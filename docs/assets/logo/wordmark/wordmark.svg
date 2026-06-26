@@ -1,0 +1,11 @@
+<svg viewBox="0 0 260 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .wordmark-text {
+      font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-weight: 700;
+      font-size: 28px;
+      fill: #0d1b2a;
+    }
+  </style>
+  <text x="10" y="38" class="wordmark-text" letter-spacing="-0.5px">AI Career Agent</text>
+</svg>
