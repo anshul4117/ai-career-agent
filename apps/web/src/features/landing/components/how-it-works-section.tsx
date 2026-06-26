@@ -10,7 +10,7 @@ export function HowItWorksSection() {
         description="Four steps from profile to application — with AI at every stage."
       />
 
-      <ol className="grid gap-6 sm:grid-cols-2" role="list">
+      <ol className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4" role="list">
         {howItWorksSteps.map((step) => (
           <li key={step.step}>
             <StepCard step={step.step} title={step.title} description={step.description} />

@@ -2,15 +2,20 @@ export const landingHero = {
   eyebrow: "Premium AI Career Operating System",
   headline: "FIND HIGH-QUALITY JOBS.",
   headlineAccent: "NOT SPAM.",
-  subheadline: "AI-powered career discovery built for serious candidates.",
+  subheadline: "AI-powered career operating system built for serious candidates. Zero ghost jobs, zero duplicates, and automatic resume customization.",
   primaryCta: "Get Started",
   secondaryCta: "Watch Demo",
 } as const;
 
+export const announcementBar = {
+  text: "🚀 Now building the future of job discovery. Find high-quality jobs, not spam.",
+} as const;
+
 export const socialProofStats = [
-  { id: "jobs", label: "Total Jobs", value: "12,400+" },
-  { id: "users", label: "Total Users", value: "8,200+" },
-  { id: "companies", label: "Companies", value: "1,500+" },
+  { id: "jobs", label: "Curated Jobs", value: "5,000+" },
+  { id: "companies", label: "Companies", value: "300+" },
+  { id: "match", label: "AI Match Accuracy", value: "95%" },
+  { id: "agent", label: "AI Agent", value: "24/7" },
 ] as const;
 
 export const landingFeatures = [
@@ -29,23 +34,30 @@ export const landingFeatures = [
     icon: "file" as const,
   },
   {
-    id: "cover-letter",
-    title: "Cover Letter Generation",
-    description: "Personalized cover letters crafted from your profile and the job description.",
-    icon: "mail" as const,
-  },
-  {
     id: "matching",
-    title: "Job Matching",
+    title: "AI Resume Match",
     description:
       "Understand match scores, skill gaps, and AI recommendations before you apply.",
     icon: "target" as const,
   },
   {
+    id: "cover-letter",
+    title: "Cover Letter Generator",
+    description: "Personalized cover letters crafted from your profile and the job description.",
+    icon: "mail" as const,
+  },
+  {
     id: "tracking",
-    title: "Application Tracking",
+    title: "Application Tracker",
     description: "Manage your entire job search pipeline from saved to offer in one place.",
     icon: "clipboard" as const,
+  },
+  {
+    id: "spam-free",
+    title: "Spam-Free Jobs",
+    description:
+      "Every single posting is verified active. We index only trusted sources and remove duplicate listings.",
+    icon: "shield" as const,
   },
 ] as const;
 
@@ -62,13 +74,69 @@ export const howItWorksSteps = [
   },
   {
     step: 3,
-    title: "Find Jobs",
+    title: "Discover Jobs",
     description: "Browse quality-ranked opportunities matched to your profile.",
   },
   {
     step: 4,
     title: "Apply Faster",
     description: "Optimize materials, generate cover letters, and track every application.",
+  },
+] as const;
+
+export const whyChooseUs = {
+  title: "AI Career Agent vs Traditional Job Boards",
+  description: "Why serious candidates choose a quality-first career operating system.",
+  headers: ["Feature", "AI Career Agent", "Traditional Boards"],
+  rows: [
+    {
+      feature: "Verification",
+      us: "100% verified active listings, zero ghost jobs",
+      them: "Mass duplication and outdated postings",
+      isUsPositive: true,
+    },
+    {
+      feature: "Job Filtering",
+      us: "AI quality score based on trust, relevance & recency",
+      them: "Keyword matching and sponsored ads spam",
+      isUsPositive: true,
+    },
+    {
+      feature: "Resume Adaptability",
+      us: "One-click ATS-optimization tailored to specific JDs",
+      them: "Manual adjustments for every application",
+      isUsPositive: true,
+    },
+    {
+      feature: "Pipeline Tracking",
+      us: "Centralized pipeline from save to offer tracking",
+      them: "Siloed applications, spreadsheets & chaotic tracking",
+      isUsPositive: true,
+    },
+  ],
+} as const;
+
+export const testimonials = [
+  {
+    name: "Aarav Sharma",
+    role: "Frontend Engineer",
+    company: "Linear Labs",
+    content: "AI Career Agent cut my job search time in half. Instead of browsing thousands of ghost listings, I was recommended exactly 5 jobs that fit my profile. Got interviews for 3 of them!",
+    avatarInitials: "AS",
+  },
+  {
+    name: "Neha Patel",
+    role: "B.Tech Student",
+    company: "IIT Bombay",
+    content: "As a student searching for summer internships, the AI Resume Match was a lifesaver. It showed me exactly what skills were missing from my resume and helped me optimize it in seconds.",
+    avatarInitials: "NP",
+  },
+  {
+    name: "Rohan Das",
+    role: "Full Stack Developer",
+    company: "Vercel",
+    content: "The modern brutalist UI is incredibly fast, and the spam filtering actually works. This is the first career platform that focuses on developer candidate experience first.",
+    avatarInitials: "RD",
   },
 ] as const;
 
@@ -99,12 +167,21 @@ export const faqItems = [
   },
 ] as const;
 
-export const footerLinks = [
-  { title: "About", href: "#" },
-  { title: "Contact", href: "#" },
-  { title: "Privacy Policy", href: "#" },
-  { title: "Terms", href: "#" },
-] as const;
+export const footerLinks = {
+  navigation: [
+    { title: "Features", href: "#features" },
+    { title: "How It Works", href: "#how-it-works" },
+    { title: "FAQ", href: "#faq" },
+  ],
+  resources: [
+    { title: "GitHub", href: "https://github.com/anshul4117/ai-career-agent" },
+    { title: "Pricing (Soon)", href: "#" },
+  ],
+  legal: [
+    { title: "Privacy Policy", href: "#" },
+    { title: "Terms of Service", href: "#" },
+  ],
+} as const;
 
 export const landingNavLinks = [
   { title: "Features", href: "#features" },
