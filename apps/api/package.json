@@ -1,0 +1,6 @@
+{
+  "name": "@ai-career-agent/api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI Career Agent — NestJS backend API"
+}

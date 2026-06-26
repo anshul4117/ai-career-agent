@@ -1,0 +1,19 @@
+{
+  "name": "ai-career-agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Production-grade AI Career Agent platform",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "echo \"Run dev from individual apps once scaffolded\"",
+    "build": "echo \"Run build from individual apps once scaffolded\"",
+    "lint": "echo \"Lint scripts to be configured\"",
+    "test": "echo \"Test scripts to be configured\""
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

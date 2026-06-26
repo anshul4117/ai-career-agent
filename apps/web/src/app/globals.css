@@ -1,0 +1,159 @@
+@import "tailwindcss";
+
+@theme {
+  /* Solarized Light — Modern Brutalism */
+  --color-background: #fdf6e3;
+  --color-surface: #fff9ec;
+  --color-surface-secondary: #f7f1e1;
+  --color-surface-hover: #f3eedb;
+
+  --color-foreground: #111111;
+  --color-foreground-secondary: #4b5563;
+  --color-foreground-muted: #6b7280;
+
+  --color-border: #111111;
+  --color-border-secondary: #374151;
+
+  --color-primary: #0f766e;
+  --color-primary-foreground: #ffffff;
+  --color-accent: #7c3aed;
+  --color-accent-foreground: #ffffff;
+
+  --color-success: #16a34a;
+  --color-warning: #ea580c;
+  --color-error: #dc2626;
+  --color-info: #2563eb;
+
+  --font-heading: var(--font-space-grotesk), sans-serif;
+  --font-body: var(--font-inter), sans-serif;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  --shadow-brutal: 4px 4px 0px #111111;
+  --shadow-brutal-hover: 6px 6px 0px #111111;
+
+  --spacing-sidebar: 280px;
+  --spacing-header: 72px;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    letter-spacing: -0.025em;
+    color: var(--color-foreground);
+  }
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 700;
+  }
+
+  @media (min-width: 768px) {
+    h1 {
+      font-size: 3.75rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    h1 {
+      font-size: 4.5rem;
+    }
+  }
+
+  h2 {
+    font-size: 2.25rem;
+    font-weight: 700;
+  }
+
+  @media (min-width: 768px) {
+    h2 {
+      font-size: 3rem;
+    }
+  }
+
+  h3 {
+    font-size: 1.875rem;
+    font-weight: 700;
+  }
+
+  h4 {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  h5 {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .brutal-border {
+    border: 3px solid var(--color-border);
+  }
+
+  .brutal-border-secondary {
+    border: 2px solid var(--color-border);
+  }
+
+  .brutal-shadow {
+    box-shadow: var(--shadow-brutal);
+  }
+
+  .brutal-shadow-hover {
+    box-shadow: var(--shadow-brutal-hover);
+  }
+
+  .brutal-card {
+    background-color: var(--color-surface);
+    border: 3px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-brutal);
+  }
+
+  .brutal-hover-lift {
+    transition: transform 150ms ease;
+  }
+
+  .brutal-hover-lift:hover {
+    transform: translate(-2px, -2px);
+  }
+
+  .font-heading {
+    font-family: var(--font-heading);
+  }
+
+  .font-body {
+    font-family: var(--font-body);
+  }
+}

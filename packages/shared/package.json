@@ -1,0 +1,6 @@
+{
+  "name": "@ai-career-agent/shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared utilities and constants for AI Career Agent"
+}
