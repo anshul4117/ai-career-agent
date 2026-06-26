@@ -73,9 +73,7 @@ function SidebarHeader({
       {!collapsed ? (
         <Logo />
       ) : (
-        <span className="font-heading text-sm font-bold" title="AI Career Agent">
-          ACA
-        </span>
+        <Logo iconOnly />
       )}
 
       <Button

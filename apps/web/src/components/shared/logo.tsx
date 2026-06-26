@@ -1,20 +1,57 @@
 import Link from "next/link";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface LogoProps {
   className?: string;
-  showTagline?: boolean;
+  showTagline?: boolean; // Kept for backwards compatibility
+  iconOnly?: boolean;
+  variant?: "default" | "monochrome-dark" | "monochrome-light";
 }
 
-export function Logo({ className, showTagline = false }: LogoProps) {
+export function Logo({
+  className,
+  showTagline = false,
+  iconOnly = false,
+  variant = "default",
+}: LogoProps) {
+  // Select asset path based on variant and iconOnly mode
+  let src = "/logo.svg";
+  let width = 144;
+  let height = 40;
+
+  if (iconOnly) {
+    width = 43;
+    height = 36;
+    if (variant === "monochrome-dark") {
+      src = "/icon-black.svg";
+    } else if (variant === "monochrome-light") {
+      src = "/icon-white.svg";
+    } else {
+      src = "/favicon.svg";
+    }
+  } else {
+    if (variant === "monochrome-dark") {
+      src = "/logo-black.svg";
+    } else if (variant === "monochrome-light") {
+      src = "/logo-white.svg";
+    } else {
+      src = "/logo.svg";
+    }
+  }
+
   return (
-    <Link href="/" className={cn("inline-flex flex-col gap-0.5", className)}>
-      <span className="font-heading text-lg font-bold tracking-tight text-foreground">
-        AI Career Agent
-      </span>
-      {showTagline && (
-        <span className="text-xs font-medium text-foreground-muted">Career OS</span>
-      )}
+    <Link href="/" className={cn("inline-flex items-center select-none", className)}>
+      <Image
+        src={src}
+        alt="AI Career Agent Logo"
+        width={width}
+        height={height}
+        priority
+        className={cn(
+          iconOnly ? "h-9 w-auto shrink-0" : "h-10 w-auto shrink-0"
+        )}
+      />
     </Link>
   );
 }

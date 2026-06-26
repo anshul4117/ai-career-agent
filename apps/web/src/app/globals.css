@@ -1,27 +1,27 @@
 @import "tailwindcss";
 
 @theme {
-  /* Solarized Light — Modern Brutalism */
-  --color-background: #fdf6e3;
-  --color-surface: #fff9ec;
-  --color-surface-secondary: #f7f1e1;
-  --color-surface-hover: #f3eedb;
+  /* Solarized Light — Modern Brutalism (Updated Brand Palette) */
+  --color-background: #fdf8f6;
+  --color-surface: #fffdfc;
+  --color-surface-secondary: #f5efef;
+  --color-surface-hover: #efe7e7;
 
-  --color-foreground: #111111;
-  --color-foreground-secondary: #4b5563;
+  --color-foreground: #0d1b2a;
+  --color-foreground-secondary: #073642;
   --color-foreground-muted: #6b7280;
 
-  --color-border: #111111;
+  --color-border: #0d1b2a;
   --color-border-secondary: #374151;
 
-  --color-primary: #0f766e;
+  --color-primary: #2563eb;
   --color-primary-foreground: #ffffff;
   --color-accent: #7c3aed;
   --color-accent-foreground: #ffffff;
 
-  --color-success: #16a34a;
-  --color-warning: #ea580c;
-  --color-error: #dc2626;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
   --color-info: #2563eb;
 
   --font-heading: var(--font-space-grotesk), sans-serif;
