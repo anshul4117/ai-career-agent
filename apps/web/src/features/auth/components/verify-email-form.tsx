@@ -4,19 +4,19 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { forgotPasswordSchema } from "../schemas/auth.schema";
+import { verifyEmailSchema } from "../schemas/auth.schema";
 import { authService } from "../services/auth.service";
-import { EmailInput } from "./email-input";
 import { LoadingButton } from "./loading-button";
 import { ErrorMessage } from "./error-message";
+import { BrutalInput } from "@/components/ui/brutal-input";
 import { Text } from "@/components/ui/typography";
 import { z } from "zod";
 
-type ForgotFormValues = z.infer<typeof forgotPasswordSchema>;
+type VerifyFormValues = z.infer<typeof verifyEmailSchema>;
 
-export function ForgotPasswordForm() {
+export function VerifyEmailForm() {
   const router = useRouter();
-  const [sent, setSent] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,36 +24,35 @@ export function ForgotPasswordForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ForgotFormValues>({
-    resolver: zodResolver(forgotPasswordSchema),
-    defaultValues: { email: "" },
+  } = useForm<VerifyFormValues>({
+    resolver: zodResolver(verifyEmailSchema),
+    defaultValues: { code: "" },
   });
 
-  const onSubmit = async (data: ForgotFormValues) => {
+  const onSubmit = async (data: VerifyFormValues) => {
     setError(null);
     setIsLoading(true);
     try {
-      await authService.forgotPassword(data.email);
-      setSent(true);
-      // Wait a moment and redirect to verify page, or let the user click
+      await authService.verifyEmail(data.code);
+      setSuccess(true);
       setTimeout(() => {
-        router.push("/reset-password");
-      }, 2000);
+        router.push("/complete-profile");
+      }, 1500);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to trigger password recovery. Please try again.";
+      const message = err instanceof Error ? err.message : "Invalid verification code. Please check and try again.";
       setError(message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (sent) {
+  if (success) {
     return (
       <div className="space-y-4">
         <div className="rounded-md bg-success/10 p-4 border-[3px] border-success text-success-foreground brutal-shadow">
-          <Text className="text-sm font-bold text-success mb-1">Recovery Link Sent!</Text>
+          <Text className="text-sm font-bold text-success mb-1">Email Verified Successfully!</Text>
           <Text variant="small" className="text-xs text-foreground-secondary leading-relaxed">
-            If an account exists, a link/token has been sent. Redirecting to reset page...
+            Your email has been confirmed. Redirecting to profile setup...
           </Text>
         </div>
       </div>
@@ -65,15 +64,19 @@ export function ForgotPasswordForm() {
       <ErrorMessage message={error} onClose={() => setError(null)} />
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-        <EmailInput
-          id="forgot-email"
-          error={errors.email?.message}
+        <BrutalInput
+          id="verify-code"
+          label="Verification Code"
+          placeholder="123456"
+          maxLength={6}
+          error={errors.code?.message}
           disabled={isLoading}
-          {...register("email")}
+          required
+          {...register("code")}
         />
 
-        <LoadingButton type="submit" loading={isLoading} loadingText="Sending recovery link...">
-          Send Recovery Link
+        <LoadingButton type="submit" loading={isLoading} loadingText="Verifying email...">
+          Verify Email
         </LoadingButton>
       </form>
     </div>

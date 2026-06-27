@@ -1,27 +1,24 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ForgotPasswordForm } from "@/features/auth/components/forgot-password-form";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AuthCard, AuthHeader, AuthFooter, ForgotPasswordForm } from "@/features/auth";
 
 export const metadata: Metadata = {
-  title: "Forgot Password",
+  title: "Recover Password — AI Career Agent",
+  description: "Recover your AI Career Agent account password by triggering a recovery link.",
 };
 
 export default function ForgotPasswordPage() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Reset password</CardTitle>
-        <CardDescription>We&apos;ll send a reset link to your email.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ForgotPasswordForm />
-        <p className="mt-6 text-center text-sm text-foreground-secondary">
-          <Link href="/login" className="font-semibold text-primary hover:underline">
-            Back to login
-          </Link>
-        </p>
-      </CardContent>
-    </Card>
+    <AuthCard>
+      <AuthHeader
+        title="Forgot Password?"
+        description="Enter your email below and we'll send you instructions to reset your password."
+      />
+      <ForgotPasswordForm />
+      <AuthFooter
+        mainLinkText="Remembered your password?"
+        mainLinkHref="/login"
+        mainLinkActionText="Sign In"
+      />
+    </AuthCard>
   );
 }

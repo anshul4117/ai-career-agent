@@ -1,28 +1,24 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { RegisterForm } from "@/features/auth/components/register-form";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AuthCard, AuthHeader, AuthFooter, RegisterForm } from "@/features/auth";
 
 export const metadata: Metadata = {
-  title: "Register",
+  title: "Create Account — AI Career Agent",
+  description: "Create your AI Career Agent account to start your quality-first job search journey.",
 };
 
 export default function RegisterPage() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Create account</CardTitle>
-        <CardDescription>Start your quality-first job search journey.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <RegisterForm />
-        <p className="mt-6 text-center text-sm text-foreground-secondary">
-          Already have an account?{" "}
-          <Link href="/login" className="font-semibold text-primary hover:underline">
-            Login
-          </Link>
-        </p>
-      </CardContent>
-    </Card>
+    <AuthCard>
+      <AuthHeader
+        title="Get Started"
+        description="Start discovering high-quality opportunities without the spam."
+      />
+      <RegisterForm />
+      <AuthFooter
+        mainLinkText="Already have an account?"
+        mainLinkHref="/login"
+        mainLinkActionText="Sign In"
+      />
+    </AuthCard>
   );
 }
