@@ -1,82 +1,99 @@
 "use client";
 
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { registerSchema } from "../schemas/auth.schema";
+import { useAuth } from "../hooks/use-auth";
+import { EmailInput } from "./email-input";
+import { PasswordInput } from "./password-input";
+import { ConfirmPasswordInput } from "./confirm-password-input";
+import { PasswordStrength } from "./password-strength";
+import { SocialLoginButton } from "./social-login-button";
+import { AuthDivider } from "./auth-divider";
+import { LoadingButton } from "./loading-button";
+import { ErrorMessage } from "./error-message";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { mockUser } from "@/features/auth/mock/user";
-import { useAuthStore } from "@/store";
-
-const registerSchema = z.object({
-  name: z.string().min(2, "Name is required"),
-  email: z.string().email("Enter a valid email"),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[A-Z]/, "Must contain uppercase letter")
-    .regex(/[a-z]/, "Must contain lowercase letter")
-    .regex(/[0-9]/, "Must contain number"),
-});
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export function RegisterForm() {
   const router = useRouter();
-  const login = useAuthStore((state) => state.login);
+  const { register: signup, isLoading } = useAuth();
+  const [error, setError] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    watch,
+    formState: { errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { name: "", email: "", password: "" },
+    defaultValues: { email: "", password: "", confirmPassword: "" },
   });
 
+  const passwordValue = watch("password", "");
+
   const onSubmit = async (data: RegisterFormValues) => {
-    // Mock only — no API call
-    login({ ...mockUser, name: data.name, email: data.email });
-    router.push("/dashboard");
+    setError(null);
+    try {
+      await signup(data.email, data.password);
+      router.push("/verify-email");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to create account. Please try again.";
+      setError(message);
+    }
+  };
+
+  const handleGoogleSignup = () => {
+    setError(null);
+    // TODO: Connect Google Sign-Up with Clerk OAuth trigger in Sprint 7
+    alert("Google sign-in is coming in the next sprint (Sprint 7)!");
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-      <div className="space-y-2">
-        <Label htmlFor="name">Name</Label>
-        <Input id="name" placeholder="Your name" {...register("name")} />
-        {errors.name && (
-          <p className="text-sm text-error" role="alert">
-            {errors.name.message}
-          </p>
-        )}
-      </div>
+    <div className="space-y-4">
+      <SocialLoginButton provider="google" onClick={handleGoogleSignup} isLoading={isLoading} />
+      
+      <AuthDivider />
 
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
-        <Input id="email" type="email" placeholder="you@example.com" {...register("email")} />
-        {errors.email && (
-          <p className="text-sm text-error" role="alert">
-            {errors.email.message}
-          </p>
-        )}
-      </div>
+      <ErrorMessage message={error} onClose={() => setError(null)} />
 
-      <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
-        <Input id="password" type="password" placeholder="••••••••" {...register("password")} />
-        {errors.password && (
-          <p className="text-sm text-error" role="alert">
-            {errors.password.message}
-          </p>
-        )}
-      </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+        <EmailInput
+          id="register-email"
+          error={errors.email?.message}
+          disabled={isLoading}
+          {...register("email")}
+        />
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? "Creating account..." : "Create Account"}
-      </Button>
-    </form>
+        <PasswordInput
+          id="register-password"
+          label="Password"
+          placeholder="••••••••"
+          error={errors.password?.message}
+          disabled={isLoading}
+          {...register("password")}
+        />
+
+        {passwordValue.length > 0 && (
+          <div className="pt-1">
+            <PasswordStrength value={passwordValue} />
+          </div>
+        )}
+
+        <ConfirmPasswordInput
+          id="register-confirm-password"
+          error={errors.confirmPassword?.message}
+          disabled={isLoading}
+          {...register("confirmPassword")}
+        />
+
+        <LoadingButton type="submit" loading={isLoading} loadingText="Creating account...">
+          Create Account
+        </LoadingButton>
+      </form>
+    </div>
   );
 }
