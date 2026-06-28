@@ -1,13 +1,13 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-export interface TooltipProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface BrutalTooltipProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'content'> {
   content: React.ReactNode;
   children: React.ReactElement;
   delay?: number;
 }
 
-export const Tooltip = ({ content, children, delay = 300, className, ...props }: TooltipProps) => {
+export const Tooltip = ({ content, children, delay = 300, className, ...props }: BrutalTooltipProps) => {
   const [isVisible, setIsVisible] = React.useState(false);
   const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
   const tooltipId = React.useId();
@@ -36,7 +36,7 @@ export const Tooltip = ({ content, children, delay = 300, className, ...props }:
     onFocus: showTooltip,
     onBlur: hideTooltip,
     "aria-describedby": tooltipId,
-  });
+  } as React.HTMLAttributes<HTMLElement>);
 
   return (
     <div className="relative inline-block">

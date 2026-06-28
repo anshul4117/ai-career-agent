@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import { resetPasswordSchema } from "../schemas/auth.schema";
-import { authService } from "../services/auth.service";
+import { useAuth } from "../hooks/use-auth";
 import { PasswordInput } from "./password-input";
 import { ConfirmPasswordInput } from "./confirm-password-input";
 import { PasswordStrength } from "./password-strength";
@@ -22,8 +22,11 @@ export function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const tokenFromUrl = searchParams.get("token") || "";
   const [success, setSuccess] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { resetPassword } = useAuth();
   const [error, setError] = useState<string | null>(null);
+
+  // Localized loading state
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
 
   const {
     register,
@@ -39,18 +42,18 @@ export function ResetPasswordForm() {
 
   const onSubmit = async (data: ResetFormValues) => {
     setError(null);
-    setIsLoading(true);
+    setIsResettingPassword(true);
     try {
-      await authService.resetPassword(data.password, data.token);
+      await resetPassword(data.password, data.token);
       setSuccess(true);
       setTimeout(() => {
         router.push("/login");
       }, 2000);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to reset password. The link might be expired.";
+      const message = err instanceof Error ? err.message : "Failed to reset password. The token might be invalid or expired.";
       setError(message);
     } finally {
-      setIsLoading(false);
+      setIsResettingPassword(false);
     }
   };
 
@@ -79,7 +82,7 @@ export function ResetPasswordForm() {
             label="Reset Token"
             placeholder="Paste your reset token here"
             error={errors.token?.message}
-            disabled={isLoading}
+            disabled={isResettingPassword}
             required
             {...register("token")}
           />
@@ -90,7 +93,7 @@ export function ResetPasswordForm() {
           label="New Password"
           placeholder="••••••••"
           error={errors.password?.message}
-          disabled={isLoading}
+          disabled={isResettingPassword}
           {...register("password")}
         />
 
@@ -103,11 +106,16 @@ export function ResetPasswordForm() {
         <ConfirmPasswordInput
           id="reset-confirm-password"
           error={errors.confirmPassword?.message}
-          disabled={isLoading}
+          disabled={isResettingPassword}
           {...register("confirmPassword")}
         />
 
-        <LoadingButton type="submit" loading={isLoading} loadingText="Updating password...">
+        <LoadingButton
+          type="submit"
+          loading={isResettingPassword}
+          disabled={isResettingPassword}
+          loadingText="Updating password..."
+        >
           Update Password
         </LoadingButton>
       </form>

@@ -6,6 +6,11 @@ export interface AuthUser {
   name?: string;
   profileImage?: string;
   createdAt?: string;
+  profileCompleted?: boolean;
+  verified?: boolean;
+  headline?: string;
+  preferredRole?: string;
+  preferredLocation?: string;
 }
 
 export interface AuthSessionState {

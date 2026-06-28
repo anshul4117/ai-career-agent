@@ -6,7 +6,7 @@ interface SocialLoginButtonProps {
   isLoading?: boolean;
 }
 
-export function SocialLoginButton({ provider, onClick, isLoading = false }: SocialLoginButtonProps) {
+export function SocialLoginButton({ onClick, isLoading = false }: SocialLoginButtonProps) {
   return (
     <BrutalButton
       type="button"

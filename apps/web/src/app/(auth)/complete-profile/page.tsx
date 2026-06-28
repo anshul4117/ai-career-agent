@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
-import { AuthCard, AuthHeader, CompleteProfileForm } from "@/features/auth";
+import { AuthCard } from "@/features/auth/components/auth-card";
+import { AuthHeader } from "@/features/auth/components/auth-header";
+import { CompleteProfileForm } from "@/features/auth/components/complete-profile-form";
 
 export const metadata: Metadata = {
-  title: "Complete Your Profile — AI Career Agent",
-  description: "Complete your onboarding details to unlock job discovery and matching.",
+  title: "Onboarding — AI Career Agent",
+  description: "Complete your profile preferences to configure your AI Career Agent assistant.",
 };
 
 export default function CompleteProfilePage() {
   return (
     <AuthCard>
       <AuthHeader
-        title="Tell Us About Yourself"
-        description="Share a few professional details to help us customize your matches."
+        title="Complete Your Profile"
+        description="Help us personalize your resume optimization and job matches."
       />
       <CompleteProfileForm />
     </AuthCard>

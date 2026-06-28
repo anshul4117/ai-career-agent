@@ -15,14 +15,14 @@ export function TestimonialsSection() {
       />
 
       <Grid cols={1} colsSm={2} colsLg={3} gap={6} role="list" className="w-full">
-        {testimonials.map((t, idx) => (
+        {testimonials.map((t) => (
           <li key={t.name} className="list-none">
             <BrutalCard
               hoverable
               className="h-full flex flex-col justify-between gap-6 border-[3px] border-border brutal-shadow hover:brutal-shadow-hover"
             >
               <Text variant="body" className="italic text-foreground text-sm md:text-base leading-relaxed">
-                "{t.content}"
+                &quot;{t.content}&quot;
               </Text>
               
               <div className="flex items-center gap-3 pt-4 border-t border-border/10">

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { verifyEmailSchema } from "../schemas/auth.schema";
-import { authService } from "../services/auth.service";
+import { useAuth } from "../hooks/use-auth";
 import { LoadingButton } from "./loading-button";
 import { ErrorMessage } from "./error-message";
 import { BrutalInput } from "@/components/ui/brutal-input";
@@ -17,8 +17,11 @@ type VerifyFormValues = z.infer<typeof verifyEmailSchema>;
 export function VerifyEmailForm() {
   const router = useRouter();
   const [success, setSuccess] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { verifyEmail } = useAuth();
   const [error, setError] = useState<string | null>(null);
+
+  // Localized loading state
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const {
     register,
@@ -31,9 +34,9 @@ export function VerifyEmailForm() {
 
   const onSubmit = async (data: VerifyFormValues) => {
     setError(null);
-    setIsLoading(true);
+    setIsVerifying(true);
     try {
-      await authService.verifyEmail(data.code);
+      await verifyEmail(data.code);
       setSuccess(true);
       setTimeout(() => {
         router.push("/complete-profile");
@@ -42,7 +45,7 @@ export function VerifyEmailForm() {
       const message = err instanceof Error ? err.message : "Invalid verification code. Please check and try again.";
       setError(message);
     } finally {
-      setIsLoading(false);
+      setIsVerifying(false);
     }
   };
 
@@ -70,12 +73,17 @@ export function VerifyEmailForm() {
           placeholder="123456"
           maxLength={6}
           error={errors.code?.message}
-          disabled={isLoading}
+          disabled={isVerifying}
           required
           {...register("code")}
         />
 
-        <LoadingButton type="submit" loading={isLoading} loadingText="Verifying email...">
+        <LoadingButton
+          type="submit"
+          loading={isVerifying}
+          disabled={isVerifying}
+          loadingText="Verifying email..."
+        >
           Verify Email
         </LoadingButton>
       </form>

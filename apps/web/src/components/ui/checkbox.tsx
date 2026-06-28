@@ -42,7 +42,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
                 props.disabled && "cursor-not-allowed opacity-50",
                 className
               )}
-              onClick={(e) => {
+              onClick={() => {
                 if (props.disabled) return;
                 const input = document.getElementById(checkboxId) as HTMLInputElement | null;
                 if (input) {

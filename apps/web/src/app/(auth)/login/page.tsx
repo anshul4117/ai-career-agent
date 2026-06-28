@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
-import { AuthCard, AuthHeader, AuthFooter, LoginForm } from "@/features/auth";
+import { AuthCard } from "@/features/auth/components/auth-card";
+import { AuthHeader } from "@/features/auth/components/auth-header";
+import { AuthFooter } from "@/features/auth/components/auth-footer";
+import { LoginForm } from "@/features/auth/components/login-form";
 
 export const metadata: Metadata = {
   title: "Sign In — AI Career Agent",

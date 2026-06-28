@@ -1,7 +1,7 @@
 import { Check, X } from "lucide-react";
 import { LandingSection, SectionHeading } from "@/features/landing/components/section-primitives";
 import { whyChooseUs } from "@/features/landing/data/landing-content";
-import { Heading, Text } from "@/components/ui/typography";
+import { Text } from "@/components/ui/typography";
 
 export function WhyChooseUsSection() {
   return (
@@ -29,7 +29,7 @@ export function WhyChooseUsSection() {
             </tr>
           </thead>
           <tbody>
-            {whyChooseUs.rows.map((row, rowIdx) => (
+            {whyChooseUs.rows.map((row) => (
               <tr
                 key={row.feature}
                 className={`border-b-[2px] border-border last:border-b-0 hover:bg-surface-hover/50`}
