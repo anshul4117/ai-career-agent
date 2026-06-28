@@ -1,7 +1,7 @@
 import { Alert } from "@/components/ui/alert";
 
 interface ErrorMessageProps {
-  message?: string;
+  message?: string | null;
   title?: string;
   onClose?: () => void;
 }

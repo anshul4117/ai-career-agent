@@ -1,45 +1,44 @@
-import { useAuthStore } from "../store/auth.store";
-import { authService } from "../services/auth.service";
+"use client";
+
+import { useAuthContext } from "../providers/auth-provider";
+import { useRouter } from "next/navigation";
 
 export function useAuth() {
-  const { user, isAuthenticated, isLoading, setLoading } = useAuthStore();
-
-  const login = async (email: string, password: string) => {
-    // TODO: Integrate Clerk sign-in triggers in Sprint 7
-    setLoading(true);
-    try {
-      return await authService.login(email, password);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const register = async (email: string, password: string) => {
-    // TODO: Integrate Clerk sign-up triggers in Sprint 7
-    setLoading(true);
-    try {
-      return await authService.register(email, password);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const logout = async () => {
-    // TODO: Integrate Clerk sign-out triggers in Sprint 7
-    setLoading(true);
-    try {
-      await authService.logout();
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return {
+  const router = useRouter();
+  const {
     user,
     isAuthenticated,
     isLoading,
     login,
     register,
     logout,
+    loginWithGoogle,
+    registerWithGoogle,
+    forgotPassword,
+    resetPassword,
+    verifyEmail,
+  } = useAuthContext();
+
+  const handleLogout = async () => {
+    await logout();
+    // Redirect to login page immediately after clearing session
+    router.replace("/login");
+  };
+
+  return {
+    user,
+    isLoaded: !isLoading,
+    isAuthenticated,
+    isLoading,
+    login,
+    register,
+    logout: handleLogout,
+    loginWithGoogle,
+    registerWithGoogle,
+    forgotPassword,
+    resetPassword,
+    verifyEmail,
   };
 }
+
+export type UseAuthReturn = ReturnType<typeof useAuth>;

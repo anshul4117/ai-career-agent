@@ -15,7 +15,7 @@ import {
 import { mainNavigation } from "@/config/navigation";
 import { mockUser } from "@/features/auth/mock/user";
 import { cn } from "@/lib/utils";
-import { useAuthStore } from "@/store";
+import { useAuth } from "@/features/auth";
 
 interface SidebarNavProps {
   collapsed?: boolean;
@@ -23,10 +23,16 @@ interface SidebarNavProps {
 }
 
 export function SidebarNav({ collapsed = false, onNavigate }: SidebarNavProps) {
-  const storeUser = useAuthStore((state) => state.user);
-  const user = storeUser ?? mockUser;
+  const { user, isAuthenticated, logout } = useAuth();
 
-  const initials = user.name
+  const activeUser = isAuthenticated && user ? {
+    name: user.name || `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.email || "",
+    email: user.email,
+  } : mockUser;
+
+  const userName = activeUser.name || activeUser.email || "User";
+
+  const initials = userName
     .split(" ")
     .map((n) => n[0])
     .join("")
@@ -47,7 +53,13 @@ export function SidebarNav({ collapsed = false, onNavigate }: SidebarNavProps) {
       </nav>
 
       <div className="border-t-[3px] border-border p-3">
-        <UserProfile collapsed={collapsed} name={user.name} email={user.email} initials={initials} />
+        <UserProfile
+          collapsed={collapsed}
+          name={userName}
+          email={activeUser.email}
+          initials={initials}
+          signOut={logout}
+        />
       </div>
     </div>
   );
@@ -58,11 +70,13 @@ function UserProfile({
   name,
   email,
   initials,
+  signOut,
 }: {
   collapsed: boolean;
   name: string;
   email: string;
   initials: string;
+  signOut: () => void;
 }) {
   return (
     <DropdownMenu>
@@ -91,22 +105,23 @@ function UserProfile({
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/profile">
-            <User className="mr-2 h-4 w-4" />
-            Profile
+            <User className="mr-2 h-4 w-4" /> Profile
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/settings">
-            <Settings className="mr-2 h-4 w-4" />
-            Settings
+            <Settings className="mr-2 h-4 w-4" /> Settings
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/login">
-            <LogOut className="mr-2 h-4 w-4" />
-            Sign out
-          </Link>
+        <DropdownMenuItem>
+          <button
+            type="button"
+            className="flex w-full items-center"
+            onClick={() => signOut()}
+          >
+            <LogOut className="mr-2 h-4 w-4" /> Sign out
+          </button>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

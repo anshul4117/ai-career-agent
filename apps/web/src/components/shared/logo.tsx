@@ -11,7 +11,6 @@ interface LogoProps {
 
 export function Logo({
   className,
-  showTagline = false,
   iconOnly = false,
   variant = "default",
 }: LogoProps) {

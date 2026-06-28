@@ -19,8 +19,12 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
   const router = useRouter();
-  const { login, isLoading } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const [error, setError] = useState<string | null>(null);
+  
+  // Localized and isolated loading states
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const {
     register,
@@ -33,19 +37,29 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginFormValues) => {
     setError(null);
+    setIsSigningIn(true);
     try {
       await login(data.email, data.password);
       router.push("/dashboard");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to sign in. Please check your credentials.";
       setError(message);
+    } finally {
+      setIsSigningIn(false);
     }
   };
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
     setError(null);
-    // TODO: Connect Google Sign-In with Clerk OAuth trigger in Sprint 7
-    alert("Google sign-in is coming in the next sprint (Sprint 7)!");
+    setIsGoogleLoading(true);
+    try {
+      await loginWithGoogle();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Google sign in failed.";
+      setError(message);
+    } finally {
+      setIsGoogleLoading(false);
+    }
   };
 
   const passwordLabel = (
@@ -57,9 +71,15 @@ export function LoginForm() {
     </div>
   );
 
+  const isAnyLoading = isSigningIn || isGoogleLoading;
+
   return (
     <div className="space-y-4">
-      <SocialLoginButton provider="google" onClick={handleGoogleLogin} isLoading={isLoading} />
+      <SocialLoginButton
+        provider="google"
+        onClick={handleGoogleLogin}
+        isLoading={isGoogleLoading}
+      />
       
       <AuthDivider />
 
@@ -69,7 +89,7 @@ export function LoginForm() {
         <EmailInput
           id="login-email"
           error={errors.email?.message}
-          disabled={isLoading}
+          disabled={isAnyLoading}
           {...register("email")}
         />
 
@@ -77,11 +97,16 @@ export function LoginForm() {
           id="login-password"
           label={passwordLabel}
           error={errors.password?.message}
-          disabled={isLoading}
+          disabled={isAnyLoading}
           {...register("password")}
         />
 
-        <LoadingButton type="submit" loading={isLoading} loadingText="Signing in...">
+        <LoadingButton
+          type="submit"
+          loading={isSigningIn}
+          disabled={isAnyLoading}
+          loadingText="Signing in..."
+        >
           Sign In
         </LoadingButton>
       </form>

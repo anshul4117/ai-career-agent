@@ -1,28 +1,23 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { AuthCard, AuthHeader, AuthFooter, ResetPasswordForm } from "@/features/auth";
-import { Loader2 } from "lucide-react";
+import { AuthCard } from "@/features/auth/components/auth-card";
+import { AuthHeader } from "@/features/auth/components/auth-header";
+import { AuthFooter } from "@/features/auth/components/auth-footer";
+import { ResetPasswordForm } from "@/features/auth/components/reset-password-form";
 
 export const metadata: Metadata = {
   title: "Reset Password — AI Career Agent",
-  description: "Reset your AI Career Agent account password securely.",
+  description: "Create a new password for your AI Career Agent account.",
 };
 
 export default function ResetPasswordPage() {
   return (
     <AuthCard>
       <AuthHeader
-        title="Reset Password"
-        description="Choose a strong, secure new password for your account."
+        title="Choose New Password"
+        description="Enter the recovery code/token sent to your email to set a new password."
       />
-      <Suspense
-        fallback={
-          <div className="h-48 flex flex-col items-center justify-center gap-2 text-foreground-secondary text-sm">
-            <Loader2 className="h-6 w-6 animate-spin text-primary" />
-            <span>Loading form configuration...</span>
-          </div>
-        }
-      >
+      <Suspense fallback={<div className="text-sm font-bold text-center py-4">Loading reset form...</div>}>
         <ResetPasswordForm />
       </Suspense>
       <AuthFooter

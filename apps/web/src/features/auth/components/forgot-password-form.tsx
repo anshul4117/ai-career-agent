@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { forgotPasswordSchema } from "../schemas/auth.schema";
-import { authService } from "../services/auth.service";
+import { useAuth } from "../hooks/use-auth";
 import { EmailInput } from "./email-input";
 import { LoadingButton } from "./loading-button";
 import { ErrorMessage } from "./error-message";
@@ -17,8 +17,11 @@ type ForgotFormValues = z.infer<typeof forgotPasswordSchema>;
 export function ForgotPasswordForm() {
   const router = useRouter();
   const [sent, setSent] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { forgotPassword } = useAuth();
   const [error, setError] = useState<string | null>(null);
+
+  // Localized loading state
+  const [isRecovering, setIsRecovering] = useState(false);
 
   const {
     register,
@@ -31,11 +34,10 @@ export function ForgotPasswordForm() {
 
   const onSubmit = async (data: ForgotFormValues) => {
     setError(null);
-    setIsLoading(true);
+    setIsRecovering(true);
     try {
-      await authService.forgotPassword(data.email);
+      await forgotPassword(data.email);
       setSent(true);
-      // Wait a moment and redirect to verify page, or let the user click
       setTimeout(() => {
         router.push("/reset-password");
       }, 2000);
@@ -43,7 +45,7 @@ export function ForgotPasswordForm() {
       const message = err instanceof Error ? err.message : "Failed to trigger password recovery. Please try again.";
       setError(message);
     } finally {
-      setIsLoading(false);
+      setIsRecovering(false);
     }
   };
 
@@ -68,11 +70,16 @@ export function ForgotPasswordForm() {
         <EmailInput
           id="forgot-email"
           error={errors.email?.message}
-          disabled={isLoading}
+          disabled={isRecovering}
           {...register("email")}
         />
 
-        <LoadingButton type="submit" loading={isLoading} loadingText="Sending recovery link...">
+        <LoadingButton
+          type="submit"
+          loading={isRecovering}
+          disabled={isRecovering}
+          loadingText="Sending recovery link..."
+        >
           Send Recovery Link
         </LoadingButton>
       </form>

@@ -20,8 +20,12 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export function RegisterForm() {
   const router = useRouter();
-  const { register: signup, isLoading } = useAuth();
+  const { register: signup, registerWithGoogle } = useAuth();
   const [error, setError] = useState<string | null>(null);
+
+  // Localized loading states
+  const [isSigningUp, setIsSigningUp] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const {
     register,
@@ -37,24 +41,40 @@ export function RegisterForm() {
 
   const onSubmit = async (data: RegisterFormValues) => {
     setError(null);
+    setIsSigningUp(true);
     try {
       await signup(data.email, data.password);
       router.push("/verify-email");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to create account. Please try again.";
       setError(message);
+    } finally {
+      setIsSigningUp(false);
     }
   };
 
-  const handleGoogleSignup = () => {
+  const handleGoogleSignup = async () => {
     setError(null);
-    // TODO: Connect Google Sign-Up with Clerk OAuth trigger in Sprint 7
-    alert("Google sign-in is coming in the next sprint (Sprint 7)!");
+    setIsGoogleLoading(true);
+    try {
+      await registerWithGoogle();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Google sign up failed.";
+      setError(message);
+    } finally {
+      setIsGoogleLoading(false);
+    }
   };
+
+  const isAnyLoading = isSigningUp || isGoogleLoading;
 
   return (
     <div className="space-y-4">
-      <SocialLoginButton provider="google" onClick={handleGoogleSignup} isLoading={isLoading} />
+      <SocialLoginButton
+        provider="google"
+        onClick={handleGoogleSignup}
+        isLoading={isGoogleLoading}
+      />
       
       <AuthDivider />
 
@@ -64,7 +84,7 @@ export function RegisterForm() {
         <EmailInput
           id="register-email"
           error={errors.email?.message}
-          disabled={isLoading}
+          disabled={isAnyLoading}
           {...register("email")}
         />
 
@@ -73,7 +93,7 @@ export function RegisterForm() {
           label="Password"
           placeholder="••••••••"
           error={errors.password?.message}
-          disabled={isLoading}
+          disabled={isAnyLoading}
           {...register("password")}
         />
 
@@ -86,11 +106,16 @@ export function RegisterForm() {
         <ConfirmPasswordInput
           id="register-confirm-password"
           error={errors.confirmPassword?.message}
-          disabled={isLoading}
+          disabled={isAnyLoading}
           {...register("confirmPassword")}
         />
 
-        <LoadingButton type="submit" loading={isLoading} loadingText="Creating account...">
+        <LoadingButton
+          type="submit"
+          loading={isSigningUp}
+          disabled={isAnyLoading}
+          loadingText="Creating account..."
+        >
           Create Account
         </LoadingButton>
       </form>

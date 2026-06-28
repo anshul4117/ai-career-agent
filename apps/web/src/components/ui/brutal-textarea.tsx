@@ -3,14 +3,14 @@ import { Label } from "@/components/ui/label";
 import { Text } from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
 
-export interface BrutalTextareaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextareaElement>, "label"> {
+export interface BrutalTextareaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "label"> {
   label?: string;
   error?: string;
   description?: string;
   required?: boolean;
 }
 
-export const BrutalTextarea = React.forwardRef<HTMLTextareaElement, BrutalTextareaProps>(
+export const BrutalTextarea = React.forwardRef<HTMLTextAreaElement, BrutalTextareaProps>(
   ({ id, label, error, description, required, className, rows = 4, ...props }, ref) => {
     const generatedId = React.useId();
     const textareaId = id || generatedId;

@@ -6,15 +6,20 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { mockUser } from "@/features/auth/mock/user";
-import { useAuthStore, useUiStore } from "@/store";
+import { useAuth } from "@/features/auth";
+import { useUiStore } from "@/store";
 
 export function Header() {
   const { toggleSidebar, toggleSidebarCollapsed, searchQuery, setSearchQuery } =
     useUiStore();
-  const storeUser = useAuthStore((state) => state.user);
-  const user = storeUser ?? mockUser;
+  const { user, isAuthenticated } = useAuth();
+  const activeUser = isAuthenticated && user ? {
+    name: user.name || `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.email || "",
+    email: user.email,
+  } : mockUser;
+  const userName = activeUser.name || activeUser.email || "User";
 
-  const initials = user.name
+  const initials = userName
     .split(" ")
     .map((n) => n[0])
     .join("")
@@ -77,7 +82,7 @@ export function Header() {
             <AvatarFallback className="text-xs">{initials}</AvatarFallback>
           </Avatar>
           <span className="hidden max-w-[120px] truncate text-sm font-semibold lg:inline">
-            {user.name}
+            {userName}
           </span>
         </Link>
       </div>

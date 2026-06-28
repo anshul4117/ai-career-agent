@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
-import { AuthCard, AuthHeader, AuthFooter, VerifyEmailForm } from "@/features/auth";
+import { AuthCard } from "@/features/auth/components/auth-card";
+import { AuthHeader } from "@/features/auth/components/auth-header";
+import { AuthFooter } from "@/features/auth/components/auth-footer";
+import { VerifyEmailForm } from "@/features/auth/components/verify-email-form";
 
 export const metadata: Metadata = {
   title: "Verify Email — AI Career Agent",

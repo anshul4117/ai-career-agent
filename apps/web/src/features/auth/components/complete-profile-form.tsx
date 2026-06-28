@@ -12,14 +12,17 @@ import { ErrorMessage } from "./error-message";
 import { Text } from "@/components/ui/typography";
 import { Camera, User } from "lucide-react";
 import { z } from "zod";
+import { authService } from "../services/auth.service";
 
 type ProfileFormValues = z.infer<typeof completeProfileSchema>;
 
 export function CompleteProfileForm() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+
+  // Localized loading state
+  const [isSaving, setIsSaving] = useState(false);
 
   const {
     register,
@@ -38,22 +41,43 @@ export function CompleteProfileForm() {
 
   const onSubmit = async (data: ProfileFormValues) => {
     setError(null);
-    setIsLoading(true);
+    setIsSaving(true);
     try {
-      // Simulate profile saving delay
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      void data;
+      await authService.completeProfile({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        headline: data.headline,
+        preferredRole: data.preferredRole,
+        preferredLocation: data.preferredLocation,
+      });
       router.push("/dashboard");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to update profile onboarding.";
       setError(message);
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
-  const handleSkip = () => {
-    router.push("/dashboard");
+  const handleSkip = async () => {
+    setError(null);
+    setIsSaving(true);
+    try {
+      const user = authService.getCurrentUser();
+      const defaultFirstName = user?.email.split("@")[0] || "User";
+      await authService.completeProfile({
+        firstName: defaultFirstName,
+        lastName: "",
+        headline: "",
+        preferredRole: "",
+        preferredLocation: "",
+      });
+      router.push("/dashboard");
+    } catch (err) {
+      router.push("/dashboard");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handlePhotoClick = () => {
@@ -61,7 +85,6 @@ export function CompleteProfileForm() {
     if (photoUrl) {
       setPhotoUrl(null);
     } else {
-      // Generate a mock dicebear avatar to make it look premium and dynamic!
       setPhotoUrl("https://api.dicebear.com/7.x/bottts/svg?seed=anshul");
     }
   };
@@ -100,7 +123,7 @@ export function CompleteProfileForm() {
             label="First Name"
             placeholder="John"
             error={errors.firstName?.message}
-            disabled={isLoading}
+            disabled={isSaving}
             required
             {...register("firstName")}
           />
@@ -110,7 +133,7 @@ export function CompleteProfileForm() {
             label="Last Name"
             placeholder="Doe"
             error={errors.lastName?.message}
-            disabled={isLoading}
+            disabled={isSaving}
             required
             {...register("lastName")}
           />
@@ -121,7 +144,7 @@ export function CompleteProfileForm() {
           label="Professional Headline"
           placeholder="Software Engineer | Frontend Specialist"
           error={errors.headline?.message}
-          disabled={isLoading}
+          disabled={isSaving}
           required
           {...register("headline")}
         />
@@ -132,7 +155,7 @@ export function CompleteProfileForm() {
             label="Preferred Role"
             placeholder="React Developer"
             error={errors.preferredRole?.message}
-            disabled={isLoading}
+            disabled={isSaving}
             required
             {...register("preferredRole")}
           />
@@ -142,14 +165,19 @@ export function CompleteProfileForm() {
             label="Preferred Location"
             placeholder="Remote / New York"
             error={errors.preferredLocation?.message}
-            disabled={isLoading}
+            disabled={isSaving}
             required
             {...register("preferredLocation")}
           />
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
-          <LoadingButton type="submit" loading={isLoading} loadingText="Saving profile...">
+          <LoadingButton
+            type="submit"
+            loading={isSaving}
+            disabled={isSaving}
+            loadingText="Saving profile..."
+          >
             Continue
           </LoadingButton>
 
@@ -157,7 +185,7 @@ export function CompleteProfileForm() {
             type="button"
             variant="secondary"
             onClick={handleSkip}
-            disabled={isLoading}
+            disabled={isSaving}
             className="w-full sm:w-auto px-6 h-12 uppercase font-bold text-sm tracking-wide bg-transparent border-2 border-border text-foreground hover:bg-foreground/5 hover:text-foreground"
           >
             Skip for Now

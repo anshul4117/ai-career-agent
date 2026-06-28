@@ -79,7 +79,7 @@ interface CaptionProps extends React.HTMLAttributes<HTMLSpanElement> {
 
 export const Caption = React.forwardRef<HTMLSpanElement, CaptionProps>(
   ({ as = "span", className, children, ...props }, ref) => {
-    const Component = as;
+    const Component = as as "span";
 
     return (
       <Component

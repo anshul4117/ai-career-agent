@@ -6,7 +6,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface PasswordInputProps extends Omit<React.ComponentProps<"input">, "label"> {
-  label?: string;
+  label?: React.ReactNode;
   error?: string;
   required?: boolean;
 }
