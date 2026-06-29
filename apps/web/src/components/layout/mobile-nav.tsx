@@ -6,8 +6,8 @@ import {
   Briefcase,
   FileText,
   LayoutDashboard,
-  Menu,
   User,
+  Menu,
 } from "lucide-react";
 import { isNavItemActive } from "@/components/layout/nav-link";
 import { cn } from "@/lib/utils";

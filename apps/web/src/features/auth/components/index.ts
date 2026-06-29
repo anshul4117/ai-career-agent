@@ -16,3 +16,5 @@ export { ForgotPasswordForm } from "./forgot-password-form";
 export { ResetPasswordForm } from "./reset-password-form";
 export { VerifyEmailForm } from "./verify-email-form";
 export { CompleteProfileForm } from "./complete-profile-form";
+export { AuthGuard } from "./auth-guard";
+export { GuestGuard } from "./guest-guard";

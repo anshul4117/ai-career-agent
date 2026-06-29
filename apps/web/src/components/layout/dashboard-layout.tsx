@@ -24,7 +24,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         )}
       >
         <Header />
-        <main className="flex-1 p-4 pb-24 md:p-6 md:pb-24 lg:p-8 lg:pb-8">{children}</main>
+        <main className="flex-1 w-full min-w-0 overflow-x-hidden px-4 py-6 pb-24 md:px-6 md:py-8 md:pb-24 lg:px-8 lg:py-8 lg:pb-8">{children}</main>
       </div>
 
       <MobileNav />

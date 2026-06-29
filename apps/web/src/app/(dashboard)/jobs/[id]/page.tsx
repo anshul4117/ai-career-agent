@@ -35,9 +35,9 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
           <div className="flex gap-2">
             <Button variant="secondary">Save</Button>
             <Button asChild>
-              <a href={job.applyUrl} target="_blank" rel="noopener noreferrer">
+              <Link href={`/jobs/${job.id}/apply`}>
                 Apply
-              </a>
+              </Link>
             </Button>
           </div>
         }

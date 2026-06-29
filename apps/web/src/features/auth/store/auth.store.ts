@@ -1,36 +1,25 @@
-// Auth store using Zustand with login/logout state
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import type { AuthUser } from "../types/auth.types";
 
-/** Authentication state managed by Zustand (demo only). */
 interface AuthState {
-  /** Whether a user is considered authenticated (demo flag). */
+  user: AuthUser | null;
   isAuthenticated: boolean;
-  /** Log in a user (demo – accepts a user object). */
-  login: (user: AuthUser) => void;
-  /** Log out the current user. */
-  logout: () => void;
+  isLoading: boolean;
+  setUser: (user: AuthUser | null) => void;
+  setIsLoading: (isLoading: boolean) => void;
+  reset: () => void;
 }
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      isAuthenticated: false,
-      login: (user) => set({ isAuthenticated: true }),
-      logout: () => set({ isAuthenticated: false }),
-    }),
-    {
-      name: "aca-auth",
-      // No persisted state needed for demo.
-      partialize: () => ({}),
-    },
-  ),
-);
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  isAuthenticated: false,
+  isLoading: true, // Start loading to check session on mount
 
-/** Optional helper to reset auth store (currently clears demo flag). */
+  setUser: (user) => set({ user, isAuthenticated: !!user }),
+  setIsLoading: (isLoading) => set({ isLoading }),
+  reset: () => set({ user: null, isAuthenticated: false, isLoading: false }),
+}));
+
 export function resetAuthStore() {
-  useAuthStore.setState({ isAuthenticated: false });
+  useAuthStore.getState().reset();
 }
-
-export type { AuthState };

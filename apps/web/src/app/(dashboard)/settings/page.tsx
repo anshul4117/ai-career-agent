@@ -1,16 +1,17 @@
-import type { Metadata } from "next";
+"use client";
+
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { mockUser } from "@/features/auth/mock/user";
-
-export const metadata: Metadata = {
-  title: "Settings",
-};
+import { useAuth } from "@/features/auth";
 
 export default function SettingsPage() {
+  const { user, isAuthenticated } = useAuth();
+  const activeUser = isAuthenticated && user ? user : mockUser;
+
   return (
     <div>
       <PageHeader title="Settings" description="Manage your account and preferences." />
@@ -23,11 +24,11 @@ export default function SettingsPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" defaultValue={mockUser.name} />
+              <Input id="name" defaultValue={activeUser.name || ""} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" defaultValue={mockUser.email} />
+              <Input id="email" type="email" defaultValue={activeUser.email || ""} />
             </div>
             <Button variant="secondary">Save Changes</Button>
           </CardContent>

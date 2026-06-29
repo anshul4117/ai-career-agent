@@ -1,63 +1,48 @@
-import type { Metadata } from "next";
-import { PageHeader } from "@/components/shared/page-header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { mockDashboardStats } from "@/features/dashboard/mock/stats";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Dashboard",
-};
+import React from "react";
+import { WelcomeBanner } from "@/features/dashboard/components/welcome-banner";
+import { AnalyticsCards } from "@/features/dashboard/components/analytics-cards";
+import { ResumeProgressCard } from "@/features/dashboard/components/resume-progress-card";
+import { ProfileCompletionCard } from "@/features/dashboard/components/profile-completion-card";
+import { QuickActions } from "@/features/dashboard/components/quick-actions";
+import { RecommendedJobs } from "@/features/dashboard/components/recommended-jobs";
+import { RecentApplications } from "@/features/dashboard/components/recent-applications";
+import { AIInsights } from "@/features/dashboard/components/ai-insights";
+import { RecentActivity } from "@/features/dashboard/components/recent-activity";
 
 export default function DashboardPage() {
-  const stats = mockDashboardStats;
-
   return (
-    <div>
-      <PageHeader
-        title="Dashboard"
-        description="Your career command center — quality jobs, not spam."
-      />
+    <div className="space-y-6 w-full min-w-0">
+      {/* 1. Welcome Section */}
+      <WelcomeBanner />
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Profile Completion" value={`${stats.profileCompletion}%`} />
-        <StatCard
-          title="Resume Status"
-          value={stats.resumeUploaded ? "Uploaded" : "Not Uploaded"}
-        />
-        <StatCard title="Job Matches" value={String(stats.jobMatches)} />
-        <StatCard title="Applications" value={String(stats.totalApplications)} />
+      {/* 2. Analytics Cards */}
+      <AnalyticsCards />
+
+      {/* 3. Resume & Profile Progress Cards */}
+      <div className="grid gap-6 md:grid-cols-2 w-full min-w-0">
+        <ResumeProgressCard />
+        <ProfileCompletionCard />
       </div>
 
-      <Card className="mt-8">
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-4">
-            {stats.recentActivity.map((item) => (
-              <li
-                key={item.id}
-                className="flex items-center justify-between border-b-[2px] border-border pb-4 last:border-0 last:pb-0"
-              >
-                <span className="text-sm font-medium">{item.action}</span>
-                <span className="text-xs text-foreground-muted">{item.time}</span>
-              </li>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
+      {/* 4. Quick Actions Shortcuts */}
+      <QuickActions />
 
-function StatCard({ title, value }: { title: string; value: string }) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-sm font-medium text-foreground-secondary">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-3xl font-bold">{value}</p>
-      </CardContent>
-    </Card>
+      {/* 5. Jobs, Applications, AI Insights, and Activity Timelines */}
+      <div className="grid gap-6 lg:grid-cols-2 w-full min-w-0">
+        {/* Left Column: Recommended Jobs & AI Insights */}
+        <div className="space-y-6 w-full min-w-0">
+          <RecommendedJobs />
+          <AIInsights />
+        </div>
+
+        {/* Right Column: Recent Applications & Timeline Activity */}
+        <div className="space-y-6 w-full min-w-0">
+          <RecentApplications />
+          <RecentActivity />
+        </div>
+      </div>
+    </div>
   );
 }

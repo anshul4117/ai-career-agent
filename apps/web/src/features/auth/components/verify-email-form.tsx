@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { verifyEmailSchema } from "../schemas/auth.schema";
 import { useAuth } from "../hooks/use-auth";
 import { LoadingButton } from "./loading-button";
@@ -15,7 +14,6 @@ import { z } from "zod";
 type VerifyFormValues = z.infer<typeof verifyEmailSchema>;
 
 export function VerifyEmailForm() {
-  const router = useRouter();
   const [success, setSuccess] = useState(false);
   const { verifyEmail } = useAuth();
   const [error, setError] = useState<string | null>(null);
@@ -36,15 +34,12 @@ export function VerifyEmailForm() {
     setError(null);
     setIsVerifying(true);
     try {
-      await verifyEmail(data.code);
       setSuccess(true);
-      setTimeout(() => {
-        router.push("/complete-profile");
-      }, 1500);
+      await verifyEmail(data.code);
     } catch (err) {
+      setSuccess(false);
       const message = err instanceof Error ? err.message : "Invalid verification code. Please check and try again.";
       setError(message);
-    } finally {
       setIsVerifying(false);
     }
   };

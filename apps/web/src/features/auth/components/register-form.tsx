@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { registerSchema } from "../schemas/auth.schema";
 import { useAuth } from "../hooks/use-auth";
 import { EmailInput } from "./email-input";
@@ -19,7 +18,6 @@ import { z } from "zod";
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export function RegisterForm() {
-  const router = useRouter();
   const { register: signup, registerWithGoogle } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
@@ -44,11 +42,9 @@ export function RegisterForm() {
     setIsSigningUp(true);
     try {
       await signup(data.email, data.password);
-      router.push("/verify-email");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to create account. Please try again.";
       setError(message);
-    } finally {
       setIsSigningUp(false);
     }
   };
