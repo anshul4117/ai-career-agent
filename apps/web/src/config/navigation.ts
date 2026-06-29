@@ -7,6 +7,7 @@ import {
   Mail,
   Settings,
   User,
+  Bell,
 } from "lucide-react";
 import type { NavItem } from "@/types";
 
@@ -45,6 +46,11 @@ export const mainNavigation: NavItem[] = [
     title: "Cover Letters",
     href: "/cover-letters",
     icon: Mail,
+  },
+  {
+    title: "Notifications",
+    href: "/dashboard/notifications",
+    icon: Bell,
   },
   {
     title: "Settings",

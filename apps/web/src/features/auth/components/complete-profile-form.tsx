@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { completeProfileSchema } from "../schemas/auth.schema";
 import { BrutalInput } from "@/components/ui/brutal-input";
 import { BrutalButton } from "@/components/ui/brutal-button";
@@ -12,12 +11,12 @@ import { ErrorMessage } from "./error-message";
 import { Text } from "@/components/ui/typography";
 import { Camera, User } from "lucide-react";
 import { z } from "zod";
-import { authService } from "../services/auth.service";
+import { useAuth } from "../hooks/use-auth";
 
 type ProfileFormValues = z.infer<typeof completeProfileSchema>;
 
 export function CompleteProfileForm() {
-  const router = useRouter();
+  const { completeProfile, user } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
 
@@ -43,18 +42,16 @@ export function CompleteProfileForm() {
     setError(null);
     setIsSaving(true);
     try {
-      await authService.completeProfile({
+      await completeProfile({
         firstName: data.firstName,
         lastName: data.lastName,
         headline: data.headline,
         preferredRole: data.preferredRole,
         preferredLocation: data.preferredLocation,
       });
-      router.push("/dashboard");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to update profile onboarding.";
       setError(message);
-    } finally {
       setIsSaving(false);
     }
   };
@@ -63,19 +60,17 @@ export function CompleteProfileForm() {
     setError(null);
     setIsSaving(true);
     try {
-      const user = authService.getCurrentUser();
       const defaultFirstName = user?.email.split("@")[0] || "User";
-      await authService.completeProfile({
+      await completeProfile({
         firstName: defaultFirstName,
         lastName: "",
         headline: "",
         preferredRole: "",
         preferredLocation: "",
       });
-      router.push("/dashboard");
     } catch (err) {
-      router.push("/dashboard");
-    } finally {
+      const message = err instanceof Error ? err.message : "Failed to skip onboarding.";
+      setError(message);
       setIsSaving(false);
     }
   };

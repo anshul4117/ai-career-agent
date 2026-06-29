@@ -5,12 +5,14 @@ import { Bell, Menu, PanelLeft, Search } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Logo } from "@/components/shared/logo";
 import { mockUser } from "@/features/auth/mock/user";
 import { useAuth } from "@/features/auth";
 import { useUiStore } from "@/store";
+import { cn } from "@/lib/utils";
 
 export function Header() {
-  const { toggleSidebar, toggleSidebarCollapsed, searchQuery, setSearchQuery } =
+  const { sidebarCollapsed, toggleSidebar, toggleSidebarCollapsed, searchQuery, setSearchQuery } =
     useUiStore();
   const { user, isAuthenticated } = useAuth();
   const activeUser = isAuthenticated && user ? {
@@ -27,16 +29,8 @@ export function Header() {
     .toUpperCase();
 
   return (
-    <header className="sticky top-0 z-30 flex h-[var(--spacing-header)] items-center gap-3 border-b-[3px] border-border bg-surface px-4 lg:gap-4 lg:px-6">
-      <Button
-        variant="ghost"
-        size="icon"
-        className="lg:hidden"
-        onClick={toggleSidebar}
-        aria-label="Open sidebar menu"
-      >
-        <Menu className="h-5 w-5" />
-      </Button>
+    <header className="sticky top-0 z-30 flex h-[var(--spacing-header)] items-center gap-3 border-b-[3px] border-border bg-surface px-4 md:px-6 lg:px-8">
+      <Logo href="/dashboard" className="lg:hidden" />
 
       <Button
         variant="ghost"
@@ -64,13 +58,11 @@ export function Header() {
       </div>
 
       <div className="ml-auto flex items-center gap-1 sm:gap-2">
-        <Button variant="ghost" size="icon" className="md:hidden" aria-label="Search">
-          <Search className="h-5 w-5" />
-        </Button>
-
-        <Button variant="ghost" size="icon" aria-label="Notifications">
-          <Bell className="h-5 w-5" />
-          <span className="sr-only">Notifications</span>
+        <Button variant="ghost" size="icon" aria-label="Notifications" asChild>
+          <Link href="/dashboard/notifications">
+            <Bell className="h-5 w-5" />
+            <span className="sr-only">Notifications</span>
+          </Link>
         </Button>
 
         <Link

@@ -34,12 +34,18 @@ export function LandingNavbar() {
             >
               How It Works
             </Link>
-            <div className="flex items-center gap-1.5 cursor-not-allowed">
-              <span className="text-sm font-semibold text-foreground-muted/65">Pricing</span>
-              <Badge variant="secondary" className="px-1.5 py-0 text-[10px] uppercase font-bold tracking-wide scale-90">
-                Soon
-              </Badge>
-            </div>
+            <Link
+              href="/pricing"
+              className="text-sm font-semibold text-foreground-secondary transition-colors hover:text-foreground"
+            >
+              Pricing
+            </Link>
+            <Link
+              href="/about"
+              className="text-sm font-semibold text-foreground-secondary transition-colors hover:text-foreground"
+            >
+              About
+            </Link>
             <Link
               href="#faq"
               className="text-sm font-semibold text-foreground-secondary transition-colors hover:text-foreground"

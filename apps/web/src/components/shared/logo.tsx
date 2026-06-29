@@ -7,12 +7,14 @@ interface LogoProps {
   showTagline?: boolean; // Kept for backwards compatibility
   iconOnly?: boolean;
   variant?: "default" | "monochrome-dark" | "monochrome-light";
+  href?: string;
 }
 
 export function Logo({
   className,
   iconOnly = false,
   variant = "default",
+  href = "/",
 }: LogoProps) {
   // Select asset path based on variant and iconOnly mode
   let src = "/logo.svg";
@@ -40,7 +42,7 @@ export function Logo({
   }
 
   return (
-    <Link href="/" className={cn("inline-flex items-center select-none", className)}>
+    <Link href={href} className={cn("inline-flex items-center select-none", className)}>
       <Image
         src={src}
         alt="AI Career Agent Logo"

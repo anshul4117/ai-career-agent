@@ -8,9 +8,10 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "echo \"Run dev from individual apps once scaffolded\"",
-    "build": "echo \"Run build from individual apps once scaffolded\"",
-    "lint": "echo \"Lint scripts to be configured\"",
+    "dev": "npm run dev --workspace=@ai-career-agent/web",
+    "build": "npm run build --workspace=@ai-career-agent/web",
+    "lint": "npm run lint --workspace=@ai-career-agent/web",
+    "type-check": "npm run type-check --workspace=@ai-career-agent/web",
     "test": "echo \"Test scripts to be configured\""
   },
   "engines": {

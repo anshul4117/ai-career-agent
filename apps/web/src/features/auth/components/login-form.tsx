@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { loginSchema } from "../schemas/auth.schema";
 import { useAuth } from "../hooks/use-auth";
@@ -18,7 +17,6 @@ import { z } from "zod";
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
-  const router = useRouter();
   const { login, loginWithGoogle } = useAuth();
   const [error, setError] = useState<string | null>(null);
   
@@ -40,11 +38,10 @@ export function LoginForm() {
     setIsSigningIn(true);
     try {
       await login(data.email, data.password);
-      router.push("/dashboard");
+      // Let GuestGuard handle the redirect automatically to keep routing centralized
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to sign in. Please check your credentials.";
       setError(message);
-    } finally {
       setIsSigningIn(false);
     }
   };

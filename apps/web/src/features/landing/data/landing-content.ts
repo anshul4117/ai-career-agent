@@ -172,14 +172,16 @@ export const footerLinks = {
     { title: "Features", href: "#features" },
     { title: "How It Works", href: "#how-it-works" },
     { title: "FAQ", href: "#faq" },
+    { title: "About Us", href: "/about" },
+    { title: "Contact Us", href: "/contact" },
   ],
   resources: [
     { title: "GitHub", href: "https://github.com/anshul4117/ai-career-agent" },
     { title: "Pricing (Soon)", href: "#" },
   ],
   legal: [
-    { title: "Privacy Policy", href: "#" },
-    { title: "Terms of Service", href: "#" },
+    { title: "Privacy Policy", href: "/privacy" },
+    { title: "Terms of Service", href: "/terms" },
   ],
 } as const;
 

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Upload } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +24,11 @@ export default function ResumePage() {
       <PageHeader
         title="Resume"
         description="Upload and manage your resumes."
+        action={
+          <Button asChild>
+            <Link href="/resume/new">Create Resume</Link>
+          </Button>
+        }
       />
 
       <Card className="mb-8">
@@ -60,8 +66,8 @@ export default function ResumePage() {
                   <Badge variant={parsingVariant(resume.parsingStatus)}>
                     {resume.parsingStatus}
                   </Badge>
-                  <Button variant="ghost" size="sm">
-                    View
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link href={`/resume/${resume.id}`}>View</Link>
                   </Button>
                   <Button variant="ghost" size="sm">
                     Download
