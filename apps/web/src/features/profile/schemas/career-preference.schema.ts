@@ -34,9 +34,9 @@ export const careerPreferenceSchema = z.object({
     .min(1, "Notice period is required")
     .max(50)
     .trim(),
-  openToWork: z.boolean().default(true),
-  visaSponsorshipRequired: z.boolean().default(false),
-  relocationWillingness: z.boolean().default(true),
+  openToWork: z.boolean(),
+  visaSponsorshipRequired: z.boolean(),
+  relocationWillingness: z.boolean(),
   preferredIndustry: z
     .string()
     .min(1, "Preferred industry is required")

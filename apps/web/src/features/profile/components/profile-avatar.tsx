@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface ProfileAvatarProps {
@@ -28,7 +29,7 @@ export function ProfileAvatar({ url, initials, size = "lg", className }: Profile
       aria-label={`Avatar for ${initials}`}
     >
       {url ? (
-        <img src={url} alt="Profile avatar" className="h-full w-full object-cover" />
+        <Image src={url} alt="Profile avatar" fill unoptimized className="object-cover" />
       ) : (
         <span className="text-foreground">{initials}</span>
       )}

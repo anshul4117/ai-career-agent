@@ -5,9 +5,8 @@ import Link from "next/link";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Heading, Text } from "@/components/ui/typography";
-import { Badge } from "@/components/ui/badge";
 import { RECOMMENDED_JOBS } from "../data/mock-dashboard-data";
-import { Briefcase, ArrowRight, Bookmark } from "lucide-react";
+import { ArrowRight, Bookmark } from "lucide-react";
 
 export function RecommendedJobs() {
   return (

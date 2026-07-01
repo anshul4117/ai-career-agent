@@ -18,7 +18,7 @@ const QUICK_ACTIONS = [
   { label: "Edit Profile", href: "/profile/edit", icon: Pencil },
   { label: "Manage Skills", href: "/profile/skills", icon: Code2 },
   { label: "Add Experience", href: "/profile/experience", icon: Briefcase },
-  { label: "Review Profile", href: "/profile/review", icon: FileText },
+  { label: "Preview Profile", href: "/profile/preview", icon: FileText },
   { label: "View Applications", href: "/applications", icon: LayoutDashboard },
 ];
 

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { AuthUser } from "../types/auth.types";
 
-interface AuthState {
+export interface AuthState {
   user: AuthUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;

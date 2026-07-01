@@ -3,9 +3,9 @@
 import React from "react";
 import { StatsCard } from "@/components/ui/stats-card";
 import { ANALYTICS_DATA } from "../data/mock-dashboard-data";
-import { FileText, Bookmark, Eye, Mail } from "lucide-react";
+import { FileText, Bookmark, Eye, Mail, type LucideIcon } from "lucide-react";
 
-const ICON_MAP: Record<string, React.ComponentType<any>> = {
+const ICON_MAP: Record<string, LucideIcon> = {
   "file-text": FileText,
   "bookmark": Bookmark,
   "eye": Eye,

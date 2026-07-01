@@ -7,7 +7,7 @@ import { socialLinkSchema, type SocialLinkFormValues } from "../schemas/social-l
 import { BrutalInput } from "@/components/ui/brutal-input";
 import { BrutalSelect } from "@/components/ui/brutal-select";
 import { BrutalButton } from "@/components/ui/brutal-button";
-import type { SocialLink } from "../types/social-link.types";
+import type { SocialLink, SocialPlatform } from "../types/social-link.types";
 import { SOCIAL_PLATFORM_LABELS } from "../data/social-links.mock";
 
 interface SocialLinkFormProps {
@@ -26,22 +26,24 @@ export function SocialLinkForm({
   existingPlatforms = [],
 }: SocialLinkFormProps) {
   // Filter platform options so the user doesn't add duplicates
-  const platformOptions = Object.entries(SOCIAL_PLATFORM_LABELS)
-    .filter(([key]) => !existingPlatforms.includes(key) || initialValues?.platform === key)
-    .map(([key, label]) => ({
-      value: key,
-      label,
-    }));
+  const platformOptions = React.useMemo(() => {
+    return Object.entries(SOCIAL_PLATFORM_LABELS)
+      .filter(([key]) => !existingPlatforms.includes(key) || initialValues?.platform === key)
+      .map(([key, label]) => ({
+        value: key,
+        label,
+      }));
+  }, [existingPlatforms, initialValues?.platform]);
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<SocialLinkFormValues>({
     resolver: zodResolver(socialLinkSchema),
     defaultValues: {
-      platform: platformOptions[0]?.value as any,
+      platform: (platformOptions[0]?.value ?? "github") as SocialPlatform,
       url: "",
     },
   });
@@ -54,11 +56,11 @@ export function SocialLinkForm({
       });
     } else if (platformOptions.length > 0) {
       reset({
-        platform: platformOptions[0].value as any,
+        platform: platformOptions[0].value as SocialPlatform,
         url: "",
       });
     }
-  }, [initialValues, reset, existingPlatforms]);
+  }, [initialValues, reset, platformOptions]);
 
   if (platformOptions.length === 0 && !initialValues) {
     return (
@@ -96,6 +98,15 @@ export function SocialLinkForm({
         <BrutalButton
           type="button"
           variant="secondary"
+          onClick={() => reset()}
+          disabled={!isDirty || isSubmitting}
+          className="h-10 px-4 text-xs font-bold uppercase tracking-wider"
+        >
+          Reset
+        </BrutalButton>
+        <BrutalButton
+          type="button"
+          variant="secondary"
           onClick={onCancel}
           disabled={isSubmitting}
           className="h-10 px-4 text-xs font-bold uppercase tracking-wider"
@@ -104,7 +115,7 @@ export function SocialLinkForm({
         </BrutalButton>
         <BrutalButton
           type="submit"
-          disabled={isSubmitting}
+          disabled={!isDirty || isSubmitting}
           className="h-10 px-5 text-xs font-bold uppercase tracking-wider"
         >
           {isSubmitting ? "Saving..." : submitLabel}

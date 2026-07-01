@@ -39,10 +39,16 @@ export default function CertificationsPage() {
   };
 
   const handleFormSubmit = (values: CertificationFormValues) => {
+    const mappedValues = {
+      ...values,
+      expiryDate: values.expiryDate ?? null,
+      credentialId: values.credentialId ?? null,
+      credentialUrl: values.credentialUrl ?? null,
+    };
     if (editingCert) {
-      updateCertification(editingCert.id, values);
+      updateCertification(editingCert.id, mappedValues);
     } else {
-      addCertification(values);
+      addCertification(mappedValues);
     }
     setIsDialogOpen(false);
   };

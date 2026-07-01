@@ -2,12 +2,11 @@
 
 import React from "react";
 import { BrutalCard } from "@/components/ui/brutal-card";
-import { Heading, Text } from "@/components/ui/typography";
+import { Heading } from "@/components/ui/typography";
 import { RECENT_ACTIVITY } from "../data/mock-dashboard-data";
-import { FileEdit, FileText, CheckCircle2, RefreshCw } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { FileEdit, FileText, CheckCircle2, RefreshCw, type LucideIcon } from "lucide-react";
 
-const ACTIVITY_ICONS: Record<string, React.ComponentType<any>> = {
+const ACTIVITY_ICONS: Record<string, LucideIcon> = {
   resume: FileText,
   application: CheckCircle2,
   profile: FileEdit,

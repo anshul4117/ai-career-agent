@@ -7,10 +7,10 @@ export { useAuthStore };
 
 /** Demo helper — seeds mock user for UI development */
 export function useDemoAuth() {
-  const { login, isAuthenticated } = useAuthStore();
+  const { setUser, isAuthenticated } = useAuthStore();
   return {
     isAuthenticated,
-    enableDemo: () => login(mockUser),
+    enableDemo: () => setUser(mockUser),
   };
 }
 export type { AuthState } from "@/features/auth/store/auth.store";

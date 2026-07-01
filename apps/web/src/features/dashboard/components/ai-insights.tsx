@@ -4,9 +4,9 @@ import React from "react";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { Heading, Text } from "@/components/ui/typography";
 import { AI_INSIGHTS } from "../data/mock-dashboard-data";
-import { Sparkles, Key, AlertCircle, Award, Compass } from "lucide-react";
+import { Sparkles, Key, AlertCircle, Award, Compass, type LucideIcon } from "lucide-react";
 
-const INSIGHT_ICONS: Record<string, React.ComponentType<any>> = {
+const INSIGHT_ICONS: Record<string, LucideIcon> = {
   keyword: Key,
   profile: AlertCircle,
   skill: Award,

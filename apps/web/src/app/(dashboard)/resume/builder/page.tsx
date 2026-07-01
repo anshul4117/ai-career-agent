@@ -5,14 +5,12 @@ import Link from "next/link";
 import { PageHeader } from "@/components/shared/page-header";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
-import { Heading, Text } from "@/components/ui/typography";
-import { ErrorMessage } from "@/features/auth/components/error-message";
+import { Heading } from "@/components/ui/typography";
 import { 
   User, 
   Briefcase, 
   GraduationCap, 
   Code, 
-  FileText, 
   Sparkles, 
   Download, 
   Save, 

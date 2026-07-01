@@ -30,7 +30,7 @@ export const experienceSchema = z
       .regex(/^\d{4}-\d{2}-\d{2}$/, "Start date must be in YYYY-MM-DD format"),
     endDate: z
       .preprocess((val) => (val === "" ? null : val), z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "End date must be in YYYY-MM-DD format").nullable().optional()),
-    currentPosition: z.boolean().default(false),
+    currentPosition: z.boolean(),
     description: z
       .string()
       .min(1, "Description is required")
@@ -48,8 +48,7 @@ export const experienceSchema = z
           return val;
         },
         z.array(z.string())
-      )
-      .default([]),
+      ),
   })
   .refine(
     (data) => {

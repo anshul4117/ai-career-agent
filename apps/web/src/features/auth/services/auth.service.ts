@@ -1,5 +1,9 @@
 import type { AuthUser } from "../types/auth.types";
 
+interface DatabaseUser extends AuthUser {
+  password?: string;
+}
+
 const USERS_KEY = "aca-users";
 const SESSION_KEY = "aca-current-user";
 const COOKIE_NAME = "aca-session";
@@ -23,7 +27,7 @@ function clearSessionCookie() {
 }
 
 // Seed mock database if not already initialized
-function initializeMockDatabase() {
+function initializeMockDatabase(): DatabaseUser[] {
   if (typeof window === "undefined") return [];
 
   const stored = localStorage.getItem(USERS_KEY);
@@ -71,14 +75,15 @@ export const authService = {
   async login(email: string, password: string): Promise<AuthUser> {
     await delay();
     const users = initializeMockDatabase();
-    const userMatch = users.find((u: any) => u.email.toLowerCase() === email.toLowerCase());
+    const userMatch = users.find((u: DatabaseUser) => u.email.toLowerCase() === email.toLowerCase());
 
     if (!userMatch || userMatch.password !== password) {
       throw new Error("Invalid email or password.");
     }
 
     // Exclude password from current session user object
-    const { password: _, ...authUser } = userMatch;
+    const authUser: DatabaseUser = { ...userMatch };
+    delete authUser.password;
     localStorage.setItem(SESSION_KEY, JSON.stringify(authUser));
     setSessionCookie();
     return authUser;
@@ -89,7 +94,7 @@ export const authService = {
     await delay();
     const users = initializeMockDatabase();
     // Default to the first user or create one
-    let googleUser = users.find((u: any) => u.email === "googleuser@example.com");
+    let googleUser = users.find((u: DatabaseUser) => u.email === "googleuser@example.com");
     if (!googleUser) {
       googleUser = {
         id: `usr_${Date.now()}`,
@@ -106,7 +111,8 @@ export const authService = {
       localStorage.setItem(USERS_KEY, JSON.stringify(users));
     }
 
-    const { password: _, ...authUser } = googleUser;
+    const authUser: DatabaseUser = { ...googleUser };
+    delete authUser.password;
     localStorage.setItem(SESSION_KEY, JSON.stringify(authUser));
     setSessionCookie();
     return authUser;
@@ -116,7 +122,7 @@ export const authService = {
   async register(email: string, password: string): Promise<AuthUser> {
     await delay();
     const users = initializeMockDatabase();
-    const exists = users.some((u: any) => u.email.toLowerCase() === email.toLowerCase());
+    const exists = users.some((u: DatabaseUser) => u.email.toLowerCase() === email.toLowerCase());
 
     if (exists) {
       throw new Error("User with this email already exists.");
@@ -138,7 +144,8 @@ export const authService = {
     users.push(newUser);
     localStorage.setItem(USERS_KEY, JSON.stringify(users));
 
-    const { password: _, ...authUser } = newUser;
+    const authUser: DatabaseUser = { ...newUser };
+    delete authUser.password;
     // Do not set session yet, user must verify email first
     return authUser;
   },
@@ -164,7 +171,7 @@ export const authService = {
 
     // In mock mode, find the last registered unverified user and verify them
     const users = initializeMockDatabase();
-    const unverifiedUser = [...users].reverse().find((u: any) => !u.verified);
+    const unverifiedUser = [...users].reverse().find((u: DatabaseUser) => !u.verified);
 
     if (!unverifiedUser) {
       // Fallback: if no unverified users, use Jane Smith or make user
@@ -174,7 +181,8 @@ export const authService = {
     unverifiedUser.verified = true;
     localStorage.setItem(USERS_KEY, JSON.stringify(users));
 
-    const { password: _, ...authUser } = unverifiedUser;
+    const authUser: DatabaseUser = { ...unverifiedUser };
+    delete authUser.password;
     localStorage.setItem(SESSION_KEY, JSON.stringify(authUser));
     setSessionCookie();
     return authUser;
@@ -184,7 +192,7 @@ export const authService = {
   async forgotPassword(email: string): Promise<void> {
     await delay();
     const users = initializeMockDatabase();
-    const exists = users.some((u: any) => u.email.toLowerCase() === email.toLowerCase());
+    const exists = users.some((u: DatabaseUser) => u.email.toLowerCase() === email.toLowerCase());
 
     if (!exists) {
       throw new Error("No user found with that email address.");
@@ -238,7 +246,7 @@ export const authService = {
     }
 
     const users = initializeMockDatabase();
-    const userIndex = users.findIndex((u: any) => u.id === currentUser.id);
+    const userIndex = users.findIndex((u: DatabaseUser) => u.id === currentUser.id);
 
     const updatedUser = {
       ...currentUser,

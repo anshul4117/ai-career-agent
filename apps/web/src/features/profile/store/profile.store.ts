@@ -99,7 +99,47 @@ interface ProfileState {
   removeAvatar: () => void;
 }
 
-export const useProfileStore = create<ProfileState>((set, get) => ({
+export const useProfileStore = create<ProfileState>((originalSet, get) => {
+  const set = (
+    updater: Partial<ProfileState> | ((state: ProfileState) => Partial<ProfileState>)
+  ) => {
+    originalSet((state) => {
+      const partialUpdate = typeof updater === "function" ? updater(state) : updater;
+      const merged = { ...state, ...partialUpdate };
+      
+      if (merged.profile) {
+        const audit = calculateProfileCompletion(
+          merged.profile,
+          merged.skills,
+          merged.education,
+          merged.experience,
+          merged.projects,
+          merged.certifications,
+          merged.languages,
+          merged.socialLinks,
+          merged.preferences
+        );
+        
+        const updatedSections = merged.profile.completion.sections.map((sec) => {
+          const isCompleted = audit.completedSections.some((c) => c.id === sec.id);
+          return { ...sec, completed: isCompleted };
+        });
+        
+        merged.profile = {
+          ...merged.profile,
+          completion: {
+            percentage: audit.percentage,
+            sections: updatedSections,
+          },
+        };
+        merged.autosaveTimestamp = new Date().toLocaleTimeString();
+      }
+      
+      return merged;
+    });
+  };
+
+  return {
   profile: null,
   skills: [],
   education: [],
@@ -568,4 +608,4 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     });
     get().syncCompletion();
   },
-}));
+}; });

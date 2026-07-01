@@ -39,10 +39,17 @@ export default function ProjectsPage() {
   };
 
   const handleFormSubmit = (values: ProjectFormValues) => {
+    const mappedValues = {
+      ...values,
+      imageUrl: null,
+      githubUrl: values.githubUrl ?? null,
+      liveDemoUrl: values.liveDemoUrl ?? null,
+      endDate: values.endDate ?? null,
+    };
     if (editingProj) {
-      updateProject(editingProj.id, values);
+      updateProject(editingProj.id, mappedValues);
     } else {
-      addProject(values);
+      addProject(mappedValues);
     }
     setIsDialogOpen(false);
   };

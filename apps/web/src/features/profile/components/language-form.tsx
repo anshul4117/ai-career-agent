@@ -54,7 +54,7 @@ export function LanguageForm({
     setValue,
     watch,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<LanguageFormValues>({
     resolver: zodResolver(languageSchema),
     defaultValues: {
@@ -149,6 +149,15 @@ export function LanguageForm({
         <BrutalButton
           type="button"
           variant="secondary"
+          onClick={() => reset()}
+          disabled={!isDirty || isSubmitting}
+          className="h-10 px-4 text-xs font-bold uppercase tracking-wider"
+        >
+          Reset
+        </BrutalButton>
+        <BrutalButton
+          type="button"
+          variant="secondary"
           onClick={onCancel}
           disabled={isSubmitting}
           className="h-10 px-4 text-xs font-bold uppercase tracking-wider"
@@ -157,7 +166,7 @@ export function LanguageForm({
         </BrutalButton>
         <BrutalButton
           type="submit"
-          disabled={isSubmitting}
+          disabled={!isDirty || isSubmitting}
           className="h-10 px-5 text-xs font-bold uppercase tracking-wider"
         >
           {isSubmitting ? "Saving..." : submitLabel}

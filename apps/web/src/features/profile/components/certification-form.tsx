@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { certificationSchema, type CertificationFormValues } from "../schemas/certification.schema";
 import { BrutalInput } from "@/components/ui/brutal-input";
@@ -28,9 +28,9 @@ export function CertificationForm({
     setValue,
     watch,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<CertificationFormValues>({
-    resolver: zodResolver(certificationSchema),
+    resolver: zodResolver(certificationSchema) as unknown as Resolver<CertificationFormValues>,
     defaultValues: {
       name: "",
       issuingOrganization: "",
@@ -141,6 +141,15 @@ export function CertificationForm({
         <BrutalButton
           type="button"
           variant="secondary"
+          onClick={() => reset()}
+          disabled={!isDirty || isSubmitting}
+          className="h-10 px-4 text-xs font-bold uppercase tracking-wider"
+        >
+          Reset
+        </BrutalButton>
+        <BrutalButton
+          type="button"
+          variant="secondary"
           onClick={onCancel}
           disabled={isSubmitting}
           className="h-10 px-4 text-xs font-bold uppercase tracking-wider"
@@ -149,7 +158,7 @@ export function CertificationForm({
         </BrutalButton>
         <BrutalButton
           type="submit"
-          disabled={isSubmitting}
+          disabled={!isDirty || isSubmitting}
           className="h-10 px-5 text-xs font-bold uppercase tracking-wider"
         >
           {isSubmitting ? "Saving..." : submitLabel}

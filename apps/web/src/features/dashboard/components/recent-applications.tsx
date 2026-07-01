@@ -4,11 +4,10 @@ import React from "react";
 import Link from "next/link";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
-import { Heading, Text } from "@/components/ui/typography";
+import { Heading } from "@/components/ui/typography";
 import { Badge } from "@/components/ui/badge";
 import { RECENT_APPLICATIONS } from "../data/mock-dashboard-data";
-import { FileText, ArrowRight, Eye } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { ArrowRight, Eye } from "lucide-react";
 
 const STATUS_VARIANTS: Record<string, "default" | "secondary" | "success" | "warning" | "outline"> = {
   applied: "secondary",

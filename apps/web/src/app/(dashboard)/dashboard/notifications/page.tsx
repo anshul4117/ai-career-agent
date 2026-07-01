@@ -16,7 +16,8 @@ import {
   Sparkles, 
   User, 
   Settings,
-  Circle
+  Circle,
+  type LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -83,7 +84,7 @@ const CATEGORY_LABELS: Record<NotificationCategory, string> = {
   system: "System Alerts",
 };
 
-const CATEGORY_ICONS: Record<Exclude<NotificationCategory, "all">, React.ComponentType<any>> = {
+const CATEGORY_ICONS: Record<Exclude<NotificationCategory, "all">, LucideIcon> = {
   jobs: Briefcase,
   applications: FileText,
   ai: Sparkles,

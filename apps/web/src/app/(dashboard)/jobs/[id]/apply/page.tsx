@@ -8,9 +8,9 @@ import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Heading, Text } from "@/components/ui/typography";
 import { ErrorMessage } from "@/features/auth/components/error-message";
-import { mockJobs, getJobById } from "@/features/jobs/mock/jobs";
+import { getJobById } from "@/features/jobs/mock/jobs";
 import { mockResumes } from "@/features/resume/mock/resumes";
-import { FileText, Briefcase, Sparkles, HelpCircle, Check, Loader2 } from "lucide-react";
+import { FileText, Briefcase, Sparkles, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ApplyJobPageProps {

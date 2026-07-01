@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { projectSchema, type ProjectFormValues } from "../schemas/project.schema";
 import { BrutalInput } from "@/components/ui/brutal-input";
@@ -26,12 +26,10 @@ export function ProjectForm({
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<ProjectFormValues>({
-    resolver: zodResolver(projectSchema),
+    resolver: zodResolver(projectSchema) as unknown as Resolver<ProjectFormValues>,
     defaultValues: {
       title: "",
       description: "",
@@ -45,8 +43,6 @@ export function ProjectForm({
       featured: false,
     },
   });
-
-  const featured = watch("featured");
 
   useEffect(() => {
     if (initialValues) {
@@ -171,6 +167,15 @@ export function ProjectForm({
         <BrutalButton
           type="button"
           variant="secondary"
+          onClick={() => reset()}
+          disabled={!isDirty || isSubmitting}
+          className="h-10 px-4 text-xs font-bold uppercase tracking-wider"
+        >
+          Reset
+        </BrutalButton>
+        <BrutalButton
+          type="button"
+          variant="secondary"
           onClick={onCancel}
           disabled={isSubmitting}
           className="h-10 px-4 text-xs font-bold uppercase tracking-wider"
@@ -179,7 +184,7 @@ export function ProjectForm({
         </BrutalButton>
         <BrutalButton
           type="submit"
-          disabled={isSubmitting}
+          disabled={!isDirty || isSubmitting}
           className="h-10 px-5 text-xs font-bold uppercase tracking-wider"
         >
           {isSubmitting ? "Saving..." : submitLabel}

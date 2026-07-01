@@ -1,16 +1,14 @@
 "use client";
 
 import React from "react";
-import { Settings, Pencil } from "lucide-react";
+import { Settings } from "lucide-react";
 import { BrutalCard } from "@/components/ui/brutal-card";
-import { BrutalButton } from "@/components/ui/brutal-button";
 import { Heading } from "@/components/ui/typography";
 import type { CareerPreference } from "../types/career-preference.types";
 import { EMPLOYMENT_TYPE_LABELS, WORK_MODE_LABELS } from "../data/experience.mock";
 
 interface CareerPreferenceCardProps {
   preferences: CareerPreference | null;
-  onEditClick: () => void;
 }
 
 function InfoRow({ label, value }: { label: string; value: string | boolean | undefined }) {
@@ -24,7 +22,7 @@ function InfoRow({ label, value }: { label: string; value: string | boolean | un
   );
 }
 
-export function CareerPreferenceCard({ preferences, onEditClick }: CareerPreferenceCardProps) {
+export function CareerPreferenceCard({ preferences }: CareerPreferenceCardProps) {
   return (
     <BrutalCard className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0">
       <div className="space-y-4">
@@ -34,23 +32,13 @@ export function CareerPreferenceCard({ preferences, onEditClick }: CareerPrefere
             <Settings className="h-5 w-5 text-primary" aria-hidden="true" />
             Career Preferences
           </Heading>
-
-          <BrutalButton
-            onClick={onEditClick}
-            variant="secondary"
-            className="h-8 px-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shrink-0"
-            aria-label="Edit career preferences"
-          >
-            <Pencil className="h-3.5 w-3.5" />
-            Edit
-          </BrutalButton>
         </div>
 
         {/* Preferences Table */}
         {!preferences ? (
           <div className="py-6 text-center space-y-2">
             <p className="text-foreground-secondary text-xs">
-              No preferences configured. Click edit to set them up.
+              No preferences configured.
             </p>
           </div>
         ) : (

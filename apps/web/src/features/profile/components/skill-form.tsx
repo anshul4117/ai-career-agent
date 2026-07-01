@@ -40,7 +40,7 @@ export function SkillForm({
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<SkillFormValues>({
     resolver: zodResolver(skillSchema),
     defaultValues: {
@@ -122,6 +122,15 @@ export function SkillForm({
         <BrutalButton
           type="button"
           variant="secondary"
+          onClick={() => reset()}
+          disabled={!isDirty || isSubmitting}
+          className="h-10 px-4 text-xs font-bold uppercase tracking-wider"
+        >
+          Reset
+        </BrutalButton>
+        <BrutalButton
+          type="button"
+          variant="secondary"
           onClick={onCancel}
           disabled={isSubmitting}
           className="h-10 px-4 text-xs font-bold uppercase tracking-wider"
@@ -130,7 +139,7 @@ export function SkillForm({
         </BrutalButton>
         <BrutalButton
           type="submit"
-          disabled={isSubmitting}
+          disabled={!isDirty || isSubmitting}
           className="h-10 px-5 text-xs font-bold uppercase tracking-wider"
         >
           {isSubmitting ? "Saving..." : submitLabel}

@@ -1,20 +1,17 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { BrutalCard } from "@/components/ui/brutal-card";
-import { BrutalButton } from "@/components/ui/brutal-button";
 import { Heading, Text } from "@/components/ui/typography";
-import { Code2, ArrowRight, Star, Plus } from "lucide-react";
+import { Code2, Star } from "lucide-react";
 import { SkillBadge } from "./skill-badge";
 import type { Skill } from "../types/skill.types";
 
 interface SkillsCardProps {
   skills: Skill[];
-  onAddClick: () => void;
 }
 
-export function SkillsCard({ skills, onAddClick }: SkillsCardProps) {
+export function SkillsCard({ skills }: SkillsCardProps) {
   // Show featured skills first, or fallback to the top 6 skills
   const previewSkills = skills.filter((s) => s.featured).concat(skills.filter((s) => !s.featured)).slice(0, 6);
 
@@ -27,28 +24,6 @@ export function SkillsCard({ skills, onAddClick }: SkillsCardProps) {
             <Code2 className="h-5 w-5 text-primary" aria-hidden="true" />
             Skills & Expertise
           </Heading>
-
-          <div className="flex items-center gap-2">
-            <BrutalButton
-              onClick={onAddClick}
-              variant="secondary"
-              className="h-8 px-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shrink-0"
-              aria-label="Add new skill"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Add New
-            </BrutalButton>
-            <BrutalButton
-              asChild
-              variant="secondary"
-              className="h-8 px-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shrink-0"
-            >
-              <Link href="/profile/skills" aria-label="View all skills">
-                View All
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </BrutalButton>
-          </div>
         </div>
 
         {/* List Preview */}

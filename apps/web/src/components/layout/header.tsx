@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, Menu, PanelLeft, Search } from "lucide-react";
+import { Bell, PanelLeft, Search } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,10 +9,9 @@ import { Logo } from "@/components/shared/logo";
 import { mockUser } from "@/features/auth/mock/user";
 import { useAuth } from "@/features/auth";
 import { useUiStore } from "@/store";
-import { cn } from "@/lib/utils";
 
 export function Header() {
-  const { sidebarCollapsed, toggleSidebar, toggleSidebarCollapsed, searchQuery, setSearchQuery } =
+  const { toggleSidebarCollapsed, searchQuery, setSearchQuery } =
     useUiStore();
   const { user, isAuthenticated } = useAuth();
   const activeUser = isAuthenticated && user ? {

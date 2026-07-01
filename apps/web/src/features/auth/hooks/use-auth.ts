@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../store/auth.store";
 import { authService } from "../services/auth.service";
@@ -8,7 +9,7 @@ export function useAuth() {
   const router = useRouter();
   const { user, isAuthenticated, isLoading, setUser, setIsLoading, reset } = useAuthStore();
 
-  const login = async (email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string) => {
     setIsLoading(true);
     try {
       const authUser = await authService.login(email, password);
@@ -24,9 +25,27 @@ export function useAuth() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [router, setUser, setIsLoading]);
 
-  const register = async (email: string, password: string) => {
+  const loginWithGoogle = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const authUser = await authService.loginWithGoogle();
+      setUser(authUser);
+      if (authUser.profileCompleted) {
+        router.replace("/dashboard");
+      } else {
+        router.replace("/complete-profile");
+      }
+    } catch (err) {
+      setIsLoading(false);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [router, setUser, setIsLoading]);
+
+  const register = useCallback(async (email: string, password: string) => {
     setIsLoading(true);
     try {
       await authService.register(email, password);
@@ -37,9 +56,27 @@ export function useAuth() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [router, setIsLoading]);
 
-  const logout = async () => {
+  const registerWithGoogle = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const authUser = await authService.registerWithGoogle();
+      setUser(authUser);
+      if (authUser.profileCompleted) {
+        router.replace("/dashboard");
+      } else {
+        router.replace("/complete-profile");
+      }
+    } catch (err) {
+      setIsLoading(false);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [router, setUser, setIsLoading]);
+
+  const logout = useCallback(async () => {
     setIsLoading(true);
     try {
       await authService.logout();
@@ -51,9 +88,9 @@ export function useAuth() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [router, reset, setIsLoading]);
 
-  const verifyEmail = async (code: string) => {
+  const verifyEmail = useCallback(async (code: string) => {
     setIsLoading(true);
     try {
       const authUser = await authService.verifyEmail(code);
@@ -67,9 +104,9 @@ export function useAuth() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [router, setUser, setIsLoading]);
 
-  const completeProfile = async (data: {
+  const completeProfile = useCallback(async (data: {
     firstName: string;
     lastName: string;
     headline: string;
@@ -87,9 +124,9 @@ export function useAuth() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [router, setUser, setIsLoading]);
 
-  const forgotPassword = async (email: string) => {
+  const forgotPassword = useCallback(async (email: string) => {
     setIsLoading(true);
     try {
       await authService.forgotPassword(email);
@@ -100,9 +137,9 @@ export function useAuth() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [router, setIsLoading]);
 
-  const resetPassword = async (password: string, token: string) => {
+  const resetPassword = useCallback(async (password: string, token: string) => {
     setIsLoading(true);
     try {
       await authService.resetPassword(password, token);
@@ -113,9 +150,9 @@ export function useAuth() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [router, setIsLoading]);
 
-  const restoreSession = () => {
+  const restoreSession = useCallback(() => {
     try {
       const currentUser = authService.getCurrentUser();
       setUser(currentUser);
@@ -124,7 +161,7 @@ export function useAuth() {
           document.cookie = "aca-session=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT;max-age=0;SameSite=Lax";
         }
       }
-    } catch (err) {
+    } catch {
       setUser(null);
       if (typeof document !== "undefined") {
         document.cookie = "aca-session=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT;max-age=0;SameSite=Lax";
@@ -132,7 +169,7 @@ export function useAuth() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [setUser, setIsLoading]);
 
   return {
     user,
@@ -140,7 +177,9 @@ export function useAuth() {
     isLoading,
     isLoaded: !isLoading,
     login,
+    loginWithGoogle,
     register,
+    registerWithGoogle,
     logout,
     verifyEmail,
     completeProfile,

@@ -40,10 +40,15 @@ export default function EducationPage() {
   };
 
   const handleFormSubmit = (values: EducationFormValues) => {
+    const mappedValues = {
+      ...values,
+      description: values.description ?? null,
+      endDate: values.endDate ?? null,
+    };
     if (editingEdu) {
-      updateEducation(editingEdu.id, values);
+      updateEducation(editingEdu.id, mappedValues);
     } else {
-      addEducation(values);
+      addEducation(mappedValues);
     }
     setIsDialogOpen(false);
   };
