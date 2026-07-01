@@ -13,7 +13,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     // Session restoration on client mount
     restoreSession();
-  }, []);
+  }, [restoreSession]);
 
   return <>{children}</>;
 }

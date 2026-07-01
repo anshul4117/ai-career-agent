@@ -1,19 +1,16 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { BrutalCard } from "@/components/ui/brutal-card";
-import { BrutalButton } from "@/components/ui/brutal-button";
 import { Heading, Text } from "@/components/ui/typography";
-import { GraduationCap, ArrowRight, Plus } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 import type { Education } from "../types/education.types";
 
 interface EducationCardProps {
   education: Education[];
-  onAddClick: () => void;
 }
 
-export function EducationCard({ education, onAddClick }: EducationCardProps) {
+export function EducationCard({ education }: EducationCardProps) {
   // Sort and preview top 2 education entries
   const previewEdu = [...education]
     .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
@@ -34,28 +31,6 @@ export function EducationCard({ education, onAddClick }: EducationCardProps) {
             <GraduationCap className="h-5 w-5 text-primary" aria-hidden="true" />
             Education History
           </Heading>
-
-          <div className="flex items-center gap-2">
-            <BrutalButton
-              onClick={onAddClick}
-              variant="secondary"
-              className="h-8 px-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shrink-0"
-              aria-label="Add new education"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Add New
-            </BrutalButton>
-            <BrutalButton
-              asChild
-              variant="secondary"
-              className="h-8 px-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shrink-0"
-            >
-              <Link href="/profile/education" aria-label="View all education entries">
-                View All
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </BrutalButton>
-          </div>
         </div>
 
         {/* List Preview */}

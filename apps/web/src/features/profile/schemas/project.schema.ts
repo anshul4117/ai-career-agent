@@ -48,7 +48,7 @@ export const projectSchema = z
       .regex(/^\d{4}-\d{2}-\d{2}$/, "Start date must be in YYYY-MM-DD format"),
     endDate: z
       .preprocess((val) => (val === "" ? null : val), z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "End date must be in YYYY-MM-DD format").nullable().optional()),
-    featured: z.boolean().default(false),
+    featured: z.boolean(),
   })
   .refine(
     (data) => {

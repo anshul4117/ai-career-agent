@@ -5,7 +5,7 @@ import Link from "next/link";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Heading, Text } from "@/components/ui/typography";
-import { CheckCircle2, Circle, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { ProfileCompletion } from "../types/profile.types";
 
 interface ProfileCompletionCardProps {
@@ -19,11 +19,16 @@ export function ProfileCompletionCard({ completion }: ProfileCompletionCardProps
   const offset = circumference - (completion.percentage / 100) * circumference;
 
   return (
-    <BrutalCard className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0">
-      <div className="flex flex-col sm:flex-row gap-6">
+    <BrutalCard className="bg-surface border-[3px] border-border p-5 brutal-shadow w-full min-w-0">
+      <div className="flex flex-col items-center gap-4 text-center">
+        {/* Header */}
+        <Heading level="h4" className="text-xs font-black uppercase tracking-wider text-foreground-muted self-start">
+          Profile Strength
+        </Heading>
+
         {/* Circular Progress */}
-        <div className="flex items-center justify-center shrink-0" aria-label={`Profile ${completion.percentage}% complete`}>
-          <svg width="100" height="100" viewBox="0 0 100 100" className="transform -rotate-90">
+        <div className="relative flex items-center justify-center h-24 w-24 shrink-0" aria-label={`Profile ${completion.percentage}% complete`}>
+          <svg width="90" height="90" viewBox="0 0 100 100" className="transform -rotate-90">
             <circle cx="50" cy="50" r="40" fill="none" stroke="var(--color-surface-secondary)" strokeWidth="8" />
             <circle
               cx="50"
@@ -38,38 +43,41 @@ export function ProfileCompletionCard({ completion }: ProfileCompletionCardProps
               className="transition-all duration-700"
             />
           </svg>
-          <span className="absolute text-xl font-black text-foreground">{completion.percentage}%</span>
+          <span className="absolute text-lg font-black text-foreground">{completion.percentage}%</span>
         </div>
 
-        {/* Section List */}
-        <div className="flex-1 min-w-0 space-y-3">
+        <div className="space-y-3 w-full">
           <div className="space-y-1">
-            <Heading level="h4" className="text-base font-black uppercase tracking-tight">
-              Profile Completion
-            </Heading>
-            <Text className="text-foreground-secondary text-xs">
+            <span className="text-[10px] font-black uppercase text-success bg-success/15 border border-success px-2 py-0.5 rounded-sm inline-block">
+              {completion.percentage === 100 ? "Fully Complete" : "In Progress"}
+            </span>
+            <Text className="text-foreground-secondary text-xs font-semibold">
               {completedCount} of {totalCount} sections completed
             </Text>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+          {/* Labeled Section Status Badges */}
+          <div className="grid grid-cols-2 gap-1.5 pt-1 text-left w-full">
             {completion.sections.map((section) => (
-              <div key={section.id} className="flex items-center gap-1.5 text-xs">
-                {section.completed ? (
-                  <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0" aria-hidden="true" />
-                ) : (
-                  <Circle className="h-3.5 w-3.5 text-foreground-muted shrink-0" aria-hidden="true" />
-                )}
-                <span className={section.completed ? "text-foreground-secondary" : "text-foreground-muted"}>
-                  {section.label}
+              <div
+                key={section.id}
+                className={`flex items-center gap-1 px-2 py-1 border border-border text-[8px] font-black uppercase rounded-sm tracking-wider ${
+                  section.completed
+                    ? "bg-success/10 text-success border-success/30"
+                    : "bg-error/10 text-error border-error/30"
+                }`}
+              >
+                <span className="shrink-0 font-extrabold text-[9px]">
+                  {section.completed ? "✔" : "✖"}
                 </span>
+                <span className="truncate">{section.label}</span>
               </div>
             ))}
           </div>
 
-          <div className="pt-2">
-            <BrutalButton asChild variant="secondary" className="h-9 px-4 uppercase font-bold text-[10px] tracking-wider">
-              <Link href="/profile/review">
+          <div className="pt-2 border-t border-border/10 w-full">
+            <BrutalButton asChild variant="secondary" className="h-9 w-full uppercase font-bold text-[10px] tracking-wider">
+              <Link href="/profile/edit">
                 Complete Your Profile
                 <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
               </Link>

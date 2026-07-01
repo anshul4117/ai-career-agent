@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { experienceSchema, type ExperienceFormValues } from "../schemas/experience.schema";
 import { BrutalInput } from "@/components/ui/brutal-input";
@@ -44,9 +44,9 @@ export function ExperienceForm({
     setValue,
     watch,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<ExperienceFormValues>({
-    resolver: zodResolver(experienceSchema),
+    resolver: zodResolver(experienceSchema) as unknown as Resolver<ExperienceFormValues>,
     defaultValues: {
       jobTitle: "",
       companyName: "",
@@ -192,6 +192,15 @@ export function ExperienceForm({
         <BrutalButton
           type="button"
           variant="secondary"
+          onClick={() => reset()}
+          disabled={!isDirty || isSubmitting}
+          className="h-10 px-4 text-xs font-bold uppercase tracking-wider"
+        >
+          Reset
+        </BrutalButton>
+        <BrutalButton
+          type="button"
+          variant="secondary"
           onClick={onCancel}
           disabled={isSubmitting}
           className="h-10 px-4 text-xs font-bold uppercase tracking-wider"
@@ -200,7 +209,7 @@ export function ExperienceForm({
         </BrutalButton>
         <BrutalButton
           type="submit"
-          disabled={isSubmitting}
+          disabled={!isDirty || isSubmitting}
           className="h-10 px-5 text-xs font-bold uppercase tracking-wider"
         >
           {isSubmitting ? "Saving..." : submitLabel}

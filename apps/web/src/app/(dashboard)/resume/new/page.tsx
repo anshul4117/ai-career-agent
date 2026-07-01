@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/shared/page-header";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
-import { Heading, Text } from "@/components/ui/typography";
+
 import { ErrorMessage } from "@/features/auth/components/error-message";
 import { ArrowLeft, Sparkles, Check, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";

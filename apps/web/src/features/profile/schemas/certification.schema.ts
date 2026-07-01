@@ -26,7 +26,7 @@ export const certificationSchema = z
         (val) => (val === "" ? null : val),
         z.string().url("Invalid credential URL format").nullable().optional()
       ),
-    neverExpires: z.boolean().default(false),
+    neverExpires: z.boolean(),
   })
   .refine(
     (data) => {

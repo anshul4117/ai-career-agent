@@ -1,19 +1,16 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { BrutalCard } from "@/components/ui/brutal-card";
-import { BrutalButton } from "@/components/ui/brutal-button";
 import { Heading, Text } from "@/components/ui/typography";
-import { FolderOpen, ArrowRight, Star, Plus } from "lucide-react";
+import { FolderOpen, Star } from "lucide-react";
 import type { Project } from "../types/project.types";
 
 interface ProjectsCardProps {
   projects: Project[];
-  onAddClick: () => void;
 }
 
-export function ProjectsCard({ projects, onAddClick }: ProjectsCardProps) {
+export function ProjectsCard({ projects }: ProjectsCardProps) {
   // Sort and preview top 2 projects
   const previewProjects = [...projects]
     .sort((a, b) => {
@@ -32,28 +29,6 @@ export function ProjectsCard({ projects, onAddClick }: ProjectsCardProps) {
             <FolderOpen className="h-5 w-5 text-primary" aria-hidden="true" />
             Projects & Portfolio
           </Heading>
-
-          <div className="flex items-center gap-2">
-            <BrutalButton
-              onClick={onAddClick}
-              variant="secondary"
-              className="h-8 px-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shrink-0"
-              aria-label="Add new project"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Add New
-            </BrutalButton>
-            <BrutalButton
-              asChild
-              variant="secondary"
-              className="h-8 px-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shrink-0"
-            >
-              <Link href="/profile/projects" aria-label="View all projects">
-                View All
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </BrutalButton>
-          </div>
         </div>
 
         {/* List Preview */}

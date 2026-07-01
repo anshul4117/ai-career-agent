@@ -16,7 +16,7 @@ export const skillSchema = z.object({
     .number({ invalid_type_error: "Years of experience must be a number" })
     .min(0, "Years of experience cannot be negative")
     .max(50, "Experience cannot exceed 50 years"),
-  featured: z.boolean().default(false),
+  featured: z.boolean(),
 });
 
 export type SkillFormValues = z.infer<typeof skillSchema>;

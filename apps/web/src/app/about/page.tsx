@@ -8,8 +8,8 @@ import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Heading, Text } from "@/components/ui/typography";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 import { 
-  Sparkles, 
   Target, 
   Eye, 
   Cpu, 
@@ -197,10 +197,13 @@ export default function AboutPage() {
               },
             ].map((member, i) => (
               <BrutalCard key={i} className="bg-surface border-[3px] border-border p-6 text-center space-y-3 brutal-shadow">
-                <img
+                <Image
                   src={member.avatar}
                   alt={member.name}
-                  className="h-16 w-16 mx-auto rounded-full border-2 border-border brutal-shadow-sm"
+                  width={64}
+                  height={64}
+                  unoptimized
+                  className="mx-auto rounded-full border-2 border-border brutal-shadow-sm"
                 />
                 <div>
                   <Heading level="h4" className="text-base font-black uppercase tracking-tight">{member.name}</Heading>

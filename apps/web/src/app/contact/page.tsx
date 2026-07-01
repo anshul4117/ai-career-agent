@@ -9,7 +9,6 @@ import { BrutalButton } from "@/components/ui/brutal-button";
 import { Heading, Text } from "@/components/ui/typography";
 import { ErrorMessage } from "@/features/auth/components/error-message";
 import { Mail, Github, Linkedin, HelpCircle, Check, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export default function ContactPage() {
   // Form states

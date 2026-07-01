@@ -15,7 +15,7 @@ export const languageSchema = z.object({
   readingLevel: languageLevelSchema,
   writingLevel: languageLevelSchema,
   speakingLevel: languageLevelSchema,
-  nativeLanguage: z.boolean().default(false),
+  nativeLanguage: z.boolean(),
 });
 
 export type LanguageFormValues = z.infer<typeof languageSchema>;

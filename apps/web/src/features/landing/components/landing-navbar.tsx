@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Github } from "lucide-react";
 import { Logo } from "@/components/shared/logo";
 import { BrutalButton } from "@/components/ui/brutal-button";
-import { Badge } from "@/components/ui/badge";
 import { siteConfig } from "@/config/site";
 import { announcementBar } from "@/features/landing/data/landing-content";
 

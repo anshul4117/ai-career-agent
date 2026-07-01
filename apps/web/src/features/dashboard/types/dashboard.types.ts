@@ -44,3 +44,8 @@ export interface RecentActivityData {
   action: string;
   time: string;
 }
+
+export type DashboardJob = RecommendedJobData;
+export type DashboardInsight = AiInsightData;
+export type DashboardActivity = RecentActivityData;
+export type DashboardApplication = RecentApplicationData;

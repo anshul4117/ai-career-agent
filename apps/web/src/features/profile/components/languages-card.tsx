@@ -1,20 +1,17 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { BrutalCard } from "@/components/ui/brutal-card";
-import { BrutalButton } from "@/components/ui/brutal-button";
 import { Heading, Text } from "@/components/ui/typography";
-import { MessageSquare, ArrowRight, Plus } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import type { Language } from "../types/language.types";
 import { LANGUAGE_LEVEL_LABELS } from "../data/languages.mock";
 
 interface LanguagesCardProps {
   languages: Language[];
-  onAddClick: () => void;
 }
 
-export function LanguagesCard({ languages, onAddClick }: LanguagesCardProps) {
+export function LanguagesCard({ languages }: LanguagesCardProps) {
   const previewLangs = [...languages].slice(0, 3);
 
   return (
@@ -26,28 +23,6 @@ export function LanguagesCard({ languages, onAddClick }: LanguagesCardProps) {
             <MessageSquare className="h-5 w-5 text-primary" aria-hidden="true" />
             Languages
           </Heading>
-
-          <div className="flex items-center gap-2">
-            <BrutalButton
-              onClick={onAddClick}
-              variant="secondary"
-              className="h-8 px-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shrink-0"
-              aria-label="Add new language"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Add New
-            </BrutalButton>
-            <BrutalButton
-              asChild
-              variant="secondary"
-              className="h-8 px-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shrink-0"
-            >
-              <Link href="/profile/languages" aria-label="View all languages">
-                View All
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </BrutalButton>
-          </div>
         </div>
 
         {/* List Preview */}

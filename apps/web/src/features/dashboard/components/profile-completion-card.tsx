@@ -72,7 +72,7 @@ export function ProfileCompletionCard() {
 
       <div className="pt-2">
         <BrutalButton asChild variant="secondary" className="w-full h-11 uppercase font-bold text-xs tracking-wider">
-          <Link href="/profile">Complete Profile</Link>
+          <Link href="/profile/edit">Complete Profile</Link>
         </BrutalButton>
       </div>
     </BrutalCard>

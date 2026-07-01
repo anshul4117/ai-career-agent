@@ -9,7 +9,7 @@ export type {
   ProfileStats,
   ProfileCompletion,
   ProfileCompletionSection,
-  ProfileAvatarType,
+  ProfileAvatar as ProfileAvatarType,
   Gender,
   WorkPreference,
   AvailabilityStatus,

@@ -1,20 +1,17 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { BrutalCard } from "@/components/ui/brutal-card";
-import { BrutalButton } from "@/components/ui/brutal-button";
 import { Heading, Text } from "@/components/ui/typography";
-import { Share2, ArrowRight, Plus } from "lucide-react";
+import { Share2 } from "lucide-react";
 import type { SocialLink } from "../types/social-link.types";
 import { SOCIAL_PLATFORM_LABELS } from "../data/social-links.mock";
 
 interface SocialLinksCardProps {
   socialLinks: SocialLink[];
-  onAddClick: () => void;
 }
 
-export function SocialLinksCard({ socialLinks, onAddClick }: SocialLinksCardProps) {
+export function SocialLinksCard({ socialLinks }: SocialLinksCardProps) {
   const previewLinks = [...socialLinks].slice(0, 4);
 
   return (
@@ -26,28 +23,6 @@ export function SocialLinksCard({ socialLinks, onAddClick }: SocialLinksCardProp
             <Share2 className="h-5 w-5 text-primary" aria-hidden="true" />
             Social Links
           </Heading>
-
-          <div className="flex items-center gap-2">
-            <BrutalButton
-              onClick={onAddClick}
-              variant="secondary"
-              className="h-8 px-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shrink-0"
-              aria-label="Add new social link"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Add New
-            </BrutalButton>
-            <BrutalButton
-              asChild
-              variant="secondary"
-              className="h-8 px-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shrink-0"
-            >
-              <Link href="/profile/social-links" aria-label="View all social links">
-                View All
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </BrutalButton>
-          </div>
         </div>
 
         {/* List Preview */}

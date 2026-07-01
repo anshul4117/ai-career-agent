@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { educationSchema, type EducationFormValues } from "../schemas/education.schema";
 import { BrutalInput } from "@/components/ui/brutal-input";
@@ -29,9 +29,9 @@ export function EducationForm({
     setValue,
     watch,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<EducationFormValues>({
-    resolver: zodResolver(educationSchema),
+    resolver: zodResolver(educationSchema) as unknown as Resolver<EducationFormValues>,
     defaultValues: {
       degree: "",
       fieldOfStudy: "",
@@ -167,6 +167,15 @@ export function EducationForm({
         <BrutalButton
           type="button"
           variant="secondary"
+          onClick={() => reset()}
+          disabled={!isDirty || isSubmitting}
+          className="h-10 px-4 text-xs font-bold uppercase tracking-wider"
+        >
+          Reset
+        </BrutalButton>
+        <BrutalButton
+          type="button"
+          variant="secondary"
           onClick={onCancel}
           disabled={isSubmitting}
           className="h-10 px-4 text-xs font-bold uppercase tracking-wider"
@@ -175,7 +184,7 @@ export function EducationForm({
         </BrutalButton>
         <BrutalButton
           type="submit"
-          disabled={isSubmitting}
+          disabled={!isDirty || isSubmitting}
           className="h-10 px-5 text-xs font-bold uppercase tracking-wider"
         >
           {isSubmitting ? "Saving..." : submitLabel}

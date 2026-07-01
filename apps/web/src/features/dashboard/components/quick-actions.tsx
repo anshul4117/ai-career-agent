@@ -11,7 +11,8 @@ import {
   Briefcase, 
   LayoutDashboard, 
   Sparkles, 
-  Mail 
+  Mail,
+  type LucideIcon
 } from "lucide-react";
 
 interface ActionItem {
@@ -19,7 +20,7 @@ interface ActionItem {
   desc: string;
   href: string;
   btnLabel: string;
-  icon: React.ComponentType<any>;
+  icon: LucideIcon;
 }
 
 const QUICK_ACTIONS: ActionItem[] = [

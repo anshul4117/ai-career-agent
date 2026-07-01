@@ -39,10 +39,14 @@ export default function ExperiencePage() {
   };
 
   const handleFormSubmit = (values: ExperienceFormValues) => {
+    const mappedValues = {
+      ...values,
+      endDate: values.endDate ?? null,
+    };
     if (editingExp) {
-      updateExperience(editingExp.id, values);
+      updateExperience(editingExp.id, mappedValues);
     } else {
-      addExperience(values);
+      addExperience(mappedValues);
     }
     setIsDialogOpen(false);
   };

@@ -44,7 +44,7 @@ export function calculateProfileCompletion(
       weight: 15,
       completed: !!(profile?.personal?.firstName && profile?.personal?.lastName),
       suggestion: "Add your first and last name to verify your identity.",
-      actionUrl: "/profile/edit",
+      actionUrl: "/profile/edit#personal",
     },
     {
       id: "contact",
@@ -52,7 +52,7 @@ export function calculateProfileCompletion(
       weight: 10,
       completed: !!(profile?.contact?.email && profile?.contact?.phone),
       suggestion: "Provide your email address and phone number.",
-      actionUrl: "/profile/edit",
+      actionUrl: "/profile/edit#contact",
     },
     {
       id: "skills",
@@ -60,7 +60,7 @@ export function calculateProfileCompletion(
       weight: 15,
       completed: skills.length > 0,
       suggestion: "Add technical or professional skills.",
-      actionUrl: "/profile/skills",
+      actionUrl: "/profile/edit#skills",
     },
     {
       id: "education",
@@ -68,7 +68,7 @@ export function calculateProfileCompletion(
       weight: 10,
       completed: education.length > 0,
       suggestion: "List your degrees, institutions, and grades.",
-      actionUrl: "/profile/education",
+      actionUrl: "/profile/edit#education",
     },
     {
       id: "experience",
@@ -76,7 +76,7 @@ export function calculateProfileCompletion(
       weight: 15,
       completed: experience.length > 0,
       suggestion: "List your professional work experiences.",
-      actionUrl: "/profile/experience",
+      actionUrl: "/profile/edit#experience",
     },
     {
       id: "projects",
@@ -84,7 +84,7 @@ export function calculateProfileCompletion(
       weight: 10,
       completed: projects.length > 0,
       suggestion: "Showcase side projects or portfolios.",
-      actionUrl: "/profile/projects",
+      actionUrl: "/profile/edit#projects",
     },
     {
       id: "certifications",
@@ -92,7 +92,7 @@ export function calculateProfileCompletion(
       weight: 5,
       completed: certifications.length > 0,
       suggestion: "Add professional licenses or certifications.",
-      actionUrl: "/profile/certifications",
+      actionUrl: "/profile/edit#certifications",
     },
     {
       id: "languages",
@@ -100,7 +100,7 @@ export function calculateProfileCompletion(
       weight: 5,
       completed: languages.length > 0,
       suggestion: "List languages you speak and write.",
-      actionUrl: "/profile/languages",
+      actionUrl: "/profile/edit#languages",
     },
     {
       id: "social",
@@ -108,7 +108,7 @@ export function calculateProfileCompletion(
       weight: 5,
       completed: socialLinks.length > 0,
       suggestion: "Add GitHub, LinkedIn, or Portfolio URLs.",
-      actionUrl: "/profile/social-links",
+      actionUrl: "/profile/edit#social",
     },
     {
       id: "preferences",
@@ -116,7 +116,7 @@ export function calculateProfileCompletion(
       weight: 10,
       completed: !!preferences?.preferredRole,
       suggestion: "Provide expected salary, shifts, and notice period.",
-      actionUrl: "/profile/preferences",
+      actionUrl: "/profile/edit#preferences",
     },
   ];
 

@@ -1,19 +1,16 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { BrutalCard } from "@/components/ui/brutal-card";
-import { BrutalButton } from "@/components/ui/brutal-button";
 import { Heading, Text } from "@/components/ui/typography";
-import { Award, ArrowRight, Plus } from "lucide-react";
+import { Award } from "lucide-react";
 import type { Certification } from "../types/certification.types";
 
 interface CertificationsCardProps {
   certifications: Certification[];
-  onAddClick: () => void;
 }
 
-export function CertificationsCard({ certifications, onAddClick }: CertificationsCardProps) {
+export function CertificationsCard({ certifications }: CertificationsCardProps) {
   const previewCerts = [...certifications]
     .sort((a, b) => new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime())
     .slice(0, 2);
@@ -27,28 +24,6 @@ export function CertificationsCard({ certifications, onAddClick }: Certification
             <Award className="h-5 w-5 text-primary" aria-hidden="true" />
             Certifications
           </Heading>
-
-          <div className="flex items-center gap-2">
-            <BrutalButton
-              onClick={onAddClick}
-              variant="secondary"
-              className="h-8 px-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shrink-0"
-              aria-label="Add new certification"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Add New
-            </BrutalButton>
-            <BrutalButton
-              asChild
-              variant="secondary"
-              className="h-8 px-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shrink-0"
-            >
-              <Link href="/profile/certifications" aria-label="View all certifications">
-                View All
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </BrutalButton>
-          </div>
         </div>
 
         {/* List Preview */}
