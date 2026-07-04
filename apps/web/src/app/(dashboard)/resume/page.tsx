@@ -103,12 +103,20 @@ export default function ResumePage() {
             Manage your multiple resume layouts, customize formats, and track ATS scores.
           </p>
         </div>
-        <BrutalButton asChild className="h-10 px-5 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shrink-0 self-start">
-          <Link href="/resume/new">
-            <Plus className="h-4 w-4" />
-            Create Resume
-          </Link>
-        </BrutalButton>
+        <div className="flex flex-wrap gap-2.5 shrink-0 self-start">
+          <BrutalButton asChild variant="secondary" className="h-10 px-5 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+            <Link href="/resume/import">
+              <Sparkles className="h-4 w-4 text-primary" />
+              Import Resume
+            </Link>
+          </BrutalButton>
+          <BrutalButton asChild className="h-10 px-5 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+            <Link href="/resume/new">
+              <Plus className="h-4 w-4" />
+              Create Resume
+            </Link>
+          </BrutalButton>
+        </div>
       </div>
 
       {/* Active Resumes Section */}
@@ -121,11 +129,20 @@ export default function ResumePage() {
             No Resumes Configured
           </Heading>
           <p className="text-xs text-foreground-secondary leading-relaxed max-w-md mx-auto">
-            {"You don't have any active resume layouts yet. Create a draft layout linked to your profile to get started."}
+            {"You don't have any active resume layouts yet. Create a layout from scratch or upload your existing resume to parse details."}
           </p>
-          <div className="pt-2">
-            <BrutalButton asChild className="h-10 px-5 text-xs font-bold uppercase tracking-wider">
-              <Link href="/resume/new">Create Your First Resume</Link>
+          <div className="pt-2 flex flex-col sm:flex-row justify-center gap-3">
+            <BrutalButton asChild variant="secondary" className="h-10 px-5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5">
+              <Link href="/resume/import">
+                <Sparkles className="h-4 w-4 text-primary" />
+                Import Existing Resume
+              </Link>
+            </BrutalButton>
+            <BrutalButton asChild className="h-10 px-5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5">
+              <Link href="/resume/new">
+                <Plus className="h-4 w-4" />
+                Create New Layout
+              </Link>
             </BrutalButton>
           </div>
         </BrutalCard>

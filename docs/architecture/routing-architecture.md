@@ -44,10 +44,12 @@ The tables below map the complete routing structure for Next.js App Router:
 | :--- | :--- | :--- |
 | `/dashboard` | Dashboard Hub | Main workspace showing match scores and job feeds. |
 | `/complete-profile` | Profile Onboarding | Mandatory profile step for first-time signups. |
-| `/profile` | Profile Manager | Setup skills, education, locations, and experience. |
-| `/resume` | Resume Manager | Upload, parse, and list candidate resume files. |
-| `/resume/new` | Resume Builder | Multi-step interactive editor for new resumes. |
-| `/resume/:id` | Resume Previewer | Interactive feedback, match analyzer, and download PDF. |
+| `/profile` | Profile Overview | LinkedIn-style CV profile dashboard with completion and missing sections. |
+| `/profile/edit` | Profile Editor | Single editing workspace for all 10 candidate profile forms. |
+| `/resume` | Resume Workspace | Dashboard list showing ATS scores, default badges, duplicate, archive, and delete operations. |
+| `/resume/new` | Create Wizard | Multi-step setup wizard selecting templates (6 layouts) and draft metadata. |
+| `/resume/:id` | Resume Preview | Print-ready CV visualizer mapping active candidate profile details to selected templates. |
+| `/resume/:id/edit` | Edit Settings | Form to update draft name, descriptions, layout formats, active/archived status, and default statuses. |
 | `/jobs` | Job Search | Browse matched job cards and adjust preferences. |
 | `/jobs/:id` | Job Detail View | Review full JD metrics, required skills, and matching details. |
 | `/saved-jobs` | Bookmarks List | Jobs bookmarked by the candidate. |

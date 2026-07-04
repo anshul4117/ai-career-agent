@@ -155,10 +155,12 @@ Future
 | ---------------------- | ----------------- |
 | Dashboard              | /dashboard        |
 | Complete Profile       | /complete-profile |
-| Profile                | /profile          |
-| Resume                 | /resume           |
-| Resume Builder         | /resume/new       |
-| Resume Preview         | /resume/:id       |
+| Profile Overview       | /profile          |
+| Edit Profile           | /profile/edit     |
+| Resume Workspace       | /resume           |
+| Create Wizard           | /resume/new       |
+| Resume Preview          | /resume/:id       |
+| Edit Settings           | /resume/:id/edit  |
 | Jobs                   | /jobs             |
 | Job Details            | /jobs/:id         |
 | Saved Jobs             | /saved-jobs       |
@@ -434,23 +436,39 @@ Resume
 
 ↓
 
-Create Resume
+Create Resume / Choose Template
 
 ↓
 
-Edit Resume
+Advanced Drag & Drop Editor (Sprint 3.3)
+* Reorder sections & listings via DnD-kit
+* Toggle visibility per section
+* Local Undo / Redo history state machine
+* Create custom listing sections
 
 ↓
 
-Preview
+Templates & Theme Customization (Sprint 3.6)
+* Switch templates instantly (6 built-in presets)
+* Injected CSS variables engine (colors, font typography spacing, column layout split)
+* Live Preview updates instantly without page reload
 
 ↓
 
-Download PDF
+Export & Print Engine (Sprint 3.7)
+* Client-side PDF print layout engine
+* Injected physical print stylesheet config overrides (paper A4/Letter size, orientation)
+* Dynamic page break dashed line guides overlay on preview
+* Grayscale format toggle on preview
+* Export history logging persistence
 
 ↓
 
-AI Improve (Future)
+Live Preview (Instant render across 6 templates)
+
+↓
+
+Download PDF / Export (Future)
 
 ---
 
@@ -550,7 +568,9 @@ Global State
 
 Feature State
 
-* Resume
+* Resume (Zustand useBuilderStore with debounced Auto-Save & local Undo/Redo state machine)
+* Theme Customization (Zustand useThemeStore syncing styling selections, colors, fonts, spacing, layout presets to localStorage)
+* Export & Print Engine (Zustand useExportStore tracking print scales, margins, page breaks, format downloads, and export logs logs)
 * Profile
 * Jobs
 * Applications
