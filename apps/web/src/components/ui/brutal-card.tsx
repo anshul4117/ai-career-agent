@@ -10,9 +10,9 @@ export const BrutalCard = React.forwardRef<HTMLDivElement, BrutalCardProps>(
   ({ children, className, hoverable = false, padding = "md", ...props }, ref) => {
     const paddings = {
       none: "p-0",
-      sm: "p-4",
-      md: "p-6",
-      lg: "p-8",
+      sm: "p-3",
+      md: "p-4",
+      lg: "p-5",
     };
 
     return (

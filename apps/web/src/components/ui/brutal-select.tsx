@@ -24,7 +24,7 @@ export const BrutalSelect = React.forwardRef<HTMLSelectElement, BrutalSelectProp
     const errorId = `${selectId}-error`;
 
     return (
-      <div className="space-y-2 w-full">
+      <div className="space-y-1.5 w-full">
         {label && (
           <Label htmlFor={selectId} className="flex items-center gap-1">
             {label}
@@ -36,7 +36,7 @@ export const BrutalSelect = React.forwardRef<HTMLSelectElement, BrutalSelectProp
             ref={ref}
             id={selectId}
             className={cn(
-              "flex h-12 w-full rounded-md bg-surface px-4 py-2 text-base text-foreground brutal-border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50 appearance-none pr-10",
+              "flex h-10 w-full rounded-md bg-surface px-3 py-1.5 text-sm text-foreground brutal-border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50 appearance-none pr-9",
               error && "border-error focus-visible:outline-error",
               className
             )}

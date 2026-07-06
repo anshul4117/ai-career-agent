@@ -8,6 +8,7 @@ import {
   Settings,
   User,
   Bell,
+  Building2
 } from "lucide-react";
 import type { NavItem } from "@/types";
 
@@ -31,6 +32,11 @@ export const mainNavigation: NavItem[] = [
     title: "Jobs",
     href: "/jobs",
     icon: Briefcase,
+  },
+  {
+    title: "Companies",
+    href: "/companies",
+    icon: Building2,
   },
   {
     title: "Saved Jobs",

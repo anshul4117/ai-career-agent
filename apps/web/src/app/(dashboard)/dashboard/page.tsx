@@ -10,6 +10,7 @@ import { RecommendedJobs } from "@/features/dashboard/components/recommended-job
 import { RecentApplications } from "@/features/dashboard/components/recent-applications";
 import { AIInsights } from "@/features/dashboard/components/ai-insights";
 import { RecentActivity } from "@/features/dashboard/components/recent-activity";
+import { RecentlyViewedJobs } from "@/features/dashboard/components/recently-viewed-jobs";
 
 export default function DashboardPage() {
   return (
@@ -41,6 +42,7 @@ export default function DashboardPage() {
         <div className="space-y-6 w-full min-w-0">
           <RecentApplications />
           <RecentActivity />
+          <RecentlyViewedJobs />
         </div>
       </div>
     </div>

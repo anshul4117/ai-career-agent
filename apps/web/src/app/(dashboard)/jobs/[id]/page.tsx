@@ -1,130 +1,109 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { PageHeader } from "@/components/shared/page-header";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getJobById } from "@/features/jobs/mock/jobs";
-import { formatDate, formatPercent } from "@/lib/utils";
+"use client";
 
-interface JobDetailPageProps {
+import React, { useEffect, useState, use } from "react";
+import { useJobsStore } from "@/features/jobs/store/jobs.store";
+import { jobService } from "@/features/jobs/services/job.service";
+import { JobDetailsPane } from "@/features/jobs/components/job-details-pane";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, Check, AlertCircle } from "lucide-react";
+import { BrutalCard } from "@/components/ui/brutal-card";
+import Link from "next/link";
+
+interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata({ params }: JobDetailPageProps): Promise<Metadata> {
-  const { id } = await params;
-  const job = getJobById(id);
-  return { title: job?.title ?? "Job Not Found" };
-}
+export default function JobDetailPage({ params }: PageProps) {
+  const resolvedParams = use(params);
+  const { selectJob, selectedJob, loading } = useJobsStore();
+  const [toastMsg, setToastMsg] = useState("");
+  const [hasError, setHasError] = useState(false);
 
-export default async function JobDetailPage({ params }: JobDetailPageProps) {
-  const { id } = await params;
-  const job = getJobById(id);
+  const triggerToast = (msg: string) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(""), 3000);
+  };
 
-  if (!job) {
-    notFound();
+  useEffect(() => {
+    const fetchTargetJob = async () => {
+      try {
+        const job = await jobService.getJobById(resolvedParams.id);
+        if (job) {
+          await selectJob(job.id);
+        } else {
+          setHasError(true);
+        }
+      } catch {
+        setHasError(true);
+      }
+    };
+    fetchTargetJob();
+  }, [resolvedParams.id, selectJob]);
+
+  if (hasError) {
+    return (
+      <div className="flex min-h-[50vh] flex-col items-center justify-center bg-background px-4 text-center select-none">
+        <BrutalCard className="p-8 max-w-md w-full border-[3px] border-border bg-surface brutal-shadow space-y-6 rounded-sm">
+          <div className="inline-flex p-3 bg-red-100 border-2 border-border text-red-600 rounded-sm">
+            <AlertCircle className="h-10 w-10 stroke-[2.5px]" />
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-2xl font-black uppercase text-foreground">Listing Not Found</h1>
+            <p className="text-[10px] text-foreground-muted leading-relaxed font-semibold uppercase">
+              The job listing ID does not exist or has expired.
+            </p>
+          </div>
+          <Button asChild className="h-10 px-5 text-xs font-black uppercase border-2 border-border brutal-shadow-xs">
+            <Link href="/jobs">Return to Jobs Discovery</Link>
+          </Button>
+        </BrutalCard>
+      </div>
+    );
   }
 
   return (
-    <div>
-      <PageHeader
-        title={job.title}
-        description={`${job.company} · ${job.location}`}
-        action={
-          <div className="flex gap-2">
-            <Button variant="secondary">Save</Button>
-            <Button asChild>
-              <Link href={`/jobs/${job.id}/apply`}>
-                Apply
-              </Link>
-            </Button>
-          </div>
-        }
-      />
-
-      <div className="mb-6 flex flex-wrap gap-4">
-        <ScoreBlock label="Match Score" value={job.matchScore} highlight />
-        <ScoreBlock label="Quality Score" value={job.qualityScore} />
-        <div className="brutal-card px-6 py-4">
-          <p className="text-xs text-foreground-muted">Posted</p>
-          <p className="text-lg font-bold">{formatDate(job.postedAt)}</p>
+    <div className="space-y-6 pb-12 text-left select-none relative max-w-[1200px] mx-auto w-full">
+      
+      {/* Toast Alert */}
+      {toastMsg && (
+        <div className="fixed bottom-4 right-4 z-50 bg-primary text-white border-2 border-border p-3 text-[10px] font-black uppercase tracking-wider brutal-shadow flex items-center gap-1.5" role="alert">
+          <Check className="h-4 w-4 stroke-[3px]" /> {toastMsg}
         </div>
-      </div>
+      )}
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Job Description</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm leading-relaxed text-foreground-secondary">{job.description}</p>
-          </CardContent>
-        </Card>
-
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Required Skills</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-wrap gap-2">
-              {job.requiredSkills.map((skill) => (
-                <Badge key={skill} variant="default">
-                  {skill}
-                </Badge>
-              ))}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Preferred Skills</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-wrap gap-2">
-              {job.preferredSkills.map((skill) => (
-                <Badge key={skill} variant="secondary">
-                  {skill}
-                </Badge>
-              ))}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Company</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="font-semibold">{job.company}</p>
-              <p className="mt-1 text-sm text-foreground-secondary">{job.location}</p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      <div className="mt-6">
-        <Button variant="ghost" asChild>
-          <Link href="/jobs">← Back to jobs</Link>
+      {/* Back button */}
+      <div>
+        <Button
+          variant="ghost"
+          asChild
+          className="h-9 px-3 border-2 border-border brutal-shadow-xs hover:bg-surface-secondary text-[10px] font-black uppercase flex items-center gap-1 rounded-sm"
+        >
+          <Link href="/jobs">
+            <ChevronLeft className="h-4 w-4 stroke-[2.5px]" /> Back to Discovery
+          </Link>
         </Button>
       </div>
-    </div>
-  );
-}
 
-function ScoreBlock({
-  label,
-  value,
-  highlight,
-}: {
-  label: string;
-  value: number;
-  highlight?: boolean;
-}) {
-  return (
-    <div className="brutal-card px-6 py-4">
-      <p className="text-xs text-foreground-muted">{label}</p>
-      <p className={`text-3xl font-bold ${highlight && value >= 80 ? "text-success" : ""}`}>
-        {formatPercent(value)}
-      </p>
+      {/* Detail Pane container */}
+      {loading || !selectedJob ? (
+        <div className="p-6 border-[3px] border-border bg-surface space-y-4 rounded-sm brutal-shadow">
+          <div className="space-y-2">
+            <div className="h-4 w-24 bg-slate-200 animate-pulse rounded" />
+            <div className="h-7 w-2/3 bg-slate-200 animate-pulse rounded" />
+            <div className="h-4 w-1/3 bg-slate-200 animate-pulse rounded" />
+          </div>
+          <div className="grid grid-cols-4 gap-4">
+            <div className="h-16 bg-slate-200 animate-pulse rounded" />
+            <div className="h-16 bg-slate-200 animate-pulse rounded" />
+            <div className="h-16 bg-slate-200 animate-pulse rounded" />
+            <div className="h-16 bg-slate-200 animate-pulse rounded" />
+          </div>
+          <div className="h-40 bg-slate-200 animate-pulse rounded" />
+        </div>
+      ) : (
+        <JobDetailsPane job={selectedJob} onToast={triggerToast} />
+      )}
+
     </div>
   );
 }

@@ -18,7 +18,7 @@ export const BrutalTextarea = React.forwardRef<HTMLTextAreaElement, BrutalTextar
     const errorId = `${textareaId}-error`;
 
     return (
-      <div className="space-y-2 w-full">
+      <div className="space-y-1.5 w-full">
         {label && (
           <Label htmlFor={textareaId} className="flex items-center gap-1">
             {label}
@@ -30,7 +30,7 @@ export const BrutalTextarea = React.forwardRef<HTMLTextAreaElement, BrutalTextar
           id={textareaId}
           rows={rows}
           className={cn(
-            "flex w-full rounded-md bg-surface px-4 py-2 text-base text-foreground brutal-border transition-colors placeholder:text-foreground-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50",
+            "flex w-full rounded-md bg-surface px-3 py-1.5 text-sm text-foreground brutal-border transition-colors placeholder:text-foreground-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50",
             error && "border-error focus-visible:outline-error",
             className
           )}
