@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, use } from "react";
+import React, { useState, use, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/shared/page-header";
@@ -8,7 +8,8 @@ import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Heading, Text } from "@/components/ui/typography";
 import { ErrorMessage } from "@/features/auth/components/error-message";
-import { getJobById } from "@/features/jobs/mock/jobs";
+import { jobService } from "@/features/jobs/services/job.service";
+import type { Job } from "@/features/jobs/types/jobs.types";
 import { mockResumes } from "@/features/resume/mock/resumes";
 import { FileText, Briefcase, Sparkles, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -20,7 +21,8 @@ interface ApplyJobPageProps {
 export default function ApplyJobPage({ params }: ApplyJobPageProps) {
   const router = useRouter();
   const { id } = use(params);
-  const job = getJobById(id);
+  const [job, setJob] = useState<Job | null>(null);
+  const [loadingJob, setLoadingJob] = useState(true);
 
   // States
   const [selectedResumeId, setSelectedResumeId] = useState<string>("");
@@ -31,25 +33,27 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  if (!job) {
-    return (
-      <div className="p-6 text-center max-w-lg mx-auto space-y-4">
-        <Heading level="h2" className="text-3xl font-bold uppercase">Job Not Found</Heading>
-        <Text className="text-foreground-secondary">The job listing you are trying to apply for does not exist or has expired.</Text>
-        <BrutalButton asChild variant="secondary" className="w-full">
-          <Link href="/jobs">Back to Jobs Feed</Link>
-        </BrutalButton>
-      </div>
-    );
-  }
+  useEffect(() => {
+    const loadJob = async () => {
+      try {
+        const fetched = await jobService.getJobById(id);
+        setJob(fetched);
+      } catch {
+        setJob(null);
+      } finally {
+        setLoadingJob(false);
+      }
+    };
+    loadJob();
+  }, [id]);
 
-  // Pre-generate tailored cover letter based on selected resume and job details
+  // Pre-generate cover letter based on selected resume and job details
   const handleResumeSelect = (resumeId: string) => {
     setSelectedResumeId(resumeId);
     const resume = mockResumes.find((r) => r.id === resumeId);
-    if (resume) {
+    if (resume && job) {
       setCoverLetterText(
-        `Dear Hiring Team at ${job.company},\n\nI am writing to express my strong interest in the ${job.title} position at your company. With my background in technology and experience working with files like ${resume.fileName}, I am confident in my ability to contribute effectively from day one.\n\nYour job description highlights requirements in ${job.requiredSkills.join(", ")}, which align perfectly with my technical toolkit. I look forward to discussing how my experience can support your goals.\n\nSincerely,\nCandidate User`
+        `Dear Hiring Team at ${job.companyInfo.name},\n\nI am writing to express my strong interest in the ${job.title} position at your company. With my background in technology and experience working with files like ${resume.fileName}, I am confident in my ability to contribute effectively from day one.\n\nYour job description highlights requirements in ${job.skillsRequired.join(", ")}, which align perfectly with my technical toolkit. I look forward to discussing how my experience can support your goals.\n\nSincerely,\nCandidate User`
       );
     }
   };
@@ -76,11 +80,32 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
     }, 1200);
   };
 
+  if (loadingJob) {
+    return (
+      <div className="p-6 text-center max-w-lg mx-auto space-y-4">
+        <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+        <Text className="text-foreground-secondary">Loading application workspace...</Text>
+      </div>
+    );
+  }
+
+  if (!job) {
+    return (
+      <div className="p-6 text-center max-w-lg mx-auto space-y-4">
+        <Heading level="h2" className="text-3xl font-bold uppercase">Job Not Found</Heading>
+        <Text className="text-foreground-secondary">The job listing you are trying to apply for does not exist or has expired.</Text>
+        <BrutalButton asChild variant="secondary" className="w-full">
+          <Link href="/jobs">Back to Jobs Feed</Link>
+        </BrutalButton>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6 select-none text-left">
       <PageHeader
         title="Apply for Role"
-        description={`Submit application details for ${job.title} at ${job.company}`}
+        description={`Submit application details for ${job.title} at ${job.companyInfo.name}`}
       />
 
       <div className="grid gap-6 md:grid-cols-3">
@@ -225,7 +250,7 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
               </div>
               <div>
                 <p className="text-xs text-foreground-muted uppercase font-bold">Company</p>
-                <p className="font-bold">{job.company}</p>
+                <p className="font-bold">{job.companyInfo.name}</p>
               </div>
               <div>
                 <p className="text-xs text-foreground-muted uppercase font-bold">Location</p>
@@ -233,13 +258,13 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
               </div>
               <div>
                 <p className="text-xs text-foreground-muted uppercase font-bold">Type</p>
-                <p className="font-bold text-xs uppercase bg-surface border-2 border-border px-2 py-0.5 inline-block brutal-shadow-sm">
-                  {job.employmentType.replace("_", " ")}
+                <p className="font-bold text-[10px] uppercase bg-surface border-2 border-border px-2 py-0.5 inline-block brutal-shadow-sm">
+                  {job.employmentType.replace("-", " ")}
                 </p>
               </div>
               <div>
                 <p className="text-xs text-foreground-muted uppercase font-bold">Match Score</p>
-                <span className="text-2xl font-black text-success">{job.matchScore}% Match</span>
+                <span className="text-xl font-black text-success">{job.trustScore}% Match</span>
               </div>
             </div>
           </BrutalCard>

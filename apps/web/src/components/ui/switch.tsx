@@ -54,7 +54,7 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
                 onChange?.(!checked);
               }}
               className={cn(
-                "relative h-6 w-11 cursor-pointer rounded-full bg-surface border-2 border-foreground transition-colors duration-200 outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                "relative h-5 w-9 cursor-pointer rounded-full bg-surface border-2 border-foreground transition-colors duration-200 outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                 checked && "bg-accent border-foreground",
                 error && "border-error focus-visible:outline-error",
                 props.disabled && "cursor-not-allowed opacity-50",
@@ -67,8 +67,8 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
               {/* Switch Thumb */}
               <span
                 className={cn(
-                  "pointer-events-none block h-4 w-4 rounded-full bg-foreground transition-transform duration-200 border border-foreground translate-x-0.5 translate-y-[2px]",
-                  checked && "translate-x-[22px] bg-surface border-surface"
+                  "pointer-events-none block h-3 w-3 rounded-full bg-foreground transition-transform duration-200 border border-foreground translate-x-0.5 translate-y-[1px]",
+                  checked && "translate-x-[16px] bg-surface border-surface"
                 )}
               />
             </div>

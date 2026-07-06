@@ -52,17 +52,17 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
         ref={ref}
         role="alert"
         className={cn(
-          "relative flex items-start gap-4 rounded-md p-4 border-[3px] brutal-shadow text-foreground",
+          "relative flex items-start gap-3 rounded-md p-3.5 border-[3px] brutal-shadow text-foreground",
           colorStyle.container,
           className
         )}
         {...props}
       >
         <div className={cn("inline-flex h-6 items-center justify-center rounded-sm", colorStyle.icon)}>
-          <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+          <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
         </div>
         <div className="flex-1 space-y-1">
-          <Heading level="h5" className="text-base font-bold leading-none tracking-tight">
+          <Heading level="h5" className="text-sm font-bold leading-none tracking-tight">
             {title}
           </Heading>
           {description && (

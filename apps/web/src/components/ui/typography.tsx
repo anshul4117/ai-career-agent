@@ -15,12 +15,12 @@ export const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(
     const Component = level;
     
     const sizes: Record<HeadingLevel, string> = {
-      h1: "text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight",
-      h2: "text-3xl md:text-4xl font-bold tracking-tight",
-      h3: "text-2xl md:text-3xl font-bold",
-      h4: "text-xl md:text-2xl font-semibold",
-      h5: "text-lg md:text-xl font-semibold",
-      h6: "text-base md:text-lg font-semibold",
+      h1: "text-2xl md:text-3xl font-bold tracking-tight",
+      h2: "text-xl md:text-2xl font-bold tracking-tight",
+      h3: "text-lg md:text-xl font-bold",
+      h4: "text-base md:text-lg font-semibold",
+      h5: "text-sm font-semibold",
+      h6: "text-[13px] font-semibold",
     };
 
     return (
@@ -51,10 +51,10 @@ export const Text = React.forwardRef<HTMLParagraphElement, TextProps>(
     const Component = as;
 
     const variants: Record<TextVariant, string> = {
-      large: "text-lg md:text-xl text-foreground-secondary",
-      body: "text-base text-foreground-secondary leading-relaxed",
-      small: "text-sm text-foreground-secondary",
-      muted: "text-sm text-foreground-muted",
+      large: "text-base md:text-lg text-foreground-secondary",
+      body: "text-sm text-foreground-secondary leading-relaxed",
+      small: "text-[13px] text-foreground-secondary",
+      muted: "text-[13px] text-foreground-muted",
     };
 
     return (

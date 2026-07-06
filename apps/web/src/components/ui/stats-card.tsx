@@ -23,13 +23,13 @@ export const StatsCard = React.forwardRef<HTMLDivElement, StatsCardProps>(
             <Text variant="small" className="font-semibold uppercase tracking-wider text-foreground-muted">
               {label}
             </Text>
-            <Heading level="h3" className="text-3xl font-bold tracking-tight">
+            <Heading level="h3" className="text-2xl font-bold tracking-tight">
               {value}
             </Heading>
           </div>
           {Icon && (
             <div className="p-2 rounded-md bg-surface-secondary brutal-border-secondary text-foreground">
-              <Icon className="h-5 w-5" aria-hidden="true" />
+              <Icon className="h-4 w-4" aria-hidden="true" />
             </div>
           )}
         </div>

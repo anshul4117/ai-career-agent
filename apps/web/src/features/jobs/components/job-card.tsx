@@ -1,68 +1,119 @@
 "use client";
 
-import Link from "next/link";
-import { Bookmark, Eye } from "lucide-react";
+import React from "react";
+import type { Job } from "../types/jobs.types";
+import { BrutalCard } from "@/components/ui/brutal-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatDate, formatPercent } from "@/lib/utils";
-import type { Job } from "@/features/jobs/mock/jobs";
+import { Bookmark, Calendar, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface JobCardProps {
   job: Job;
-  isSelected?: boolean;
-  onSelect?: () => void;
+  isSelected: boolean;
+  onClick: () => void;
+  onSave: (e: React.MouseEvent) => void;
 }
 
-function getScoreVariant(score: number): "success" | "warning" | "secondary" {
-  if (score >= 80) return "success";
-  if (score < 60) return "warning";
-  return "secondary";
-}
+export function JobCard({ job, isSelected, onClick, onSave }: JobCardProps) {
+  const formatSalary = (min: number | null, max: number | null, curr: string) => {
+    if (min === null && max === null) return "Salary Undisclosed";
+    const minK = min ? `${Math.round(min / 1000)}k` : "0";
+    const maxK = max ? `${Math.round(max / 1000)}k` : "Any";
+    return `${minK} - ${maxK} ${curr.toUpperCase()}`;
+  };
 
-export function JobCard({ job, isSelected, onSelect }: JobCardProps) {
+  const getRelativeDate = (dateStr: string) => {
+    const diffTime = Math.abs(Date.now() - new Date(dateStr).getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays <= 1) return "Today";
+    if (diffDays === 2) return "Yesterday";
+    return `${diffDays} days ago`;
+  };
+
   return (
-    <Card
+    <BrutalCard
+      onClick={onClick}
       className={cn(
-        "cursor-pointer transition-transform duration-150 hover:translate-x-[-2px] hover:translate-y-[-2px] hover:brutal-shadow-hover",
-        isSelected && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+        "cursor-pointer border-[3px] border-border brutal-shadow-xs transition-all hover:-translate-y-0.5 hover:brutal-shadow bg-surface rounded-sm p-3 relative flex flex-col justify-between gap-2.5 text-left",
+        isSelected && "bg-amber-50 border-primary brutal-shadow"
       )}
-      onClick={onSelect}
     >
-      <CardHeader>
-        <div className="flex items-start justify-between gap-2">
-          <div>
-            <CardTitle className="text-lg">{job.title}</CardTitle>
-            <p className="mt-1 text-sm font-medium text-foreground-secondary">{job.company}</p>
+      <div>
+        {/* Header (Title & Save Trigger) */}
+        <div className="flex justify-between items-start gap-2">
+          <div className="space-y-0.5">
+            <h3 className="text-xs font-black uppercase text-foreground leading-tight tracking-tight">
+              {job.title}
+            </h3>
+            <p className="text-[9px] font-bold text-primary uppercase tracking-wider">
+              {job.companyInfo.name}
+            </p>
           </div>
-          <Badge variant={getScoreVariant(job.matchScore)}>{formatPercent(job.matchScore)}</Badge>
+          
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onSave}
+            className="h-7 w-7 border-2 border-border brutal-shadow-xs hover:bg-surface-secondary shrink-0 rounded-sm"
+            aria-label={job.isSaved ? "Unsave job" : "Save job"}
+          >
+            <Bookmark
+              className={cn(
+                "h-3.5 w-3.5 stroke-[2.5px]",
+                job.isSaved ? "fill-primary text-primary" : "text-foreground"
+              )}
+            />
+          </Button>
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-wrap gap-2 text-sm text-foreground-muted">
-          <span>{job.location}</span>
-          <span>·</span>
-          <span>{job.employmentType.replace("_", " ")}</span>
-          <span>·</span>
-          <span>{formatDate(job.postedAt)}</span>
+ 
+        {/* Badges row */}
+        <div className="flex flex-wrap gap-1 mt-1.5">
+          <Badge className="text-[7.5px] font-black uppercase tracking-wider bg-surface border-2 border-border text-foreground px-1 py-0.5">
+            {job.remoteType}
+          </Badge>
+          <Badge className="text-[7.5px] font-black uppercase tracking-wider bg-surface border-2 border-border text-foreground px-1 py-0.5">
+            {job.experienceLevel}
+          </Badge>
+          <Badge className="text-[7.5px] font-black uppercase tracking-wider bg-surface border-2 border-border text-foreground px-1 py-0.5">
+            {job.employmentType.replace("-", " ")}
+          </Badge>
         </div>
-        <p className="mt-3 text-sm text-foreground-secondary">
-          Quality Score: <strong>{formatPercent(job.qualityScore)}</strong>
+ 
+        {/* Description Snippet */}
+        <p className="text-[9px] font-semibold text-foreground-muted line-clamp-2 mt-2 leading-relaxed">
+          {job.description}
         </p>
-      </CardContent>
-      <CardFooter className="gap-2">
-        <Button variant="secondary" size="sm" asChild onClick={(e) => e.stopPropagation()}>
-          <Link href={`/jobs/${job.id}`}>
-            <Eye className="h-4 w-4" />
-            View
-          </Link>
-        </Button>
-        <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
-          <Bookmark className="h-4 w-4" />
-          Save
-        </Button>
-      </CardFooter>
-    </Card>
+ 
+        {/* Technical tags */}
+        <div className="flex flex-wrap gap-1 mt-2">
+          {job.skillsRequired.slice(0, 4).map((skill) => (
+            <span
+              key={skill}
+              className="text-[7.5px] font-bold bg-surface-secondary border border-border/40 text-foreground px-1 py-0.5 rounded-sm"
+            >
+              {skill}
+            </span>
+          ))}
+          {job.skillsRequired.length > 4 && (
+            <span className="text-[7.5px] font-bold text-foreground-muted px-1 py-0.5">
+              +{job.skillsRequired.length - 4} more
+            </span>
+          )}
+        </div>
+      </div>
+ 
+      {/* Footer Info */}
+      <div className="border-t border-border/10 pt-2 mt-1.5 flex items-center justify-between text-[7.5px] font-black uppercase tracking-wider text-foreground-muted">
+        <div className="flex items-center gap-1">
+          <DollarSign className="h-3 w-3 text-foreground stroke-[2.5px]" />
+          <span>{formatSalary(job.salaryMin, job.salaryMax, job.currency)}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <Calendar className="h-3 w-3 text-foreground stroke-[2.5px]" />
+          <span>{getRelativeDate(job.postedDate)}</span>
+        </div>
+      </div>
+    </BrutalCard>
   );
 }

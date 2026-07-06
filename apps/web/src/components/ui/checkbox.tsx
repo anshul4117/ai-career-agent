@@ -20,7 +20,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
     return (
       <div className="space-y-1">
         <div className="flex items-start gap-3">
-          <div className="relative flex items-center h-6">
+          <div className="relative flex items-center h-5">
             <input
               ref={ref}
               id={checkboxId}
@@ -37,7 +37,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             {/* Custom Checkbox Box */}
             <div
               className={cn(
-                "h-5 w-5 rounded-sm bg-surface border-2 border-foreground transition-all peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary peer-checked:bg-foreground peer-checked:text-surface flex items-center justify-center cursor-pointer",
+                "h-4 w-4 rounded-sm bg-surface border-2 border-foreground transition-all peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary peer-checked:bg-foreground peer-checked:text-surface flex items-center justify-center cursor-pointer",
                 error && "border-error peer-focus-visible:outline-error",
                 props.disabled && "cursor-not-allowed opacity-50",
                 className
@@ -50,7 +50,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
                 }
               }}
             >
-              <Check className="h-4.5 w-4.5 stroke-[3px] text-surface hidden peer-checked:block" />
+              <Check className="h-3.5 w-3.5 stroke-[3px] text-surface hidden peer-checked:block" />
             </div>
           </div>
           {label && (
@@ -66,7 +66,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           )}
         </div>
         {(description || error) && (
-          <div className="pl-8">
+          <div className="pl-7">
             {description && !error && (
               <Text id={descriptionId} variant="muted" className="text-xs">
                 {description}
