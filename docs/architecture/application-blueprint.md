@@ -472,33 +472,41 @@ Download PDF / Export (Future)
 
 ---
 
-# 13. Job Workflow
+# 13. Job Discovery & Workflow Spec
 
-Dashboard
+## Ingestion & Navigation
+Dashboard -> Jobs Workspace -> Search Query -> Filters -> Details Pane -> Save Collection / AI Match -> Apply -> Applications Tracker
 
-↓
+## Route Mapping Matrix
+1. **`/jobs`** (Protected): Main discovery search. Entry: Dashboard Sidebar. Exit: Job Detail view. Auth: Required. Navigation: Sidebar. Future Deps: jobs.store.ts.
+2. **`/jobs/[id]`** (Protected): Dynamic detail page. Entry: Card Click. Exit: Apply Redirect. Auth: Required. Deps: recommendation.store.ts.
+3. **`/companies`** (Protected): Corporate directory. Entry: Job Detail link. Exit: Company Detail. Auth: Required. Deps: company.store.ts.
+4. **`/companies/[id]`** (Protected): Dynamic corporate profile. Entry: Link Click. Exit: Active job card click. Auth: Required.
+5. **`/saved-jobs`** (Protected): Bookmark collections. Entry: Sidebar. Exit: Jobs detail. Auth: Required. Deps: bookmark.store.ts.
+6. **`/search`** (Protected): Redirect handler syncing query parameters. Entry: Global search. Exit: `/jobs` with queries. Auth: Required.
+7. **`/recommendations`** (Protected): Candidate profile match feed. Entry: Dashboard link. Exit: Detail card. Auth: Required.
+8. **`/job-alerts`** (Protected): Email notification toggles. Entry: Settings pane. Exit: Dashboard. Auth: Required.
+9. **`/application/new`** (Protected): Form initializing applying logs. Entry: Apply click. Exit: Tracker list. Auth: Required.
+10. **`/application/[id]`** (Protected): Tracker detail log view. Entry: Application lists. Exit: Edit logs. Auth: Required.
 
-Jobs
+## Zustand Stores Design
+- **`jobs.store.ts`**: Holds ingested listings arrays, pagination metrics, active selection index, and retrieval status loaders.
+- **`search.store.ts`**: Manages queries inputs, recent search list cache (limit 10), and url query state builders.
+- **`company.store.ts`**: Manages profile lookups, hiring indices, and related job list caches.
+- **`bookmark.store.ts`**: Manages optimistic saves caches, collections arrays, and background synchronization queues.
+- **`recommendation.store.ts`**: Handles profile matching scores, weight matrices, and local text embedding results.
 
-↓
+## Service Layer Operations
+- **`job.service.ts`**: Implements endpoints parsing Wellfound APIs, YC RSS, and Greenhouse JSON endpoints.
+- **`company.service.ts`**: Feeds corporate logos, headquarters, and tech stacks.
+- **`search.service.ts`**: Orchestrates local indices indexing and Elasticsearch/Algolia queries.
+- **`bookmark.service.ts`**: Syncs collection updates with database stores.
+- **`recommendation.service.ts`**: Executes skill alignments and years-of-experience comparisons.
 
-Search Jobs
-
-↓
-
-Job Details
-
-↓
-
-Save Job
-
-↓
-
-Apply
-
-↓
-
-Track Application
+## Responsive Strategy
+- **Desktop (>= 1024px)**: Renders side-by-side split screen. Left column: filters sidebar and job listings grid. Right column: dynamic sticky details pane.
+- **Tablet (768px - 1023px)**: Left column list of job cards, selecting a card opens detail page in a modal overlay drawer.
+- **Mobile (< 768px)**: Stacked single column list view. Selecting a card navigates to `/jobs/[id]` or slides up full-screen overlay sheet.
 
 ---
 
