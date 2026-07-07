@@ -28,6 +28,13 @@ Define the bookmarking architecture, custom collections structures, search histo
 - **Save / Unsave**: Instant, optimistic UI updates that update local state before confirming with the server.
 - **Custom Collections**: Group saved jobs into custom categories (e.g. "React Jobs", "Wellfound Leads") to organize applications.
 - **View History**: Maintain a list of the 20 most recently viewed jobs for quick navigation.
+- **Saved Date & Sorting**:
+  - Store a `savedAt` ISO timestamp when a job is bookmarked.
+  - Support client-side sorting of saved jobs by:
+    - *Recently Saved*: Descending by `savedAt` timestamp.
+    - *Company*: Alphabetically by company name.
+    - *Job Title*: Alphabetically by job title.
+    - *Date Posted*: Descending by `postedDate` timestamp.
 
 ---
 
