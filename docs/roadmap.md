@@ -235,6 +235,8 @@ Users can:
 
 **Goal:** Remove spam and prioritize quality jobs.
 
+**Status:** Completed
+
 **Priority:** Critical
 
 **Backend:**
