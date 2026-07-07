@@ -35,8 +35,10 @@ export interface Job {
   freshnessScore: number;
   matchScore?: number;
   isSaved: boolean;
+  savedAt?: string;
   isApplied: boolean;
   viewedAt: string | null;
+  easyApply?: boolean;
 }
 
 export type FundingStage = "seed" | "series-a" | "series-b" | "series-c" | "ipo" | "bootstrapped";
@@ -74,6 +76,11 @@ export interface JobFilters {
   remoteType: RemoteType[];
   employmentType: EmploymentType[];
   salaryMin: number | null;
+  skills: string[];
+  industry: string;
+  datePosted: "any" | "24h" | "week" | "month";
+  easyApply: boolean;
+  matchScoreMin: number | null;
 }
 
 export interface CompanyFilters {

@@ -8,7 +8,8 @@ import {
   Settings,
   User,
   Bell,
-  Building2
+  Building2,
+  AlarmClock
 } from "lucide-react";
 import type { NavItem } from "@/types";
 
@@ -42,6 +43,11 @@ export const mainNavigation: NavItem[] = [
     title: "Saved Jobs",
     href: "/saved-jobs",
     icon: Bookmark,
+  },
+  {
+    title: "Job Alerts",
+    href: "/job-alerts",
+    icon: AlarmClock,
   },
   {
     title: "Applications",

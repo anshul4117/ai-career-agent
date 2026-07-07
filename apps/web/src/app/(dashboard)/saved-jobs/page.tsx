@@ -1,9 +1,9 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
+ 
+import React, { useEffect, useState, useTransition } from "react";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
-import { JobCard } from "@/features/jobs/components/job-card";
+import { SavedJobCard } from "@/features/jobs/components/saved-job-card";
 import { useBookmarkStore } from "@/features/jobs/store/bookmark.store";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
@@ -15,29 +15,30 @@ import {
   Clock, 
   ArrowRight
 } from "lucide-react";
-
+ 
 export default function SavedJobsPage() {
   const router = useRouter();
   const { savedJobs, recentlyViewed, fetchSavedJobs, toggleSaveJob, loadRecentlyViewed } = useBookmarkStore();
+  const [, startTransition] = useTransition();
   
   // Search and Sort states
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortOption, setSortOption] = useState<"recent" | "match" | "salary">("recent");
+  const [sortOption, setSortOption] = useState<"recent" | "company" | "title" | "posted">("recent");
   const [toastMsg, setToastMsg] = useState("");
-
+ 
   const triggerToast = (msg: string) => {
     setToastMsg(msg);
     setTimeout(() => setToastMsg(""), 3000);
   };
-
+ 
   useEffect(() => {
     fetchSavedJobs();
     loadRecentlyViewed();
   }, [fetchSavedJobs, loadRecentlyViewed]);
-
+ 
   // Client-side filtering & sorting
   let processedSavedJobs = [...savedJobs];
-
+ 
   if (searchQuery.trim()) {
     const q = searchQuery.toLowerCase();
     processedSavedJobs = processedSavedJobs.filter(
@@ -46,17 +47,28 @@ export default function SavedJobsPage() {
                job.skillsRequired.some((s) => s.toLowerCase().includes(q))
     );
   }
-
+ 
+  // Sorting options
   if (sortOption === "recent") {
+    processedSavedJobs.sort((a, b) => new Date(b.savedAt || b.postedDate).getTime() - new Date(a.savedAt || a.postedDate).getTime());
+  } else if (sortOption === "company") {
+    processedSavedJobs.sort((a, b) => a.companyInfo.name.localeCompare(b.companyInfo.name));
+  } else if (sortOption === "title") {
+    processedSavedJobs.sort((a, b) => a.title.localeCompare(b.title));
+  } else if (sortOption === "posted") {
     processedSavedJobs.sort((a, b) => new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime());
-  } else if (sortOption === "match") {
-    processedSavedJobs.sort((a, b) => b.trustScore - a.trustScore);
-  } else if (sortOption === "salary") {
-    processedSavedJobs.sort((a, b) => (b.salaryMax || 0) - (a.salaryMax || 0));
   }
-
+ 
+  const handleUnsave = (job: import("@/features/jobs/types/jobs.types").Job) => {
+    // Optimistic UI updates
+    startTransition(async () => {
+      await toggleSaveJob(job);
+      triggerToast("Job removed from saved list");
+    });
+  };
+ 
   return (
-    <div className="space-y-6 pb-12 text-left select-none relative">
+    <div className="space-y-6 pb-12 text-left select-none relative max-w-[1200px] mx-auto w-full">
       
       {/* Toast Alert Banner */}
       {toastMsg && (
@@ -64,13 +76,13 @@ export default function SavedJobsPage() {
           <Check className="h-4 w-4 stroke-[3px]" /> {toastMsg}
         </div>
       )}
-
+ 
       {/* Header */}
       <PageHeader
         title="Saved Jobs"
         description="Review, search, and manage the opportunities you've bookmarked."
       />
-
+ 
       {savedJobs.length === 0 ? (
         <EmptyState
           title="No saved jobs"
@@ -92,22 +104,23 @@ export default function SavedJobsPage() {
                 className="pl-9 h-9 text-xs font-bold border-2 border-border"
               />
             </div>
-
+ 
             <div className="flex items-center gap-2 shrink-0">
               <span className="text-[10px] font-black uppercase text-foreground-muted">Sort:</span>
               <BrutalSelect
                 value={sortOption}
-                onChange={(e) => setSortOption(e.target.value as "recent" | "match" | "salary")}
+                onChange={(e) => setSortOption(e.target.value as "recent" | "company" | "title" | "posted")}
                 options={[
-                  { label: "Date Saved", value: "recent" },
-                  { label: "Match Score", value: "match" },
-                  { label: "Salary Limit", value: "salary" }
+                  { label: "Recently Saved", value: "recent" },
+                  { label: "Company", value: "company" },
+                  { label: "Job Title", value: "title" },
+                  { label: "Date Posted", value: "posted" }
                 ]}
                 className="h-9 text-[9px] font-black uppercase border-2 border-border w-40"
               />
             </div>
           </div>
-
+ 
           {/* Results Grid */}
           {processedSavedJobs.length === 0 ? (
             <BrutalCard className="p-8 border-2 border-border text-center rounded-sm bg-surface-secondary/5">
@@ -118,15 +131,13 @@ export default function SavedJobsPage() {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
               {processedSavedJobs.map((job) => (
-                <JobCard
+                <SavedJobCard
                   key={job.id}
                   job={job}
-                  isSelected={false}
                   onClick={() => router.push(`/jobs/${job.id}`)}
-                  onSave={async (e) => {
+                  onUnsave={async (e) => {
                     e.stopPropagation();
-                    await toggleSaveJob(job);
-                    triggerToast("Job removed from saved list");
+                    handleUnsave(job);
                   }}
                 />
               ))}
@@ -134,7 +145,7 @@ export default function SavedJobsPage() {
           )}
         </div>
       )}
-
+ 
       {/* Recently Viewed jobs panel */}
       {recentlyViewed.length > 0 && (
         <div className="space-y-3.5 border-t border-border/10 pt-6">
@@ -161,7 +172,7 @@ export default function SavedJobsPage() {
           </div>
         </div>
       )}
-
+ 
     </div>
   );
 }

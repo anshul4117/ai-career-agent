@@ -82,6 +82,42 @@ export const jobService = {
       filtered = filtered.filter((j) => j.salaryMax !== null && j.salaryMax >= sMin);
     }
 
+    if (filters.skills && filters.skills.length > 0) {
+      filtered = filtered.filter((j) =>
+        filters.skills.some((skill) => j.skillsRequired.some(js => js.toLowerCase() === skill.toLowerCase()))
+      );
+    }
+
+    if (filters.industry) {
+      const ind = filters.industry.toLowerCase();
+      filtered = filtered.filter((j) => {
+        const company = mockCompanies.find((c) => c.id === j.companyId);
+        return company ? company.industry.toLowerCase().includes(ind) : false;
+      });
+    }
+
+    if (filters.datePosted && filters.datePosted !== "any") {
+      const now = Date.now();
+      const dayMs = 24 * 60 * 60 * 1000;
+      filtered = filtered.filter((j) => {
+        const postedTime = new Date(j.postedDate).getTime();
+        const ageMs = now - postedTime;
+        if (filters.datePosted === "24h") return ageMs <= dayMs;
+        if (filters.datePosted === "week") return ageMs <= 7 * dayMs;
+        if (filters.datePosted === "month") return ageMs <= 30 * dayMs;
+        return true;
+      });
+    }
+
+    if (filters.easyApply) {
+      filtered = filtered.filter((j) => !!j.easyApply);
+    }
+
+    if (filters.matchScoreMin !== null) {
+      const minScore = filters.matchScoreMin;
+      filtered = filtered.filter((j) => j.trustScore >= minScore);
+    }
+
     // 2. Sort jobs
     if (params.sorting === "recent") {
       filtered.sort((a, b) => new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime());
