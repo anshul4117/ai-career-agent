@@ -32,6 +32,13 @@ export const jobService = {
     const company = mockCompanies.find((c) => c.id === id);
     return company || null;
   },
+ 
+  /**
+   * Retrieves all jobs in the database
+   */
+  async getAllJobs(): Promise<Job[]> {
+    return [...mockJobs];
+  },
 
   /**
    * Executes filter, sort, and pagination workflows on client-side mock collection

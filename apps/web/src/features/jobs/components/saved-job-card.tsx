@@ -6,6 +6,7 @@ import { BrutalCard } from "@/components/ui/brutal-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Bookmark, MapPin, DollarSign } from "lucide-react";
+import { cn } from "@/lib/utils";
  
 interface SavedJobCardProps {
   job: Job;
@@ -37,6 +38,22 @@ export function SavedJobCard({ job, onUnsave, onClick }: SavedJobCardProps) {
     .join("")
     .slice(0, 2)
     .toUpperCase();
+ 
+  const getQualityBadge = () => {
+    const score = Math.round((job.freshnessScore * 0.4) + (job.trustScore * 0.6));
+    if (job.trustScore >= 85) {
+      return { label: "Verified", className: "bg-green-50 text-green-700 border-green-300 border" };
+    }
+    if (job.freshnessScore >= 80) {
+      return { label: "Fresh", className: "bg-blue-50 text-blue-700 border-blue-300 border" };
+    }
+    if (score >= 70) {
+      return { label: "Trusted", className: "bg-amber-50 text-amber-700 border-amber-300 border" };
+    }
+    return { label: "Good", className: "bg-gray-50 text-gray-700 border-gray-300 border" };
+  };
+ 
+  const quality = getQualityBadge();
  
   return (
     <BrutalCard
@@ -84,6 +101,9 @@ export function SavedJobCard({ job, onUnsave, onClick }: SavedJobCardProps) {
         <div className="flex items-center gap-1.5 mt-2">
           <Badge className="text-[7.5px] font-black uppercase tracking-wider bg-primary text-white border-2 border-border px-1 py-0.5">
             {job.trustScore}% Match
+          </Badge>
+          <Badge className={cn("text-[7.5px] font-black uppercase tracking-wider shadow-none font-extrabold px-1 py-0.5 rounded-sm", quality.className)}>
+            {quality.label}
           </Badge>
           <span className="text-[8px] font-bold text-foreground-muted bg-surface-secondary px-1.5 py-0.5 border border-border/10 rounded-sm">
             {getRelativeSavedDate(job.savedAt)}
