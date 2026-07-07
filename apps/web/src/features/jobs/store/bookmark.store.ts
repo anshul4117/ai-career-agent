@@ -42,7 +42,7 @@ export const useBookmarkStore = create<BookmarkState>((set, get) => ({
       await bookmarkService.saveJob(job.id);
     }
 
-    const updatedJob = { ...job, isSaved: !wasSaved };
+    const updatedJob = { ...job, isSaved: !wasSaved, savedAt: !wasSaved ? new Date().toISOString() : undefined };
 
     set((state) => {
       const isNowSaved = !wasSaved;

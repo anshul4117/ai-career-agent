@@ -267,7 +267,9 @@ for (let i = 1; i <= 100; i++) {
     trustScore: 85 + (i % 15),
     freshnessScore: 90 - (i % 10),
     isSaved: i % 11 === 0,
+    savedAt: i % 11 === 0 ? new Date(Date.now() - (i % 5 + 1) * 24 * 60 * 60 * 1000).toISOString() : undefined,
     isApplied: false,
-    viewedAt: null
+    viewedAt: null,
+    easyApply: i % 2 === 0
   });
 }
