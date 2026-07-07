@@ -110,14 +110,15 @@ Current
 * Profile
 * Resume
 * Jobs
-* Applications
 * Saved Jobs
+* Job Alerts
+* Applications
 * Cover Letters
+* Notifications
 * Settings
 
 Future
 
-* Notifications
 * AI Chat
 * Career Roadmap
 * Interview Preparation
@@ -164,6 +165,7 @@ Future
 | Jobs                   | /jobs             |
 | Job Details            | /jobs/:id         |
 | Saved Jobs             | /saved-jobs       |
+| Job Alerts             | /job-alerts       |
 | Applications           | /applications     |
 | Cover Letters          | /cover-letters    |
 | Settings               | /settings         |
@@ -335,8 +337,10 @@ Dashboard Sidebar
 * Resume
 * Jobs
 * Saved Jobs
+* Job Alerts
 * Applications
 * Cover Letters
+* Notifications
 * Settings
 
 Header
@@ -393,6 +397,7 @@ Complete Profile
 | Jobs          | ❌     | ✅    |
 | Applications  | ❌     | ✅    |
 | Saved Jobs    | ❌     | ✅    |
+| Job Alerts    | ❌     | ✅    |
 | Cover Letters | ❌     | ✅    |
 | Settings      | ❌     | ✅    |
 

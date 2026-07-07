@@ -2,6 +2,25 @@
 
 All notable changes to the AI Career Agent platform will be documented in this file.
 
+## [1.7.0] - 2026-07-07
+
+### Added
+- **Decoupled Alerts & Notifications Architecture**: Separated Job Alerts (rule configuration engine) from the Notification Center feed.
+- **Job Alerts Upgrades**: Added "Duplicate Alert" handler, active/paused status badges, and last/next scheduled scan time metadata to rules cards.
+- **Unified Notification Center**: Pre-seeded inbox notifications spanning Job Alerts, Application Updates, Resume Parsing, Resume Tailoring, AI Matches, and Cover Letter generations.
+- **Notification Inbox Filtering**: Added filtering by read/unread statuses and Category tabs, plus view contextual buttons routing to matched detail locations.
+- **Alert Scanner Simulation**: Connected the `createAlert` Zustand flow to trigger a mock matching engine cycle that posts new matches to the notifications feed after 3 seconds.
+
+## [1.6.0] - 2026-07-07
+
+### Added
+- **Saved Jobs Dashboard**: Complete saved jobs tracker showing matching rating score, salary limit, locations, relative save date, and custom sorting options (Recently Saved, Company, Job Title, Date Posted) with optimistic unsaving logic.
+- **Job Alerts Scanning**: LocalStorage CRUD scheduler supporting daily/weekly/instant alerts matching keywords, remote, salary thresholds, and experience criteria, with toggle switches.
+- **Advanced Search & Filtering**: Instant collapsible filter criteria including skills tag additions, match score slider, easy apply toggles, and date posted age.
+- **Search Query History**: Memory of recent searches, saved filters naming, and popular terms pills.
+- **Responsive Drawer & FAB**: Sticky desktop filter sidebar collapsing to a slide-over panel on mobile/tablet screens triggered by a floating action button.
+- **Scroll Restoration**: Persist search filters and vertical scroll coordinates in sessionStorage to restore states on backward navigation.
+
 ## [1.5.0] - 2026-06-30
 
 ### Added
