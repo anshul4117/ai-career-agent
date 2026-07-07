@@ -31,12 +31,28 @@ export function JobCard({ job, isSelected, onClick, onSave }: JobCardProps) {
     return `${diffDays} days ago`;
   };
 
+  const getQualityBadge = () => {
+    const score = Math.round((job.freshnessScore * 0.4) + (job.trustScore * 0.6));
+    if (job.trustScore >= 85) {
+      return { label: "Verified", className: "bg-green-50 text-green-700 border-green-300 border" };
+    }
+    if (job.freshnessScore >= 80) {
+      return { label: "Fresh", className: "bg-blue-50 text-blue-700 border-blue-300 border" };
+    }
+    if (score >= 70) {
+      return { label: "Trusted", className: "bg-amber-50 text-amber-700 border-amber-300 border" };
+    }
+    return { label: "Good", className: "bg-gray-50 text-gray-700 border-gray-300 border" };
+  };
+ 
+  const quality = getQualityBadge();
+ 
   return (
     <BrutalCard
       onClick={onClick}
       className={cn(
         "cursor-pointer border-[3px] border-border brutal-shadow-xs transition-all hover:-translate-y-0.5 hover:brutal-shadow bg-surface rounded-sm p-3 relative flex flex-col justify-between gap-2.5 text-left",
-        isSelected && "bg-amber-50 border-primary brutal-shadow"
+        isSelected && "bg-amber-50/50 border-primary brutal-shadow"
       )}
     >
       <div>
@@ -69,6 +85,9 @@ export function JobCard({ job, isSelected, onClick, onSave }: JobCardProps) {
  
         {/* Badges row */}
         <div className="flex flex-wrap gap-1 mt-1.5">
+          <Badge className={cn("text-[7.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-sm shadow-none font-extrabold", quality.className)}>
+            {quality.label}
+          </Badge>
           <Badge className="text-[7.5px] font-black uppercase tracking-wider bg-surface border-2 border-border text-foreground px-1 py-0.5">
             {job.remoteType}
           </Badge>

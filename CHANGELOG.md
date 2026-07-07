@@ -2,6 +2,16 @@
 
 All notable changes to the AI Career Agent platform will be documented in this file.
 
+## [1.8.0] - 2026-07-07
+
+### Added
+- **Job Quality Engine Core**: Created `quality-engine.service.ts` evaluating duplicate scores, freshness scores, trust scores, and unified overall quality ratings.
+- **Deduplication Audit**: Duplicate detector evaluating overlap across titles, companies, locations, employment types, salaries, and external posting IDs.
+- **Freshness & Trust Computations**: Freshness category decay mapping and 8-factor trust signal verification checklists.
+- **Quality Zustand Store**: Created `quality.store.ts` caching computed quality ratings and supporting mock loading states, error states, and force recalculation runs.
+- **Interactive UI Details Card**: Quality Assessment sidebar block inside `JobDetailsPane` displaying rating bars, status badges, details tooltips, trust checklists, and recalculate triggers.
+- **Uncluttered Listing Quality Badges**: Embedded colored quality labels (Verified, Fresh, Trusted, Good) into the main listing Job Cards and Saved Job Cards.
+
 ## [1.7.0] - 2026-07-07
 
 ### Added

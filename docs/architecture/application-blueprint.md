@@ -586,6 +586,7 @@ Feature State
 * Export & Print Engine (Zustand useExportStore tracking print scales, margins, page breaks, format downloads, and export logs logs)
 * Profile
 * Jobs
+* Job Quality Engine (Zustand useQualityStore tracking computed audits, freshness ratings, and duplicates detection)
 * Applications
 
 Form State

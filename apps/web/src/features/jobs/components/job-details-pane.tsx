@@ -9,6 +9,7 @@ import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useQualityStore } from "../store/quality.store";
 import { 
   Bookmark, 
   ExternalLink, 
@@ -17,7 +18,9 @@ import {
   Clock, 
   TrendingUp,
   Globe,
-  Building2
+  Building2,
+  HelpCircle,
+  RefreshCw
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +34,26 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
   const { toggleSaveJob, addRecentlyViewed, recentlyViewed } = useBookmarkStore();
   const [similarJobs, setSimilarJobs] = useState<Job[]>([]);
   const [companyDetails, setCompanyDetails] = useState<Company | null>(null);
+ 
+  const { reports, loading: qualityLoading, errors: qualityErrors, calculateJobQuality } = useQualityStore();
+ 
+  useEffect(() => {
+    const loadQuality = async () => {
+      const allJobs = await jobService.getAllJobs();
+      await calculateJobQuality(job, allJobs);
+    };
+    loadQuality();
+  }, [job, calculateJobQuality]);
+ 
+  const handleRecalculate = async () => {
+    const allJobs = await jobService.getAllJobs();
+    await calculateJobQuality(job, allJobs, true);
+    onToast("Job quality metrics recalculated!");
+  };
+ 
+  const report = reports[job.id];
+  const isQloading = !!qualityLoading[job.id];
+  const qError = qualityErrors[job.id];
 
   useEffect(() => {
     // Add to recently viewed on details load
@@ -250,9 +273,156 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
           </BrutalCard>
         </div>
 
-        {/* Right Column: Skills Only */}
+        {/* Right Column: Quality Assessment & Skills */}
         <div className="space-y-6">
           
+          {/* Quality Card */}
+          <BrutalCard className="border-2 border-border bg-surface p-5 rounded-sm space-y-4">
+            <div className="flex justify-between items-center border-b-2 border-border/10 pb-2">
+              <h3 className="text-[10px] font-black uppercase tracking-widest text-foreground">
+                Job Quality Score
+              </h3>
+              {/* Tooltip Wrapper */}
+              <div className="relative group inline-block">
+                <button
+                  type="button"
+                  className="p-1 hover:bg-surface-secondary rounded-sm transition-all focus:outline-none"
+                  aria-label="How is this score calculated?"
+                >
+                  <HelpCircle className="h-3.5 w-3.5 text-foreground-muted stroke-[2.5px]" />
+                </button>
+                <div className="absolute right-0 top-full mt-1.5 w-56 bg-foreground text-surface p-3 text-[8.5px] leading-relaxed brutal-shadow border-2 border-border hidden group-hover:block group-focus-within:block z-30 font-bold uppercase rounded-sm">
+                  <p className="border-b border-border/20 pb-1 mb-1 text-accent">Scoring Engine Metrics</p>
+                  <ul className="space-y-1 normal-case font-semibold text-slate-200">
+                    <li className="flex items-start gap-1"><span className="text-accent font-black">•</span><span><strong>Freshness (40%)</strong>: Age of posting. Expired past 30 days.</span></li>
+                    <li className="flex items-start gap-1"><span className="text-accent font-black">•</span><span><strong>Trust (60%)</strong>: Evaluates site links, logo presence, descriptions, and recruiters.</span></li>
+                    <li className="flex items-start gap-1"><span className="text-accent font-black">•</span><span><strong>Duplicates Penalty</strong>: Deduplication filters cap overall score to Poor.</span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+ 
+            {isQloading ? (
+              <div className="space-y-3 py-1">
+                <div className="h-6 bg-slate-200 animate-pulse rounded-sm w-3/4" />
+                <div className="h-3 bg-slate-200 animate-pulse rounded-sm w-full" />
+                <div className="h-10 bg-slate-200 animate-pulse rounded-sm w-full animate-none" />
+              </div>
+            ) : qError ? (
+              <div className="space-y-2.5 py-1 text-center">
+                <p className="text-[9px] font-bold text-error uppercase">{qError}</p>
+                <Button 
+                  onClick={handleRecalculate}
+                  className="h-8 text-[9px] font-black uppercase border border-border/20 rounded-sm w-full hover:bg-surface-secondary"
+                >
+                  Retry Audit
+                </Button>
+              </div>
+            ) : report ? (
+              <div className="space-y-4">
+                {/* Overall Score Progress */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center text-[10px] font-black uppercase">
+                    <span>Overall rating</span>
+                    <span className={cn(
+                      "font-black text-xs px-1.5 py-0.5 border border-border rounded-sm brutal-shadow-xs",
+                      report.overallLabel === "Excellent" && "bg-green-100 text-green-700",
+                      report.overallLabel === "Very Good" && "bg-blue-100 text-blue-700",
+                      report.overallLabel === "Good" && "bg-amber-100 text-amber-700",
+                      report.overallLabel === "Average" && "bg-gray-100 text-gray-700",
+                      report.overallLabel === "Poor" && "bg-red-100 text-red-700"
+                    )}>
+                      {report.overallLabel} ({report.overallScore}%)
+                    </span>
+                  </div>
+                  <div className="h-3 w-full bg-slate-100 border border-border/40 rounded-sm overflow-hidden relative">
+                    <div 
+                      className={cn(
+                        "h-full transition-all duration-500",
+                        report.overallScore >= 80 ? "bg-green-500" :
+                        report.overallScore >= 60 ? "bg-blue-500" :
+                        report.overallScore >= 40 ? "bg-amber-500" : "bg-red-500"
+                      )}
+                      style={{ width: `${report.overallScore}%` }}
+                    />
+                  </div>
+                </div>
+ 
+                {/* Score breakdown metrics */}
+                <div className="space-y-2 border-t border-border/10 pt-3 text-[9px] font-bold uppercase tracking-wider text-foreground-secondary">
+                  <div className="flex justify-between items-center">
+                    <span>Freshness:</span>
+                    <Badge className="text-[7.5px] font-black bg-surface-secondary border border-border/20 text-foreground px-1 py-0.5 rounded-sm">
+                      {report.freshnessLabel} ({report.freshnessCategory})
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span>Trust Factor:</span>
+                    <Badge className="text-[7.5px] font-black bg-surface-secondary border border-border/20 text-foreground px-1 py-0.5 rounded-sm">
+                      {report.trustLabel} ({report.trustScore}%)
+                    </Badge>
+                  </div>
+                </div>
+ 
+                {/* Duplicate Status */}
+                <div className="border-t border-border/10 pt-3 flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-foreground-secondary">
+                  <div className="flex justify-between items-center">
+                    <span>Duplicate Checks:</span>
+                    <Badge className={cn(
+                      "text-[7.5px] font-black border px-1 py-0.5 rounded-sm shadow-none",
+                      report.duplicateStatus === "Unique" && "bg-green-50 text-green-700 border-green-300",
+                      report.duplicateStatus === "Possible Duplicate" && "bg-amber-50 text-amber-700 border-amber-300",
+                      report.duplicateStatus === "Duplicate" && "bg-red-50 text-red-700 border-red-300"
+                    )}>
+                      {report.duplicateStatus}
+                    </Badge>
+                  </div>
+                  <span className="text-[8px] font-semibold text-foreground-muted normal-case leading-snug">
+                    {report.duplicateReason}
+                  </span>
+                </div>
+ 
+                {/* Verified Trust checklist */}
+                <details className="text-[9px] font-black uppercase text-foreground-secondary border-t border-border/10 pt-3 cursor-pointer group">
+                  <summary className="list-none flex justify-between items-center font-black select-none outline-none">
+                    <span>Trust Signals Breakdown</span>
+                    <span className="text-primary group-open:rotate-180 transition-transform">▼</span>
+                  </summary>
+                  <ul className="space-y-1.5 mt-3 text-[8px] font-semibold normal-case">
+                    {report.trustFactors.map((factor) => (
+                      <li key={factor.name} className="flex items-start gap-1.5 leading-tight">
+                        <span className={cn("shrink-0 font-extrabold text-[9px] leading-none", factor.met ? "text-green-600" : "text-slate-400")}>
+                          {factor.met ? "✓" : "✗"}
+                        </span>
+                        <div className="flex flex-col text-[8.5px]">
+                          <span className={cn("font-bold uppercase text-[7.5px]", factor.met ? "text-foreground" : "text-foreground-muted")}>{factor.name}</span>
+                          <span className="text-foreground-muted leading-tight mt-0.5">{factor.met ? factor.description : `${factor.name} was not found on this listing.`}</span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+ 
+                <Button
+                  variant="ghost"
+                  onClick={handleRecalculate}
+                  className="w-full h-8 border border-border/20 hover:bg-surface-secondary text-[9px] font-black uppercase flex items-center justify-center gap-1.5 rounded-sm transition-all mt-2.5"
+                >
+                  <RefreshCw className="h-3 w-3 animate-none" /> Recalculate Quality
+                </Button>
+              </div>
+            ) : (
+              <div className="text-center py-2">
+                <Button 
+                  onClick={handleRecalculate}
+                  className="h-8 text-[9px] font-black uppercase border border-border/20 rounded-sm w-full hover:bg-surface-secondary"
+                >
+                  Run Quality Check
+                </Button>
+              </div>
+            )}
+          </BrutalCard>
+ 
           {/* Skills Required */}
           <BrutalCard className="border-2 border-border bg-surface p-5 rounded-sm">
             <h3 className="text-[10px] font-black uppercase tracking-widest text-foreground border-b-2 border-border/10 pb-2 mb-3">
