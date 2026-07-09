@@ -36,11 +36,12 @@ export type EmploymentType =
 export type ApplicationStatus =
   | "SAVED"
   | "APPLIED"
-  | "INTERVIEW_SCHEDULED"
-  | "INTERVIEW_COMPLETED"
-  | "REJECTED"
-  | "OFFER_RECEIVED"
+  | "SCREENING"
+  | "ASSESSMENT"
+  | "INTERVIEW"
+  | "OFFER"
   | "ACCEPTED"
+  | "REJECTED"
   | "WITHDRAWN";
 
 export type ParsingStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";

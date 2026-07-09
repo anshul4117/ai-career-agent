@@ -2,6 +2,18 @@
 
 All notable changes to the AI Career Agent platform will be documented in this file.
 
+## [2.0.0] - 2026-07-09
+
+### Added
+- **Application Tracker Core Types**: Structured `JobApplication` and `TimelineEvent` schemas in `application.types.ts`.
+- **Application Services Layer**: Created CRUD provider `application.service.ts`, chronological history event formatter `timeline.service.ts`, conversion rate calculator `analytics.service.ts`, and stage alert notifier `notification.service.ts`.
+- **Application Zustand Store**: Integrated `application.store.ts` store with localStorage persistence cache supporting optimistic status moves, schedule dates coordinate edits, and contact logs updates.
+- **Unified Application Board Page**: Created multi-tab view page displaying Pipeline Boards, Stats & Charts dashboards, Table Lists, and Calendars.
+- **Drag-and-Drop Kanban Board**: Designed board columns (Saved, Applied, Screening, Assessment, Interview, Offer, Accepted, Rejected) with drag overlays and accessibility arrows.
+- **Funnel & Distribution Analytics**: Designed responsive CSS/SVG monthly bar/area line graphs, conversion ratios progress bars, and upcoming interview card lists.
+- **Monthly Scheduler Calendar**: Designed month-view calendar with navigation triggers plotting interview slots.
+- **Contact & notes Drawer Inspector**: Designed details drawer sidebar to configure recruiter contacts details, schedules, notes, and timeline logs.
+
 ## [1.9.0] - 2026-07-07
 
 ### Added
