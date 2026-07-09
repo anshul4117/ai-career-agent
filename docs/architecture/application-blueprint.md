@@ -114,7 +114,7 @@ Current
 * Saved Jobs
 * Job Alerts
 * Applications
-* Cover Letters
+* Cover Letters (Core & Advanced AI Generator)
 * Notifications
 * Settings
 

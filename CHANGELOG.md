@@ -2,6 +2,13 @@
 
 All notable changes to the AI Career Agent platform will be documented in this file.
 
+## [2.2.0] - 2026-07-09
+
+### Added
+- **AI Cover Letter Generator Service**: Created `cover-letter.service.ts` generating contextual statements mapped to Professional, Startup, Enterprise, Modern, and Minimal layouts using resume details and target tone selectors.
+- **Cover Letter Zustand Store**: Created `cover-letter.store.ts` store managing draft states, version snapshots history, active layout selections, and text editor Undo/Redo stack arrays.
+- **Cover Letter Studio Workspace & Dashboard**: Built a responsive, multi-view Dashboard (listing drafts, favorite presets, and quick-starts) and a dense side-by-side Generator Wizard Workspace (bundling layout forms, rich text inputs, undo/redo buttons, and formal printable preview letters).
+
 ## [2.1.0] - 2026-07-09
 
 ### Added
