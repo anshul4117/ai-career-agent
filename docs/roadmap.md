@@ -359,9 +359,11 @@ Users can:
 ---
 
 ## Phase 10 — AI Cover Letter Generator
-
+ 
 **Goal:** Generate personalized cover letters.
-
+ 
+**Status:** ✅ Complete (Sprint 10)
+ 
 **Priority:** Medium
 
 **Backend:**
