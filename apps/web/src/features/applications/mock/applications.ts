@@ -21,7 +21,7 @@ export const mockApplications: ApplicationItem[] = [
     jobTitle: "Full Stack Developer",
     company: "Vercel Startup",
     appliedAt: "2025-06-17",
-    status: "INTERVIEW_SCHEDULED",
+    status: "INTERVIEW",
   },
   {
     id: "app_003",

@@ -500,6 +500,7 @@ Dashboard -> Jobs Workspace -> Search Query -> Filters -> Details Pane -> Save C
 - **`company.store.ts`**: Manages profile lookups, hiring indices, and related job list caches.
 - **`bookmark.store.ts`**: Manages optimistic saves caches, collections arrays, and background synchronization queues.
 - **`recommendation.store.ts`**: Handles profile matching scores, weight matrices, and local text embedding results.
+- **`application.store.ts`**: Manages applications list state, stage transitions, recruiter contacts, timeline logs, calendar schedules, and search/filters configurations.
 
 ## Service Layer Operations
 - **`job.service.ts`**: Implements endpoints parsing Wellfound APIs, YC RSS, and Greenhouse JSON endpoints.
@@ -507,6 +508,10 @@ Dashboard -> Jobs Workspace -> Search Query -> Filters -> Details Pane -> Save C
 - **`search.service.ts`**: Orchestrates local indices indexing and Elasticsearch/Algolia queries.
 - **`bookmark.service.ts`**: Syncs collection updates with database stores.
 - **`recommendation.service.ts`**: Executes skill alignments and years-of-experience comparisons.
+- **`application.service.ts`**: Coordinates application CRUD database interfaces and seed parameters.
+- **`timeline.service.ts`**: Generates application action events chronologically.
+- **`analytics.service.ts`**: Calculates funnel conversion metrics, response rates, and monthly distributions.
+- **`notification.service.ts`**: Triggers notification warnings when application stages change.
 
 ## Responsive Strategy
 - **Desktop (>= 1024px)**: Renders side-by-side split screen. Left column: filters sidebar and job listings grid. Right column: dynamic sticky details pane.
@@ -585,9 +590,9 @@ Feature State
 * Theme Customization (Zustand useThemeStore syncing styling selections, colors, fonts, spacing, layout presets to localStorage)
 * Export & Print Engine (Zustand useExportStore tracking print scales, margins, page breaks, format downloads, and export logs logs)
 * Profile
-* Jobs
 * Job Quality Engine (Zustand useQualityStore tracking computed audits, freshness ratings, and duplicates detection)
 * AI Match Engine (Zustand useMatchStore caching computed profile matching metrics, skills gap analyses, and roadmaps)
+* Application Tracker (Zustand useApplicationStore tracking application stages, timelines, contacts, and upcoming interview schedules)
 * Applications
 
 Form State
