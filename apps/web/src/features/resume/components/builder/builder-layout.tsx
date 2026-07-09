@@ -8,6 +8,8 @@ import { ResumePreview } from "./resume-preview";
 import { TemplateGallery } from "./template-gallery";
 import { ThemePanel } from "./theme-panel";
 import { ExportDialog } from "./export-dialog";
+import { ResumeOptimizePanel } from "./resume-optimize-panel";
+import { OptimizationStudio } from "./optimization-studio";
 import { useBuilderStore } from "../../store/builder.store";
 import { useThemeStore } from "../../store/theme.store";
 import { cn } from "@/lib/utils";
@@ -19,7 +21,7 @@ export function ResumeBuilderLayout() {
   const { loadTheme } = useThemeStore();
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [activeSidebarTab, setActiveSidebarTab] = useState<"sections" | "templates" | "theme">("sections");
+  const [activeSidebarTab, setActiveSidebarTab] = useState<"sections" | "templates" | "theme" | "optimize">("sections");
   const [previewWidth, setPreviewWidth] = useState(500);
   const [isResizing, setIsResizing] = useState(false);
   
@@ -101,7 +103,7 @@ export function ResumeBuilderLayout() {
           {/* Tab Selection Headers - Visible only if expanded */}
           {!isSidebarCollapsed && (
             <div className="flex border-b-2 border-border select-none shrink-0">
-              {(["sections", "templates", "theme"] as const).map((tab) => (
+              {(["sections", "templates", "theme", "optimize"] as const).map((tab) => (
                 <button
                   key={tab}
                   type="button"
@@ -130,6 +132,7 @@ export function ResumeBuilderLayout() {
                 {activeSidebarTab === "sections" && <ResumeSectionsSidebar />}
                 {activeSidebarTab === "templates" && <TemplateGallery />}
                 {activeSidebarTab === "theme" && <ThemePanel />}
+                {activeSidebarTab === "optimize" && <ResumeOptimizePanel />}
               </>
             )}
           </div>
@@ -145,7 +148,7 @@ export function ResumeBuilderLayout() {
           {/* Primary scroll container: Editor and Preview stack vertically on Tablet */}
           <div className="flex-1 p-4 md:p-6 overflow-y-auto min-w-0">
             <div className="max-w-3xl mx-auto space-y-12">
-              <ResumeEditor />
+              {activeSidebarTab === "optimize" ? <OptimizationStudio /> : <ResumeEditor />}
 
               {/* Tablet view for Live Preview (rendered directly below editor on md screen, hidden on lg and sm) */}
               <div className="hidden md:block lg:hidden border-t-3 border-border pt-8 mt-8">
@@ -276,7 +279,7 @@ export function ResumeBuilderLayout() {
           {/* Header with tabs */}
           <div className="flex items-center justify-between border-b-2 border-border p-3 bg-surface-secondary/10 select-none">
             <div className="flex border-2 border-border select-none rounded-sm">
-              {(["templates", "theme"] as const).map((tab) => (
+              {(["templates", "theme", "optimize"] as const).map((tab) => (
                 <button
                   key={tab}
                   type="button"
@@ -303,7 +306,9 @@ export function ResumeBuilderLayout() {
 
           {/* Content */}
           <div className="flex-1 overflow-y-auto p-4">
-            {activeSidebarTab === "templates" ? <TemplateGallery /> : <ThemePanel />}
+            {activeSidebarTab === "templates" && <TemplateGallery />}
+            {activeSidebarTab === "theme" && <ThemePanel />}
+            {activeSidebarTab === "optimize" && <ResumeOptimizePanel />}
           </div>
         </div>
       </div>

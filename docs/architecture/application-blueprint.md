@@ -109,6 +109,7 @@ Current
 * Dashboard
 * Profile
 * Resume
+* Resume Optimization (Core & Advanced)
 * Jobs
 * Saved Jobs
 * Job Alerts
