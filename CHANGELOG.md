@@ -2,6 +2,13 @@
 
 All notable changes to the AI Career Agent platform will be documented in this file.
 
+## [2.1.0] - 2026-07-09
+
+### Added
+- **AI Resume Optimizer Service**: Created `resume-optimizer.service.ts` evaluating completeness, keyword match ratios, suggested gaps, and experience bullet upgrades.
+- **Resume Optimizer Zustand Store**: Created `resume-optimizer.store.ts` store coordinating target JD parameters, active studio tabs, history logs, variant versions, and export download mock states.
+- **Embedded Optimize Panel & Studio Workspace**: Built collapsible `ResumeOptimizePanel` sidebar and full-featured `OptimizationStudio` center-screen dashboard (with side-by-side Diffs, Bullet Enhancers, Readability Diagnostics, and Audit logs).
+
 ## [2.0.0] - 2026-07-09
 
 ### Added
