@@ -25,7 +25,8 @@ import {
   History,
   TrendingUp,
   Save,
-  RotateCcw
+  RotateCcw,
+  Sparkles
 } from "lucide-react";
 import { cn } from "@/lib/utils";
  
@@ -148,6 +149,8 @@ export default function JobsPage() {
       updateFilters({ salaryMin: null });
     } else if (key === "matchScoreMin") {
       updateFilters({ matchScoreMin: null });
+    } else if (key === "matchFilter") {
+      updateFilters({ matchFilter: "all" });
     } else if (key === "datePosted") {
       updateFilters({ datePosted: "any" });
     } else if (key === "easyApply") {
@@ -170,7 +173,8 @@ export default function JobsPage() {
     filters.skills.length > 0 ||
     filters.datePosted !== "any" ||
     filters.easyApply ||
-    filters.matchScoreMin !== null;
+    filters.matchScoreMin !== null ||
+    (filters.matchFilter && filters.matchFilter !== "all");
  
   const totalPages = Math.ceil(totalCount / limit);
  
@@ -336,13 +340,31 @@ export default function JobsPage() {
               {loading ? "Searching..." : `${totalCount} Positions found`}
             </span>
  
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  if (sorting === "match") {
+                    setSorting("recent");
+                  } else {
+                    setSorting("match");
+                  }
+                }}
+                className={cn(
+                  "h-8.5 px-2.5 text-[9px] font-black uppercase border-2 border-border rounded-sm brutal-shadow-xs flex items-center gap-1 shrink-0 transition-all",
+                  sorting === "match" ? "bg-accent text-foreground brutal-shadow" : "bg-surface hover:bg-surface-secondary"
+                )}
+                title="Sort by highest match then quality"
+              >
+                <Sparkles className="h-3 w-3 text-primary animate-pulse" /> Recommended
+              </Button>
+ 
               <BrutalSelect
                 value={sorting}
                 onChange={(e) => setSorting(e.target.value as "recent" | "match" | "salary_desc" | "salary_asc")}
                 options={[
                   { label: "Most Recent", value: "recent" },
-                  { label: "Match Score", value: "match" },
+                  { label: "AI Recommendation", value: "match" },
                   { label: "Salary: High to Low", value: "salary_desc" },
                   { label: "Salary: Low to High", value: "salary_asc" }
                 ]}
@@ -455,6 +477,18 @@ export default function JobsPage() {
                   <button onClick={() => handleRemoveFilter("skills", skill)} className="text-error font-black"><X className="h-2.5 w-2.5" /></button>
                 </span>
               ))}
+ 
+              {filters.matchFilter && filters.matchFilter !== "all" && (
+                <span className="inline-flex items-center gap-1 bg-amber-50 px-1.5 py-0.5 border border-border rounded-sm">
+                  Match Mode: {filters.matchFilter === "90" ? "90%+" :
+                               filters.matchFilter === "80" ? "80%+" :
+                               filters.matchFilter === "70" ? "70%+" :
+                               filters.matchFilter === "high_match" ? "High Match" :
+                               filters.matchFilter === "missing_skills" ? "Missing <= 2 Skills" :
+                               "High Quality & Match"}
+                  <button onClick={() => handleRemoveFilter("matchFilter")} className="text-error font-black"><X className="h-2.5 w-2.5" /></button>
+                </span>
+              )}
  
               <Button
                 variant="ghost"

@@ -2,7 +2,7 @@
  
 import React, { useState } from "react";
 import { useJobsStore } from "../store/jobs.store";
-import type { ExperienceLevel, RemoteType, EmploymentType } from "../types/jobs.types";
+import type { ExperienceLevel, RemoteType, EmploymentType, JobFilters } from "../types/jobs.types";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,7 +29,8 @@ export function JobsFilter() {
     company: true,
     posted: true,
     score: true,
-    easyApply: true
+    easyApply: true,
+    matchFilter: true
   });
  
   const toggleSection = (section: string) => {
@@ -106,6 +107,16 @@ export function JobsFilter() {
     { label: "85%+ Match", value: "85" },
     { label: "90%+ Match", value: "90" },
     { label: "95%+ Match", value: "95" }
+  ];
+ 
+  const aiMatchOptions = [
+    { label: "All Opportunities", value: "all" },
+    { label: "90%+ Match Score", value: "90" },
+    { label: "80%+ Match Score", value: "80" },
+    { label: "70%+ Match Score", value: "70" },
+    { label: "High Match Only (>= 80%)", value: "high_match" },
+    { label: "Missing <= 2 Skills", value: "missing_skills" },
+    { label: "High Match + High Quality", value: "high_quality_match" }
   ];
  
   return (
@@ -369,6 +380,27 @@ export function JobsFilter() {
               value={filters.datePosted}
               onChange={(e) => updateFilters({ datePosted: e.target.value as "any" | "24h" | "week" | "month" })}
               options={postedDateOptions}
+              className="text-xs font-bold h-8.5"
+            />
+          </div>
+        )}
+      </div>
+ 
+      {/* AI Match Filters */}
+      <div className="border-b border-border/10 pb-3">
+        <button
+          onClick={() => toggleSection("matchFilter")}
+          className="w-full flex justify-between items-center text-[10px] font-black uppercase tracking-wide text-foreground-secondary py-1"
+        >
+          <span>AI Match Filters</span>
+          <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200 text-foreground-muted", openSections.matchFilter ? "" : "-rotate-90")} />
+        </button>
+        {openSections.matchFilter && (
+          <div className="mt-2">
+            <BrutalSelect
+              value={filters.matchFilter || "all"}
+              onChange={(e) => updateFilters({ matchFilter: e.target.value as JobFilters["matchFilter"] })}
+              options={aiMatchOptions}
               className="text-xs font-bold h-8.5"
             />
           </div>

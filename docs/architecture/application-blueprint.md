@@ -587,6 +587,7 @@ Feature State
 * Profile
 * Jobs
 * Job Quality Engine (Zustand useQualityStore tracking computed audits, freshness ratings, and duplicates detection)
+* AI Match Engine (Zustand useMatchStore caching computed profile matching metrics, skills gap analyses, and roadmaps)
 * Applications
 
 Form State

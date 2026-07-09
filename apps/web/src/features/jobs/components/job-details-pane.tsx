@@ -10,6 +10,8 @@ import { BrutalButton } from "@/components/ui/brutal-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useQualityStore } from "../store/quality.store";
+import { useMatchStore } from "../store/match.store";
+import { useProfileStore } from "@/features/profile";
 import { 
   Bookmark, 
   ExternalLink, 
@@ -36,6 +38,8 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
   const [companyDetails, setCompanyDetails] = useState<Company | null>(null);
  
   const { reports, loading: qualityLoading, errors: qualityErrors, calculateJobQuality } = useQualityStore();
+  const { matches, loading: matchLoading, errors: matchErrors, calculateMatch } = useMatchStore();
+  const profileState = useProfileStore();
  
   useEffect(() => {
     const loadQuality = async () => {
@@ -45,15 +49,48 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
     loadQuality();
   }, [job, calculateJobQuality]);
  
-  const handleRecalculate = async () => {
-    const allJobs = await jobService.getAllJobs();
-    await calculateJobQuality(job, allJobs, true);
-    onToast("Job quality metrics recalculated!");
-  };
- 
   const report = reports[job.id];
   const isQloading = !!qualityLoading[job.id];
   const qError = qualityErrors[job.id];
+ 
+  useEffect(() => {
+    const loadMatchData = async () => {
+      if (!report || !profileState.profile) return;
+      await calculateMatch(job, {
+        skills: profileState.skills,
+        education: profileState.education,
+        preferences: profileState.preferences,
+        profile: profileState.profile
+      }, report.overallScore);
+    };
+    loadMatchData();
+  }, [
+    job,
+    report,
+    profileState.profile,
+    profileState.skills,
+    profileState.education,
+    profileState.preferences,
+    calculateMatch
+  ]);
+ 
+  const handleRecalculate = async () => {
+    const allJobs = await jobService.getAllJobs();
+    await calculateJobQuality(job, allJobs, true);
+    
+    const latestQualityReport = useQualityStore.getState().reports[job.id];
+    const latestQualityScore = latestQualityReport ? latestQualityReport.overallScore : 80;
+ 
+    if (profileState.profile) {
+      await calculateMatch(job, {
+        skills: profileState.skills,
+        education: profileState.education,
+        preferences: profileState.preferences,
+        profile: profileState.profile
+      }, latestQualityScore, true);
+    }
+    onToast("AI match and quality metrics refreshed!");
+  };
 
   useEffect(() => {
     // Add to recently viewed on details load
@@ -216,7 +253,214 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
               ))}
             </ul>
           </BrutalCard>
-
+ 
+          {/* AI Match Insights */}
+          {matchLoading[job.id] ? (
+            <BrutalCard className="border-2 border-border bg-surface p-5 rounded-sm space-y-4">
+              <h3 className="text-[10px] font-black uppercase tracking-widest text-foreground border-b-2 border-border/10 pb-2">
+                Evaluating AI Match Analytics...
+              </h3>
+              <div className="space-y-3">
+                <div className="h-6 bg-slate-200 animate-pulse rounded-sm w-3/4" />
+                <div className="h-4 bg-slate-200 animate-pulse rounded-sm w-1/2" />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="h-10 bg-slate-200 animate-pulse rounded-sm w-full" />
+                  <div className="h-10 bg-slate-200 animate-pulse rounded-sm w-full animate-none" />
+                </div>
+              </div>
+            </BrutalCard>
+          ) : matchErrors[job.id] ? (
+            <BrutalCard className="border-2 border-border bg-surface p-5 rounded-sm text-center py-6">
+              <p className="text-xs font-bold text-error uppercase mb-2">Match analysis could not be retrieved.</p>
+              <Button 
+                onClick={handleRecalculate}
+                className="h-8 text-[9px] font-black uppercase border border-border/20 rounded-sm hover:bg-surface-secondary"
+              >
+                Re-Run Match Audit
+              </Button>
+            </BrutalCard>
+          ) : matches[job.id] ? (() => {
+            const matchReport = matches[job.id];
+            return (
+              <div className="space-y-6">
+                {/* 1. Match Breakdown Progress Indicators */}
+                <BrutalCard className="border-2 border-border bg-surface p-5 rounded-sm">
+                  <h3 className="text-[10px] font-black uppercase tracking-widest text-foreground border-b-2 border-border/10 pb-2 mb-4 flex justify-between items-center">
+                    <span>AI Match Score Breakdown</span>
+                    <span className={cn(
+                      "font-black text-[9px] uppercase border px-1.5 py-0.5 rounded-sm shadow-none",
+                      matchReport.overallScore >= 90 && "bg-green-50 text-green-700 border-green-300",
+                      matchReport.overallScore >= 80 && "bg-blue-50 text-blue-700 border-blue-300",
+                      matchReport.overallScore >= 70 && "bg-amber-50 text-amber-700 border-amber-300",
+                      matchReport.overallScore >= 50 && "bg-gray-50 text-gray-700 border-gray-300",
+                      matchReport.overallScore < 50 && "bg-red-50 text-red-700 border-red-300"
+                    )}>
+                      {matchReport.overallScore}% {matchReport.overallLabel}
+                    </span>
+                  </h3>
+                  
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {/* Skills Progress */}
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center text-[9px] font-bold uppercase">
+                        <span>Skills Overlap</span>
+                        <span>{matchReport.skills.score}%</span>
+                      </div>
+                      <div className="h-2.5 w-full bg-slate-100 border border-border/25 rounded-sm overflow-hidden" role="progressbar" aria-valuenow={matchReport.skills.score} aria-valuemin={0} aria-valuemax={100} aria-label="Skills Match Progress">
+                        <div className="h-full bg-primary" style={{ width: `${matchReport.skills.score}%` }} />
+                      </div>
+                    </div>
+ 
+                    {/* Experience Level Progress */}
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center text-[9px] font-bold uppercase">
+                        <span>Experience Level</span>
+                        <span>{matchReport.experience.score}%</span>
+                      </div>
+                      <div className="h-2.5 w-full bg-slate-100 border border-border/25 rounded-sm overflow-hidden" role="progressbar" aria-valuenow={matchReport.experience.score} aria-valuemin={0} aria-valuemax={100} aria-label="Experience Match Progress">
+                        <div className="h-full bg-primary" style={{ width: `${matchReport.experience.score}%` }} />
+                      </div>
+                    </div>
+ 
+                    {/* Location Match Progress */}
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center text-[9px] font-bold uppercase">
+                        <span>Location Preferences</span>
+                        <span>{matchReport.location.score}%</span>
+                      </div>
+                      <div className="h-2.5 w-full bg-slate-100 border border-border/25 rounded-sm overflow-hidden" role="progressbar" aria-valuenow={matchReport.location.score} aria-valuemin={0} aria-valuemax={100} aria-label="Location Match Progress">
+                        <div className="h-full bg-primary" style={{ width: `${matchReport.location.score}%` }} />
+                      </div>
+                    </div>
+ 
+                    {/* Salary Targets Progress */}
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center text-[9px] font-bold uppercase">
+                        <span>Compensation Range</span>
+                        <span>{matchReport.salary.score}%</span>
+                      </div>
+                      <div className="h-2.5 w-full bg-slate-100 border border-border/25 rounded-sm overflow-hidden" role="progressbar" aria-valuenow={matchReport.salary.score} aria-valuemin={0} aria-valuemax={100} aria-label="Salary Match Progress">
+                        <div className="h-full bg-primary" style={{ width: `${matchReport.salary.score}%` }} />
+                      </div>
+                    </div>
+ 
+                    {/* Education Matching Progress */}
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center text-[9px] font-bold uppercase">
+                        <span>Education Align</span>
+                        <span>{matchReport.education.score}%</span>
+                      </div>
+                      <div className="h-2.5 w-full bg-slate-100 border border-border/25 rounded-sm overflow-hidden" role="progressbar" aria-valuenow={matchReport.education.score} aria-valuemin={0} aria-valuemax={100} aria-label="Education Match Progress">
+                        <div className="h-full bg-primary" style={{ width: `${matchReport.education.score}%` }} />
+                      </div>
+                    </div>
+ 
+                    {/* Job Quality Score Progress */}
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center text-[9px] font-bold uppercase">
+                        <span>Listing Trust & Quality</span>
+                        <span>{matchReport.quality.score}%</span>
+                      </div>
+                      <div className="h-2.5 w-full bg-slate-100 border border-border/25 rounded-sm overflow-hidden" role="progressbar" aria-valuenow={matchReport.quality.score} aria-valuemin={0} aria-valuemax={100} aria-label="Job Quality Match Progress">
+                        <div className="h-full bg-primary" style={{ width: `${matchReport.quality.score}%` }} />
+                      </div>
+                    </div>
+                  </div>
+                </BrutalCard>
+ 
+                {/* 2. Fit Reasons and Skills Analysis Grid */}
+                <div className="grid gap-6 md:grid-cols-2">
+                  {/* Why This Job Card */}
+                  <BrutalCard className="border-2 border-border bg-surface p-5 rounded-sm">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-foreground border-b-2 border-border/10 pb-2 mb-3">
+                      Why This Job?
+                    </h3>
+                    <ul className="space-y-2 text-xs font-semibold leading-relaxed">
+                      {matchReport.reasons.map((reason, idx) => (
+                        <li key={idx} className="flex gap-2 items-start leading-tight">
+                          <span className={cn("shrink-0 font-extrabold text-[9px] leading-none", reason.met ? "text-green-600" : "text-red-500")}>
+                            {reason.met ? "✓" : "✗"}
+                          </span>
+                          <span className={reason.met ? "text-foreground-secondary" : "text-foreground-muted"}>
+                            {reason.text}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </BrutalCard>
+ 
+                  {/* Skill Gap Analysis Card */}
+                  <BrutalCard className="border-2 border-border bg-surface p-5 rounded-sm space-y-3.5">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-foreground border-b-2 border-border/10 pb-2 mb-1">
+                      Skills Gap Analysis
+                    </h3>
+                    
+                    {/* Matched Skills */}
+                    <div className="space-y-1">
+                      <span className="text-[8px] font-black text-foreground-muted uppercase block">Matched Skills</span>
+                      <div className="flex flex-wrap gap-1">
+                        {matchReport.skills.matched.length > 0 ? matchReport.skills.matched.map((s) => (
+                          <Badge key={s} className="text-[7.5px] font-bold bg-green-50 text-green-700 border border-green-300 shadow-none px-1.5 py-0.5 rounded-sm">
+                            {s}
+                          </Badge>
+                        )) : <span className="text-[8px] font-bold text-foreground-muted italic">No matching skills found.</span>}
+                      </div>
+                    </div>
+ 
+                    {/* Missing Skills */}
+                    <div className="space-y-1">
+                      <span className="text-[8px] font-black text-foreground-muted uppercase block">Missing Skills</span>
+                      <div className="flex flex-wrap gap-1">
+                        {matchReport.skills.missing.length > 0 ? matchReport.skills.missing.map((s) => (
+                          <Badge key={s} className="text-[7.5px] font-bold bg-red-50 text-red-700 border border-red-300 shadow-none px-1.5 py-0.5 rounded-sm">
+                            {s}
+                          </Badge>
+                        )) : <span className="text-[8px] font-bold text-foreground-muted italic">None! You possess all required skills.</span>}
+                      </div>
+                    </div>
+ 
+                    {/* Additional Skills */}
+                    <div className="space-y-1">
+                      <span className="text-[8px] font-black text-foreground-muted uppercase block">Additional Preferred Skills</span>
+                      <div className="flex flex-wrap gap-1">
+                        {matchReport.skills.additional.slice(0, 6).map((s) => (
+                          <Badge key={s} className="text-[7.5px] font-bold bg-surface border border-border/20 text-foreground-secondary shadow-none px-1.5 py-0.5 rounded-sm">
+                            {s}
+                          </Badge>
+                        ))}
+                        {matchReport.skills.additional.length > 6 && (
+                          <span className="text-[8px] font-bold text-foreground-muted">+{matchReport.skills.additional.length - 6} more</span>
+                        )}
+                      </div>
+                    </div>
+                  </BrutalCard>
+                </div>
+ 
+                {/* 3. Learning Recommendations */}
+                {matchReport.recommendations.length > 0 && (
+                  <BrutalCard className="border-2 border-border bg-surface p-5 rounded-sm">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-foreground border-b-2 border-border/10 pb-2 mb-3">
+                      Recommended Upskilling Roadmap
+                    </h3>
+                    <div className="grid gap-3.5 sm:grid-cols-2">
+                      {matchReport.recommendations.map((rec, idx) => (
+                        <div key={idx} className="p-3 border border-border/20 rounded-sm bg-surface-secondary/20 flex gap-2.5 items-start">
+                          <div className="h-5 w-5 bg-primary border border-border rounded-sm flex items-center justify-center text-white text-[9px] font-black shrink-0">
+                            {idx + 1}
+                          </div>
+                          <div className="space-y-0.5 leading-snug">
+                            <span className="text-[8px] font-black text-primary uppercase block">Topic Recommendation</span>
+                            <span className="text-[10px] font-semibold text-foreground-secondary">{rec}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </BrutalCard>
+                )}
+              </div>
+            );
+          })() : null}
+ 
           {/* About Company (Moved here) */}
           {companyDetails && (
             <BrutalCard className="border-2 border-border bg-surface p-5 rounded-sm space-y-4">
