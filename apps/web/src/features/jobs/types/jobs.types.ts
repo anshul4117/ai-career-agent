@@ -81,6 +81,7 @@ export interface JobFilters {
   datePosted: "any" | "24h" | "week" | "month";
   easyApply: boolean;
   matchScoreMin: number | null;
+  matchFilter?: "all" | "90" | "80" | "70" | "high_match" | "missing_skills" | "high_quality_match" | null;
 }
 
 export interface CompanyFilters {

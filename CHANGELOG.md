@@ -2,6 +2,18 @@
 
 All notable changes to the AI Career Agent platform will be documented in this file.
 
+## [1.9.0] - 2026-07-07
+
+### Added
+- **AI Match Engine Service**: Created `match-engine.service.ts` evaluating skills overlap, experience decay, educational alignment, location preferences, salary budget fit, and job quality indexes.
+- **Match Zustand Store**: Created `match.store.ts` caching computed matching metrics with simulated loading latency states and error handling.
+- **Personalized Match Badges**: Displays real-time match percentages and labels (Excellent Match, Great Match, Good Match, Fair Match, Low Match) on every `JobCard`.
+- **Match Breakdown widget**: Added Match Breakdown details block to `JobDetailsPane` displaying progress bars for skills, experience, education, locations, salaries, and overall ratings.
+- **Why This Job & Skills Gap**: Integrated fit explanation lists and side-by-side skills analysis (Matched, Missing, Additional Skills).
+- **Upskilling Roadmap Builder**: Generates learning recommendations dynamically from missing skills.
+- **AI Match Filters**: Integrated search filters supporting 1-click match score thresholds (90%+, 80%+, 70%+, High Match, Missing <= 2 Skills, High Match + Quality).
+- **Recommended For You Sorting**: Sorting option sorting listings by highest match score, then highest quality.
+
 ## [1.8.0] - 2026-07-07
 
 ### Added

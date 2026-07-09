@@ -47,6 +47,7 @@ const DEFAULT_FILTERS: JobFilters = {
   datePosted: "any",
   easyApply: false,
   matchScoreMin: null,
+  matchFilter: "all"
 };
  
 export const useJobsStore = create<JobsState>()(

@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Bookmark, Calendar, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useProfileStore } from "@/features/profile";
+import { matchEngineService } from "../services/match-engine.service";
 
 interface JobCardProps {
   job: Job;
@@ -16,6 +18,8 @@ interface JobCardProps {
 }
 
 export function JobCard({ job, isSelected, onClick, onSave }: JobCardProps) {
+  const profileState = useProfileStore();
+
   const formatSalary = (min: number | null, max: number | null, curr: string) => {
     if (min === null && max === null) return "Salary Undisclosed";
     const minK = min ? `${Math.round(min / 1000)}k` : "0";
@@ -44,8 +48,35 @@ export function JobCard({ job, isSelected, onClick, onSave }: JobCardProps) {
     }
     return { label: "Good", className: "bg-gray-50 text-gray-700 border-gray-300 border" };
   };
+
+  const getMatchBadge = () => {
+    if (!profileState.profile) return null;
+    const qualityScore = Math.round((job.freshnessScore * 0.4) + (job.trustScore * 0.6));
+    const yearsOfExp = profileState.profile.career?.yearsOfExperience || 0;
+    const report = matchEngineService.calculateOverallMatch(
+      profileState.skills,
+      profileState.education,
+      profileState.preferences,
+      yearsOfExp,
+      job,
+      qualityScore
+    );
+
+    let colorClass = "bg-red-50 text-red-700 border-red-300 border";
+    if (report.overallScore >= 90) colorClass = "bg-green-50 text-green-700 border-green-300 border";
+    else if (report.overallScore >= 80) colorClass = "bg-blue-50 text-blue-700 border-blue-300 border";
+    else if (report.overallScore >= 70) colorClass = "bg-amber-50 text-amber-700 border-amber-300 border";
+    else if (report.overallScore >= 50) colorClass = "bg-gray-50 text-gray-700 border-gray-300 border";
+
+    return {
+      score: report.overallScore,
+      label: report.overallLabel,
+      className: colorClass
+    };
+  };
  
   const quality = getQualityBadge();
+  const match = getMatchBadge();
  
   return (
     <BrutalCard
@@ -85,6 +116,11 @@ export function JobCard({ job, isSelected, onClick, onSave }: JobCardProps) {
  
         {/* Badges row */}
         <div className="flex flex-wrap gap-1 mt-1.5">
+          {match && (
+            <Badge className={cn("text-[7.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-sm shadow-none font-extrabold", match.className)}>
+              {match.score}% {match.label}
+            </Badge>
+          )}
           <Badge className={cn("text-[7.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-sm shadow-none font-extrabold", quality.className)}>
             {quality.label}
           </Badge>

@@ -1,5 +1,7 @@
 import { mockJobs, mockCompanies } from "../mock/jobs-data";
 import type { Job, Company, JobFilters } from "../types/jobs.types";
+import { useProfileStore } from "@/features/profile";
+import { matchEngineService } from "./match-engine.service";
 
 export const jobService = {
   /**
@@ -125,21 +127,74 @@ export const jobService = {
       filtered = filtered.filter((j) => j.trustScore >= minScore);
     }
 
+    // Map AI match and quality scores dynamically based on the current candidate profile
+    const profileState = useProfileStore.getState();
+    const userProfile = profileState.profile;
+
+    let jobsWithScores = filtered.map((job) => {
+      const qualityScore = Math.round((job.freshnessScore * 0.4) + (job.trustScore * 0.6));
+      let matchScore = 0;
+      let missingSkillsCount = 0;
+      if (userProfile) {
+        const yearsOfExp = userProfile.career?.yearsOfExperience || 0;
+        const report = matchEngineService.calculateOverallMatch(
+          profileState.skills,
+          profileState.education,
+          profileState.preferences,
+          yearsOfExp,
+          job,
+          qualityScore
+        );
+        matchScore = report.overallScore;
+        missingSkillsCount = report.skills.missing.length;
+      } else {
+        matchScore = Math.round(job.trustScore * 0.8);
+      }
+      return {
+        ...job,
+        computedMatchScore: matchScore,
+        computedQualityScore: qualityScore,
+        missingSkillsCount
+      };
+    });
+
+    // Apply filters.matchFilter
+    if (filters.matchFilter && filters.matchFilter !== "all") {
+      const filterMode = filters.matchFilter;
+      jobsWithScores = jobsWithScores.filter((item) => {
+        if (filterMode === "90") return item.computedMatchScore >= 90;
+        if (filterMode === "80") return item.computedMatchScore >= 80;
+        if (filterMode === "70") return item.computedMatchScore >= 70;
+        if (filterMode === "high_match") return item.computedMatchScore >= 80;
+        if (filterMode === "missing_skills") return item.missingSkillsCount <= 2;
+        if (filterMode === "high_quality_match") {
+          return item.computedMatchScore >= 80 && item.computedQualityScore >= 80;
+        }
+        return true;
+      });
+    }
+
     // 2. Sort jobs
     if (params.sorting === "recent") {
-      filtered.sort((a, b) => new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime());
+      jobsWithScores.sort((a, b) => new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime());
     } else if (params.sorting === "salary_desc") {
-      filtered.sort((a, b) => (b.salaryMax || 0) - (a.salaryMax || 0));
+      jobsWithScores.sort((a, b) => (b.salaryMax || 0) - (a.salaryMax || 0));
     } else if (params.sorting === "salary_asc") {
-      filtered.sort((a, b) => (a.salaryMin || 0) - (b.salaryMin || 0));
+      jobsWithScores.sort((a, b) => (a.salaryMin || 0) - (b.salaryMin || 0));
     } else if (params.sorting === "match") {
-      filtered.sort((a, b) => (b.trustScore || 0) - (a.trustScore || 0));
+      // Recommended: sort by highest match score, then highest quality score
+      jobsWithScores.sort((a, b) => {
+        if (b.computedMatchScore !== a.computedMatchScore) {
+          return b.computedMatchScore - a.computedMatchScore;
+        }
+        return b.computedQualityScore - a.computedQualityScore;
+      });
     }
 
     // 3. Paginate
-    const total = filtered.length;
+    const total = jobsWithScores.length;
     const offset = (params.page - 1) * params.limit;
-    const paginated = filtered.slice(offset, offset + params.limit);
+    const paginated = (jobsWithScores as Job[]).slice(offset, offset + params.limit);
 
     // Artificial latency for visual loaders (200ms)
     await new Promise((resolve) => setTimeout(resolve, 200));

@@ -265,6 +265,8 @@ Users can:
 
 **Goal:** Match users to jobs.
 
+**Status:** Completed
+
 **Priority:** Critical
 
 **Backend:**
