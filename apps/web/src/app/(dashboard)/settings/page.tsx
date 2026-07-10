@@ -1,75 +1,74 @@
 "use client";
-
+ 
+import React, { useEffect } from "react";
 import { PageHeader } from "@/components/shared/page-header";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { mockUser } from "@/features/auth/mock/user";
-import { useAuth } from "@/features/auth";
-
+import { useSettingsStore, type SettingsTab } from "@/features/settings/store/settings.store";
+import { useResumeStore } from "@/features/resume/store/resume.store";
+import { SettingsSidebar } from "@/features/settings/components/settings-sidebar";
+import { SettingsPanels } from "@/features/settings/components/settings-panels";
+import { cn } from "@/lib/utils";
+ 
 export default function SettingsPage() {
-  const { user, isAuthenticated } = useAuth();
-  const activeUser = isAuthenticated && user ? user : mockUser;
-
+  const { loadSettings, activeTab, setActiveTab } = useSettingsStore();
+  const { loadResumes } = useResumeStore();
+ 
+  useEffect(() => {
+    loadSettings();
+    loadResumes();
+  }, [loadSettings, loadResumes]);
+ 
+  // Mobile horizontal scroll tabs definitions
+  const mobileTabs = [
+    { id: "profile" as SettingsTab, label: "Profile" },
+    { id: "account" as SettingsTab, label: "Account" },
+    { id: "jobs" as SettingsTab, label: "Job Preferences" },
+    { id: "notifications" as SettingsTab, label: "Notifications" },
+    { id: "ai" as SettingsTab, label: "AI & Resumes" },
+    { id: "appearance" as SettingsTab, label: "Appearance" },
+    { id: "connections" as SettingsTab, label: "Linked" },
+    { id: "privacy" as SettingsTab, label: "Privacy" }
+  ];
+ 
   return (
-    <div>
-      <PageHeader title="Settings" description="Manage your account and preferences." />
-
-      <div className="grid gap-6 max-w-2xl">
-        <Card>
-          <CardHeader>
-            <CardTitle>Account</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" defaultValue={activeUser.name || ""} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" defaultValue={activeUser.email || ""} />
-            </div>
-            <Button variant="secondary">Save Changes</Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Password</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Button variant="secondary">Change Password</Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Notifications</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <label className="flex items-center gap-3 text-sm">
-              <input type="checkbox" defaultChecked className="h-4 w-4 accent-primary" />
-              Email notifications for job matches
-            </label>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Preferences</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="theme">Theme</Label>
-              <Input id="theme" defaultValue="Solarized Light" disabled />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="language">Language</Label>
-              <Input id="language" defaultValue="English" />
-            </div>
-          </CardContent>
-        </Card>
+    <div className="space-y-6 pb-12 select-none relative max-w-[1200px] mx-auto w-full">
+      <PageHeader 
+        title="Settings & Preferences" 
+        description="Manage your profile metadata, AI assistants settings, notifications frequency, and credentials." 
+      />
+ 
+      {/* Mobile Horizontal Tab Navigation */}
+      <div className="block lg:hidden overflow-x-auto border-b-2 border-border bg-surface p-1 select-none shrink-0 rounded-sm">
+        <div className="flex gap-1.5 min-w-[640px] px-1 py-1">
+          {mobileTabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={cn(
+                "py-1.5 px-3 text-[9px] font-black uppercase tracking-wider border border-border rounded-xs transition-colors",
+                activeTab === tab.id 
+                  ? "bg-primary text-white border-primary" 
+                  : "bg-surface text-foreground-secondary hover:bg-surface-secondary"
+              )}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+ 
+      {/* Desktop side-by-side grid */}
+      <div className="grid gap-6 lg:grid-cols-4 items-start">
+        
+        {/* Left Column: Sidebar on Desktop, hidden on mobile */}
+        <div className="hidden lg:block lg:col-span-1">
+          <SettingsSidebar />
+        </div>
+ 
+        {/* Right Column: Active Configuration Forms Panels */}
+        <div className="lg:col-span-3">
+          <SettingsPanels />
+        </div>
+ 
       </div>
     </div>
   );
