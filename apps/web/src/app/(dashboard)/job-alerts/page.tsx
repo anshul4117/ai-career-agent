@@ -2,7 +2,7 @@
  
 import React, { useEffect, useState } from "react";
 import { PageHeader } from "@/components/shared/page-header";
-import { EmptyState } from "@/components/shared/empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -150,10 +150,13 @@ export default function JobAlertsPage() {
  
       {alerts.length === 0 ? (
         <EmptyState
+          icon={Bell}
           title="No job alerts active"
           description="Create alerts matching your dream role parameters to get notified instantly."
-          actionLabel="Create First Job Alert"
-          onAction={openCreateModal}
+          primaryAction={{
+            label: "Create First Job Alert",
+            onClick: openCreateModal
+          }}
         />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">

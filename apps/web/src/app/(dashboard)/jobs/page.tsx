@@ -9,8 +9,8 @@ import { JobCard } from "@/features/jobs/components/job-card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { BrutalSelect } from "@/components/ui/brutal-select";
-import { Skeleton } from "@/components/ui/skeleton";
-import { BrutalCard } from "@/components/ui/brutal-card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { JobsSkeleton } from "@/components/ui/skeleton-loaders";
 import { 
   Search, 
   SlidersHorizontal, 
@@ -506,40 +506,21 @@ export default function JobsPage() {
  
           {/* Jobs Listing */}
           {loading ? (
-            <div className={cn("grid gap-4", viewMode === "grid" ? "sm:grid-cols-2 xl:grid-cols-3" : "grid-cols-1")}>
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="p-4 border-2 border-border bg-surface space-y-3 rounded-sm">
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-3 w-1/2" />
-                  <div className="flex gap-2">
-                    <Skeleton className="h-5 w-16" />
-                    <Skeleton className="h-5 w-16" />
-                  </div>
-                  <Skeleton className="h-8 w-full" />
-                </div>
-              ))}
-            </div>
+            <JobsSkeleton />
           ) : jobs.length === 0 ? (
-            <BrutalCard className="p-8 border-[3px] border-border brutal-shadow bg-surface text-center space-y-4 rounded-sm">
-              <div className="inline-flex p-3 bg-amber-100 border-2 border-border text-amber-600 rounded-sm">
-                <AlertCircle className="h-8 w-8 stroke-[2.5px]" />
-              </div>
-              <h3 className="text-xs font-black uppercase tracking-widest text-foreground">No matches found</h3>
-              <p className="text-[10px] text-foreground-muted leading-relaxed font-semibold max-w-xs mx-auto">
-                Try widening your location parameters, salary limits, or adjusting keyword queries.
-              </p>
-              <Button 
-                onClick={() => {
+            <EmptyState
+              icon={AlertCircle}
+              title="No matches found"
+              description="Try widening your location parameters, salary limits, or adjusting keyword queries."
+              primaryAction={{
+                label: "Clear Filters",
+                onClick: () => {
                   useJobsStore.getState().resetFilters();
                   setKeywordInput("");
                   setLocationInput("");
-                }} 
-                variant="secondary" 
-                className="h-9 px-4 text-[10px] font-black uppercase border-2 border-border brutal-shadow-xs"
-              >
-                Clear Filters
-              </Button>
-            </BrutalCard>
+                }
+              }}
+            />
           ) : (
             <div className={cn("grid gap-4", viewMode === "grid" ? "sm:grid-cols-2 xl:grid-cols-3" : "grid-cols-1")}>
               {jobs.map((job) => (

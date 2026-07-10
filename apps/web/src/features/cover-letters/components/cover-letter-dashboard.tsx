@@ -6,13 +6,13 @@ import { useCoverLetterStore } from "../store/cover-letter.store";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { 
   FileText, 
   Plus, 
   Trash2, 
   Copy, 
   Sparkles, 
-  FileCode, 
   TrendingUp, 
   Clock, 
   Heart
@@ -191,23 +191,15 @@ export function CoverLetterDashboard({ onStartNew }: CoverLetterDashboardProps) 
               ))}
             </div>
           ) : (
-            <BrutalCard className="border-[3px] border-border bg-surface p-12 rounded-sm brutal-shadow-xs text-center space-y-4">
-              <div className="h-12 w-12 border-2 border-border bg-slate-100 flex items-center justify-center rounded-sm mx-auto text-foreground-muted">
-                <FileCode className="h-6 w-6" />
-              </div>
-              <div className="space-y-1">
-                <h4 className="text-xs font-black uppercase">No documents found</h4>
-                <p className="text-[9px] text-foreground-secondary leading-relaxed max-w-sm mx-auto">
-                  You do not have any saved cover letter drafts yet. Open the wizard generator to build your first tailored statement!
-                </p>
-              </div>
-              <BrutalButton 
-                onClick={() => onStartNew()}
-                className="h-9 px-5 uppercase font-bold text-xs bg-primary text-white mx-auto"
-              >
-                Create Layout
-              </BrutalButton>
-            </BrutalCard>
+            <EmptyState
+              icon={FileText}
+              title="No cover letters found"
+              description="You do not have any saved cover letter drafts yet. Open the wizard generator to build your first tailored statement!"
+              primaryAction={{
+                label: "Create Layout",
+                onClick: () => onStartNew()
+              }}
+            />
           )}
         </div>
  

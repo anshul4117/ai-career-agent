@@ -2,9 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Heading } from "@/components/ui/typography";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ResumeSkeleton } from "@/components/ui/skeleton-loaders";
 import { useResumeStore } from "@/features/resume/store/resume.store";
 import { MOCK_TEMPLATES } from "@/features/resume/services/resume.service";
 import { 
@@ -14,6 +17,7 @@ import {
 import { formatDate } from "@/lib/utils";
 
 export default function ResumePage() {
+  const router = useRouter();
   const {
     resumes,
     isLoading,
@@ -78,8 +82,16 @@ export default function ResumePage() {
 
   if (isLoading && resumes.length === 0) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-12 h-12 border-[3px] border-foreground border-t-transparent animate-spin brutal-shadow bg-surface rounded-full" />
+      <div className="space-y-8 w-full min-w-0 pb-16">
+        <div className="space-y-1">
+          <Heading level="h2" className="text-2xl md:text-3xl font-black uppercase tracking-tight">
+            Resume Workspace
+          </Heading>
+          <p className="text-foreground-secondary text-xs">
+            Manage your multiple resume layouts, customize formats, and track ATS scores.
+          </p>
+        </div>
+        <ResumeSkeleton />
       </div>
     );
   }
@@ -121,31 +133,19 @@ export default function ResumePage() {
 
       {/* Active Resumes Section */}
       {activeResumes.length === 0 ? (
-        <BrutalCard className="bg-surface border-3 border-border p-8 text-center space-y-4 brutal-shadow max-w-xl mx-auto py-12">
-          <div className="inline-flex p-3.5 bg-surface-secondary border-2 border-border brutal-shadow-sm rounded-sm">
-            <FileText className="h-8 w-8 text-foreground-muted" />
-          </div>
-          <Heading level="h3" className="text-lg font-black uppercase tracking-wider">
-            No Resumes Configured
-          </Heading>
-          <p className="text-xs text-foreground-secondary leading-relaxed max-w-md mx-auto">
-            {"You don't have any active resume layouts yet. Create a layout from scratch or upload your existing resume to parse details."}
-          </p>
-          <div className="pt-2 flex flex-col sm:flex-row justify-center gap-3">
-            <BrutalButton asChild variant="secondary" className="h-10 px-5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5">
-              <Link href="/resume/import">
-                <Sparkles className="h-4 w-4 text-primary" />
-                Import Existing Resume
-              </Link>
-            </BrutalButton>
-            <BrutalButton asChild className="h-10 px-5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5">
-              <Link href="/resume/new">
-                <Plus className="h-4 w-4" />
-                Create New Layout
-              </Link>
-            </BrutalButton>
-          </div>
-        </BrutalCard>
+        <EmptyState
+          icon={FileText}
+          title="No Resumes Configured"
+          description="You don't have any active resume layouts yet. Create a layout from scratch or upload your existing resume to parse details."
+          primaryAction={{
+            label: "Create New Layout",
+            onClick: () => router.push("/resume/new")
+          }}
+          secondaryAction={{
+            label: "Import Existing Resume",
+            onClick: () => router.push("/resume/import")
+          }}
+        />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {activeResumes.map((resume) => {

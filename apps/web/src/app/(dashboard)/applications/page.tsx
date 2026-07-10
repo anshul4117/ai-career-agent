@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BrutalSelect } from "@/components/ui/brutal-select";
 import { BrutalCard } from "@/components/ui/brutal-card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ApplicationsSkeleton } from "@/components/ui/skeleton-loaders";
 import { useApplicationStore } from "@/features/applications/store/application.store";
 import { ApplicationsDashboard } from "@/features/applications/components/applications-dashboard";
 import { KanbanBoard } from "@/features/applications/components/kanban-board";
@@ -365,10 +367,17 @@ export default function ApplicationsPage() {
  
       {/* 4. Dynamic Render Views */}
       {loading ? (
-        <div className="flex flex-col justify-center items-center py-16 space-y-4">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-border border-t-primary" />
-          <span className="text-[10px] font-black uppercase text-foreground-secondary">Loading Tracker Engine...</span>
-        </div>
+        <ApplicationsSkeleton />
+      ) : applications.length === 0 ? (
+        <EmptyState
+          icon={LayoutList}
+          title="No applications tracked yet"
+          description="Start logging your job applications to manage interviews, offers, and follow-ups in one clean workspace."
+          primaryAction={{
+            label: "Add Application",
+            onClick: () => setIsAddOpen(true)
+          }}
+        />
       ) : (
         <div className="w-full">
           {activeTab === "kanban" && (

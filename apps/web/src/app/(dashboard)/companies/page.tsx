@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import { BrutalSelect } from "@/components/ui/brutal-select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
-import { BrutalCard } from "@/components/ui/brutal-card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { CompaniesSkeleton } from "@/components/ui/skeleton-loaders";
 import { 
   Search, 
   SlidersHorizontal, 
@@ -19,7 +19,6 @@ import {
   ChevronRight,
   LayoutGrid,
   LayoutList,
-  AlertCircle,
   Building2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -234,30 +233,17 @@ export default function CompaniesPage() {
 
           {/* Company Cards List */}
           {loading ? (
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="p-4 border-2 border-border bg-surface space-y-3 rounded-sm">
-                  <div className="flex gap-2">
-                    <Skeleton className="h-10 w-10" />
-                    <div className="space-y-2 flex-1">
-                      <Skeleton className="h-4 w-3/4" />
-                      <Skeleton className="h-3 w-1/2" />
-                    </div>
-                  </div>
-                  <Skeleton className="h-10 w-full" />
-                </div>
-              ))}
-            </div>
+            <CompaniesSkeleton />
           ) : companies.length === 0 ? (
-            <BrutalCard className="p-8 border-[3px] border-border brutal-shadow bg-surface text-center space-y-4 rounded-sm">
-              <div className="inline-flex p-3 bg-amber-100 border-2 border-border text-amber-600 rounded-sm">
-                <AlertCircle className="h-8 w-8 stroke-[2.5px]" />
-              </div>
-              <h3 className="text-xs font-black uppercase tracking-widest text-foreground">No companies found</h3>
-              <p className="text-[10px] text-foreground-muted leading-relaxed font-semibold max-w-xs mx-auto">
-                No matching profiles found. Try widening size checkboxes or search parameters.
-              </p>
-            </BrutalCard>
+            <EmptyState
+              icon={Building2}
+              title="No companies found"
+              description="No matching corporate profiles found. Try widening size checkboxes or search parameters."
+              primaryAction={{
+                label: "Reset Filters",
+                onClick: resetFilters
+              }}
+            />
           ) : (
             <div className={cn("grid gap-4", viewMode === "grid" ? "sm:grid-cols-2 md:grid-cols-3" : "grid-cols-1")}>
               {companies.map((company) => (

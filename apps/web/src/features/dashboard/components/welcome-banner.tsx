@@ -36,7 +36,7 @@ export function WelcomeBanner() {
   return (
     <div className="bg-surface border-[3px] border-border p-5 md:p-6 brutal-shadow flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full min-w-0">
       <div className="space-y-1">
-        <Heading level="h2" className="text-3xl font-black uppercase tracking-tight">
+        <Heading level="h2" className="text-2xl sm:text-3xl font-black uppercase tracking-tight">
           {greeting}, {activeUser.firstName} 👋
         </Heading>
         <Text className="text-foreground-secondary text-sm font-medium leading-relaxed">

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { WelcomeBanner } from "@/features/dashboard/components/welcome-banner";
 import { AnalyticsCards } from "@/features/dashboard/components/analytics-cards";
 import { ResumeProgressCard } from "@/features/dashboard/components/resume-progress-card";
@@ -11,8 +11,25 @@ import { RecentApplications } from "@/features/dashboard/components/recent-appli
 import { AIInsights } from "@/features/dashboard/components/ai-insights";
 import { RecentActivity } from "@/features/dashboard/components/recent-activity";
 import { RecentlyViewedJobs } from "@/features/dashboard/components/recently-viewed-jobs";
+import { DashboardSkeleton } from "@/components/ui/skeleton-loaders";
 
 export default function DashboardPage() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 550);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="space-y-6 w-full min-w-0">
+        <WelcomeBanner />
+        <DashboardSkeleton />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 w-full min-w-0">
       {/* 1. Welcome Section */}

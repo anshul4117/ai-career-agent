@@ -6,10 +6,11 @@ import { useSettingsStore, type SettingsTab } from "@/features/settings/store/se
 import { useResumeStore } from "@/features/resume/store/resume.store";
 import { SettingsSidebar } from "@/features/settings/components/settings-sidebar";
 import { SettingsPanels } from "@/features/settings/components/settings-panels";
+import { SettingsSkeleton } from "@/components/ui/skeleton-loaders";
 import { cn } from "@/lib/utils";
  
 export default function SettingsPage() {
-  const { loadSettings, activeTab, setActiveTab } = useSettingsStore();
+  const { loadSettings, activeTab, setActiveTab, loading, settings } = useSettingsStore();
   const { loadResumes } = useResumeStore();
  
   useEffect(() => {
@@ -36,40 +37,46 @@ export default function SettingsPage() {
         description="Manage your profile metadata, AI assistants settings, notifications frequency, and credentials." 
       />
  
-      {/* Mobile Horizontal Tab Navigation */}
-      <div className="block lg:hidden overflow-x-auto border-b-2 border-border bg-surface p-1 select-none shrink-0 rounded-sm">
-        <div className="flex gap-1.5 min-w-[640px] px-1 py-1">
-          {mobileTabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={cn(
-                "py-1.5 px-3 text-[9px] font-black uppercase tracking-wider border border-border rounded-xs transition-colors",
-                activeTab === tab.id 
-                  ? "bg-primary text-white border-primary" 
-                  : "bg-surface text-foreground-secondary hover:bg-surface-secondary"
-              )}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      {loading || !settings ? (
+        <SettingsSkeleton />
+      ) : (
+        <>
+          {/* Mobile Horizontal Tab Navigation */}
+          <div className="block lg:hidden overflow-x-auto border-b-2 border-border bg-surface p-1 select-none shrink-0 rounded-sm">
+            <div className="flex gap-1.5 min-w-[640px] px-1 py-1">
+              {mobileTabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={cn(
+                    "py-1.5 px-3 text-[9px] font-black uppercase tracking-wider border border-border rounded-xs transition-colors",
+                    activeTab === tab.id 
+                      ? "bg-primary text-white border-primary" 
+                      : "bg-surface text-foreground-secondary hover:bg-surface-secondary"
+                  )}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
  
-      {/* Desktop side-by-side grid */}
-      <div className="grid gap-6 lg:grid-cols-4 items-start">
-        
-        {/* Left Column: Sidebar on Desktop, hidden on mobile */}
-        <div className="hidden lg:block lg:col-span-1">
-          <SettingsSidebar />
-        </div>
+          {/* Desktop side-by-side grid */}
+          <div className="grid gap-6 lg:grid-cols-4 items-start">
+            
+            {/* Left Column: Sidebar on Desktop, hidden on mobile */}
+            <div className="hidden lg:block lg:col-span-1">
+              <SettingsSidebar />
+            </div>
  
-        {/* Right Column: Active Configuration Forms Panels */}
-        <div className="lg:col-span-3">
-          <SettingsPanels />
-        </div>
+            {/* Right Column: Active Configuration Forms Panels */}
+            <div className="lg:col-span-3">
+              <SettingsPanels />
+            </div>
  
-      </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

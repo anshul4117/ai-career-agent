@@ -384,17 +384,19 @@ Users can:
  
 ---
  
-## Phase 11 — Settings & Preferences
+## Phase 11 — Settings & UX Polish
  
-**Goal:** Manage account credentials, themes, job query alerts, and AI writing preferences.
+**Goal:** Manage account credentials, themes, job query alerts, AI writing preferences, and mobile layout quality checks.
  
-**Status:** ✅ Complete (Sprint 11.1)
+**Status:** ✅ Complete (Sprint 11.1 & 11.2)
  
 **Priority:** Medium
  
 **Frontend:**
 - Settings sidebar and panels
 - Completion indicators widget
+- Reusable Skeleton loaders & EmptyState components
+- Mobile layout optimizations
  
 **Deliverables:** Centralized settings dashboard.
  

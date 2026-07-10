@@ -2,7 +2,7 @@
  
 import React, { useEffect, useState, useTransition } from "react";
 import { PageHeader } from "@/components/shared/page-header";
-import { EmptyState } from "@/components/shared/empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { SavedJobCard } from "@/features/jobs/components/saved-job-card";
 import { useBookmarkStore } from "@/features/jobs/store/bookmark.store";
 import { useRouter } from "next/navigation";
@@ -13,7 +13,8 @@ import {
   Search, 
   Check, 
   Clock, 
-  ArrowRight
+  ArrowRight,
+  Bookmark
 } from "lucide-react";
  
 export default function SavedJobsPage() {
@@ -85,10 +86,13 @@ export default function SavedJobsPage() {
  
       {savedJobs.length === 0 ? (
         <EmptyState
+          icon={Bookmark}
           title="No saved jobs"
           description="Browse the listings feed page to save interesting jobs."
-          actionLabel="Browse Jobs Feed"
-          actionHref="/jobs"
+          primaryAction={{
+            label: "Browse Jobs Feed",
+            onClick: () => router.push("/jobs")
+          }}
         />
       ) : (
         <div className="space-y-6">
