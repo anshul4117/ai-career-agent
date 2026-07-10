@@ -2,6 +2,13 @@
 
 All notable changes to the AI Career Agent platform will be documented in this file.
 
+## [2.3.0] - 2026-07-10
+
+### Added
+- **Settings & Preferences Service**: Created `settings.service.ts` managing user settings loading, saving to localStorage, factory resets, and JSON-based export/import configuration utilities.
+- **Settings Zustand Store**: Created `settings.store.ts` store managing active tabs, staging unsaved changes drafts, tracking modification comparisons, and computing real-time Profile Completion scores.
+- **Centralized Settings Dashboard**: Overhauled `/settings` layout into a responsive dashboard. Added a desktop sidebar menu, mobile scrollable tab bars, quick action resets, active session tables, CCPA/GDPR compliance data download utilities, and a sticky save-changes bar.
+
 ## [2.2.0] - 2026-07-09
 
 ### Added
