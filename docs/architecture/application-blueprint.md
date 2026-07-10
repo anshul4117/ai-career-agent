@@ -117,6 +117,7 @@ Current
 * Cover Letters (Core & Advanced AI Generator)
 * Notifications
 * Settings & Preferences (Core Settings Dashboard)
+* UX Utilities (Reusable Skeleton Loaders & Customizable Empty States)
 
 Future
 

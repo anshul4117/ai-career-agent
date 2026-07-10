@@ -2,6 +2,13 @@
 
 All notable changes to the AI Career Agent platform will be documented in this file.
 
+## [2.4.0] - 2026-07-10
+
+### Added
+- **Reusable Skeleton System**: Introduced `skeleton-loaders.tsx` providing structural loading skeletons (`DashboardSkeleton`, `JobsSkeleton`, `CompaniesSkeleton`, `ApplicationsSkeleton`, `ResumeSkeleton`, `SettingsSkeleton`, and `NotificationsSkeleton`).
+- **Standardized Empty States**: Created `empty-state.tsx` supporting customizable icons, descriptions, and primary/secondary CTA actions. Integrated it across Jobs, Saved Jobs, Applications, Companies, Resumes, Settings (Connected Accounts), and Notifications views.
+- **Mobile Spacing & Padding Audit**: Tuned responsive layout wrappers, padding spacing, and touch targets to handle small viewports down to 320px elegantly.
+
 ## [2.3.0] - 2026-07-10
 
 ### Added

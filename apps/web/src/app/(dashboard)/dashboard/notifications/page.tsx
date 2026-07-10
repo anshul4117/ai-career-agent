@@ -6,7 +6,8 @@ import { PageHeader } from "@/components/shared/page-header";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { EmptyState } from "@/components/shared/empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
+import { NotificationsSkeleton } from "@/components/ui/skeleton-loaders";
 import { useNotificationsStore } from "@/features/notifications/store/notifications.store";
 import type { NotificationCategory } from "@/features/notifications/types/notifications.types";
 import { 
@@ -185,17 +186,16 @@ export default function NotificationsPage() {
  
       {/* Main Inbox Render */}
       {loading && notifications.length === 0 ? (
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-16 bg-surface border-2 border-border brutal-shadow-xs animate-pulse rounded-sm" />
-          ))}
-        </div>
+        <NotificationsSkeleton />
       ) : filteredNotifications.length === 0 ? (
         <EmptyState
+          icon={Bell}
           title={`No notifications in ${CATEGORY_LABELS[activeCategory]}`}
           description="Everything is currently quiet. We will notify you when matching jobs or applications status changes occur."
-          actionLabel="Go to Job Discovery"
-          actionHref="/jobs"
+          primaryAction={{
+            label: "Go to Job Discovery",
+            onClick: () => router.push("/jobs")
+          }}
         />
       ) : (
         <div className="space-y-3">

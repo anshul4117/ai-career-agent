@@ -5,6 +5,7 @@ import { useSettingsStore } from "../store/settings.store";
 import { useResumeStore } from "../../resume/store/resume.store";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { 
   User, 
   Key, 
@@ -661,28 +662,40 @@ export function SettingsPanels() {
               <h3 className="text-[10px] font-black uppercase tracking-widest text-foreground">Linked Accounts Providers</h3>
             </div>
  
-            <div className="space-y-3">
-              {draftSettings.connections.map((c) => (
-                <div key={c.id} className="flex justify-between items-center p-3 border border-border bg-surface rounded-sm">
-                  <div className="space-y-0.5">
-                    <span className="text-[10px] font-black uppercase block">{c.provider}</span>
-                    <span className="text-[8px] text-foreground-secondary block">
-                      {c.connected ? `Connected as: ${c.username || "Authorized profile"}` : "Not authorized connection"}
-                    </span>
+            {draftSettings.connections.every((c) => !c.connected) ? (
+              <EmptyState
+                icon={LinkIcon}
+                title="No connected accounts"
+                description="Link your developer and social profiles to sync career credentials and resume data."
+                primaryAction={{
+                  label: "Connect Google Provider",
+                  onClick: () => handleToggleConnection(draftSettings.connections[0]?.id)
+                }}
+              />
+            ) : (
+              <div className="space-y-3">
+                {draftSettings.connections.map((c) => (
+                  <div key={c.id} className="flex justify-between items-center p-3 border border-border bg-surface rounded-sm">
+                    <div className="space-y-0.5">
+                      <span className="text-[10px] font-black uppercase block">{c.provider}</span>
+                      <span className="text-[8px] text-foreground-secondary block">
+                        {c.connected ? `Connected as: ${c.username || "Authorized profile"}` : "Not authorized connection"}
+                      </span>
+                    </div>
+
+                    <BrutalButton
+                      onClick={() => handleToggleConnection(c.id)}
+                      className={cn(
+                        "h-8 px-3 text-[8.5px] font-black uppercase shadow-none border rounded-none",
+                        c.connected ? "bg-rose-50 text-rose-600 border-rose-200" : "bg-primary text-white border-primary"
+                      )}
+                    >
+                      {c.connected ? "Disconnect" : "Connect Account"}
+                    </BrutalButton>
                   </div>
- 
-                  <BrutalButton
-                    onClick={() => handleToggleConnection(c.id)}
-                    className={cn(
-                      "h-8 px-3 text-[8.5px] font-black uppercase shadow-none border rounded-none",
-                      c.connected ? "bg-rose-50 text-rose-600 border-rose-200" : "bg-primary text-white border-primary"
-                    )}
-                  >
-                    {c.connected ? "Disconnect" : "Connect Account"}
-                  </BrutalButton>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </BrutalCard>
         )}
  
