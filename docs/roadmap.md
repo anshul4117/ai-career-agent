@@ -381,7 +381,23 @@ Users can:
 **Deliverables:** One-click cover letter creation.
 
 **Success Criteria:** Relevant cover letters generated.
-
+ 
+---
+ 
+## Phase 11 — Settings & Preferences
+ 
+**Goal:** Manage account credentials, themes, job query alerts, and AI writing preferences.
+ 
+**Status:** ✅ Complete (Sprint 11.1)
+ 
+**Priority:** Medium
+ 
+**Frontend:**
+- Settings sidebar and panels
+- Completion indicators widget
+ 
+**Deliverables:** Centralized settings dashboard.
+ 
 ---
 
 ## MVP Release

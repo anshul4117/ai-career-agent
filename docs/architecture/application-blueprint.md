@@ -116,7 +116,7 @@ Current
 * Applications
 * Cover Letters (Core & Advanced AI Generator)
 * Notifications
-* Settings
+* Settings & Preferences (Core Settings Dashboard)
 
 Future
 
