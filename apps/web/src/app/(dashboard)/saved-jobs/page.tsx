@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { BrutalSelect } from "@/components/ui/brutal-select";
 import { BrutalCard } from "@/components/ui/brutal-card";
+import { SavedJobSkeleton } from "@/components/ui/skeleton-loaders";
 import { 
   Search, 
   Check, 
@@ -19,7 +20,7 @@ import {
  
 export default function SavedJobsPage() {
   const router = useRouter();
-  const { savedJobs, recentlyViewed, fetchSavedJobs, toggleSaveJob, loadRecentlyViewed } = useBookmarkStore();
+  const { savedJobs, recentlyViewed, fetchSavedJobs, toggleSaveJob, loadRecentlyViewed, loading } = useBookmarkStore();
   const [, startTransition] = useTransition();
   
   // Search and Sort states
@@ -84,7 +85,13 @@ export default function SavedJobsPage() {
         description="Review, search, and manage the opportunities you've bookmarked."
       />
  
-      {savedJobs.length === 0 ? (
+      {loading ? (
+        <div className="space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <SavedJobSkeleton key={i} />
+          ))}
+        </div>
+      ) : savedJobs.length === 0 ? (
         <EmptyState
           icon={Bookmark}
           title="No saved jobs"

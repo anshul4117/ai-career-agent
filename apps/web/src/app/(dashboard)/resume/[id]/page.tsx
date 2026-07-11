@@ -8,6 +8,8 @@ import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { useResumeStore } from "@/features/resume/store/resume.store";
 import { useProfileStore } from "@/features/profile/store/profile.store";
+import { ResumePreviewSkeleton } from "@/components/ui/skeleton-loaders";
+import { Skeleton } from "@/components/ui/skeleton";
 import { MOCK_TEMPLATES } from "@/features/resume/services/resume.service";
 import { 
   ArrowLeft, Printer, Share2, Copy, Pencil 
@@ -64,8 +66,21 @@ export default function ResumePreviewPage({ params }: PageProps) {
 
   if (isLoading || !currentResume || !profile) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-12 h-12 border-[3px] border-foreground border-t-transparent animate-spin brutal-shadow bg-surface rounded-full" />
+      <div className="space-y-6 pb-16 w-full min-w-0">
+        <div className="flex justify-between items-center border-b-3 border-border pb-5">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-10 w-10" />
+            <div className="space-y-1">
+              <Skeleton className="h-5 w-40" />
+              <Skeleton className="h-3 w-48" />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Skeleton className="h-9 w-20" />
+            <Skeleton className="h-9 w-20" />
+          </div>
+        </div>
+        <ResumePreviewSkeleton />
       </div>
     );
   }

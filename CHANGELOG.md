@@ -2,6 +2,11 @@
 
 All notable changes to the AI Career Agent platform will be documented in this file.
 
+## [2.4.1] - 2026-07-10
+
+### Fixed
+- **Loading Flow Overhaul**: Removed the generic App Router `loading.tsx` from the `(dashboard)` group directory. Handled all loading states within the page components, ensuring single-UI loading transitions using page-specific high-fidelity skeletons and avoiding double loading screens on route transitions.
+
 ## [2.4.0] - 2026-07-10
 
 ### Added

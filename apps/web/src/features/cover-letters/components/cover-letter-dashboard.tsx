@@ -18,6 +18,7 @@ import {
   Heart
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CoverLetterDashboardSkeleton } from "@/components/ui/skeleton-loaders";
  
 interface CoverLetterDashboardProps {
   onStartNew: (template?: CoverLetterTemplate) => void;
@@ -34,8 +35,12 @@ export function CoverLetterDashboard({ onStartNew }: CoverLetterDashboardProps) 
     saveDraft 
   } = useCoverLetterStore();
  
+  const [localLoading, setLocalLoading] = React.useState(true);
+ 
   React.useEffect(() => {
     loadDrafts();
+    const timer = setTimeout(() => setLocalLoading(false), 500);
+    return () => clearTimeout(timer);
   }, [loadDrafts]);
  
   const generatedToday = React.useMemo(() => {
@@ -80,6 +85,10 @@ export function CoverLetterDashboard({ onStartNew }: CoverLetterDashboardProps) 
     { id: "modern" as CoverLetterTemplate, name: "Streamlined Modern", desc: "Design-centric roles, product managers.", color: "bg-green-100 text-green-700" },
     { id: "minimal" as CoverLetterTemplate, name: "Letter Minimal", desc: "Direct, clean cover layouts.", color: "bg-slate-100 text-slate-700" }
   ];
+ 
+  if (localLoading) {
+    return <CoverLetterDashboardSkeleton />;
+  }
  
   return (
     <div className="space-y-6 text-left select-none">

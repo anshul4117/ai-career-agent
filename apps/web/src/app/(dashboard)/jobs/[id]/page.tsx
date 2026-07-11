@@ -7,6 +7,7 @@ import { JobDetailsPane } from "@/features/jobs/components/job-details-pane";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Check, AlertCircle } from "lucide-react";
 import { BrutalCard } from "@/components/ui/brutal-card";
+import { JobDetailsSkeleton } from "@/components/ui/skeleton-loaders";
 import Link from "next/link";
 
 interface PageProps {
@@ -86,20 +87,7 @@ export default function JobDetailPage({ params }: PageProps) {
 
       {/* Detail Pane container */}
       {loading || !selectedJob ? (
-        <div className="p-6 border-[3px] border-border bg-surface space-y-4 rounded-sm brutal-shadow">
-          <div className="space-y-2">
-            <div className="h-4 w-24 bg-slate-200 animate-pulse rounded" />
-            <div className="h-7 w-2/3 bg-slate-200 animate-pulse rounded" />
-            <div className="h-4 w-1/3 bg-slate-200 animate-pulse rounded" />
-          </div>
-          <div className="grid grid-cols-4 gap-4">
-            <div className="h-16 bg-slate-200 animate-pulse rounded" />
-            <div className="h-16 bg-slate-200 animate-pulse rounded" />
-            <div className="h-16 bg-slate-200 animate-pulse rounded" />
-            <div className="h-16 bg-slate-200 animate-pulse rounded" />
-          </div>
-          <div className="h-40 bg-slate-200 animate-pulse rounded" />
-        </div>
+        <JobDetailsSkeleton />
       ) : (
         <JobDetailsPane job={selectedJob} onToast={triggerToast} />
       )}

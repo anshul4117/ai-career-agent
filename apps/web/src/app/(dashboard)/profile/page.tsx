@@ -18,6 +18,7 @@ import { CareerPreferenceCard } from "@/features/profile/components/career-prefe
 
 import { useProfileStore } from "@/features/profile/store/profile.store";
 import { calculateProfileCompletion } from "@/features/profile/utils/completion-engine";
+import { ProfileSkeleton } from "@/components/ui/skeleton-loaders";
 
 export default function ProfilePage() {
   const {
@@ -39,11 +40,7 @@ export default function ProfilePage() {
   }, [loadProfile]);
 
   if (isLoading || !profile) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-12 h-12 border-[3px] border-foreground border-t-transparent animate-spin brutal-shadow bg-surface rounded-full" />
-      </div>
-    );
+    return <ProfileSkeleton />;
   }
 
   // Recalculate audit dynamically

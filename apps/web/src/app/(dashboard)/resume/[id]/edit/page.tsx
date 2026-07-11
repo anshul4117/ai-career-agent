@@ -5,6 +5,7 @@ import { useBuilderStore } from "@/features/resume/store/builder.store";
 import { ResumeBuilderLayout } from "@/features/resume/components/builder/builder-layout";
 import { Heading } from "@/components/ui/typography";
 import { BrutalButton } from "@/components/ui/brutal-button";
+import { ResumeBuilderSkeleton } from "@/components/ui/skeleton-loaders";
 import Link from "next/link";
 
 interface PageProps {
@@ -52,11 +53,16 @@ export default function EditResumePage({ params }: PageProps) {
 
   if (isLoading && !currentResume) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <div className="w-12 h-12 border-[3px] border-foreground border-t-transparent animate-spin brutal-shadow bg-surface rounded-full" />
-        <span className="text-xs font-black uppercase text-foreground-secondary tracking-widest animate-pulse">
-          Bootstrapping Builder Workspace...
-        </span>
+      <div className="space-y-6">
+        <div className="space-y-1">
+          <Heading level="h2" className="text-2xl font-black uppercase tracking-tight">
+            Resume Builder Workspace
+          </Heading>
+          <p className="text-foreground-secondary text-xs">
+            Refining layout structure and custom text sections.
+          </p>
+        </div>
+        <ResumeBuilderSkeleton />
       </div>
     );
   }
