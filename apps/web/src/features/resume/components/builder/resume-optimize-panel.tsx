@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { ResumeOptimizerSkeleton } from "@/components/ui/skeleton-loaders";
  
 export function ResumeOptimizePanel() {
   const { currentResume } = useBuilderStore();
@@ -104,11 +105,8 @@ export function ResumeOptimizePanel() {
       </div>
  
       {/* Loading spacer */}
-      {loading && !analysis && (
-        <div className="py-8 text-center text-foreground-muted space-y-2">
-          <div className="h-6 w-6 animate-spin border-2 border-primary border-t-transparent rounded-full mx-auto" />
-          <p className="text-[8.5px] font-black uppercase">Ingesting qualifications...</p>
-        </div>
+      {loading && (
+        <ResumeOptimizerSkeleton />
       )}
  
       {/* Analysis widgets */}

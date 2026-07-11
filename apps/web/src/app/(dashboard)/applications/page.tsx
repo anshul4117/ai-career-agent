@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { BrutalSelect } from "@/components/ui/brutal-select";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { EmptyState } from "@/components/ui/empty-state";
-import { ApplicationsSkeleton } from "@/components/ui/skeleton-loaders";
+import { ApplicationsSkeleton, CalendarSkeleton } from "@/components/ui/skeleton-loaders";
 import { useApplicationStore } from "@/features/applications/store/application.store";
 import { ApplicationsDashboard } from "@/features/applications/components/applications-dashboard";
 import { KanbanBoard } from "@/features/applications/components/kanban-board";
@@ -367,7 +367,11 @@ export default function ApplicationsPage() {
  
       {/* 4. Dynamic Render Views */}
       {loading ? (
-        <ApplicationsSkeleton />
+        activeTab === "calendar" ? (
+          <CalendarSkeleton />
+        ) : (
+          <ApplicationsSkeleton />
+        )
       ) : applications.length === 0 ? (
         <EmptyState
           icon={LayoutList}

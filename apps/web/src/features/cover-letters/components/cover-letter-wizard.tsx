@@ -22,6 +22,7 @@ import {
   Edit3
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CoverLetterEditorSkeleton, CoverLetterPreviewSkeleton } from "@/components/ui/skeleton-loaders";
  
 interface CoverLetterWizardProps {
   initialTemplate?: CoverLetterTemplate;
@@ -338,7 +339,13 @@ export function CoverLetterWizard({ initialTemplate, onBackToDashboard }: CoverL
           </div>
  
           {/* Active Pane */}
-          {activeDraft ? (
+          {loading ? (
+            editorTab === "preview" ? (
+              <CoverLetterPreviewSkeleton />
+            ) : (
+              <CoverLetterEditorSkeleton />
+            )
+          ) : activeDraft ? (
             <div className="space-y-4">
               
               {/* Tab 1: Editor */}

@@ -8,6 +8,7 @@ import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { CompanyDetailsSkeleton } from "@/components/ui/skeleton-loaders";
 import { 
   MapPin, 
   Globe, 
@@ -15,7 +16,6 @@ import {
   Users, 
   TrendingUp, 
   ChevronLeft,
-  Loader2,
   AlertCircle
 } from "lucide-react";
 import Link from "next/link";
@@ -71,9 +71,17 @@ export default function CompanyDetailPage({ params }: PageProps) {
 
   if (loading || !selectedCompany) {
     return (
-      <div className="p-12 text-center max-w-lg mx-auto space-y-4">
-        <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-        <p className="text-xs font-bold text-foreground-muted uppercase">Loading company profile...</p>
+      <div className="space-y-6">
+        <div>
+          <Button
+            variant="ghost"
+            disabled
+            className="h-9 px-3 border-2 border-border brutal-shadow-xs hover:bg-surface-secondary text-[10px] font-black uppercase flex items-center gap-1 rounded-sm opacity-50"
+          >
+            <ChevronLeft className="h-4 w-4 stroke-[2.5px]" /> Back to Directory
+          </Button>
+        </div>
+        <CompanyDetailsSkeleton />
       </div>
     );
   }

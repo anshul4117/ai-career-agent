@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { BrutalSelect } from "@/components/ui/brutal-select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAlertsStore } from "@/features/jobs/store/alerts.store";
+import { JobAlertSkeleton } from "@/components/ui/skeleton-loaders";
 import type { JobAlert, JobAlertFilters } from "@/features/jobs/types/alerts.types";
 import type { RemoteType, ExperienceLevel, EmploymentType } from "@/features/jobs/types/jobs.types";
 import { 
@@ -21,7 +22,7 @@ import {
 } from "lucide-react";
  
 export default function JobAlertsPage() {
-  const { alerts, fetchAlerts, createAlert, updateAlert, deleteAlert, duplicateAlert, toggleAlertActive } = useAlertsStore();
+  const { alerts, fetchAlerts, createAlert, updateAlert, deleteAlert, duplicateAlert, toggleAlertActive, loading } = useAlertsStore();
   
   // Modal toggle state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -148,7 +149,13 @@ export default function JobAlertsPage() {
         </Button>
       </div>
  
-      {alerts.length === 0 ? (
+      {loading ? (
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+          {[...Array(3)].map((_, i) => (
+            <JobAlertSkeleton key={i} />
+          ))}
+        </div>
+      ) : alerts.length === 0 ? (
         <EmptyState
           icon={Bell}
           title="No job alerts active"
