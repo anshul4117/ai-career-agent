@@ -114,7 +114,7 @@ export default function CompanyDetailPage({ params }: PageProps) {
                 {selectedCompany.name}
               </h1>
               {selectedCompany.isActivelyHiring && (
-                <Badge className="text-[8px] font-black uppercase bg-green-200 border-2 border-border text-green-800 px-1.5 py-0.5 rounded-sm brutal-shadow-xs">
+                <Badge className="text-[8px] font-black uppercase bg-green-200 border-2 border-border text-green-800 dark:text-green-300 px-1.5 py-0.5 rounded-sm brutal-shadow-xs">
                   Hiring
                 </Badge>
               )}
@@ -257,7 +257,7 @@ export default function CompanyDetailPage({ params }: PageProps) {
                 className="border-2 border-border bg-surface p-4 brutal-shadow-xs hover:brutal-shadow-sm rounded-sm"
               >
                 <div className="flex gap-2 items-center">
-                  <div className="h-8 w-8 border-2 border-border bg-amber-100 flex items-center justify-center font-black uppercase text-[10px] rounded-sm shrink-0">
+                  <div className="h-8 w-8 border-2 border-border bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center font-black uppercase text-[10px] rounded-sm shrink-0">
                     {simCo.name.slice(0, 2)}
                   </div>
                   <div className="min-w-0">

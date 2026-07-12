@@ -183,9 +183,9 @@ export default function JobAlertsPage() {
                         {alert.title}
                       </h3>
                       {alert.isActive ? (
-                        <Badge className="text-[7px] font-bold bg-green-100 text-green-700 border border-green-300 px-1 py-0.5 rounded-sm">Active</Badge>
+                        <Badge className="text-[7px] font-bold bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-500/30 px-1 py-0.5 rounded-sm">Active</Badge>
                       ) : (
-                        <Badge className="text-[7px] font-bold bg-gray-100 text-gray-500 border border-gray-300 px-1 py-0.5 rounded-sm">Paused</Badge>
+                        <Badge className="text-[7px] font-bold bg-gray-100 text-gray-500 dark:text-foreground-muted border border-gray-300 px-1 py-0.5 rounded-sm">Paused</Badge>
                       )}
                     </div>
                     <span className="inline-block text-[8px] font-bold uppercase tracking-wider text-foreground-muted bg-surface-secondary px-1.5 py-0.5 border border-border/10 rounded-sm">
@@ -218,17 +218,17 @@ export default function JobAlertsPage() {
                     </Badge>
                   )}
                   {alert.filters.remoteType && alert.filters.remoteType.map((rt) => (
-                    <Badge key={rt} className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-amber-100 text-foreground">
+                    <Badge key={rt} className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-amber-100 dark:bg-amber-500/20 text-foreground">
                       {rt}
                     </Badge>
                   ))}
                   {alert.filters.salaryMin && (
-                    <Badge className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-green-100 text-foreground">
+                    <Badge className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-green-100 dark:bg-green-500/20 text-foreground">
                       &gt;=${Math.round(alert.filters.salaryMin / 1000)}k
                     </Badge>
                   )}
                   {alert.filters.experienceLevel && alert.filters.experienceLevel.map((el) => (
-                    <Badge key={el} className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-blue-100 text-foreground">
+                    <Badge key={el} className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-blue-100 dark:bg-blue-500/20 text-foreground">
                       {el}
                     </Badge>
                   ))}

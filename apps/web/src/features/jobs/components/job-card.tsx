@@ -38,15 +38,15 @@ export function JobCard({ job, isSelected, onClick, onSave }: JobCardProps) {
   const getQualityBadge = () => {
     const score = Math.round((job.freshnessScore * 0.4) + (job.trustScore * 0.6));
     if (job.trustScore >= 85) {
-      return { label: "Verified", className: "bg-green-50 text-green-700 border-green-300 border" };
+      return { label: "Verified", className: "bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border-green-300 dark:border-green-500/30 border" };
     }
     if (job.freshnessScore >= 80) {
-      return { label: "Fresh", className: "bg-blue-50 text-blue-700 border-blue-300 border" };
+      return { label: "Fresh", className: "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-300 dark:border-blue-500/30 border" };
     }
     if (score >= 70) {
-      return { label: "Trusted", className: "bg-amber-50 text-amber-700 border-amber-300 border" };
+      return { label: "Trusted", className: "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-500/30 border" };
     }
-    return { label: "Good", className: "bg-gray-50 text-gray-700 border-gray-300 border" };
+    return { label: "Good", className: "bg-gray-50 dark:bg-surface-secondary text-gray-700 dark:text-foreground-secondary border-gray-300 border" };
   };
 
   const getMatchBadge = () => {
@@ -63,10 +63,10 @@ export function JobCard({ job, isSelected, onClick, onSave }: JobCardProps) {
     );
 
     let colorClass = "bg-red-50 text-red-700 border-red-300 border";
-    if (report.overallScore >= 90) colorClass = "bg-green-50 text-green-700 border-green-300 border";
-    else if (report.overallScore >= 80) colorClass = "bg-blue-50 text-blue-700 border-blue-300 border";
-    else if (report.overallScore >= 70) colorClass = "bg-amber-50 text-amber-700 border-amber-300 border";
-    else if (report.overallScore >= 50) colorClass = "bg-gray-50 text-gray-700 border-gray-300 border";
+    if (report.overallScore >= 90) colorClass = "bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border-green-300 dark:border-green-500/30 border";
+    else if (report.overallScore >= 80) colorClass = "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-300 dark:border-blue-500/30 border";
+    else if (report.overallScore >= 70) colorClass = "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-500/30 border";
+    else if (report.overallScore >= 50) colorClass = "bg-gray-50 dark:bg-surface-secondary text-gray-700 dark:text-foreground-secondary border-gray-300 border";
 
     return {
       score: report.overallScore,
@@ -83,7 +83,7 @@ export function JobCard({ job, isSelected, onClick, onSave }: JobCardProps) {
       onClick={onClick}
       className={cn(
         "cursor-pointer border-[3px] border-border brutal-shadow-xs transition-all hover:-translate-y-0.5 hover:brutal-shadow bg-surface rounded-sm p-3 relative flex flex-col justify-between gap-2.5 text-left",
-        isSelected && "bg-amber-50/50 border-primary brutal-shadow"
+        isSelected && "bg-amber-50 dark:bg-amber-500/10/50 border-primary brutal-shadow"
       )}
     >
       <div>

@@ -114,7 +114,7 @@ export function ApplicationsDashboard({ applications, onOpenDetails }: Applicati
       {/* 1. Statistics Cards Row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <BrutalCard className="border-[3px] border-border bg-surface p-4 rounded-sm brutal-shadow-xs flex items-center gap-3">
-          <div className="h-10 w-10 border-2 border-border bg-blue-100 flex items-center justify-center rounded-sm text-blue-700 shrink-0">
+          <div className="h-10 w-10 border-2 border-border bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center rounded-sm text-blue-700 dark:text-blue-400 shrink-0">
             <Briefcase className="h-5 w-5 stroke-[2.5px]" />
           </div>
           <div>
@@ -124,7 +124,7 @@ export function ApplicationsDashboard({ applications, onOpenDetails }: Applicati
         </BrutalCard>
  
         <BrutalCard className="border-[3px] border-border bg-surface p-4 rounded-sm brutal-shadow-xs flex items-center gap-3">
-          <div className="h-10 w-10 border-2 border-border bg-amber-100 flex items-center justify-center rounded-sm text-amber-700 shrink-0">
+          <div className="h-10 w-10 border-2 border-border bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center rounded-sm text-amber-700 dark:text-amber-400 shrink-0">
             <Clock className="h-5 w-5 stroke-[2.5px]" />
           </div>
           <div>
@@ -134,7 +134,7 @@ export function ApplicationsDashboard({ applications, onOpenDetails }: Applicati
         </BrutalCard>
  
         <BrutalCard className="border-[3px] border-border bg-surface p-4 rounded-sm brutal-shadow-xs flex items-center gap-3">
-          <div className="h-10 w-10 border-2 border-border bg-green-100 flex items-center justify-center rounded-sm text-green-700 shrink-0">
+          <div className="h-10 w-10 border-2 border-border bg-green-100 dark:bg-green-500/20 flex items-center justify-center rounded-sm text-green-700 dark:text-green-400 shrink-0">
             <Award className="h-5 w-5 stroke-[2.5px]" />
           </div>
           <div>
@@ -144,7 +144,7 @@ export function ApplicationsDashboard({ applications, onOpenDetails }: Applicati
         </BrutalCard>
  
         <BrutalCard className="border-[3px] border-border bg-surface p-4 rounded-sm brutal-shadow-xs flex items-center gap-3">
-          <div className="h-10 w-10 border-2 border-border bg-rose-100 flex items-center justify-center rounded-sm text-rose-700 shrink-0">
+          <div className="h-10 w-10 border-2 border-border bg-rose-100 dark:bg-rose-500/20 flex items-center justify-center rounded-sm text-rose-700 dark:text-rose-400 shrink-0">
             <UserCheck className="h-5 w-5 stroke-[2.5px]" />
           </div>
           <div>
@@ -167,9 +167,9 @@ export function ApplicationsDashboard({ applications, onOpenDetails }: Applicati
             <div className="space-y-1">
               <div className="flex justify-between items-center text-[9px] font-black uppercase">
                 <span>Employer Response Rate</span>
-                <span className="text-blue-600">{conversion.responseRate}%</span>
+                <span className="text-blue-600 dark:text-blue-400">{conversion.responseRate}%</span>
               </div>
-              <div className="h-3 w-full bg-slate-100 border-2 border-border rounded-sm overflow-hidden" role="progressbar" aria-valuenow={conversion.responseRate} aria-valuemin={0} aria-valuemax={100} aria-label="Employer Response Rate Progress">
+              <div className="h-3 w-full bg-slate-100 dark:bg-surface-hover border-2 border-border rounded-sm overflow-hidden" role="progressbar" aria-valuenow={conversion.responseRate} aria-valuemin={0} aria-valuemax={100} aria-label="Employer Response Rate Progress">
                 <div className="h-full bg-blue-500 border-r border-border" style={{ width: `${conversion.responseRate}%` }} />
               </div>
             </div>
@@ -178,9 +178,9 @@ export function ApplicationsDashboard({ applications, onOpenDetails }: Applicati
             <div className="space-y-1">
               <div className="flex justify-between items-center text-[9px] font-black uppercase">
                 <span>Interview Invite Rate</span>
-                <span className="text-amber-600">{conversion.interviewRate}%</span>
+                <span className="text-amber-600 dark:text-amber-400">{conversion.interviewRate}%</span>
               </div>
-              <div className="h-3 w-full bg-slate-100 border-2 border-border rounded-sm overflow-hidden" role="progressbar" aria-valuenow={conversion.interviewRate} aria-valuemin={0} aria-valuemax={100} aria-label="Interview Invitation Rate Progress">
+              <div className="h-3 w-full bg-slate-100 dark:bg-surface-hover border-2 border-border rounded-sm overflow-hidden" role="progressbar" aria-valuenow={conversion.interviewRate} aria-valuemin={0} aria-valuemax={100} aria-label="Interview Invitation Rate Progress">
                 <div className="h-full bg-amber-500 border-r border-border" style={{ width: `${conversion.interviewRate}%` }} />
               </div>
             </div>
@@ -189,9 +189,9 @@ export function ApplicationsDashboard({ applications, onOpenDetails }: Applicati
             <div className="space-y-1">
               <div className="flex justify-between items-center text-[9px] font-black uppercase">
                 <span>Offer Conversion Rate</span>
-                <span className="text-green-600">{conversion.offerRate}%</span>
+                <span className="text-green-600 dark:text-green-400">{conversion.offerRate}%</span>
               </div>
-              <div className="h-3 w-full bg-slate-100 border-2 border-border rounded-sm overflow-hidden" role="progressbar" aria-valuenow={conversion.offerRate} aria-valuemin={0} aria-valuemax={100} aria-label="Offer Conversion Rate Progress">
+              <div className="h-3 w-full bg-slate-100 dark:bg-surface-hover border-2 border-border rounded-sm overflow-hidden" role="progressbar" aria-valuenow={conversion.offerRate} aria-valuemin={0} aria-valuemax={100} aria-label="Offer Conversion Rate Progress">
                 <div className="h-full bg-green-500 border-r border-border" style={{ width: `${conversion.offerRate}%` }} />
               </div>
             </div>
@@ -207,7 +207,7 @@ export function ApplicationsDashboard({ applications, onOpenDetails }: Applicati
           </div>
  
           {/* Responsive SVG Sparkline Chart */}
-          <div className="w-full flex justify-center items-center py-4 bg-slate-50/40 border border-border/10 rounded-sm mt-3">
+          <div className="w-full flex justify-center items-center py-4 bg-slate-50/40 dark:bg-surface-secondary/40 border border-border/10 rounded-sm mt-3">
             <svg 
               viewBox={`0 0 ${chartWidth} ${chartHeight}`} 
               className="w-full max-h-[140px] drop-shadow-sm overflow-visible"
@@ -263,11 +263,11 @@ export function ApplicationsDashboard({ applications, onOpenDetails }: Applicati
                   <div 
                     key={app.id}
                     onClick={() => onOpenDetails(app.id)}
-                    className="p-2.5 border-2 border-border hover:border-primary bg-slate-50/40 rounded-sm cursor-pointer space-y-1.5 transition-all text-xs"
+                    className="p-2.5 border-2 border-border hover:border-primary bg-slate-50/40 dark:bg-surface-secondary/40 rounded-sm cursor-pointer space-y-1.5 transition-all text-xs"
                   >
                     <div className="flex justify-between items-start">
                       <span className="text-[8px] font-black text-primary uppercase">{app.company}</span>
-                      <Badge className="text-[6.5px] font-black uppercase bg-amber-100 text-amber-800 border-amber-300 border py-0 px-1 rounded-none shadow-none">{app.interviewRound}</Badge>
+                      <Badge className="text-[6.5px] font-black uppercase bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-500/30 border py-0 px-1 rounded-none shadow-none">{app.interviewRound}</Badge>
                     </div>
                     <h4 className="font-black uppercase text-[10.5px] tracking-tight truncate">{app.jobTitle}</h4>
                     
@@ -282,7 +282,7 @@ export function ApplicationsDashboard({ applications, onOpenDetails }: Applicati
                         target="_blank"
                         rel="noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className="mt-2 text-[7.5px] font-black uppercase text-blue-600 hover:text-blue-800 flex items-center gap-0.5 border border-blue-200 bg-blue-50 px-1 py-0.5 w-max rounded-sm"
+                        className="mt-2 text-[7.5px] font-black uppercase text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:text-blue-300 flex items-center gap-0.5 border border-blue-200 bg-blue-50 dark:bg-blue-500/10 px-1 py-0.5 w-max rounded-sm"
                       >
                         Join Call <ExternalLink className="h-2 w-2" />
                       </a>
@@ -314,7 +314,7 @@ export function ApplicationsDashboard({ applications, onOpenDetails }: Applicati
                     <div className="flex justify-between items-start">
                       <span className="text-[8px] font-black text-emerald-700 uppercase">{app.company}</span>
                       {app.offerDeadline && (
-                        <Badge className="text-[6px] font-black bg-rose-100 text-rose-800 border-rose-300 border py-0 px-1 rounded-none shadow-none flex items-center gap-0.5">
+                        <Badge className="text-[6px] font-black bg-rose-100 dark:bg-rose-500/20 text-rose-800 dark:text-rose-300 border-rose-300 dark:border-rose-500/30 border py-0 px-1 rounded-none shadow-none flex items-center gap-0.5">
                           <AlertCircle className="h-2 w-2" /> Expires: {app.offerDeadline}
                         </Badge>
                       )}
@@ -332,7 +332,7 @@ export function ApplicationsDashboard({ applications, onOpenDetails }: Applicati
           {/* Follow-up Reminders */}
           <div className="border-t border-border/10 pt-3">
             <h4 className="text-[9px] font-black uppercase text-foreground flex items-center gap-1 mb-2">
-              <BellRing className="h-3.5 w-3.5 text-blue-600" /> Follow-up tasks
+              <BellRing className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" /> Follow-up tasks
             </h4>
             {followUpReminders.length > 0 ? (
               <div className="space-y-2 max-h-[100px] overflow-y-auto pr-1">
@@ -340,10 +340,10 @@ export function ApplicationsDashboard({ applications, onOpenDetails }: Applicati
                   <div 
                     key={app.id}
                     onClick={() => onOpenDetails(app.id)}
-                    className="p-1.5 border border-border/40 hover:border-primary bg-slate-50/50 rounded-sm cursor-pointer flex justify-between items-center text-[8.5px] font-bold uppercase"
+                    className="p-1.5 border border-border/40 hover:border-primary bg-slate-50/50 dark:bg-surface-secondary/50 rounded-sm cursor-pointer flex justify-between items-center text-[8.5px] font-bold uppercase"
                   >
                     <span className="truncate max-w-[120px]">{app.company} ({app.jobTitle})</span>
-                    <Badge className="text-[6.5px] font-black bg-blue-100 text-blue-800 border-none px-1 rounded-none">Active</Badge>
+                    <Badge className="text-[6.5px] font-black bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-300 border-none px-1 rounded-none">Active</Badge>
                   </div>
                 ))}
               </div>
@@ -361,7 +361,7 @@ export function ApplicationsDashboard({ applications, onOpenDetails }: Applicati
             </h3>
  
             {/* Sparkline column graph */}
-            <div className="flex justify-between items-end h-[60px] px-2 mt-4 bg-slate-50/30 border border-border/10 rounded-sm py-2">
+            <div className="flex justify-between items-end h-[60px] px-2 mt-4 bg-slate-50/30 dark:bg-surface-secondary/30 border border-border/10 rounded-sm py-2">
               {weeklyActivity.map((count, idx) => {
                 const heightPercent = Math.max(8, (count / maxWeeklyCount) * 100);
                 return (

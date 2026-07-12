@@ -58,7 +58,7 @@ export function ParseProgress() {
         </div>
 
         {/* Outer track */}
-        <div className="w-full h-6 border-3 border-border bg-slate-100 rounded-none relative overflow-hidden">
+        <div className="w-full h-6 border-3 border-border bg-slate-100 dark:bg-surface-hover rounded-none relative overflow-hidden">
           {/* Inner neon fill */}
           <div 
             className="h-full bg-primary border-r-2 border-border transition-all duration-150 ease-out"

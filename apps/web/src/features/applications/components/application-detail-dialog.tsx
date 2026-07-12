@@ -120,12 +120,12 @@ export function ApplicationDetailDialog({
  
         {/* AI Scores Summary Row */}
         <div className="grid grid-cols-2 gap-3.5">
-          <BrutalCard className="border-2 border-border bg-slate-50/50 p-2.5 rounded-sm flex flex-col items-center">
+          <BrutalCard className="border-2 border-border bg-slate-50/50 dark:bg-surface-secondary/50 p-2.5 rounded-sm flex flex-col items-center">
             <span className="text-[7.5px] font-black text-foreground-muted uppercase">Match Quality</span>
             <span className="text-sm font-black text-primary mt-0.5">{application.matchScore}% Match</span>
           </BrutalCard>
           
-          <BrutalCard className="border-2 border-border bg-slate-50/50 p-2.5 rounded-sm flex flex-col items-center">
+          <BrutalCard className="border-2 border-border bg-slate-50/50 dark:bg-surface-secondary/50 p-2.5 rounded-sm flex flex-col items-center">
             <span className="text-[7.5px] font-black text-foreground-muted uppercase">Trust Quality</span>
             <span className="text-sm font-black text-foreground mt-0.5">{application.jobQuality}% Trust</span>
           </BrutalCard>
@@ -438,7 +438,7 @@ export function ApplicationDetailDialog({
                 onDelete(application.id);
               }
             }}
-            className="flex-1 h-9 border-2 border-error bg-rose-50 hover:bg-rose-100/50 text-error text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1 rounded-sm brutal-shadow-xs hover:brutal-shadow transition-all"
+            className="flex-1 h-9 border-2 border-error bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20/50 text-error text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1 rounded-sm brutal-shadow-xs hover:brutal-shadow transition-all"
           >
             <Trash2 className="h-4 w-4" /> Delete Application
           </Button>

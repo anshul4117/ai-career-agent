@@ -250,7 +250,7 @@ export function ResumeSectionsSidebar({
                 {sec.isCompleted ? (
                   <span className={cn(
                     "flex items-center justify-center h-4 w-4 border rounded-full text-[8px]",
-                    isActive ? "bg-white text-primary border-white" : "bg-success text-white border-success"
+                    isActive ? "bg-white dark:bg-surface text-primary border-white" : "bg-success text-white border-success"
                   )}>
                     ✔
                   </span>

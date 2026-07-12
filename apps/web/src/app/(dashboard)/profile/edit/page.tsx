@@ -426,7 +426,7 @@ export default function EditProfilePage() {
                 className={`px-3 py-1.5 border-2 rounded-lg text-[9px] font-black uppercase tracking-wider shrink-0 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   isActive
                     ? "bg-primary text-white border-foreground brutal-shadow-sm translate-x-[-1px] translate-y-[-1px]"
-                    : "bg-white text-foreground border-foreground hover:bg-surface-secondary"
+                    : "bg-white dark:bg-surface text-foreground border-foreground hover:bg-surface-secondary"
                 }`}
               >
                 {sec.label}
@@ -480,7 +480,7 @@ export default function EditProfilePage() {
                     className={`w-full text-left px-3 py-2.5 border-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                       isActive
                         ? "bg-primary text-white border-foreground brutal-shadow-sm border-l-4 border-l-white scale-[1.02]"
-                        : "bg-white text-foreground border-foreground hover:bg-surface-secondary hover:translate-x-[-1px] hover:translate-y-[-1px]"
+                        : "bg-white dark:bg-surface text-foreground border-foreground hover:bg-surface-secondary hover:translate-x-[-1px] hover:translate-y-[-1px]"
                     }`}
                   >
                     {sec.label}

@@ -42,7 +42,7 @@ export function ReviewPanel() {
       <span className={cn(
         "inline-flex items-center gap-1 border px-2 py-0.5 text-[9px] font-black uppercase rounded-sm brutal-shadow-xs select-none",
         isLow 
-          ? "bg-amber-100 border-amber-400 text-amber-600" 
+          ? "bg-amber-100 dark:bg-amber-500/20 border-amber-400 dark:border-amber-500/40 text-amber-600 dark:text-amber-400" 
           : "bg-emerald-100 border-emerald-400 text-emerald-600"
       )}>
         {isLow ? <AlertTriangle className="h-3 w-3" /> : <Check className="h-3 w-3" />}
@@ -212,7 +212,7 @@ export function ReviewPanel() {
                 {/* Right Extracted Value */}
                 <div className={cn(
                   "p-3 border-2 rounded-sm",
-                  reviewState.personal.action === "accept" ? "border-emerald-300 bg-emerald-50/10" : "border-border/15 opacity-60 bg-slate-50/10"
+                  reviewState.personal.action === "accept" ? "border-emerald-300 bg-emerald-50/10 dark:bg-emerald-500/10" : "border-border/15 opacity-60 bg-slate-50/10 dark:bg-surface-secondary/10"
                 )}>
                   <h4 className="text-[9px] font-black uppercase tracking-wider text-foreground-muted mb-2">
                     Extracted Resume Data
@@ -259,7 +259,7 @@ export function ReviewPanel() {
             {reviewState.experience.action === "accept" && (
               <div className="space-y-3 pt-2">
                 {reviewState.experience.value.map((exp, idx) => (
-                  <div key={exp.id || idx} className="border border-border/20 p-3 bg-slate-50/30 rounded-sm">
+                  <div key={exp.id || idx} className="border border-border/20 p-3 bg-slate-50/30 dark:bg-surface-secondary/30 rounded-sm">
                     <div className="flex justify-between font-bold text-[10px] text-foreground">
                       <span className="uppercase font-black">{exp.jobTitle} — {exp.companyName}</span>
                       <span className="font-mono text-[9px]">{exp.startDate} to {exp.currentPosition ? "Present" : exp.endDate}</span>
@@ -303,7 +303,7 @@ export function ReviewPanel() {
             {reviewState.education.action === "accept" && (
               <div className="space-y-3 pt-2">
                 {reviewState.education.value.map((edu, idx) => (
-                  <div key={edu.id || idx} className="border border-border/20 p-3 bg-slate-50/30 rounded-sm text-[10px] text-foreground">
+                  <div key={edu.id || idx} className="border border-border/20 p-3 bg-slate-50/30 dark:bg-surface-secondary/30 rounded-sm text-[10px] text-foreground">
                     <div className="flex justify-between font-bold">
                       <span>{edu.degree} in {edu.fieldOfStudy}</span>
                       <span className="font-mono text-[9px]">{edu.startDate} – {edu.endDate}</span>
@@ -388,7 +388,7 @@ export function ReviewPanel() {
             {reviewState.projects.action === "accept" && (
               <div className="space-y-3 pt-2">
                 {reviewState.projects.value.map((proj, idx) => (
-                  <div key={proj.id || idx} className="border border-border/20 p-3 bg-slate-50/30 rounded-sm text-[10px] space-y-1">
+                  <div key={proj.id || idx} className="border border-border/20 p-3 bg-slate-50/30 dark:bg-surface-secondary/30 rounded-sm text-[10px] space-y-1">
                     <div className="font-bold text-primary">{proj.title} ({proj.role})</div>
                     <p className="leading-relaxed">{proj.description}</p>
                     {proj.techStack && proj.techStack.length > 0 && (

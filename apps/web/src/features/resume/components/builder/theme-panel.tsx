@@ -371,8 +371,8 @@ export function ThemePanel() {
             className="border-2 border-border bg-surface p-1.5 text-[10px] font-bold uppercase rounded-sm brutal-shadow-sm h-10"
           >
             <option value="bg-transparent">Transparent</option>
-            <option value="bg-slate-50/50">Subtle Slate</option>
-            <option value="bg-slate-100/50">Solid Slate tint</option>
+            <option value="bg-slate-50/50 dark:bg-surface-secondary/50">Subtle Slate</option>
+            <option value="bg-slate-100 dark:bg-surface-hover/50">Solid Slate tint</option>
           </select>
         </div>
       </div>

@@ -133,15 +133,15 @@ export function OptimizationStudio() {
  
               <div className="grid gap-4 md:grid-cols-2 text-[10.5px] leading-relaxed">
                 {/* Original */}
-                <div className="p-3 border border-border bg-slate-50/50 rounded-sm space-y-2">
-                  <span className="text-[7.5px] font-black text-rose-700 uppercase bg-rose-50 border border-rose-200 px-1 py-0.5 rounded-none shadow-none">Original Summary</span>
+                <div className="p-3 border border-border bg-slate-50/50 dark:bg-surface-secondary/50 rounded-sm space-y-2">
+                  <span className="text-[7.5px] font-black text-rose-700 dark:text-rose-400 uppercase bg-rose-50 dark:bg-rose-500/10 border border-rose-200 px-1 py-0.5 rounded-none shadow-none">Original Summary</span>
                   <p className="text-foreground-secondary italic">{analysis.summaryOpt.original}</p>
                 </div>
  
                 {/* Optimized */}
-                <div className="p-3 border-2 border-green-400 bg-green-50/10 rounded-sm space-y-2">
-                  <span className="text-[7.5px] font-black text-green-700 uppercase bg-green-50 border border-green-200 px-1 py-0.5 rounded-none shadow-none">AI Optimized Summary</span>
-                  <p className="text-green-950 font-medium bg-green-50/30 p-1.5 rounded-sm">{analysis.summaryOpt.improved}</p>
+                <div className="p-3 border-2 border-green-400 dark:border-green-500/40 bg-green-50 dark:bg-green-500/10/10 rounded-sm space-y-2">
+                  <span className="text-[7.5px] font-black text-green-700 dark:text-green-400 uppercase bg-green-50 dark:bg-green-500/10 border border-green-200 px-1 py-0.5 rounded-none shadow-none">AI Optimized Summary</span>
+                  <p className="text-green-950 font-medium bg-green-50 dark:bg-green-500/10/30 p-1.5 rounded-sm">{analysis.summaryOpt.improved}</p>
                   <p className="text-[8.5px] text-foreground-muted font-bold pt-1.5 border-t border-border/10">Rationale: {analysis.summaryOpt.rationale}</p>
                 </div>
               </div>
@@ -175,7 +175,7 @@ export function OptimizationStudio() {
                     {/* After */}
                     <div className="flex-1 space-y-1 border-t md:border-t-0 md:border-l border-border/10 pt-2 md:pt-0 md:pl-3">
                       <span className="text-[7.5px] font-black text-primary uppercase">Optimized version</span>
-                      <p className="text-[10.5px] text-foreground font-black leading-relaxed text-green-950 bg-green-50/10 p-1 rounded-xs">{b.improved}</p>
+                      <p className="text-[10.5px] text-foreground font-black leading-relaxed text-green-950 bg-green-50 dark:bg-green-500/10/10 p-1 rounded-xs">{b.improved}</p>
                       <span className="text-[8px] font-bold text-foreground-muted block mt-1.5">{b.impact}</span>
                     </div>
                   </div>
@@ -195,7 +195,7 @@ export function OptimizationStudio() {
                   Readability Index
                 </h3>
                 <div className="py-6 flex flex-col items-center justify-center">
-                  <div className="h-16 w-16 rounded-full border-[3px] border-primary flex items-center justify-center text-lg font-black bg-amber-50/10 text-primary brutal-shadow-xs">
+                  <div className="h-16 w-16 rounded-full border-[3px] border-primary flex items-center justify-center text-lg font-black bg-amber-50 dark:bg-amber-500/10/10 text-primary brutal-shadow-xs">
                     {analysis.readability.readabilityScore}
                   </div>
                   <span className="text-[8.5px] font-black uppercase tracking-wider text-foreground mt-3">Tone: {analysis.readability.tone}</span>
@@ -214,7 +214,7 @@ export function OptimizationStudio() {
                       <span>Avg Sentence Length</span>
                       <span>{analysis.readability.sentenceLength} words</span>
                     </div>
-                    <div className="h-2 w-full bg-slate-100 border border-border rounded-sm overflow-hidden">
+                    <div className="h-2 w-full bg-slate-100 dark:bg-surface-hover border border-border rounded-sm overflow-hidden">
                       <div className="h-full bg-primary" style={{ width: `${Math.min(100, (analysis.readability.sentenceLength / 25) * 100)}%` }} />
                     </div>
                   </div>
@@ -224,7 +224,7 @@ export function OptimizationStudio() {
                       <span>Passive Voice Instances</span>
                       <span>{analysis.readability.passiveVoiceCount} detected</span>
                     </div>
-                    <div className="h-2 w-full bg-slate-100 border border-border rounded-sm overflow-hidden">
+                    <div className="h-2 w-full bg-slate-100 dark:bg-surface-hover border border-border rounded-sm overflow-hidden">
                       <div className="h-full bg-rose-500" style={{ width: `${Math.min(100, (analysis.readability.passiveVoiceCount / 8) * 100)}%` }} />
                     </div>
                   </div>
@@ -234,7 +234,7 @@ export function OptimizationStudio() {
                       <span>Grammar Warnings</span>
                       <span>{analysis.readability.grammarWarningsCount} flagged</span>
                     </div>
-                    <div className="h-2 w-full bg-slate-100 border border-border rounded-sm overflow-hidden">
+                    <div className="h-2 w-full bg-slate-100 dark:bg-surface-hover border border-border rounded-sm overflow-hidden">
                       <div className="h-full bg-amber-500" style={{ width: `${Math.min(100, (analysis.readability.grammarWarningsCount / 5) * 100)}%` }} />
                     </div>
                   </div>
@@ -263,8 +263,8 @@ export function OptimizationStudio() {
                       className={cn(
                         "p-2.5 border-2 border-border rounded-sm flex justify-between items-center cursor-pointer transition-all",
                         ver.id === activeVersionId 
-                          ? "bg-amber-50 border-primary" 
-                          : "bg-slate-50/50 hover:bg-slate-100/50"
+                          ? "bg-amber-50 dark:bg-amber-500/10 border-primary" 
+                          : "bg-slate-50/50 dark:bg-surface-secondary/50 hover:bg-slate-100 dark:hover:bg-surface-hover/50"
                       )}
                     >
                       <div>
@@ -342,7 +342,7 @@ export function OptimizationStudio() {
               {history.length > 0 ? (
                 <div className="space-y-2 max-h-[250px] overflow-y-auto pr-1">
                   {history.map((item) => (
-                    <div key={item.id} className="p-2 border border-border bg-slate-50/50 rounded-sm flex justify-between items-center text-[9px] font-bold uppercase">
+                    <div key={item.id} className="p-2 border border-border bg-slate-50/50 dark:bg-surface-secondary/50 rounded-sm flex justify-between items-center text-[9px] font-bold uppercase">
                       <div>
                         <span className="font-black text-foreground block">{item.jobTitle}</span>
                         <span className="text-[7.5px] text-foreground-muted block font-mono">Date: {item.date} | Active Profile: {item.version}</span>

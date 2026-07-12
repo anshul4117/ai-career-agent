@@ -39,7 +39,27 @@
   --spacing-header: 52px;
 }
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
+  /* Premium Dark Theme Overrides (GitHub/Linear Inspired) */
+  .dark {
+    --color-background: #0d1117;
+    --color-surface: #161b22;
+    --color-surface-secondary: #21262d;
+    --color-surface-hover: #30363d;
+
+    --color-foreground: #c9d1d9;
+    --color-foreground-secondary: #8b949e;
+    --color-foreground-muted: #6e7681;
+
+    --color-border: #30363d;
+    --color-border-secondary: #21262d;
+
+    --shadow-brutal: 4px 4px 0px #000000;
+    --shadow-brutal-hover: 6px 6px 0px #000000;
+  }
+
   * {
     border-color: var(--color-border);
   }

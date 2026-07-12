@@ -96,7 +96,7 @@ export const THEME_PRESETS: Record<string, ResumeTheme> = {
     roundedCorners: "rounded-md",
     borderStyle: "border-2 border-solid",
     dividerStyle: "divider-dashed",
-    sectionBackground: "bg-slate-50/50",
+    sectionBackground: "bg-slate-50/50 dark:bg-surface-secondary/50",
     activePreset: "developer"
   },
   creative: {
@@ -120,7 +120,7 @@ export const THEME_PRESETS: Record<string, ResumeTheme> = {
     roundedCorners: "rounded-lg",
     borderStyle: "border-2 border-solid",
     dividerStyle: "divider-solid",
-    sectionBackground: "bg-slate-100/50",
+    sectionBackground: "bg-slate-100 dark:bg-surface-hover/50",
     activePreset: "creative"
   },
   minimal: {

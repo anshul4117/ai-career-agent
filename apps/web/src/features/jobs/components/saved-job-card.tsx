@@ -42,15 +42,15 @@ export function SavedJobCard({ job, onUnsave, onClick }: SavedJobCardProps) {
   const getQualityBadge = () => {
     const score = Math.round((job.freshnessScore * 0.4) + (job.trustScore * 0.6));
     if (job.trustScore >= 85) {
-      return { label: "Verified", className: "bg-green-50 text-green-700 border-green-300 border" };
+      return { label: "Verified", className: "bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border-green-300 dark:border-green-500/30 border" };
     }
     if (job.freshnessScore >= 80) {
-      return { label: "Fresh", className: "bg-blue-50 text-blue-700 border-blue-300 border" };
+      return { label: "Fresh", className: "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-300 dark:border-blue-500/30 border" };
     }
     if (score >= 70) {
-      return { label: "Trusted", className: "bg-amber-50 text-amber-700 border-amber-300 border" };
+      return { label: "Trusted", className: "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-500/30 border" };
     }
-    return { label: "Good", className: "bg-gray-50 text-gray-700 border-gray-300 border" };
+    return { label: "Good", className: "bg-gray-50 dark:bg-surface-secondary text-gray-700 dark:text-foreground-secondary border-gray-300 border" };
   };
  
   const quality = getQualityBadge();
@@ -64,7 +64,7 @@ export function SavedJobCard({ job, onUnsave, onClick }: SavedJobCardProps) {
         {/* Header (Logo, Title & Unsave Button) */}
         <div className="flex items-start gap-2.5">
           {/* Logo / Initials */}
-          <div className="h-9 w-9 border-2 border-border bg-amber-100 flex items-center justify-center font-black uppercase text-[10px] rounded-sm shrink-0 brutal-shadow-xs">
+          <div className="h-9 w-9 border-2 border-border bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center font-black uppercase text-[10px] rounded-sm shrink-0 brutal-shadow-xs">
             {job.companyInfo.logoUrl ? (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img

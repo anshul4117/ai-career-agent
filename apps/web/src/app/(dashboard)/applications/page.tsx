@@ -306,7 +306,7 @@ export default function ApplicationsPage() {
             <Button
               variant="ghost"
               onClick={resetFilters}
-              className="h-6 px-1.5 text-[7.5px] font-black uppercase text-error hover:bg-rose-50 border border-error/25 ml-auto rounded-sm flex items-center gap-0.5"
+              className="h-6 px-1.5 text-[7.5px] font-black uppercase text-error hover:bg-rose-50 dark:hover:bg-rose-500/10 border border-error/25 ml-auto rounded-sm flex items-center gap-0.5"
             >
               <RotateCcw className="h-2.5 w-2.5" /> Reset Filters
             </Button>
@@ -434,15 +434,15 @@ export default function ApplicationsPage() {
                         <td className="px-4 py-3.5">
                           <Badge className={cn(
                             "text-[7px] font-black uppercase px-1.5 py-0.5 rounded-sm border shadow-none",
-                            app.status === "SAVED" && "bg-slate-50 text-slate-700 border-slate-300",
-                            app.status === "APPLIED" && "bg-blue-50 text-blue-700 border-blue-300",
+                            app.status === "SAVED" && "bg-slate-50 dark:bg-surface-secondary text-slate-700 dark:text-foreground-secondary border-slate-300 dark:border-border-secondary",
+                            app.status === "APPLIED" && "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-300 dark:border-blue-500/30",
                             app.status === "SCREENING" && "bg-indigo-50 text-indigo-700 border-indigo-300",
-                            app.status === "ASSESSMENT" && "bg-purple-50 text-purple-700 border-purple-300",
-                            app.status === "INTERVIEW" && "bg-amber-50 text-amber-700 border-amber-300",
+                            app.status === "ASSESSMENT" && "bg-purple-50 text-purple-700 dark:text-purple-400 border-purple-300",
+                            app.status === "INTERVIEW" && "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-500/30",
                             app.status === "OFFER" && "bg-emerald-50 text-emerald-700 border-emerald-300",
-                            app.status === "ACCEPTED" && "bg-green-50 text-green-700 border-green-300",
-                            app.status === "REJECTED" && "bg-rose-50 text-rose-700 border-rose-300",
-                            app.status === "WITHDRAWN" && "bg-slate-100 text-slate-500 border-slate-300"
+                            app.status === "ACCEPTED" && "bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border-green-300 dark:border-green-500/30",
+                            app.status === "REJECTED" && "bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-300 dark:border-rose-500/30",
+                            app.status === "WITHDRAWN" && "bg-slate-100 dark:bg-surface-hover text-slate-500 border-slate-300 dark:border-border-secondary"
                           )}>
                             {app.status.replace(/_/g, " ")}
                           </Badge>

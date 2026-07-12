@@ -289,10 +289,10 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
                     <span>AI Match Score Breakdown</span>
                     <span className={cn(
                       "font-black text-[9px] uppercase border px-1.5 py-0.5 rounded-sm shadow-none",
-                      matchReport.overallScore >= 90 && "bg-green-50 text-green-700 border-green-300",
-                      matchReport.overallScore >= 80 && "bg-blue-50 text-blue-700 border-blue-300",
-                      matchReport.overallScore >= 70 && "bg-amber-50 text-amber-700 border-amber-300",
-                      matchReport.overallScore >= 50 && "bg-gray-50 text-gray-700 border-gray-300",
+                      matchReport.overallScore >= 90 && "bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border-green-300 dark:border-green-500/30",
+                      matchReport.overallScore >= 80 && "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-300 dark:border-blue-500/30",
+                      matchReport.overallScore >= 70 && "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-500/30",
+                      matchReport.overallScore >= 50 && "bg-gray-50 dark:bg-surface-secondary text-gray-700 dark:text-foreground-secondary border-gray-300",
                       matchReport.overallScore < 50 && "bg-red-50 text-red-700 border-red-300"
                     )}>
                       {matchReport.overallScore}% {matchReport.overallLabel}
@@ -306,7 +306,7 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
                         <span>Skills Overlap</span>
                         <span>{matchReport.skills.score}%</span>
                       </div>
-                      <div className="h-2.5 w-full bg-slate-100 border border-border/25 rounded-sm overflow-hidden" role="progressbar" aria-valuenow={matchReport.skills.score} aria-valuemin={0} aria-valuemax={100} aria-label="Skills Match Progress">
+                      <div className="h-2.5 w-full bg-slate-100 dark:bg-surface-hover border border-border/25 rounded-sm overflow-hidden" role="progressbar" aria-valuenow={matchReport.skills.score} aria-valuemin={0} aria-valuemax={100} aria-label="Skills Match Progress">
                         <div className="h-full bg-primary" style={{ width: `${matchReport.skills.score}%` }} />
                       </div>
                     </div>
@@ -317,7 +317,7 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
                         <span>Experience Level</span>
                         <span>{matchReport.experience.score}%</span>
                       </div>
-                      <div className="h-2.5 w-full bg-slate-100 border border-border/25 rounded-sm overflow-hidden" role="progressbar" aria-valuenow={matchReport.experience.score} aria-valuemin={0} aria-valuemax={100} aria-label="Experience Match Progress">
+                      <div className="h-2.5 w-full bg-slate-100 dark:bg-surface-hover border border-border/25 rounded-sm overflow-hidden" role="progressbar" aria-valuenow={matchReport.experience.score} aria-valuemin={0} aria-valuemax={100} aria-label="Experience Match Progress">
                         <div className="h-full bg-primary" style={{ width: `${matchReport.experience.score}%` }} />
                       </div>
                     </div>
@@ -328,7 +328,7 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
                         <span>Location Preferences</span>
                         <span>{matchReport.location.score}%</span>
                       </div>
-                      <div className="h-2.5 w-full bg-slate-100 border border-border/25 rounded-sm overflow-hidden" role="progressbar" aria-valuenow={matchReport.location.score} aria-valuemin={0} aria-valuemax={100} aria-label="Location Match Progress">
+                      <div className="h-2.5 w-full bg-slate-100 dark:bg-surface-hover border border-border/25 rounded-sm overflow-hidden" role="progressbar" aria-valuenow={matchReport.location.score} aria-valuemin={0} aria-valuemax={100} aria-label="Location Match Progress">
                         <div className="h-full bg-primary" style={{ width: `${matchReport.location.score}%` }} />
                       </div>
                     </div>
@@ -339,7 +339,7 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
                         <span>Compensation Range</span>
                         <span>{matchReport.salary.score}%</span>
                       </div>
-                      <div className="h-2.5 w-full bg-slate-100 border border-border/25 rounded-sm overflow-hidden" role="progressbar" aria-valuenow={matchReport.salary.score} aria-valuemin={0} aria-valuemax={100} aria-label="Salary Match Progress">
+                      <div className="h-2.5 w-full bg-slate-100 dark:bg-surface-hover border border-border/25 rounded-sm overflow-hidden" role="progressbar" aria-valuenow={matchReport.salary.score} aria-valuemin={0} aria-valuemax={100} aria-label="Salary Match Progress">
                         <div className="h-full bg-primary" style={{ width: `${matchReport.salary.score}%` }} />
                       </div>
                     </div>
@@ -350,7 +350,7 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
                         <span>Education Align</span>
                         <span>{matchReport.education.score}%</span>
                       </div>
-                      <div className="h-2.5 w-full bg-slate-100 border border-border/25 rounded-sm overflow-hidden" role="progressbar" aria-valuenow={matchReport.education.score} aria-valuemin={0} aria-valuemax={100} aria-label="Education Match Progress">
+                      <div className="h-2.5 w-full bg-slate-100 dark:bg-surface-hover border border-border/25 rounded-sm overflow-hidden" role="progressbar" aria-valuenow={matchReport.education.score} aria-valuemin={0} aria-valuemax={100} aria-label="Education Match Progress">
                         <div className="h-full bg-primary" style={{ width: `${matchReport.education.score}%` }} />
                       </div>
                     </div>
@@ -361,7 +361,7 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
                         <span>Listing Trust & Quality</span>
                         <span>{matchReport.quality.score}%</span>
                       </div>
-                      <div className="h-2.5 w-full bg-slate-100 border border-border/25 rounded-sm overflow-hidden" role="progressbar" aria-valuenow={matchReport.quality.score} aria-valuemin={0} aria-valuemax={100} aria-label="Job Quality Match Progress">
+                      <div className="h-2.5 w-full bg-slate-100 dark:bg-surface-hover border border-border/25 rounded-sm overflow-hidden" role="progressbar" aria-valuenow={matchReport.quality.score} aria-valuemin={0} aria-valuemax={100} aria-label="Job Quality Match Progress">
                         <div className="h-full bg-primary" style={{ width: `${matchReport.quality.score}%` }} />
                       </div>
                     </div>
@@ -378,7 +378,7 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
                     <ul className="space-y-2 text-xs font-semibold leading-relaxed">
                       {matchReport.reasons.map((reason, idx) => (
                         <li key={idx} className="flex gap-2 items-start leading-tight">
-                          <span className={cn("shrink-0 font-extrabold text-[9px] leading-none", reason.met ? "text-green-600" : "text-red-500")}>
+                          <span className={cn("shrink-0 font-extrabold text-[9px] leading-none", reason.met ? "text-green-600 dark:text-green-400" : "text-red-500")}>
                             {reason.met ? "✓" : "✗"}
                           </span>
                           <span className={reason.met ? "text-foreground-secondary" : "text-foreground-muted"}>
@@ -400,7 +400,7 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
                       <span className="text-[8px] font-black text-foreground-muted uppercase block">Matched Skills</span>
                       <div className="flex flex-wrap gap-1">
                         {matchReport.skills.matched.length > 0 ? matchReport.skills.matched.map((s) => (
-                          <Badge key={s} className="text-[7.5px] font-bold bg-green-50 text-green-700 border border-green-300 shadow-none px-1.5 py-0.5 rounded-sm">
+                          <Badge key={s} className="text-[7.5px] font-bold bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-500/30 shadow-none px-1.5 py-0.5 rounded-sm">
                             {s}
                           </Badge>
                         )) : <span className="text-[8px] font-bold text-foreground-muted italic">No matching skills found.</span>}
@@ -570,16 +570,16 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
                     <span>Overall rating</span>
                     <span className={cn(
                       "font-black text-xs px-1.5 py-0.5 border border-border rounded-sm brutal-shadow-xs",
-                      report.overallLabel === "Excellent" && "bg-green-100 text-green-700",
-                      report.overallLabel === "Very Good" && "bg-blue-100 text-blue-700",
-                      report.overallLabel === "Good" && "bg-amber-100 text-amber-700",
-                      report.overallLabel === "Average" && "bg-gray-100 text-gray-700",
+                      report.overallLabel === "Excellent" && "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400",
+                      report.overallLabel === "Very Good" && "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400",
+                      report.overallLabel === "Good" && "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400",
+                      report.overallLabel === "Average" && "bg-gray-100 text-gray-700 dark:text-foreground-secondary",
                       report.overallLabel === "Poor" && "bg-red-100 text-red-700"
                     )}>
                       {report.overallLabel} ({report.overallScore}%)
                     </span>
                   </div>
-                  <div className="h-3 w-full bg-slate-100 border border-border/40 rounded-sm overflow-hidden relative">
+                  <div className="h-3 w-full bg-slate-100 dark:bg-surface-hover border border-border/40 rounded-sm overflow-hidden relative">
                     <div 
                       className={cn(
                         "h-full transition-all duration-500",
@@ -614,8 +614,8 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
                     <span>Duplicate Checks:</span>
                     <Badge className={cn(
                       "text-[7.5px] font-black border px-1 py-0.5 rounded-sm shadow-none",
-                      report.duplicateStatus === "Unique" && "bg-green-50 text-green-700 border-green-300",
-                      report.duplicateStatus === "Possible Duplicate" && "bg-amber-50 text-amber-700 border-amber-300",
+                      report.duplicateStatus === "Unique" && "bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border-green-300 dark:border-green-500/30",
+                      report.duplicateStatus === "Possible Duplicate" && "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-500/30",
                       report.duplicateStatus === "Duplicate" && "bg-red-50 text-red-700 border-red-300"
                     )}>
                       {report.duplicateStatus}
@@ -635,7 +635,7 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
                   <ul className="space-y-1.5 mt-3 text-[8px] font-semibold normal-case">
                     {report.trustFactors.map((factor) => (
                       <li key={factor.name} className="flex items-start gap-1.5 leading-tight">
-                        <span className={cn("shrink-0 font-extrabold text-[9px] leading-none", factor.met ? "text-green-600" : "text-slate-400")}>
+                        <span className={cn("shrink-0 font-extrabold text-[9px] leading-none", factor.met ? "text-green-600 dark:text-green-400" : "text-slate-400")}>
                           {factor.met ? "✓" : "✗"}
                         </span>
                         <div className="flex flex-col text-[8.5px]">

@@ -36,10 +36,10 @@ export function ResumeOptimizePanel() {
   };
  
   const getScoreColorClass = (score: number) => {
-    if (score >= 85) return "text-green-600 border-green-400 bg-green-50";
-    if (score >= 70) return "text-blue-600 border-blue-400 bg-blue-50";
-    if (score >= 50) return "text-amber-600 border-amber-400 bg-amber-50";
-    return "text-rose-600 border-rose-400 bg-rose-50";
+    if (score >= 85) return "text-green-600 dark:text-green-400 border-green-400 dark:border-green-500/40 bg-green-50 dark:bg-green-500/10";
+    if (score >= 70) return "text-blue-600 dark:text-blue-400 border-blue-400 dark:border-blue-500/40 bg-blue-50 dark:bg-blue-500/10";
+    if (score >= 50) return "text-amber-600 dark:text-amber-400 border-amber-400 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-500/10";
+    return "text-rose-600 dark:text-rose-400 border-rose-400 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10";
   };
  
   const getStatusLabel = (status: "excellent" | "good" | "needs_improvement" | "poor") => {
@@ -53,10 +53,10 @@ export function ResumeOptimizePanel() {
  
   const getStatusColor = (status: "excellent" | "good" | "needs_improvement" | "poor") => {
     switch (status) {
-      case "excellent": return "bg-green-100 text-green-800 border-green-300";
-      case "good": return "bg-blue-100 text-blue-800 border-blue-300";
-      case "needs_improvement": return "bg-amber-100 text-amber-800 border-amber-300";
-      case "poor": return "bg-rose-100 text-rose-800 border-rose-300";
+      case "excellent": return "bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-300 border-green-300 dark:border-green-500/30";
+      case "good": return "bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-500/30";
+      case "needs_improvement": return "bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-500/30";
+      case "poor": return "bg-rose-100 dark:bg-rose-500/20 text-rose-800 dark:text-rose-300 border-rose-300 dark:border-rose-500/30";
     }
   };
  
@@ -114,7 +114,7 @@ export function ResumeOptimizePanel() {
         <div className="space-y-4 animate-in fade-in duration-200">
           
           {/* ATS Score card */}
-          <BrutalCard className="border-[3px] border-border bg-slate-50/50 p-3 rounded-sm flex flex-col items-center relative overflow-hidden text-center">
+          <BrutalCard className="border-[3px] border-border bg-slate-50/50 dark:bg-surface-secondary/50 p-3 rounded-sm flex flex-col items-center relative overflow-hidden text-center">
             <div className="absolute top-1 right-2 text-[6.5px] font-black text-foreground-muted uppercase tracking-widest">ATS score</div>
             
             <div className={cn(
@@ -178,20 +178,20 @@ export function ResumeOptimizePanel() {
             <div className="border-t border-border/10 p-2.5 space-y-3.5 max-h-[250px] overflow-y-auto">
               {/* Matching */}
               <div className="space-y-1">
-                <span className="text-[7.5px] font-black text-green-700 uppercase">Matching Keywords</span>
+                <span className="text-[7.5px] font-black text-green-700 dark:text-green-400 uppercase">Matching Keywords</span>
                 <div className="flex flex-wrap gap-1">
                   {analysis.keywords.matching.map((k) => (
-                    <Badge key={k} className="text-[6.5px] font-black uppercase bg-green-50 text-green-700 border-green-200 px-1 py-0 shadow-none rounded-none">{k}</Badge>
+                    <Badge key={k} className="text-[6.5px] font-black uppercase bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border-green-200 px-1 py-0 shadow-none rounded-none">{k}</Badge>
                   ))}
                 </div>
               </div>
  
               {/* Missing */}
               <div className="space-y-1">
-                <span className="text-[7.5px] font-black text-rose-700 uppercase">Missing Keywords</span>
+                <span className="text-[7.5px] font-black text-rose-700 dark:text-rose-400 uppercase">Missing Keywords</span>
                 <div className="flex flex-wrap gap-1">
                   {analysis.keywords.missing.map((k) => (
-                    <Badge key={k} className="text-[6.5px] font-black uppercase bg-rose-50 text-rose-700 border-rose-200 px-1 py-0 shadow-none rounded-none">{k}</Badge>
+                    <Badge key={k} className="text-[6.5px] font-black uppercase bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-200 px-1 py-0 shadow-none rounded-none">{k}</Badge>
                   ))}
                 </div>
               </div>
@@ -220,7 +220,7 @@ export function ResumeOptimizePanel() {
             
             <div className="border-t border-border/10 p-2.5 space-y-3 max-h-[220px] overflow-y-auto">
               <div className="space-y-1.5">
-                <span className="text-[7.5px] font-black text-rose-700 uppercase block">Priority Gaps to Add</span>
+                <span className="text-[7.5px] font-black text-rose-700 dark:text-rose-400 uppercase block">Priority Gaps to Add</span>
                 {analysis.skillGap.priority.map((skill, sIdx) => (
                   <div key={sIdx} className="flex items-center gap-1 text-[8.5px] font-bold text-foreground">
                     <PlusCircle className="h-3 w-3 text-rose-500 shrink-0" />
@@ -238,7 +238,7 @@ export function ResumeOptimizePanel() {
             <div className="space-y-2 max-h-[260px] overflow-y-auto pr-1">
               {/* High Priority suggestions */}
               {analysis.suggestions.high.map((s, idx) => (
-                <div key={`h_${idx}`} className="p-2 border-2 border-rose-400 bg-rose-50/15 rounded-sm flex items-start gap-1.5 text-[8.5px] font-bold leading-snug">
+                <div key={`h_${idx}`} className="p-2 border-2 border-rose-400 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10/15 rounded-sm flex items-start gap-1.5 text-[8.5px] font-bold leading-snug">
                   <AlertTriangle className="h-3.5 w-3.5 text-rose-500 shrink-0 mt-0.5" />
                   <span className="text-rose-950">{s}</span>
                 </div>
@@ -246,7 +246,7 @@ export function ResumeOptimizePanel() {
  
               {/* Medium Priority suggestions */}
               {analysis.suggestions.medium.map((s, idx) => (
-                <div key={`m_${idx}`} className="p-2 border border-amber-400 bg-amber-50/10 rounded-sm flex items-start gap-1.5 text-[8.5px] font-bold leading-snug">
+                <div key={`m_${idx}`} className="p-2 border border-amber-400 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-500/10/10 rounded-sm flex items-start gap-1.5 text-[8.5px] font-bold leading-snug">
                   <AlertTriangle className="h-3.5 w-3.5 text-amber-500 shrink-0 mt-0.5" />
                   <span className="text-amber-950">{s}</span>
                 </div>
@@ -254,9 +254,9 @@ export function ResumeOptimizePanel() {
  
               {/* Low Priority suggestions */}
               {analysis.suggestions.low.map((s, idx) => (
-                <div key={`l_${idx}`} className="p-2 border border-slate-300 bg-slate-50/40 rounded-sm flex items-start gap-1.5 text-[8.5px] font-bold leading-snug">
+                <div key={`l_${idx}`} className="p-2 border border-slate-300 dark:border-border-secondary bg-slate-50/40 dark:bg-surface-secondary/40 rounded-sm flex items-start gap-1.5 text-[8.5px] font-bold leading-snug">
                   <CheckCircle2 className="h-3.5 w-3.5 text-slate-500 shrink-0 mt-0.5" />
-                  <span className="text-slate-700">{s}</span>
+                  <span className="text-slate-700 dark:text-foreground-secondary">{s}</span>
                 </div>
               ))}
             </div>
@@ -268,7 +268,7 @@ export function ResumeOptimizePanel() {
       {/* Empty State placeholder */}
       {!analysis && !loading && (
         <div className="text-center py-10 text-foreground-muted space-y-3">
-          <div className="h-10 w-10 border border-dashed border-border/40 rounded-sm flex items-center justify-center mx-auto text-foreground-muted bg-slate-50/50">
+          <div className="h-10 w-10 border border-dashed border-border/40 rounded-sm flex items-center justify-center mx-auto text-foreground-muted bg-slate-50/50 dark:bg-surface-secondary/50">
             <Target className="h-5 w-5" />
           </div>
           <p className="text-[8.5px] font-black uppercase max-w-[200px] mx-auto leading-relaxed">
