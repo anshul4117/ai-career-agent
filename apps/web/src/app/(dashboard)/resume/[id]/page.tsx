@@ -184,10 +184,10 @@ export default function ResumePreviewPage({ params }: PageProps) {
                 <h1 className="text-3xl font-bold tracking-tight text-black uppercase">
                   {profile.personal.firstName} {profile.personal.lastName}
                 </h1>
-                <p className="italic text-xs font-semibold text-gray-600 tracking-wide">
+                <p className="italic text-xs font-semibold text-gray-600 dark:text-foreground-muted tracking-wide">
                   {profile.career.headline}
                 </p>
-                <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-gray-600">
+                <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-gray-600 dark:text-foreground-muted">
                   <span>{profile.contact.phone}</span>
                   <span>•</span>
                   <span>{profile.contact.email}</span>
@@ -213,12 +213,12 @@ export default function ResumePreviewPage({ params }: PageProps) {
                       <div key={exp.id} className="space-y-1">
                         <div className="flex justify-between font-bold text-xs text-black">
                           <span>{exp.jobTitle} — {exp.companyName}</span>
-                          <span className="font-normal text-gray-600 font-mono text-[10px]">
+                          <span className="font-normal text-gray-600 dark:text-foreground-muted font-mono text-[10px]">
                             {exp.startDate} to {exp.currentPosition ? "Present" : exp.endDate}
                           </span>
                         </div>
-                        <p className="text-[11px] italic text-gray-600">{exp.location}</p>
-                        {exp.description && <p className="leading-relaxed text-xs text-gray-700">{exp.description}</p>}
+                        <p className="text-[11px] italic text-gray-600 dark:text-foreground-muted">{exp.location}</p>
+                        {exp.description && <p className="leading-relaxed text-xs text-gray-700 dark:text-foreground-secondary">{exp.description}</p>}
                       </div>
                     ))}
                   </div>
@@ -234,11 +234,11 @@ export default function ResumePreviewPage({ params }: PageProps) {
                       <div key={edu.id} className="text-xs">
                         <div className="flex justify-between font-bold text-black">
                           <span>{edu.degree} in {edu.fieldOfStudy}</span>
-                          <span className="font-normal text-gray-600 font-mono text-[10px]">
+                          <span className="font-normal text-gray-600 dark:text-foreground-muted font-mono text-[10px]">
                             {edu.startDate} – {edu.currentStudy ? "Present" : edu.endDate}
                           </span>
                         </div>
-                        <p className="text-gray-700">{edu.institution} • Grade: {edu.cgpa}</p>
+                        <p className="text-gray-700 dark:text-foreground-secondary">{edu.institution} • Grade: {edu.cgpa}</p>
                       </div>
                     ))}
                   </div>
@@ -253,9 +253,9 @@ export default function ResumePreviewPage({ params }: PageProps) {
                     {projects.map((proj) => (
                       <div key={proj.id} className="text-xs space-y-0.5">
                         <div className="font-bold text-black">{proj.title} ({proj.role})</div>
-                        <p className="text-gray-700 leading-relaxed">{proj.description}</p>
+                        <p className="text-gray-700 dark:text-foreground-secondary leading-relaxed">{proj.description}</p>
                         {proj.techStack.length > 0 && (
-                          <p className="text-[11px] text-gray-600 font-semibold">Tech stack: {proj.techStack.join(", ")}</p>
+                          <p className="text-[11px] text-gray-600 dark:text-foreground-muted font-semibold">Tech stack: {proj.techStack.join(", ")}</p>
                         )}
                       </div>
                     ))}
@@ -267,7 +267,7 @@ export default function ResumePreviewPage({ params }: PageProps) {
               {skills.length > 0 && (
                 <div className="space-y-2">
                   <h3 className="font-bold text-xs uppercase tracking-widest text-black border-b border-gray-300 pb-0.5">Skills</h3>
-                  <p className="text-xs leading-relaxed text-gray-700">
+                  <p className="text-xs leading-relaxed text-gray-700 dark:text-foreground-secondary">
                     {skills.map((s) => `${s.name} (${s.yearsOfExperience} yrs)`).join(", ")}
                   </p>
                 </div>
@@ -277,7 +277,7 @@ export default function ResumePreviewPage({ params }: PageProps) {
 
           {/* 2. MODERN TEMPLATE */}
           {currentResume.templateId === "modern" && (
-            <div className="font-sans space-y-6 text-xs text-slate-700">
+            <div className="font-sans space-y-6 text-xs text-slate-700 dark:text-foreground-secondary">
               {/* Modern Split Header */}
               <div className="flex justify-between items-start gap-4 border-b-2 border-primary pb-4">
                 <div className="space-y-1">
@@ -299,14 +299,14 @@ export default function ResumePreviewPage({ params }: PageProps) {
               <div className="grid grid-cols-3 gap-6 items-start">
                 
                 {/* Left side */}
-                <div className="col-span-1 space-y-5 border-r border-slate-200 pr-5">
+                <div className="col-span-1 space-y-5 border-r border-slate-200 dark:border-border pr-5">
                   {/* Skills */}
                   {skills.length > 0 && (
                     <div className="space-y-2">
-                      <h3 className="font-bold uppercase tracking-wider text-slate-900 text-xs border-b border-slate-200 pb-1">Expertise</h3>
+                      <h3 className="font-bold uppercase tracking-wider text-slate-900 text-xs border-b border-slate-200 dark:border-border pb-1">Expertise</h3>
                       <div className="flex flex-wrap gap-1">
                         {skills.map((s) => (
-                          <span key={s.id} className="px-2 py-0.5 bg-slate-100 text-slate-700 font-bold rounded-sm text-[9px] uppercase border border-slate-200">
+                          <span key={s.id} className="px-2 py-0.5 bg-slate-100 dark:bg-surface-hover text-slate-700 dark:text-foreground-secondary font-bold rounded-sm text-[9px] uppercase border border-slate-200 dark:border-border">
                             {s.name}
                           </span>
                         ))}
@@ -317,10 +317,10 @@ export default function ResumePreviewPage({ params }: PageProps) {
                   {/* Languages */}
                   {languages.length > 0 && (
                     <div className="space-y-2">
-                      <h3 className="font-bold uppercase tracking-wider text-slate-900 text-xs border-b border-slate-200 pb-1">Languages</h3>
+                      <h3 className="font-bold uppercase tracking-wider text-slate-900 text-xs border-b border-slate-200 dark:border-border pb-1">Languages</h3>
                       <ul className="space-y-1">
                         {languages.map((l) => (
-                          <li key={l.id} className="font-semibold text-slate-700">
+                          <li key={l.id} className="font-semibold text-slate-700 dark:text-foreground-secondary">
                             {l.language} ({l.nativeLanguage ? "Native" : l.speakingLevel})
                           </li>
                         ))}
@@ -331,7 +331,7 @@ export default function ResumePreviewPage({ params }: PageProps) {
                   {/* Certifications */}
                   {certifications.length > 0 && (
                     <div className="space-y-2">
-                      <h3 className="font-bold uppercase tracking-wider text-slate-900 text-xs border-b border-slate-200 pb-1">Certifications</h3>
+                      <h3 className="font-bold uppercase tracking-wider text-slate-900 text-xs border-b border-slate-200 dark:border-border pb-1">Certifications</h3>
                       <ul className="space-y-2 text-[10px]">
                         {certifications.map((c) => (
                           <li key={c.id} className="space-y-0.5">
@@ -348,13 +348,13 @@ export default function ResumePreviewPage({ params }: PageProps) {
                 <div className="col-span-2 space-y-5">
                   {/* Summary */}
                   {profile.career.summary && (
-                    <p className="leading-relaxed text-slate-600 italic">{profile.career.summary}</p>
+                    <p className="leading-relaxed text-slate-600 dark:text-foreground-muted italic">{profile.career.summary}</p>
                   )}
 
                   {/* Experience */}
                   {experience.length > 0 && (
                     <div className="space-y-3">
-                      <h3 className="font-bold uppercase tracking-wider text-slate-900 text-xs border-b border-slate-200 pb-1">Professional Experience</h3>
+                      <h3 className="font-bold uppercase tracking-wider text-slate-900 text-xs border-b border-slate-200 dark:border-border pb-1">Professional Experience</h3>
                       <div className="space-y-3">
                         {experience.map((exp) => (
                           <div key={exp.id} className="space-y-1">
@@ -363,7 +363,7 @@ export default function ResumePreviewPage({ params }: PageProps) {
                               <span className="font-mono text-[10px] text-slate-500 font-normal">{exp.startDate} - {exp.currentPosition ? "Present" : exp.endDate}</span>
                             </div>
                             <p className="text-[10px] text-primary font-bold">{exp.companyName} • {exp.location}</p>
-                            {exp.description && <p className="leading-relaxed text-slate-600">{exp.description}</p>}
+                            {exp.description && <p className="leading-relaxed text-slate-600 dark:text-foreground-muted">{exp.description}</p>}
                           </div>
                         ))}
                       </div>
@@ -373,7 +373,7 @@ export default function ResumePreviewPage({ params }: PageProps) {
                   {/* Education */}
                   {education.length > 0 && (
                     <div className="space-y-3">
-                      <h3 className="font-bold uppercase tracking-wider text-slate-900 text-xs border-b border-slate-200 pb-1">Education</h3>
+                      <h3 className="font-bold uppercase tracking-wider text-slate-900 text-xs border-b border-slate-200 dark:border-border pb-1">Education</h3>
                       <div className="space-y-2">
                         {education.map((edu) => (
                           <div key={edu.id} className="space-y-0.5">
@@ -381,7 +381,7 @@ export default function ResumePreviewPage({ params }: PageProps) {
                               <span>{edu.degree}</span>
                               <span className="font-mono text-[10px] text-slate-500 font-normal">{edu.startDate} – {edu.endDate}</span>
                             </div>
-                            <p className="text-slate-600">{edu.institution} • GPA: {edu.cgpa}</p>
+                            <p className="text-slate-600 dark:text-foreground-muted">{edu.institution} • GPA: {edu.cgpa}</p>
                           </div>
                         ))}
                       </div>
@@ -395,7 +395,7 @@ export default function ResumePreviewPage({ params }: PageProps) {
 
           {/* 3. MINIMAL TEMPLATE */}
           {currentResume.templateId === "minimal" && (
-            <div className="font-sans space-y-5 text-xs text-slate-600 leading-relaxed max-w-3xl mx-auto">
+            <div className="font-sans space-y-5 text-xs text-slate-600 dark:text-foreground-muted leading-relaxed max-w-3xl mx-auto">
               {/* Minimal Header */}
               <div className="space-y-1 border-b border-slate-100 pb-3">
                 <h1 className="text-2xl font-bold text-slate-900">
@@ -464,7 +464,7 @@ export default function ResumePreviewPage({ params }: PageProps) {
 
           {/* 4. PROFESSIONAL TEMPLATE */}
           {currentResume.templateId === "professional" && (
-            <div className="font-sans space-y-6 text-xs text-slate-700">
+            <div className="font-sans space-y-6 text-xs text-slate-700 dark:text-foreground-secondary">
               {/* Professional Dark Header Band */}
               <div className="bg-[#1e293b] text-white p-6 -mx-8 sm:-mx-12 -mt-8 sm:-mt-12 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div className="space-y-1">
@@ -490,7 +490,7 @@ export default function ResumePreviewPage({ params }: PageProps) {
                   {/* Summary */}
                   {profile.career.summary && (
                     <div className="space-y-1.5">
-                      <h3 className="font-bold text-slate-900 text-xs border-b-2 border-slate-300 pb-1 uppercase tracking-wider">Executive Statement</h3>
+                      <h3 className="font-bold text-slate-900 text-xs border-b-2 border-slate-300 dark:border-border-secondary pb-1 uppercase tracking-wider">Executive Statement</h3>
                       <p className="leading-relaxed">{profile.career.summary}</p>
                     </div>
                   )}
@@ -498,7 +498,7 @@ export default function ResumePreviewPage({ params }: PageProps) {
                   {/* Experience */}
                   {experience.length > 0 && (
                     <div className="space-y-3">
-                      <h3 className="font-bold text-slate-900 text-xs border-b-2 border-slate-300 pb-1 uppercase tracking-wider">Professional History</h3>
+                      <h3 className="font-bold text-slate-900 text-xs border-b-2 border-slate-300 dark:border-border-secondary pb-1 uppercase tracking-wider">Professional History</h3>
                       <div className="space-y-3">
                         {experience.map((exp) => (
                           <div key={exp.id} className="space-y-1">
@@ -507,7 +507,7 @@ export default function ResumePreviewPage({ params }: PageProps) {
                               <span className="font-mono text-[9px] text-slate-500 font-normal">{exp.startDate} - {exp.currentPosition ? "Present" : exp.endDate}</span>
                             </div>
                             <p className="text-[10px] text-slate-500 font-bold">{exp.companyName} • {exp.location}</p>
-                            {exp.description && <p className="leading-relaxed text-slate-600">{exp.description}</p>}
+                            {exp.description && <p className="leading-relaxed text-slate-600 dark:text-foreground-muted">{exp.description}</p>}
                           </div>
                         ))}
                       </div>
@@ -517,12 +517,12 @@ export default function ResumePreviewPage({ params }: PageProps) {
                   {/* Projects */}
                   {projects.length > 0 && (
                     <div className="space-y-3">
-                      <h3 className="font-bold text-slate-900 text-xs border-b-2 border-slate-300 pb-1 uppercase tracking-wider">Key Projects</h3>
+                      <h3 className="font-bold text-slate-900 text-xs border-b-2 border-slate-300 dark:border-border-secondary pb-1 uppercase tracking-wider">Key Projects</h3>
                       <div className="space-y-2">
                         {projects.map((proj) => (
                           <div key={proj.id} className="space-y-1">
                             <p className="font-bold text-slate-800">{proj.title} — {proj.role}</p>
-                            <p className="text-slate-600">{proj.description}</p>
+                            <p className="text-slate-600 dark:text-foreground-muted">{proj.description}</p>
                           </div>
                         ))}
                       </div>
@@ -535,8 +535,8 @@ export default function ResumePreviewPage({ params }: PageProps) {
                   {/* Skills */}
                   {skills.length > 0 && (
                     <div className="space-y-2">
-                      <h3 className="font-bold text-slate-900 text-xs border-b-2 border-slate-300 pb-1 uppercase tracking-wider">Core Skills</h3>
-                      <ul className="space-y-1 text-slate-600">
+                      <h3 className="font-bold text-slate-900 text-xs border-b-2 border-slate-300 dark:border-border-secondary pb-1 uppercase tracking-wider">Core Skills</h3>
+                      <ul className="space-y-1 text-slate-600 dark:text-foreground-muted">
                         {skills.map((s) => (
                           <li key={s.id} className="flex justify-between font-semibold">
                             <span>{s.name}</span>
@@ -550,8 +550,8 @@ export default function ResumePreviewPage({ params }: PageProps) {
                   {/* Education */}
                   {education.length > 0 && (
                     <div className="space-y-2">
-                      <h3 className="font-bold text-slate-900 text-xs border-b-2 border-slate-300 pb-1 uppercase tracking-wider">Education</h3>
-                      <div className="space-y-2 text-slate-600">
+                      <h3 className="font-bold text-slate-900 text-xs border-b-2 border-slate-300 dark:border-border-secondary pb-1 uppercase tracking-wider">Education</h3>
+                      <div className="space-y-2 text-slate-600 dark:text-foreground-muted">
                         {education.map((edu) => (
                           <div key={edu.id} className="space-y-0.5">
                             <p className="font-bold text-slate-800">{edu.degree}</p>
@@ -572,7 +572,7 @@ export default function ResumePreviewPage({ params }: PageProps) {
           {currentResume.templateId === "developer" && (
             <div className="font-mono space-y-6 text-xs text-[#0f172a] leading-relaxed">
               {/* Code block header look */}
-              <div className="border-3 border-foreground p-5 bg-slate-50 space-y-3 rounded-sm brutal-shadow-sm">
+              <div className="border-3 border-foreground p-5 bg-slate-50 dark:bg-surface-secondary space-y-3 rounded-sm brutal-shadow-sm">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-foreground-secondary border-b border-border pb-2">
                   <span className="h-3 w-3 bg-[#ff5f56] rounded-full border border-black/20" />
                   <span className="h-3 w-3 bg-[#ffbd2e] rounded-full border border-black/20" />
@@ -597,7 +597,7 @@ export default function ResumePreviewPage({ params }: PageProps) {
                   <h3 className="font-black text-xs uppercase tracking-wider text-[#0f172a] border-b-2 border-foreground pb-0.5">{`# Core Tech Stack`}</h3>
                   <div className="flex flex-wrap gap-1.5 pt-1">
                     {skills.map((s) => (
-                      <span key={s.id} className="px-2 py-1 border border-foreground bg-slate-100 text-[10px] font-bold uppercase rounded-sm">
+                      <span key={s.id} className="px-2 py-1 border border-foreground bg-slate-100 dark:bg-surface-hover text-[10px] font-bold uppercase rounded-sm">
                         {s.name}
                       </span>
                     ))}
@@ -616,7 +616,7 @@ export default function ResumePreviewPage({ params }: PageProps) {
                           <span>{`[${exp.jobTitle}] @ ${exp.companyName}`}</span>
                           <span className="font-mono text-[10px] text-slate-400 font-normal">{exp.startDate} - {exp.currentPosition ? "Present" : exp.endDate}</span>
                         </div>
-                        {exp.description && <p className="text-slate-600">{exp.description}</p>}
+                        {exp.description && <p className="text-slate-600 dark:text-foreground-muted">{exp.description}</p>}
                       </div>
                     ))}
                   </div>

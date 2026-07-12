@@ -15,7 +15,7 @@ export default function Error({
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 text-center select-none">
       <BrutalCard className="p-8 max-w-md w-full border-[3px] border-border bg-surface brutal-shadow space-y-6 rounded-sm">
-        <div className="inline-flex p-3 bg-amber-100 border-2 border-border text-amber-600 rounded-sm">
+        <div className="inline-flex p-3 bg-amber-100 dark:bg-amber-500/20 border-2 border-border text-amber-600 dark:text-amber-400 rounded-sm">
           <ShieldAlert className="h-10 w-10 stroke-[2.5px]" />
         </div>
         

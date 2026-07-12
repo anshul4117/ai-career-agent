@@ -40,11 +40,11 @@ export function CompanyCard({ company }: CompanyCardProps) {
             {company.headquarters.split(",")[0]}
           </Badge>
           {company.isActivelyHiring ? (
-            <Badge className="text-[8px] font-black uppercase tracking-wider bg-green-200 border-2 border-border text-green-800 px-1.5 py-0.5">
+            <Badge className="text-[8px] font-black uppercase tracking-wider bg-green-200 border-2 border-border text-green-800 dark:text-green-300 px-1.5 py-0.5">
               Hiring
             </Badge>
           ) : (
-            <Badge className="text-[8px] font-black uppercase tracking-wider bg-slate-100 border-2 border-border text-foreground-muted px-1.5 py-0.5">
+            <Badge className="text-[8px] font-black uppercase tracking-wider bg-slate-100 dark:bg-surface-hover border-2 border-border text-foreground-muted px-1.5 py-0.5">
               Closed
             </Badge>
           )}

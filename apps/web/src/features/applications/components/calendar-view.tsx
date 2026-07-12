@@ -192,8 +192,8 @@ export function CalendarView({ applications, onOpenDetails }: CalendarViewProps)
               key={idx}
               className={cn(
                 "min-h-[70px] md:min-h-[95px] border border-border/20 p-1 flex flex-col justify-between rounded-sm relative text-[8px] font-bold uppercase transition-all bg-surface",
-                !cell.isCurrentMonth && "opacity-30 bg-slate-50/50",
-                isToday && "border-primary bg-amber-50/10 border-2"
+                !cell.isCurrentMonth && "opacity-30 bg-slate-50/50 dark:bg-surface-secondary/50",
+                isToday && "border-primary bg-amber-50 dark:bg-amber-500/10/10 border-2"
               )}
             >
               {/* Day Number */}
@@ -217,10 +217,10 @@ export function CalendarView({ applications, onOpenDetails }: CalendarViewProps)
                       onClick={() => onOpenDetails(evt.applicationId)}
                       className={cn(
                         "w-full text-left p-0.5 border border-border rounded-sm text-[7px] font-extrabold uppercase leading-none truncate flex items-center gap-1 cursor-pointer transition-colors",
-                        isInterview && "bg-amber-50 hover:bg-amber-100/50 text-amber-900 border-amber-300",
+                        isInterview && "bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20/50 text-amber-900 border-amber-300 dark:border-amber-500/30",
                         isOffer && "bg-emerald-50 hover:bg-emerald-100/50 text-emerald-900 border-emerald-300",
-                        isAssessment && "bg-purple-50 hover:bg-purple-100/50 text-purple-900 border-purple-300",
-                        evt.type === "followup" && "bg-blue-50 hover:bg-blue-100/50 text-blue-900 border-blue-300"
+                        isAssessment && "bg-purple-50 hover:bg-purple-100 dark:hover:bg-purple-500/20/50 text-purple-900 border-purple-300",
+                        evt.type === "followup" && "bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20/50 text-blue-900 border-blue-300 dark:border-blue-500/30"
                       )}
                       title={evt.label}
                       aria-label={`${evt.type} event: ${evt.label}`}
@@ -228,7 +228,7 @@ export function CalendarView({ applications, onOpenDetails }: CalendarViewProps)
                       {isInterview && <Video className="h-2.5 w-2.5 text-primary shrink-0" />}
                       {isOffer && <Gift className="h-2.5 w-2.5 text-emerald-600 shrink-0" />}
                       {isAssessment && <Code className="h-2.5 w-2.5 text-purple-600 shrink-0" />}
-                      {evt.type === "followup" && <BellRing className="h-2.5 w-2.5 text-blue-600 shrink-0" />}
+                      {evt.type === "followup" && <BellRing className="h-2.5 w-2.5 text-blue-600 dark:text-blue-400 shrink-0" />}
                       <span className="truncate flex-1">{evt.company}</span>
                     </button>
                   );

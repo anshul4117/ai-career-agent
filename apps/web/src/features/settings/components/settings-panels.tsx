@@ -123,7 +123,7 @@ export function SettingsPanels() {
  
             {/* Avatar mock */}
             <div className="flex items-center gap-4">
-              <div className="h-16 w-16 border-2 border-border bg-slate-100 flex items-center justify-center font-black text-xl uppercase rounded-sm text-foreground-muted select-none">
+              <div className="h-16 w-16 border-2 border-border bg-slate-100 dark:bg-surface-hover flex items-center justify-center font-black text-xl uppercase rounded-sm text-foreground-muted select-none">
                 AR
               </div>
               <div className="space-y-1">
@@ -261,7 +261,7 @@ export function SettingsPanels() {
                 <BrutalButton variant="secondary" className="h-9 px-4 uppercase font-bold text-xs" onClick={() => setPasswordModalOpen(true)}>
                   Change Account Password
                 </BrutalButton>
-                <BrutalButton variant="secondary" className="h-9 px-4 uppercase font-bold text-xs border-rose-200 text-rose-600 hover:bg-rose-50 ml-auto" onClick={() => setDeleteModalOpen(true)}>
+                <BrutalButton variant="secondary" className="h-9 px-4 uppercase font-bold text-xs border-rose-200 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 ml-auto" onClick={() => setDeleteModalOpen(true)}>
                   Delete Account
                 </BrutalButton>
               </div>
@@ -277,7 +277,7 @@ export function SettingsPanels() {
               <div className="border border-border rounded-sm overflow-hidden select-none bg-surface-secondary/20">
                 <table className="w-full text-[9.5px] text-left border-collapse">
                   <thead>
-                    <tr className="bg-slate-100/50 border-b-2 border-border text-[8px] font-black uppercase tracking-wider text-foreground-muted">
+                    <tr className="bg-slate-100 dark:bg-surface-hover/50 border-b-2 border-border text-[8px] font-black uppercase tracking-wider text-foreground-muted">
                       <th className="p-2 border-r border-border">Device / OS</th>
                       <th className="p-2 border-r border-border">Location</th>
                       <th className="p-2">Last Active</th>
@@ -687,7 +687,7 @@ export function SettingsPanels() {
                       onClick={() => handleToggleConnection(c.id)}
                       className={cn(
                         "h-8 px-3 text-[8.5px] font-black uppercase shadow-none border rounded-none",
-                        c.connected ? "bg-rose-50 text-rose-600 border-rose-200" : "bg-primary text-white border-primary"
+                        c.connected ? "bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-200" : "bg-primary text-white border-primary"
                       )}
                     >
                       {c.connected ? "Disconnect" : "Connect Account"}
@@ -779,7 +779,7 @@ export function SettingsPanels() {
                 <BrutalButton variant="secondary" className="h-8.5 px-3 uppercase text-[8.5px] font-black" onClick={() => triggerToast("Downloaded GDPR data package (.json)")}>
                   Download My Data Package
                 </BrutalButton>
-                <BrutalButton variant="secondary" className="h-8.5 px-3 uppercase text-[8.5px] font-black border-rose-200 text-rose-600 hover:bg-rose-50" onClick={() => { if(confirm("Are you sure you want to delete all cached telemetry records? This cannot be undone.")) triggerToast("GDPR data cleanup initiated"); }}>
+                <BrutalButton variant="secondary" className="h-8.5 px-3 uppercase text-[8.5px] font-black border-rose-200 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10" onClick={() => { if(confirm("Are you sure you want to delete all cached telemetry records? This cannot be undone.")) triggerToast("GDPR data cleanup initiated"); }}>
                   Delete My Telemetry Data
                 </BrutalButton>
               </div>
@@ -873,7 +873,7 @@ export function SettingsPanels() {
       {deleteModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
           <BrutalCard className="border-[3px] border-border bg-surface p-5 rounded-sm max-w-sm w-full brutal-shadow-lg space-y-4">
-            <div className="flex items-center gap-1 text-rose-600">
+            <div className="flex items-center gap-1 text-rose-600 dark:text-rose-400">
               <ShieldAlert className="h-5 w-5" />
               <h4 className="text-[10px] font-black uppercase tracking-widest">Delete Candidate Profile</h4>
             </div>
@@ -888,7 +888,7 @@ export function SettingsPanels() {
                 type="text"
                 value={deleteConfirmText}
                 onChange={(e) => setDeleteConfirmText(e.target.value)}
-                className="w-full text-[10.5px] font-bold p-1.5 border-2 border-rose-300 bg-rose-50/10 focus:outline-none"
+                className="w-full text-[10.5px] font-bold p-1.5 border-2 border-rose-300 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10/10 focus:outline-none"
                 placeholder="DELETE"
               />
             </div>

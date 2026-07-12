@@ -74,7 +74,7 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
         {onClose && (
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 rounded-sm p-1 text-foreground-muted hover:bg-foreground/5 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            className="absolute top-4 right-4 rounded-sm p-1 text-foreground-muted hover:bg-foreground/5 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:ring-offset-background"
             aria-label="Dismiss alert"
           >
             <X className="h-4 w-4" />

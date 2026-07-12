@@ -102,7 +102,7 @@ export function SettingsSidebar() {
           <div className="flex justify-between items-center text-[9px] font-mono font-black text-primary">
             <span>{completion}% Completed</span>
           </div>
-          <div className="h-3 w-full bg-slate-100 border border-border rounded-sm overflow-hidden p-0.5">
+          <div className="h-3 w-full bg-slate-100 dark:bg-surface-hover border border-border rounded-sm overflow-hidden p-0.5">
             <div 
               className="h-full bg-primary transition-all duration-300 rounded-2xs" 
               style={{ width: `${completion}%` }}
@@ -128,7 +128,7 @@ export function SettingsSidebar() {
  
         <BrutalButton
           onClick={handleRestore}
-          className="w-full h-8 flex items-center justify-center gap-1 text-[8.5px] font-black uppercase border-rose-200 text-rose-600 hover:bg-rose-50"
+          className="w-full h-8 flex items-center justify-center gap-1 text-[8.5px] font-black uppercase border-rose-200 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10"
           variant="secondary"
         >
           <RotateCcw className="h-3.5 w-3.5" /> Factory Reset

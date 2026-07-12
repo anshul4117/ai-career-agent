@@ -79,11 +79,11 @@ export function CoverLetterDashboard({ onStartNew }: CoverLetterDashboardProps) 
  
   // Preset list details
   const templatesDetails = [
-    { id: "professional" as CoverLetterTemplate, name: "Standard Professional", desc: "Corporate roles, finance, traditional systems.", color: "bg-blue-100 text-blue-700" },
-    { id: "startup" as CoverLetterTemplate, name: "Startup Tech", desc: "Early stage tech, product growth hackers.", color: "bg-amber-100 text-amber-700" },
-    { id: "enterprise" as CoverLetterTemplate, name: "Enterprise Systems", desc: "High-compliance, large orchestration setups.", color: "bg-purple-100 text-purple-700" },
-    { id: "modern" as CoverLetterTemplate, name: "Streamlined Modern", desc: "Design-centric roles, product managers.", color: "bg-green-100 text-green-700" },
-    { id: "minimal" as CoverLetterTemplate, name: "Letter Minimal", desc: "Direct, clean cover layouts.", color: "bg-slate-100 text-slate-700" }
+    { id: "professional" as CoverLetterTemplate, name: "Standard Professional", desc: "Corporate roles, finance, traditional systems.", color: "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400" },
+    { id: "startup" as CoverLetterTemplate, name: "Startup Tech", desc: "Early stage tech, product growth hackers.", color: "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400" },
+    { id: "enterprise" as CoverLetterTemplate, name: "Enterprise Systems", desc: "High-compliance, large orchestration setups.", color: "bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-400" },
+    { id: "modern" as CoverLetterTemplate, name: "Streamlined Modern", desc: "Design-centric roles, product managers.", color: "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400" },
+    { id: "minimal" as CoverLetterTemplate, name: "Letter Minimal", desc: "Direct, clean cover layouts.", color: "bg-slate-100 dark:bg-surface-hover text-slate-700 dark:text-foreground-secondary" }
   ];
  
   if (localLoading) {
@@ -96,7 +96,7 @@ export function CoverLetterDashboard({ onStartNew }: CoverLetterDashboardProps) 
       {/* 1. Metrics counters */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <BrutalCard className="border-[3px] border-border bg-surface p-4 rounded-sm brutal-shadow-xs flex items-center gap-3">
-          <div className="h-10 w-10 border-2 border-border bg-blue-100 flex items-center justify-center rounded-sm text-blue-700 shrink-0">
+          <div className="h-10 w-10 border-2 border-border bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center rounded-sm text-blue-700 dark:text-blue-400 shrink-0">
             <FileText className="h-5 w-5 stroke-[2.5px]" />
           </div>
           <div>
@@ -106,7 +106,7 @@ export function CoverLetterDashboard({ onStartNew }: CoverLetterDashboardProps) 
         </BrutalCard>
  
         <BrutalCard className="border-[3px] border-border bg-surface p-4 rounded-sm brutal-shadow-xs flex items-center gap-3">
-          <div className="h-10 w-10 border-2 border-border bg-amber-100 flex items-center justify-center rounded-sm text-amber-700 shrink-0">
+          <div className="h-10 w-10 border-2 border-border bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center rounded-sm text-amber-700 dark:text-amber-400 shrink-0">
             <Sparkles className="h-5 w-5 stroke-[2.5px]" />
           </div>
           <div>
@@ -126,7 +126,7 @@ export function CoverLetterDashboard({ onStartNew }: CoverLetterDashboardProps) 
         </BrutalCard>
  
         <BrutalCard className="border-[3px] border-border bg-surface p-4 rounded-sm brutal-shadow-xs flex items-center gap-3">
-          <div className="h-10 w-10 border-2 border-border bg-green-100 flex items-center justify-center rounded-sm text-green-700 shrink-0">
+          <div className="h-10 w-10 border-2 border-border bg-green-100 dark:bg-green-500/20 flex items-center justify-center rounded-sm text-green-700 dark:text-green-400 shrink-0">
             <TrendingUp className="h-5 w-5 stroke-[2.5px]" />
           </div>
           <div>
@@ -182,14 +182,14 @@ export function CoverLetterDashboard({ onStartNew }: CoverLetterDashboardProps) 
                     <div className="flex gap-1.5">
                       <button 
                         onClick={(e) => handleDuplicate(e, draft.id)}
-                        className="p-1 border border-border bg-slate-50 hover:bg-slate-100 rounded-xs"
+                        className="p-1 border border-border bg-slate-50 dark:bg-surface-secondary hover:bg-slate-100 dark:hover:bg-surface-hover rounded-xs"
                         title="Duplicate draft"
                       >
                         <Copy className="h-3 w-3 text-foreground-secondary" />
                       </button>
                       <button 
                         onClick={(e) => handleDelete(e, draft.id, draft.title)}
-                        className="p-1 border border-border bg-rose-50 hover:bg-rose-100 rounded-xs text-rose-600 border-rose-200"
+                        className="p-1 border border-border bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 rounded-xs text-rose-600 dark:text-rose-400 border-rose-200"
                         title="Delete draft"
                       >
                         <Trash2 className="h-3 w-3" />

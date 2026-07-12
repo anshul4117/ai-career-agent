@@ -436,19 +436,19 @@ export default function JobsPage() {
                 </span>
               )}
               {filters.salaryMin && (
-                <span className="inline-flex items-center gap-1 bg-green-50 px-1.5 py-0.5 border border-border rounded-sm">
+                <span className="inline-flex items-center gap-1 bg-green-50 dark:bg-green-500/10 px-1.5 py-0.5 border border-border rounded-sm">
                   Salary: &gt;={Math.round(filters.salaryMin / 1000)}k
                   <button onClick={() => handleRemoveFilter("salaryMin")} className="text-error font-black"><X className="h-2.5 w-2.5" /></button>
                 </span>
               )}
               {filters.matchScoreMin && (
-                <span className="inline-flex items-center gap-1 bg-amber-50 px-1.5 py-0.5 border border-border rounded-sm">
+                <span className="inline-flex items-center gap-1 bg-amber-50 dark:bg-amber-500/10 px-1.5 py-0.5 border border-border rounded-sm">
                   Match: &gt;={filters.matchScoreMin}%
                   <button onClick={() => handleRemoveFilter("matchScoreMin")} className="text-error font-black"><X className="h-2.5 w-2.5" /></button>
                 </span>
               )}
               {filters.datePosted !== "any" && (
-                <span className="inline-flex items-center gap-1 bg-blue-50 px-1.5 py-0.5 border border-border rounded-sm">
+                <span className="inline-flex items-center gap-1 bg-blue-50 dark:bg-blue-500/10 px-1.5 py-0.5 border border-border rounded-sm">
                   Posted: {filters.datePosted}
                   <button onClick={() => handleRemoveFilter("datePosted")} className="text-error font-black"><X className="h-2.5 w-2.5" /></button>
                 </span>
@@ -479,7 +479,7 @@ export default function JobsPage() {
               ))}
  
               {filters.matchFilter && filters.matchFilter !== "all" && (
-                <span className="inline-flex items-center gap-1 bg-amber-50 px-1.5 py-0.5 border border-border rounded-sm">
+                <span className="inline-flex items-center gap-1 bg-amber-50 dark:bg-amber-500/10 px-1.5 py-0.5 border border-border rounded-sm">
                   Match Mode: {filters.matchFilter === "90" ? "90%+" :
                                filters.matchFilter === "80" ? "80%+" :
                                filters.matchFilter === "70" ? "70%+" :

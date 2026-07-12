@@ -117,7 +117,7 @@ export function TemplateGallery() {
                     onClick={(e) => { e.stopPropagation(); toggleFavoriteTemplate(tmpl.id); }}
                     className={cn(
                       "p-1 border border-border rounded-sm hover:bg-surface transition-colors h-7 w-7 flex items-center justify-center",
-                      isFav ? "bg-amber-100 border-amber-400 text-amber-500" : "bg-surface text-foreground-muted"
+                      isFav ? "bg-amber-100 dark:bg-amber-500/20 border-amber-400 dark:border-amber-500/40 text-amber-500" : "bg-surface text-foreground-muted"
                     )}
                     aria-label="Favorite Template"
                   >

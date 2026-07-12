@@ -29,7 +29,7 @@ export function EmptyState({
   return (
     <BrutalCard className="border-[3px] border-border bg-surface p-10 text-center space-y-4 brutal-shadow max-w-xl mx-auto w-full select-none text-xs font-semibold">
       {/* 1. Icon Container */}
-      <div className="h-14 w-14 border-2 border-border bg-slate-100 flex items-center justify-center rounded-sm mx-auto text-foreground-muted">
+      <div className="h-14 w-14 border-2 border-border bg-slate-100 dark:bg-surface-hover flex items-center justify-center rounded-sm mx-auto text-foreground-muted">
         <Icon className="h-7 w-7 stroke-[2.5px]" />
       </div>
  

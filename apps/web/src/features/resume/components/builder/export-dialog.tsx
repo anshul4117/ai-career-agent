@@ -174,7 +174,7 @@ export function ExportDialog({ isOpen, onClose }: ExportDialogProps) {
                       settings[key] ? "bg-primary" : "bg-slate-200"
                     )}>
                       <div className={cn(
-                        "h-2.5 w-2.5 bg-white border border-border rounded-full absolute top-0.5 transition-all",
+                        "h-2.5 w-2.5 bg-white dark:bg-surface border border-border rounded-full absolute top-0.5 transition-all",
                         settings[key] ? "right-0.5" : "left-0.5"
                       )} />
                     </div>

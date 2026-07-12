@@ -357,7 +357,7 @@ export function CoverLetterWizard({ initialTemplate, onBackToDashboard }: CoverL
                     <button 
                       onClick={undo}
                       disabled={undoStack.length <= 1}
-                      className="p-1 border border-border bg-slate-50 hover:bg-slate-100 disabled:opacity-40 rounded-xs flex items-center gap-0.5"
+                      className="p-1 border border-border bg-slate-50 dark:bg-surface-secondary hover:bg-slate-100 dark:hover:bg-surface-hover disabled:opacity-40 rounded-xs flex items-center gap-0.5"
                       title="Undo edit"
                     >
                       <Undo className="h-3 w-3" /> Undo
@@ -365,7 +365,7 @@ export function CoverLetterWizard({ initialTemplate, onBackToDashboard }: CoverL
                     <button 
                       onClick={redo}
                       disabled={redoStack.length === 0}
-                      className="p-1 border border-border bg-slate-50 hover:bg-slate-100 disabled:opacity-40 rounded-xs flex items-center gap-0.5"
+                      className="p-1 border border-border bg-slate-50 dark:bg-surface-secondary hover:bg-slate-100 dark:hover:bg-surface-hover disabled:opacity-40 rounded-xs flex items-center gap-0.5"
                       title="Redo edit"
                     >
                       <Redo className="h-3 w-3" /> Redo
@@ -373,13 +373,13 @@ export function CoverLetterWizard({ initialTemplate, onBackToDashboard }: CoverL
  
                     <button 
                       onClick={handleCopy}
-                      className="p-1 border border-border bg-slate-50 hover:bg-slate-100 rounded-xs flex items-center gap-0.5 ml-auto"
+                      className="p-1 border border-border bg-slate-50 dark:bg-surface-secondary hover:bg-slate-100 dark:hover:bg-surface-hover rounded-xs flex items-center gap-0.5 ml-auto"
                     >
                       <Copy className="h-3 w-3" /> Copy
                     </button>
                     <button 
                       onClick={handleSave}
-                      className="p-1 border border-border bg-amber-50 hover:bg-amber-100 border-amber-300 text-amber-800 rounded-xs flex items-center gap-0.5"
+                      className="p-1 border border-border bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 border-amber-300 dark:border-amber-500/30 text-amber-800 dark:text-amber-300 rounded-xs flex items-center gap-0.5"
                     >
                       <Save className="h-3 w-3" /> Save Draft
                     </button>
@@ -389,7 +389,7 @@ export function CoverLetterWizard({ initialTemplate, onBackToDashboard }: CoverL
                   <textarea
                     value={activeDraft.content}
                     onChange={(e) => updateDraftContent(e.target.value)}
-                    className="flex-1 w-full text-[10px] font-mono leading-relaxed p-3 bg-slate-50 border-2 border-border focus:outline-none min-h-[260px] rounded-sm"
+                    className="flex-1 w-full text-[10px] font-mono leading-relaxed p-3 bg-slate-50 dark:bg-surface-secondary border-2 border-border focus:outline-none min-h-[260px] rounded-sm"
                   />
                   
                   {/* Save current version helper */}
@@ -451,7 +451,7 @@ export function CoverLetterWizard({ initialTemplate, onBackToDashboard }: CoverL
                       {activeDraft.versions.map((ver) => (
                         <div 
                           key={ver.id}
-                          className="p-2 border border-border bg-slate-50/50 rounded-sm flex justify-between items-center text-[8.5px] font-bold uppercase"
+                          className="p-2 border border-border bg-slate-50/50 dark:bg-surface-secondary/50 rounded-sm flex justify-between items-center text-[8.5px] font-bold uppercase"
                         >
                           <div>
                             <span className="font-black text-foreground block">{ver.template} format ({ver.tone} tone)</span>
@@ -474,7 +474,7 @@ export function CoverLetterWizard({ initialTemplate, onBackToDashboard }: CoverL
  
             </div>
           ) : (
-            <div className="border-2 border-dashed border-border/20 bg-slate-50/50 rounded-sm p-12 text-center text-foreground-muted min-h-[350px] flex items-center justify-center">
+            <div className="border-2 border-dashed border-border/20 bg-slate-50/50 dark:bg-surface-secondary/50 rounded-sm p-12 text-center text-foreground-muted min-h-[350px] flex items-center justify-center">
               <p className="text-[9px] font-bold uppercase tracking-wider max-w-xs">
                 Draft letter preview will assemble here after you compile generator parameters.
               </p>

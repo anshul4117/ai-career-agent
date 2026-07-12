@@ -2,8 +2,17 @@
 
 All notable changes to the AI Career Agent platform will be documented in this file.
 
+## [2.4.2] - 2026-07-12
+ 
+### Added
+- **Dark Mode Support**: Implemented a comprehensive, premium Dark Mode matching the styling of GitHub and Linear while preserving the core Brutalist design system.
+- **Theme Hydration Provider**: Added `theme-provider.tsx` linking `useSettingsStore` to toggle the `.dark` class seamlessly on the HTML element.
+ 
+### Changed
+- **Component Color Overrides**: Replaced 30+ instances of hardcoded light-mode background classes (`bg-slate-50`, `bg-blue-100`) with responsive `dark:` variants across Dashboard, Resumes, Applications, and Cover Letter modules.
+- **Premium Shadow Contrast**: Refined brutalist shadow and border utilities to maintain strict visual hierarchy without muddying deep background colors (`#0d1117`).
+ 
 ## [2.4.1] - 2026-07-10
-
 ### Fixed
 - **Loading Flow Overhaul**: Removed the generic App Router `loading.tsx` from the `(dashboard)` group directory. Handled all loading states within the page components, ensuring single-UI loading transitions using page-specific high-fidelity skeletons and avoiding double loading screens on route transitions.
 
