@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CoverLetterEditorSkeleton, CoverLetterPreviewSkeleton } from "@/components/ui/skeleton-loaders";
+import { motion, AnimatePresence } from "framer-motion";
  
 interface CoverLetterWizardProps {
   initialTemplate?: CoverLetterTemplate;
@@ -346,7 +347,15 @@ export function CoverLetterWizard({ initialTemplate, onBackToDashboard }: CoverL
               <CoverLetterEditorSkeleton />
             )
           ) : activeDraft ? (
-            <div className="space-y-4">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={editorTab}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="w-full space-y-4"
+              >
               
               {/* Tab 1: Editor */}
               {editorTab === "editor" && (
@@ -472,7 +481,8 @@ export function CoverLetterWizard({ initialTemplate, onBackToDashboard }: CoverL
                 </BrutalCard>
               )}
  
-            </div>
+              </motion.div>
+            </AnimatePresence>
           ) : (
             <div className="border-2 border-dashed border-border/20 bg-slate-50/50 dark:bg-surface-secondary/50 rounded-sm p-12 text-center text-foreground-muted min-h-[350px] flex items-center justify-center">
               <p className="text-[9px] font-bold uppercase tracking-wider max-w-xs">

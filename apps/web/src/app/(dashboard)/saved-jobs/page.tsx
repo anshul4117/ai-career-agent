@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useTransition } from "react";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
+import { motion, AnimatePresence } from "framer-motion";
 import { SavedJobCard } from "@/features/jobs/components/saved-job-card";
 import { useBookmarkStore } from "@/features/jobs/store/bookmark.store";
 import { useRouter } from "next/navigation";
@@ -140,19 +141,29 @@ export default function SavedJobsPage() {
               </p>
             </BrutalCard>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-              {processedSavedJobs.map((job) => (
-                <SavedJobCard
-                  key={job.id}
-                  job={job}
-                  onClick={() => router.push(`/jobs/${job.id}`)}
-                  onUnsave={async (e) => {
-                    e.stopPropagation();
-                    handleUnsave(job);
-                  }}
-                />
-              ))}
-            </div>
+            <motion.div layout className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+              <AnimatePresence mode="popLayout">
+                {processedSavedJobs.map((job) => (
+                  <motion.div
+                    key={job.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.2, type: "spring", bounce: 0, opacity: { duration: 0.15 } }}
+                  >
+                    <SavedJobCard
+                      job={job}
+                      onClick={() => router.push(`/jobs/${job.id}`)}
+                      onUnsave={async (e) => {
+                        e.stopPropagation();
+                        handleUnsave(job);
+                      }}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
           )}
         </div>
       )}
@@ -163,24 +174,34 @@ export default function SavedJobsPage() {
           <h3 className="text-xs font-black uppercase tracking-widest text-foreground flex items-center gap-1.5">
             <Clock className="h-4 w-4 text-primary" /> Recently Viewed Jobs
           </h3>
-          <div className="grid gap-3 sm:grid-cols-3">
-            {recentlyViewed.slice(0, 3).map((recJob) => (
-              <BrutalCard
-                key={recJob.id}
-                onClick={() => router.push(`/jobs/${recJob.id}`)}
-                className="cursor-pointer border-2 border-border bg-surface p-3.5 brutal-shadow-xs hover:brutal-shadow-sm rounded-sm"
-              >
-                <h4 className="text-xs font-black uppercase truncate text-foreground leading-tight">{recJob.title}</h4>
-                <p className="text-[9px] font-bold text-primary uppercase mt-1">{recJob.companyInfo.name}</p>
-                <div className="flex justify-between items-center text-[8px] font-black text-foreground-muted mt-2 uppercase">
-                  <span>{recJob.location}</span>
-                  <span className="text-primary font-black flex items-center gap-0.5">
-                    View <ArrowRight className="h-2.5 w-2.5" />
-                  </span>
-                </div>
-              </BrutalCard>
-            ))}
-          </div>
+          <motion.div layout className="grid gap-3 sm:grid-cols-3">
+            <AnimatePresence mode="popLayout">
+              {recentlyViewed.slice(0, 3).map((recJob) => (
+                <motion.div
+                  key={recJob.id}
+                  layout
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <BrutalCard
+                    onClick={() => router.push(`/jobs/${recJob.id}`)}
+                    className="cursor-pointer border-2 border-border bg-surface p-3.5 brutal-shadow-xs hover:brutal-shadow-sm transition-all duration-200 active:scale-[0.98] rounded-sm h-full"
+                  >
+                    <h4 className="text-xs font-black uppercase truncate text-foreground leading-tight">{recJob.title}</h4>
+                    <p className="text-[9px] font-bold text-primary uppercase mt-1">{recJob.companyInfo.name}</p>
+                    <div className="flex justify-between items-center text-[8px] font-black text-foreground-muted mt-2 uppercase">
+                      <span>{recJob.location}</span>
+                      <span className="text-primary font-black flex items-center gap-0.5">
+                        View <ArrowRight className="h-2.5 w-2.5" />
+                      </span>
+                    </div>
+                  </BrutalCard>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
         </div>
       )}
  

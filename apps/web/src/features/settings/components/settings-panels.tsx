@@ -20,6 +20,7 @@ import {
   Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
  
 export function SettingsPanels() {
   const { resumes } = useResumeStore();
@@ -112,6 +113,15 @@ export function SettingsPanels() {
  
       {/* Active Form Sections */}
       <div className="space-y-6 pb-20">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="w-full"
+          >
  
         {/* Section 1: Profile */}
         {activeTab === "profile" && (
@@ -786,7 +796,8 @@ export function SettingsPanels() {
             </BrutalCard>
           </div>
         )}
- 
+          </motion.div>
+        </AnimatePresence>
       </div>
  
       {/* 4. Sticky Save Bar at the bottom */}

@@ -58,7 +58,7 @@ export function SavedJobCard({ job, onUnsave, onClick }: SavedJobCardProps) {
   return (
     <BrutalCard
       onClick={onClick}
-      className="cursor-pointer border-[3px] border-border brutal-shadow-xs transition-all hover:-translate-y-0.5 hover:brutal-shadow bg-surface rounded-sm p-3 relative flex flex-col justify-between gap-3 text-left"
+      className="cursor-pointer border-[3px] border-border brutal-shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:brutal-shadow active:scale-[0.98] bg-surface rounded-sm p-3 relative flex flex-col justify-between gap-3 text-left"
     >
       <div>
         {/* Header (Logo, Title & Unsave Button) */}

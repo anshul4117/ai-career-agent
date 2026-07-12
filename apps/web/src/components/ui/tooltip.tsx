@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 export interface BrutalTooltipProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'content'> {
   content: React.ReactNode;
@@ -41,21 +42,29 @@ export const Tooltip = ({ content, children, delay = 300, className, ...props }:
   return (
     <div className="relative inline-block">
       {trigger}
-      {isVisible && (
-        <div
-          id={tooltipId}
-          role="tooltip"
-          className={cn(
-            "absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 text-xs font-semibold text-surface bg-foreground brutal-border rounded-sm brutal-shadow-hover whitespace-nowrap pointer-events-none transition-all duration-150 animate-in fade-in slide-in-from-bottom-1",
-            className
-          )}
-          {...props}
-        >
-          {content}
-          {/* Arrow */}
-          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[3px] border-[5px] border-transparent border-t-foreground" />
-        </div>
-      )}
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div
+            id={tooltipId}
+            role="tooltip"
+            initial={{ opacity: 0, y: 5, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 5, scale: 0.95 }}
+            transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className={cn(
+              "absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 text-xs font-semibold text-surface bg-foreground brutal-border rounded-sm brutal-shadow-hover whitespace-nowrap pointer-events-none",
+              className
+            )}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            {...(props as any)}
+          >
+            {content}
+            {/* Arrow */}
+            <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[3px] border-[5px] border-transparent border-t-foreground" />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
+

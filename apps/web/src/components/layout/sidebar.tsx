@@ -3,6 +3,7 @@
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useUiStore } from "@/store";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
@@ -21,14 +22,20 @@ export function Sidebar({ className }: SidebarProps) {
 
   return (
     <>
-      {sidebarOpen && (
-        <button
-          type="button"
-          className="fixed inset-0 z-40 bg-foreground/30 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-          aria-label="Close navigation menu"
-        />
-      )}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            type="button"
+            className="fixed inset-0 z-40 bg-foreground/30 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close navigation menu"
+          />
+        )}
+      </AnimatePresence>
 
       <aside
         className={cn(

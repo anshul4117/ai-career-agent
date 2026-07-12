@@ -2,6 +2,12 @@
 
 All notable changes to the AI Career Agent platform will be documented in this file.
 
+## [0.12.0] - 2026-07-12
+### Added
+- **Premium Animation System:** Introduced Framer Motion for buttery-smooth page transitions, list layout reordering, and entrance/exit animations.
+- **Micro-interactions:** Enhanced base buttons with a tactile press scale, updated Radix UI primitives (Dropdowns, Dialogs, Tooltips) with GPU-accelerated enter animations.
+- **Accessibility:** Global animations respect system `prefers-reduced-motion` settings.
+
 ## [2.4.2] - 2026-07-12
  
 ### Added

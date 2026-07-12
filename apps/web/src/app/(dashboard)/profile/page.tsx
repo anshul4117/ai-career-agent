@@ -19,6 +19,24 @@ import { CareerPreferenceCard } from "@/features/profile/components/career-prefe
 import { useProfileStore } from "@/features/profile/store/profile.store";
 import { calculateProfileCompletion } from "@/features/profile/utils/completion-engine";
 import { ProfileSkeleton } from "@/components/ui/skeleton-loaders";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { type: "spring" as const, stiffness: 300, damping: 24 }
+  }
+};
 
 export default function ProfilePage() {
   const {
@@ -77,54 +95,39 @@ export default function ProfilePage() {
       </div>
 
       {/* 3. Two-Column Dashboard Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start w-full">
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start w-full"
+      >
         
         {/* Left Column: Primary CV Feed (lg:col-span-2) */}
         <div className="lg:col-span-2 space-y-6 w-full min-w-0">
-          {/* About (Career Summary) */}
-          <CareerSummaryCard career={profile.career} />
-
-          {/* Work Experience */}
-          <ExperienceCard experience={experience} />
-
-          {/* Education History */}
-          <EducationCard education={education} />
-
-          {/* Portfolio Projects */}
-          <ProjectsCard projects={projects} />
-
-          {/* Skills & Expertise */}
-          <SkillsCard skills={skills} />
-
-          {/* Languages Spoken */}
-          <LanguagesCard languages={languages} />
-
-          {/* Certifications */}
-          <CertificationsCard certifications={certifications} />
+          <motion.div variants={itemVariants}><CareerSummaryCard career={profile.career} /></motion.div>
+          <motion.div variants={itemVariants}><ExperienceCard experience={experience} /></motion.div>
+          <motion.div variants={itemVariants}><EducationCard education={education} /></motion.div>
+          <motion.div variants={itemVariants}><ProjectsCard projects={projects} /></motion.div>
+          <motion.div variants={itemVariants}><SkillsCard skills={skills} /></motion.div>
+          <motion.div variants={itemVariants}><LanguagesCard languages={languages} /></motion.div>
+          <motion.div variants={itemVariants}><CertificationsCard certifications={certifications} /></motion.div>
         </div>
 
         {/* Right Column: Sidebar Widgets (lg:col-span-1) */}
         <div className="lg:col-span-1 space-y-6 w-full min-w-0">
           {/* Desktop-Only Strength & Missing Sections */}
           <div className="hidden lg:block space-y-6 w-full">
-            <ProfileCompletionCard completion={completionData} />
-            <MissingSections missingSections={audit.missingSections} />
+            <motion.div variants={itemVariants}><ProfileCompletionCard completion={completionData} /></motion.div>
+            <motion.div variants={itemVariants}><MissingSections missingSections={audit.missingSections} /></motion.div>
           </div>
 
-          {/* Personal Info details */}
-          <PersonalInfoCard personal={profile.personal} />
-
-          {/* Contact Details */}
-          <ContactInfoCard contact={profile.contact} />
-
-          {/* Social Profiles */}
-          <SocialLinksCard socialLinks={socialLinks} />
-
-          {/* Target Career Preferences */}
-          <CareerPreferenceCard preferences={preferences} />
+          <motion.div variants={itemVariants}><PersonalInfoCard personal={profile.personal} /></motion.div>
+          <motion.div variants={itemVariants}><ContactInfoCard contact={profile.contact} /></motion.div>
+          <motion.div variants={itemVariants}><SocialLinksCard socialLinks={socialLinks} /></motion.div>
+          <motion.div variants={itemVariants}><CareerPreferenceCard preferences={preferences} /></motion.div>
         </div>
 
-      </div>
+      </motion.div>
     </div>
   );
 }

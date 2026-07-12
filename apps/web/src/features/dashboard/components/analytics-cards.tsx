@@ -12,23 +12,44 @@ const ICON_MAP: Record<string, LucideIcon> = {
   "mail": Mail,
 };
 
+import { motion } from "framer-motion";
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 10 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.2 } }
+};
+
 export function AnalyticsCards() {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 w-full min-w-0">
+    <motion.div 
+      variants={container} 
+      initial="hidden" 
+      animate="show" 
+      className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 w-full min-w-0"
+    >
       {ANALYTICS_DATA.map((card, index) => {
         const Icon = ICON_MAP[card.icon] || FileText;
         const trendValue = card.trend === "neutral" ? "stable" : card.trend;
         return (
-          <StatsCard
-            key={index}
-            label={card.title}
-            value={card.count}
-            trendLabel={card.percentage}
-            icon={Icon}
-            trend={trendValue}
-          />
+          <motion.div variants={item} key={index}>
+            <StatsCard
+              label={card.title}
+              value={card.count}
+              trendLabel={card.percentage}
+              icon={Icon}
+              trend={trendValue}
+            />
+          </motion.div>
         );
       })}
-    </div>
+    </motion.div>
   );
 }

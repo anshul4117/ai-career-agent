@@ -15,6 +15,13 @@ import { useThemeStore } from "../../store/theme.store";
 import { cn } from "@/lib/utils";
 import { Eye, X, GripVertical, Settings } from "lucide-react";
 import { BrutalButton } from "@/components/ui/brutal-button";
+import { motion, AnimatePresence } from "framer-motion";
+
+const fadeVariants = {
+  hidden: { opacity: 0, y: 5 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.15 } },
+  exit: { opacity: 0, transition: { duration: 0.1 } }
+};
 
 export function ResumeBuilderLayout() {
   const { currentResume } = useBuilderStore();
@@ -128,12 +135,21 @@ export function ResumeBuilderLayout() {
               <ResumeSectionsSidebar isCollapsed={true} />
             ) : (
               // Expanded Mode: render active tab component
-              <>
-                {activeSidebarTab === "sections" && <ResumeSectionsSidebar />}
-                {activeSidebarTab === "templates" && <TemplateGallery />}
-                {activeSidebarTab === "theme" && <ThemePanel />}
-                {activeSidebarTab === "optimize" && <ResumeOptimizePanel />}
-              </>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeSidebarTab}
+                  variants={fadeVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  className="h-full w-full"
+                >
+                  {activeSidebarTab === "sections" && <ResumeSectionsSidebar />}
+                  {activeSidebarTab === "templates" && <TemplateGallery />}
+                  {activeSidebarTab === "theme" && <ThemePanel />}
+                  {activeSidebarTab === "optimize" && <ResumeOptimizePanel />}
+                </motion.div>
+              </AnimatePresence>
             )}
           </div>
         </div>
@@ -148,7 +164,18 @@ export function ResumeBuilderLayout() {
           {/* Primary scroll container: Editor and Preview stack vertically on Tablet */}
           <div className="flex-1 p-4 md:p-6 overflow-y-auto min-w-0">
             <div className="max-w-3xl mx-auto space-y-12">
-              {activeSidebarTab === "optimize" ? <OptimizationStudio /> : <ResumeEditor />}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeSidebarTab === "optimize" ? "optimize" : "editor"}
+                  variants={fadeVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  className="w-full"
+                >
+                  {activeSidebarTab === "optimize" ? <OptimizationStudio /> : <ResumeEditor />}
+                </motion.div>
+              </AnimatePresence>
 
               {/* Tablet view for Live Preview (rendered directly below editor on md screen, hidden on lg and sm) */}
               <div className="hidden md:block lg:hidden border-t-3 border-border pt-8 mt-8">

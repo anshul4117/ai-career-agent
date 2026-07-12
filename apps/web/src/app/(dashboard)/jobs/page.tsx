@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useJobsStore } from "@/features/jobs/store/jobs.store";
+import { motion, AnimatePresence } from "framer-motion";
 import { PageHeader } from "@/components/shared/page-header";
 import { JobsFilter } from "@/features/jobs/components/jobs-filter";
 import { JobCard } from "@/features/jobs/components/job-card";
@@ -522,21 +523,31 @@ export default function JobsPage() {
               }}
             />
           ) : (
-            <div className={cn("grid gap-4", viewMode === "grid" ? "sm:grid-cols-2 xl:grid-cols-3" : "grid-cols-1")}>
-              {jobs.map((job) => (
-                <JobCard
-                  key={job.id}
-                  job={job}
-                  isSelected={selectedJob?.id === job.id}
-                  onClick={() => handleJobClick(job.id)}
-                  onSave={(e) => {
-                    e.stopPropagation();
-                    toggleSaveJob(job.id);
-                    triggerToast(job.isSaved ? "Job removed from saved list" : "Job added to saved list!");
-                  }}
-                />
-              ))}
-            </div>
+            <motion.div layout className={cn("grid gap-4", viewMode === "grid" ? "sm:grid-cols-2 xl:grid-cols-3" : "grid-cols-1")}>
+              <AnimatePresence mode="popLayout">
+                {jobs.map((job) => (
+                  <motion.div
+                    key={job.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <JobCard
+                      job={job}
+                      isSelected={selectedJob?.id === job.id}
+                      onClick={() => handleJobClick(job.id)}
+                      onSave={(e) => {
+                        e.stopPropagation();
+                        toggleSaveJob(job.id);
+                        triggerToast(job.isSaved ? "Job removed from saved list" : "Job added to saved list!");
+                      }}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
           )}
  
           {/* Pagination Controls */}

@@ -20,6 +20,7 @@ import {
   X, 
   Check
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
  
 export default function JobAlertsPage() {
   const { alerts, fetchAlerts, createAlert, updateAlert, deleteAlert, duplicateAlert, toggleAlertActive, loading } = useAlertsStore();
@@ -166,9 +167,18 @@ export default function JobAlertsPage() {
           }}
         />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {alerts.map((alert) => (
-            <BrutalCard
+        <motion.div layout className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+          <AnimatePresence mode="popLayout">
+            {alerts.map((alert) => (
+              <motion.div
+                layout
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.2 }}
+                key={alert.id}
+              >
+                <BrutalCard
               key={alert.id}
               className={`border-2 border-border rounded-sm p-4 relative flex flex-col justify-between gap-3 text-left transition-all ${
                 !alert.isActive ? "opacity-75 bg-surface-secondary/30" : "bg-surface"
@@ -274,17 +284,31 @@ export default function JobAlertsPage() {
                 </Button>
               </div>
             </BrutalCard>
+            </motion.div>
           ))}
-        </div>
+          </AnimatePresence>
+        </motion.div>
       )}
  
       {/* Create / Edit Alert Modal Backdrop */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-          <BrutalCard className="w-full max-w-lg bg-surface border-[3px] border-border brutal-shadow rounded-sm max-h-[90vh] overflow-y-auto p-5 relative">
-            
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b-2 border-border pb-3 mb-4">
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="w-full max-w-lg bg-surface border-[3px] border-border brutal-shadow rounded-sm max-h-[90vh] overflow-y-auto p-5 relative"
+            >
+              
+              {/* Modal Header */}
+              <div className="flex items-center justify-between border-b-2 border-border pb-3 mb-4">
               <h2 className="text-sm font-black uppercase tracking-widest text-foreground flex items-center gap-1.5">
                 <Bell className="h-4 w-4 text-primary" /> {editingAlert ? "Edit Job Alert" : "Create Job Alert"}
               </h2>
@@ -488,10 +512,10 @@ export default function JobAlertsPage() {
               </div>
  
             </form>
- 
-          </BrutalCard>
-        </div>
-      )}
+          </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
  
     </div>
   );

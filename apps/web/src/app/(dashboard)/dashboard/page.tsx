@@ -12,6 +12,24 @@ import { AIInsights } from "@/features/dashboard/components/ai-insights";
 import { RecentActivity } from "@/features/dashboard/components/recent-activity";
 import { RecentlyViewedJobs } from "@/features/dashboard/components/recently-viewed-jobs";
 import { DashboardSkeleton } from "@/components/ui/skeleton-loaders";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { type: "spring" as const, stiffness: 300, damping: 24 }
+  }
+};
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
@@ -31,24 +49,29 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6 w-full min-w-0">
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-6 w-full min-w-0"
+    >
       {/* 1. Welcome Section */}
-      <WelcomeBanner />
+      <motion.div variants={itemVariants}><WelcomeBanner /></motion.div>
 
       {/* 2. Analytics Cards */}
-      <AnalyticsCards />
+      <motion.div variants={itemVariants}><AnalyticsCards /></motion.div>
 
       {/* 3. Resume & Profile Progress Cards */}
-      <div className="grid gap-6 md:grid-cols-2 w-full min-w-0">
+      <motion.div variants={itemVariants} className="grid gap-6 md:grid-cols-2 w-full min-w-0">
         <ResumeProgressCard />
         <ProfileCompletionCard />
-      </div>
+      </motion.div>
 
       {/* 4. Quick Actions Shortcuts */}
-      <QuickActions />
+      <motion.div variants={itemVariants}><QuickActions /></motion.div>
 
       {/* 5. Jobs, Applications, AI Insights, and Activity Timelines */}
-      <div className="grid gap-6 lg:grid-cols-2 w-full min-w-0">
+      <motion.div variants={itemVariants} className="grid gap-6 lg:grid-cols-2 w-full min-w-0">
         {/* Left Column: Recommended Jobs & AI Insights */}
         <div className="space-y-6 w-full min-w-0">
           <RecommendedJobs />
@@ -61,7 +84,7 @@ export default function DashboardPage() {
           <RecentActivity />
           <RecentlyViewedJobs />
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
