@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BrutalSelect } from "@/components/ui/brutal-select";
-import { BrutalCard } from "@/components/ui/brutal-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ApplicationsSkeleton, CalendarSkeleton } from "@/components/ui/skeleton-loaders";
 import { useApplicationStore } from "@/features/applications/store/application.store";
@@ -14,6 +13,7 @@ import { ApplicationsDashboard } from "@/features/applications/components/applic
 import { KanbanBoard } from "@/features/applications/components/kanban-board";
 import { CalendarView } from "@/features/applications/components/calendar-view";
 import { ApplicationDetailDialog } from "@/features/applications/components/application-detail-dialog";
+import { motion, AnimatePresence } from "framer-motion";
 import type { ApplicationStatus } from "@/types";
 import { 
   Check, 
@@ -28,6 +28,25 @@ import {
   X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const viewVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.2 } },
+  exit: { opacity: 0, transition: { duration: 0.15 } }
+};
+
+const tableContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 }
+  }
+};
+
+const tableRow = {
+  hidden: { opacity: 0, x: -10 },
+  show: { opacity: 1, x: 0 }
+};
  
 export default function ApplicationsPage() {
   const {
@@ -383,8 +402,16 @@ export default function ApplicationsPage() {
           }}
         />
       ) : (
-        <div className="w-full">
-          {activeTab === "kanban" && (
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            variants={viewVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="w-full"
+          >
+            {activeTab === "kanban" && (
             <KanbanBoard
               applications={filteredApps}
               onOpenDetails={setSelectedAppId}
@@ -421,10 +448,11 @@ export default function ApplicationsPage() {
                     <th className="px-4 py-3">Actions</th>
                   </tr>
                 </thead>
-                <tbody>
+                <motion.tbody variants={tableContainer} initial="hidden" animate="show">
                   {filteredApps.length > 0 ? (
                     filteredApps.map((app) => (
-                      <tr 
+                      <motion.tr 
+                        variants={tableRow}
                         key={app.id} 
                         onClick={() => setSelectedAppId(app.id)}
                         className="border-b border-border/20 hover:bg-surface-secondary/20 transition-colors cursor-pointer"
@@ -463,7 +491,7 @@ export default function ApplicationsPage() {
                             Open Details
                           </Button>
                         </td>
-                      </tr>
+                      </motion.tr>
                     ))
                   ) : (
                     <tr>
@@ -472,46 +500,63 @@ export default function ApplicationsPage() {
                       </td>
                     </tr>
                   )}
-                </tbody>
+                </motion.tbody>
               </table>
             </div>
           )}
-        </div>
+          </motion.div>
+        </AnimatePresence>
       )}
  
       {/* 5. Application Details Editor Drawer */}
-      {selectedApp && (
-        <ApplicationDetailDialog
-          application={selectedApp}
-          onClose={() => setSelectedAppId(null)}
-          onUpdate={updateApplication}
-          onUpdateStatus={handleUpdateStatus}
-          onDelete={deleteApplication}
-        />
-      )}
+      <AnimatePresence>
+        {selectedApp && (
+          <ApplicationDetailDialog
+            application={selectedApp}
+            onClose={() => setSelectedAppId(null)}
+            onUpdate={updateApplication}
+            onUpdateStatus={handleUpdateStatus}
+            onDelete={deleteApplication}
+          />
+        )}
+      </AnimatePresence>
  
       {/* 6. Quick Creation Modal Dialog */}
-      {isAddOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div onClick={() => setIsAddOpen(false)} className="absolute inset-0 bg-foreground/50 backdrop-blur-xs" />
-          <BrutalCard className="relative w-full max-w-md bg-surface border-[3px] border-border brutal-shadow rounded-sm p-6 space-y-4 z-10 text-left">
-            <div className="flex justify-between items-center border-b-2 border-border/10 pb-2">
-              <h3 className="text-xs font-black uppercase tracking-wider text-foreground">Add New Application</h3>
-              <Button variant="ghost" size="icon" onClick={() => setIsAddOpen(false)} className="h-7 w-7 border border-border/30 hover:bg-surface-secondary rounded-sm">
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
- 
-            <form onSubmit={handleCreateApplication} className="space-y-3.5">
-              <div className="space-y-1">
-                <label className="text-[8px] font-black uppercase text-foreground-muted block">Job Role Title</label>
-                <Input
-                  required
-                  placeholder="e.g. Backend Developer"
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  className="h-9 text-xs font-bold border border-border/50"
-                />
+      <AnimatePresence>
+        {isAddOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setIsAddOpen(false)} 
+              className="absolute inset-0 bg-foreground/50 backdrop-blur-xs" 
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="relative w-full max-w-md bg-surface border-[3px] border-border brutal-shadow rounded-sm p-6 space-y-4 z-10 text-left"
+            >
+              <div className="flex justify-between items-center border-b-2 border-border/10 pb-2">
+                <h3 className="text-xs font-black uppercase tracking-wider text-foreground">Add New Application</h3>
+                <Button variant="ghost" size="icon" onClick={() => setIsAddOpen(false)} className="h-7 w-7 border border-border/30 hover:bg-surface-secondary rounded-sm">
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+  
+              <form onSubmit={handleCreateApplication} className="space-y-3.5">
+                <div className="space-y-1">
+                  <label className="text-[8px] font-black uppercase text-foreground-muted block">Job Role Title</label>
+                  <Input
+                    required
+                    placeholder="e.g. Backend Developer"
+                    value={newTitle}
+                    onChange={(e) => setNewTitle(e.target.value)}
+                    className="h-9 text-xs font-bold border border-border/50"
+                  />
               </div>
  
               <div className="space-y-1">
@@ -569,9 +614,10 @@ export default function ApplicationsPage() {
                 </Button>
               </div>
             </form>
-          </BrutalCard>
+          </motion.div>
         </div>
       )}
+      </AnimatePresence>
     </div>
   );
 }

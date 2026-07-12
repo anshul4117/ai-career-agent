@@ -25,6 +25,20 @@ import {
   RefreshCw
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 10 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.2 } }
+};
 
 interface JobDetailsPaneProps {
   job: Job;
@@ -689,22 +703,23 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
           <h3 className="text-xs font-black uppercase tracking-widest text-foreground flex items-center gap-1.5">
             <TrendingUp className="h-4 w-4 text-primary" /> Similar Opportunities
           </h3>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <motion.div variants={container} initial="hidden" animate="show" className="grid gap-4 sm:grid-cols-3">
             {similarJobs.map((simJob) => (
-              <BrutalCard
-                key={simJob.id}
-                onClick={() => selectJob(simJob.id)}
-                className="cursor-pointer border-2 border-border bg-surface hover:-translate-y-0.5 transition-all p-3.5 brutal-shadow-xs hover:brutal-shadow-sm rounded-sm"
-              >
-                <h4 className="text-xs font-black uppercase truncate text-foreground leading-tight">{simJob.title}</h4>
-                <p className="text-[9px] font-bold text-primary uppercase mt-1">{simJob.companyInfo.name}</p>
-                <div className="flex justify-between items-center text-[8px] font-black text-foreground-muted mt-2 uppercase">
-                  <span>{simJob.location}</span>
-                  <span>{simJob.remoteType}</span>
-                </div>
-              </BrutalCard>
+              <motion.div variants={item} key={simJob.id} className="h-full">
+                <BrutalCard
+                  onClick={() => selectJob(simJob.id)}
+                  className="cursor-pointer border-2 border-border bg-surface hover:-translate-y-0.5 transition-all p-3.5 brutal-shadow-xs hover:brutal-shadow-sm rounded-sm h-full flex flex-col"
+                >
+                  <h4 className="text-xs font-black uppercase truncate text-foreground leading-tight">{simJob.title}</h4>
+                  <p className="text-[9px] font-bold text-primary uppercase mt-1">{simJob.companyInfo.name}</p>
+                  <div className="flex justify-between items-center text-[8px] font-black text-foreground-muted mt-auto pt-2 uppercase">
+                    <span>{simJob.location}</span>
+                    <span>{simJob.remoteType}</span>
+                  </div>
+                </BrutalCard>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       )}
 
@@ -714,21 +729,22 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
           <h3 className="text-xs font-black uppercase tracking-widest text-foreground flex items-center gap-1.5">
             <Clock className="h-4 w-4 text-primary" /> Recently Viewed
           </h3>
-          <div className="flex flex-wrap gap-2.5">
+          <motion.div variants={container} initial="hidden" animate="show" className="flex flex-wrap gap-2.5">
             {recentlyViewed
               .filter((j) => j.id !== job.id)
               .slice(0, 5)
               .map((recJob) => (
-                <Button
-                  key={recJob.id}
-                  variant="ghost"
-                  onClick={() => selectJob(recJob.id)}
-                  className="h-8 px-3 border border-border/25 rounded-sm hover:bg-surface-secondary text-[9px] font-bold text-foreground-secondary uppercase flex items-center gap-1"
-                >
-                  {recJob.title} <span className="text-primary font-black">@</span> {recJob.companyInfo.name}
-                </Button>
+                <motion.div variants={item} key={recJob.id}>
+                  <Button
+                    variant="ghost"
+                    onClick={() => selectJob(recJob.id)}
+                    className="h-8 px-3 border border-border/25 rounded-sm hover:bg-surface-secondary text-[9px] font-bold text-foreground-secondary uppercase flex items-center gap-1"
+                  >
+                    {recJob.title} <span className="text-primary font-black">@</span> {recJob.companyInfo.name}
+                  </Button>
+                </motion.div>
               ))}
-          </div>
+          </motion.div>
         </div>
       )}
 

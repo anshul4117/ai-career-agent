@@ -3,6 +3,7 @@
 import React from "react";
 import type { JobApplication } from "../types/application.types";
 import type { ApplicationStatus } from "@/types";
+import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
@@ -124,67 +125,74 @@ export function KanbanBoard({
             {/* Column Body Cards list */}
             <div className="flex-1 overflow-y-auto p-2.5 space-y-3 min-h-[150px]">
               {columnApps.length > 0 ? (
-                columnApps.map((app) => (
-                  <div
-                    key={app.id}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, app.id)}
-                    onClick={() => onOpenDetails(app.id)}
-                    className="p-3 border-2 border-border brutal-shadow-xs hover:brutal-shadow bg-surface hover:-translate-y-0.5 transition-all cursor-grab active:cursor-grabbing rounded-sm relative text-left space-y-2 group"
-                  >
-                    {/* Header info */}
-                    <div>
-                      <div className="flex justify-between items-start gap-1">
-                        <span className="text-[7.5px] font-black text-primary uppercase tracking-wider truncate max-w-[120px]">{app.company}</span>
-                        
-                        {/* Accessibility Stage Shifter Arrows */}
-                        <div className="hidden group-hover:flex items-center gap-0.5 bg-surface border border-border/40 p-0.5 rounded-sm shrink-0">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleMoveStage(app.id, app.status, "prev");
-                            }}
-                            className="p-0.5 hover:bg-slate-100 dark:hover:bg-surface-hover rounded-sm text-foreground-muted hover:text-primary"
-                            title="Move column left"
-                            aria-label={`Move ${app.jobTitle} application left`}
-                          >
-                            <ChevronLeft className="h-2.5 w-2.5" />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleMoveStage(app.id, app.status, "next");
-                            }}
-                            className="p-0.5 hover:bg-slate-100 dark:hover:bg-surface-hover rounded-sm text-foreground-muted hover:text-primary"
-                            title="Move column right"
-                            aria-label={`Move ${app.jobTitle} application right`}
-                          >
-                            <ChevronRight className="h-2.5 w-2.5" />
-                          </button>
+                <AnimatePresence>
+                  {columnApps.map((app) => (
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      key={app.id}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e as unknown as React.DragEvent, app.id)}
+                      onClick={() => onOpenDetails(app.id)}
+                      className="p-3 border-2 border-border brutal-shadow-xs hover:brutal-shadow bg-surface hover:-translate-y-0.5 transition-all cursor-grab active:cursor-grabbing rounded-sm relative text-left space-y-2 group"
+                    >
+                      {/* Header info */}
+                      <div>
+                        <div className="flex justify-between items-start gap-1">
+                          <span className="text-[7.5px] font-black text-primary uppercase tracking-wider truncate max-w-[120px]">{app.company}</span>
+                          
+                          {/* Accessibility Stage Shifter Arrows */}
+                          <div className="hidden group-hover:flex items-center gap-0.5 bg-surface border border-border/40 p-0.5 rounded-sm shrink-0">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleMoveStage(app.id, app.status, "prev");
+                              }}
+                              className="p-0.5 hover:bg-slate-100 dark:hover:bg-surface-hover rounded-sm text-foreground-muted hover:text-primary"
+                              title="Move column left"
+                              aria-label={`Move ${app.jobTitle} application left`}
+                            >
+                              <ChevronLeft className="h-2.5 w-2.5" />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleMoveStage(app.id, app.status, "next");
+                              }}
+                              className="p-0.5 hover:bg-slate-100 dark:hover:bg-surface-hover rounded-sm text-foreground-muted hover:text-primary"
+                              title="Move column right"
+                              aria-label={`Move ${app.jobTitle} application right`}
+                            >
+                              <ChevronRight className="h-2.5 w-2.5" />
+                            </button>
+                          </div>
                         </div>
+                        <h4 className="text-[11px] font-black uppercase text-foreground leading-tight tracking-tight truncate mt-0.5">
+                          {app.jobTitle}
+                        </h4>
                       </div>
-                      <h4 className="text-[11px] font-black uppercase text-foreground leading-tight tracking-tight truncate mt-0.5">
-                        {app.jobTitle}
-                      </h4>
-                    </div>
- 
-                    {/* Match Score & Quality */}
-                    <div className="flex items-center gap-1">
-                      <Badge className="text-[6.5px] font-extrabold bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border border-green-200 px-1 py-0 shadow-none rounded-none shrink-0">
-                        {app.matchScore}% Match
-                      </Badge>
-                      <Badge className="text-[6.5px] font-extrabold bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-200 px-1 py-0 shadow-none rounded-none shrink-0">
-                        {app.jobQuality}% Quality
-                      </Badge>
-                    </div>
- 
-                    {/* Footnote details */}
-                    <div className="flex items-center justify-between text-[7px] font-black uppercase tracking-wider text-foreground-muted border-t border-border/10 pt-2">
-                      <span>Source: {app.source}</span>
-                      <span>{app.appliedAt.split("T")[0]}</span>
-                    </div>
-                  </div>
-                ))
+  
+                      {/* Match Score & Quality */}
+                      <div className="flex items-center gap-1">
+                        <Badge className="text-[6.5px] font-extrabold bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border border-green-200 px-1 py-0 shadow-none rounded-none shrink-0">
+                          {app.matchScore}% Match
+                        </Badge>
+                        <Badge className="text-[6.5px] font-extrabold bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-200 px-1 py-0 shadow-none rounded-none shrink-0">
+                          {app.jobQuality}% Quality
+                        </Badge>
+                      </div>
+  
+                      {/* Footnote details */}
+                      <div className="flex items-center justify-between text-[7px] font-black uppercase tracking-wider text-foreground-muted border-t border-border/10 pt-2">
+                        <span>Source: {app.source}</span>
+                        <span>{app.appliedAt.split("T")[0]}</span>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               ) : (
                 <div className="h-full flex flex-col justify-center items-center py-8 text-center text-foreground-muted border-2 border-dashed border-border/20 rounded-sm p-4 text-[9px] font-bold uppercase">
                   Empty Stage

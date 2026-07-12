@@ -19,6 +19,20 @@ import {
   AlertCircle
 } from "lucide-react";
 import Link from "next/link";
+import { motion } from "framer-motion";
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 10 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.2 } }
+};
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -161,9 +175,9 @@ export default function CompanyDetailPage({ params }: PageProps) {
                 No active listings posted. Check back later or view similar companies.
               </p>
             ) : (
-              <div className="grid gap-3">
+              <motion.div variants={container} initial="hidden" animate="show" className="grid gap-3">
                 {companyJobs.map((job) => (
-                  <div key={job.id} className="p-3.5 border-2 border-border bg-surface-secondary/10 flex items-center justify-between gap-4 rounded-sm hover:-translate-y-0.5 transition-all">
+                  <motion.div variants={item} key={job.id} className="p-3.5 border-2 border-border bg-surface-secondary/10 flex items-center justify-between gap-4 rounded-sm hover:-translate-y-0.5 transition-all">
                     <div className="min-w-0">
                       <h4 className="text-xs font-black uppercase truncate text-foreground">{job.title}</h4>
                       <p className="text-[9px] font-bold text-foreground-muted uppercase mt-0.5">
@@ -179,9 +193,9 @@ export default function CompanyDetailPage({ params }: PageProps) {
                         Apply
                       </Link>
                     </Button>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             )}
           </BrutalCard>
         </div>
@@ -250,13 +264,13 @@ export default function CompanyDetailPage({ params }: PageProps) {
           <h3 className="text-xs font-black uppercase tracking-widest text-foreground flex items-center gap-1.5">
             <TrendingUp className="h-4 w-4 text-primary" /> Similar Companies in {selectedCompany.industry}
           </h3>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <motion.div variants={container} initial="hidden" animate="show" className="grid gap-4 sm:grid-cols-3">
             {similarCompanies.map((simCo) => (
-              <BrutalCard
-                key={simCo.id}
-                className="border-2 border-border bg-surface p-4 brutal-shadow-xs hover:brutal-shadow-sm rounded-sm"
-              >
-                <div className="flex gap-2 items-center">
+              <motion.div variants={item} key={simCo.id}>
+                <BrutalCard
+                  className="border-2 border-border bg-surface p-4 brutal-shadow-xs hover:brutal-shadow-sm rounded-sm h-full"
+                >
+                  <div className="flex gap-2 items-center">
                   <div className="h-8 w-8 border-2 border-border bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center font-black uppercase text-[10px] rounded-sm shrink-0">
                     {simCo.name.slice(0, 2)}
                   </div>
@@ -277,10 +291,11 @@ export default function CompanyDetailPage({ params }: PageProps) {
                       Profile
                     </Link>
                   </Button>
-                </div>
-              </BrutalCard>
+                  </div>
+                </BrutalCard>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       )}
 

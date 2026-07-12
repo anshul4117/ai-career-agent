@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 import {
   Briefcase,
   FileText,
@@ -38,13 +39,20 @@ export function MobileNav() {
               <Link
                 href={item.href}
                 className={cn(
-                  "flex flex-col items-center gap-1 px-2 py-3 text-[10px] font-semibold uppercase tracking-wide transition-colors",
-                  isActive ? "bg-foreground text-surface" : "text-foreground-secondary",
+                  "group relative flex flex-col items-center gap-1 px-2 py-3 text-[10px] font-semibold uppercase tracking-wide transition-colors z-10",
+                  isActive ? "text-surface" : "text-foreground-secondary hover:text-foreground",
                 )}
                 aria-current={isActive ? "page" : undefined}
               >
-                <Icon className="h-5 w-5" aria-hidden="true" />
-                <span>{item.title}</span>
+                {isActive && (
+                  <motion.div
+                    layoutId="mobile-nav-indicator"
+                    className="absolute inset-0 bg-foreground brutal-shadow -z-10 border-t-[3px] border-border"
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  />
+                )}
+                <Icon className="h-5 w-5 relative z-10" aria-hidden="true" />
+                <span className="relative z-10">{item.title}</span>
               </Link>
             </li>
           );

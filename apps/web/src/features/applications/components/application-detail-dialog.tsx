@@ -3,6 +3,7 @@
 import React from "react";
 import type { JobApplication } from "../types/application.types";
 import type { ApplicationStatus } from "@/types";
+import { motion } from "framer-motion";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -92,13 +93,23 @@ export function ApplicationDetailDialog({
   return (
     <div className="fixed inset-0 z-50 flex justify-end select-none text-left">
       {/* Backdrop */}
-      <div 
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
         onClick={onClose}
-        className="absolute inset-0 bg-foreground/50 backdrop-blur-xs transition-opacity" 
+        className="absolute inset-0 bg-foreground/50 backdrop-blur-xs" 
       />
  
       {/* Drawer */}
-      <div className="relative w-full max-w-[460px] bg-surface border-l-[4px] border-border brutal-shadow h-full flex flex-col p-5 overflow-y-auto z-10 space-y-5">
+      <motion.div
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+        className="relative w-full max-w-2xl bg-background border-l-[3px] border-border brutal-shadow-hover h-full overflow-y-auto z-10 flex flex-col p-5 space-y-5"
+      >
         
         {/* Header toolbar */}
         <div className="flex justify-between items-center border-b-2 border-border/10 pb-3">
@@ -451,7 +462,7 @@ export function ApplicationDetailDialog({
           </Button>
         </div>
         
-      </div>
+      </motion.div>
     </div>
   );
 }

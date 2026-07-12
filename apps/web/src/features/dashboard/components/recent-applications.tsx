@@ -16,6 +16,21 @@ const STATUS_VARIANTS: Record<string, "default" | "secondary" | "success" | "war
   rejected: "outline",
 };
 
+import { motion } from "framer-motion";
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 10 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.2 } }
+};
+
 export function RecentApplications() {
   return (
     <div className="space-y-4 w-full min-w-0">
@@ -45,9 +60,14 @@ export function RecentApplications() {
                 <th className="p-2 sm:p-4 text-right" role="columnheader">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y-2 divide-border text-sm">
+            <motion.tbody 
+              variants={container} 
+              initial="hidden" 
+              animate="show" 
+              className="divide-y-2 divide-border text-sm"
+            >
               {RECENT_APPLICATIONS.map((app) => (
-                <tr key={app.id} className="hover:bg-surface-secondary/50 transition-colors">
+                <motion.tr variants={item} key={app.id} className="hover:bg-surface-secondary/50 transition-colors">
                   <td className="p-2 sm:p-4 font-bold">{app.company}</td>
                   <td className="p-2 sm:p-4 text-foreground-secondary">{app.role}</td>
                   <td className="p-2 sm:p-4 text-foreground-secondary font-mono text-xs">{app.appliedDate}</td>
@@ -65,9 +85,9 @@ export function RecentApplications() {
                       </Link>
                     </BrutalButton>
                   </td>
-                </tr>
+                </motion.tr>
               ))}
-            </tbody>
+            </motion.tbody>
           </table>
         </div>
       </BrutalCard>

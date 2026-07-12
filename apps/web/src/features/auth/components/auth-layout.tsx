@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { motion } from "framer-motion";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -34,9 +35,15 @@ export function AuthLayout({ children }: AuthLayoutProps) {
       </div>
 
       {/* Centered Main Form Container */}
-      <main id="auth-content" className="w-full max-w-md z-10 flex flex-col justify-center">
+      <motion.main 
+        id="auth-content" 
+        className="w-full max-w-md z-10 flex flex-col justify-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+      >
         {children}
-      </main>
+      </motion.main>
     </div>
   );
 }

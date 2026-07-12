@@ -15,6 +15,7 @@ import {
   X 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
  
 export function JobsFilter() {
   const { filters, updateFilters, resetFilters } = useJobsStore();
@@ -163,28 +164,37 @@ export function JobsFilter() {
           <span>Company &amp; Industry</span>
           <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200 text-foreground-muted", openSections.company ? "" : "-rotate-90")} />
         </button>
-        {openSections.company && (
-          <div className="mt-2 space-y-2">
-            <div className="space-y-1">
-              <span className="text-[9px] font-bold text-foreground-muted uppercase">Company Name</span>
-              <Input
-                placeholder="e.g. Stripe, Linear"
-                value={filters.company}
-                onChange={(e) => updateFilters({ company: e.target.value })}
-                className="h-8 text-xs font-semibold border border-border/50"
-              />
-            </div>
-            <div className="space-y-1">
-              <span className="text-[9px] font-bold text-foreground-muted uppercase">Industry</span>
-              <Input
-                placeholder="e.g. Fintech, Healthcare"
-                value={filters.industry}
-                onChange={(e) => updateFilters({ industry: e.target.value })}
-                className="h-8 text-xs font-semibold border border-border/50"
-              />
-            </div>
-          </div>
-        )}
+        <AnimatePresence>
+          {openSections.company && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-2 space-y-2">
+                <div className="space-y-1">
+                  <span className="text-[9px] font-bold text-foreground-muted uppercase">Company Name</span>
+                  <Input
+                    placeholder="e.g. Stripe, Linear"
+                    value={filters.company}
+                    onChange={(e) => updateFilters({ company: e.target.value })}
+                    className="h-8 text-xs font-semibold border border-border/50"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <span className="text-[9px] font-bold text-foreground-muted uppercase">Industry</span>
+                  <Input
+                    placeholder="e.g. Fintech, Healthcare"
+                    value={filters.industry}
+                    onChange={(e) => updateFilters({ industry: e.target.value })}
+                    className="h-8 text-xs font-semibold border border-border/50"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
  
       {/* Location Selector */}
@@ -196,39 +206,48 @@ export function JobsFilter() {
           <span>Location &amp; Remote</span>
           <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200 text-foreground-muted", openSections.location ? "" : "-rotate-90")} />
         </button>
-        {openSections.location && (
-          <div className="mt-2 space-y-3">
-            <div className="space-y-1">
-              <span className="text-[9px] font-bold text-foreground-muted uppercase">HQ/Location City</span>
-              <Input
-                placeholder="e.g. Austin, London"
-                value={filters.location}
-                onChange={(e) => updateFilters({ location: e.target.value })}
-                className="h-8 text-xs font-semibold border border-border/50"
-              />
-            </div>
-            <div className="space-y-2">
-              <span className="text-[9px] font-bold text-foreground-muted uppercase block">Location Class</span>
-              {remoteOptions.map((opt) => (
-                <div key={opt.value} className="flex items-center gap-2">
-                  <Checkbox
-                    id={`filter-rem-${opt.value}`}
-                    checked={filters.remoteType.includes(opt.value)}
-                    onChange={(e) =>
-                      handleCheckboxChange("remoteType", opt.value, e.target.checked)
-                    }
+        <AnimatePresence>
+          {openSections.location && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-2 space-y-3">
+                <div className="space-y-1">
+                  <span className="text-[9px] font-bold text-foreground-muted uppercase">HQ/Location City</span>
+                  <Input
+                    placeholder="e.g. Austin, London"
+                    value={filters.location}
+                    onChange={(e) => updateFilters({ location: e.target.value })}
+                    className="h-8 text-xs font-semibold border border-border/50"
                   />
-                  <label
-                    htmlFor={`filter-rem-${opt.value}`}
-                    className="text-xs font-semibold text-foreground cursor-pointer"
-                  >
-                    {opt.label}
-                  </label>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
+                <div className="space-y-2">
+                  <span className="text-[9px] font-bold text-foreground-muted uppercase block">Location Class</span>
+                  {remoteOptions.map((opt) => (
+                    <div key={opt.value} className="flex items-center gap-2">
+                      <Checkbox
+                        id={`filter-rem-${opt.value}`}
+                        checked={filters.remoteType.includes(opt.value)}
+                        onChange={(e) =>
+                          handleCheckboxChange("remoteType", opt.value, e.target.checked)
+                        }
+                      />
+                      <label
+                        htmlFor={`filter-rem-${opt.value}`}
+                        className="text-xs font-semibold text-foreground cursor-pointer"
+                      >
+                        {opt.label}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
  
       {/* Base Salary Select */}
@@ -240,16 +259,25 @@ export function JobsFilter() {
           <span>Base Salary Target</span>
           <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200 text-foreground-muted", openSections.salary ? "" : "-rotate-90")} />
         </button>
-        {openSections.salary && (
-          <div className="mt-2">
-            <BrutalSelect
-              value={filters.salaryMin?.toString() || ""}
-              onChange={(e) => updateFilters({ salaryMin: e.target.value ? parseInt(e.target.value, 10) : null })}
-              options={salaryOptions}
-              className="text-xs font-bold h-8.5"
-            />
-          </div>
-        )}
+        <AnimatePresence>
+          {openSections.salary && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-2">
+                <BrutalSelect
+                  value={filters.salaryMin?.toString() || ""}
+                  onChange={(e) => updateFilters({ salaryMin: e.target.value ? parseInt(e.target.value, 10) : null })}
+                  options={salaryOptions}
+                  className="text-xs font-bold h-8.5"
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
  
       {/* Experience level criteria options */}
@@ -261,27 +289,36 @@ export function JobsFilter() {
           <span>Experience Level</span>
           <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200 text-foreground-muted", openSections.experience ? "" : "-rotate-90")} />
         </button>
-        {openSections.experience && (
-          <div className="mt-2 space-y-2">
-            {experienceOptions.map((opt) => (
-              <div key={opt.value} className="flex items-center gap-2">
-                <Checkbox
-                  id={`filter-exp-${opt.value}`}
-                  checked={filters.experienceLevel.includes(opt.value)}
-                  onChange={(e) =>
-                    handleCheckboxChange("experienceLevel", opt.value, e.target.checked)
-                  }
-                />
-                <label
-                  htmlFor={`filter-exp-${opt.value}`}
-                  className="text-xs font-semibold text-foreground cursor-pointer"
-                >
-                  {opt.label}
-                </label>
+        <AnimatePresence>
+          {openSections.experience && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-2 space-y-2">
+                {experienceOptions.map((opt) => (
+                  <div key={opt.value} className="flex items-center gap-2">
+                    <Checkbox
+                      id={`filter-exp-${opt.value}`}
+                      checked={filters.experienceLevel.includes(opt.value)}
+                      onChange={(e) =>
+                        handleCheckboxChange("experienceLevel", opt.value, e.target.checked)
+                      }
+                    />
+                    <label
+                      htmlFor={`filter-exp-${opt.value}`}
+                      className="text-xs font-semibold text-foreground cursor-pointer"
+                    >
+                      {opt.label}
+                    </label>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
  
       {/* Employment type options */}
@@ -293,27 +330,36 @@ export function JobsFilter() {
           <span>Employment Type</span>
           <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200 text-foreground-muted", openSections.employment ? "" : "-rotate-90")} />
         </button>
-        {openSections.employment && (
-          <div className="mt-2 space-y-2">
-            {employmentOptions.map((opt) => (
-              <div key={opt.value} className="flex items-center gap-2">
-                <Checkbox
-                  id={`filter-emp-${opt.value}`}
-                  checked={filters.employmentType.includes(opt.value)}
-                  onChange={(e) =>
-                    handleCheckboxChange("employmentType", opt.value, e.target.checked)
-                  }
-                />
-                <label
-                  htmlFor={`filter-emp-${opt.value}`}
-                  className="text-xs font-semibold text-foreground cursor-pointer"
-                >
-                  {opt.label}
-                </label>
+        <AnimatePresence>
+          {openSections.employment && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-2 space-y-2">
+                {employmentOptions.map((opt) => (
+                  <div key={opt.value} className="flex items-center gap-2">
+                    <Checkbox
+                      id={`filter-emp-${opt.value}`}
+                      checked={filters.employmentType.includes(opt.value)}
+                      onChange={(e) =>
+                        handleCheckboxChange("employmentType", opt.value, e.target.checked)
+                      }
+                    />
+                    <label
+                      htmlFor={`filter-emp-${opt.value}`}
+                      className="text-xs font-semibold text-foreground cursor-pointer"
+                    >
+                      {opt.label}
+                    </label>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
  
       {/* Skills Filters */}
@@ -325,44 +371,53 @@ export function JobsFilter() {
           <span>Skills Required</span>
           <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200 text-foreground-muted", openSections.skills ? "" : "-rotate-90")} />
         </button>
-        {openSections.skills && (
-          <div className="mt-2 space-y-2">
-            <form onSubmit={handleAddSkill} className="flex gap-1">
-              <Input
-                placeholder="e.g. Rust, Figma"
-                value={skillInput}
-                onChange={(e) => setSkillInput(e.target.value)}
-                className="h-8 text-xs font-semibold border border-border/50 flex-1"
-              />
-              <Button
-                type="submit"
-                className="h-8 w-8 p-0 border border-border rounded-sm bg-primary text-white flex items-center justify-center shrink-0 brutal-shadow-xs hover:brutal-shadow"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </form>
- 
-            {filters.skills.length > 0 && (
-              <div className="flex flex-wrap gap-1 mt-2">
-                {filters.skills.map((skill) => (
-                  <span
-                    key={skill}
-                    className="inline-flex items-center gap-1 text-[8px] font-black uppercase bg-surface border border-border px-1.5 py-0.5 rounded-sm"
+        <AnimatePresence>
+          {openSections.skills && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-2 space-y-2">
+                <form onSubmit={handleAddSkill} className="flex gap-1">
+                  <Input
+                    placeholder="e.g. Rust, Figma"
+                    value={skillInput}
+                    onChange={(e) => setSkillInput(e.target.value)}
+                    className="h-8 text-xs font-semibold border border-border/50 flex-1"
+                  />
+                  <Button
+                    type="submit"
+                    className="h-8 w-8 p-0 border border-border rounded-sm bg-primary text-white flex items-center justify-center shrink-0 brutal-shadow-xs hover:brutal-shadow"
                   >
-                    {skill}
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveSkill(skill)}
-                      className="text-error font-bold"
-                    >
-                      <X className="h-2.5 w-2.5" />
-                    </button>
-                  </span>
-                ))}
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </form>
+     
+                {filters.skills.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {filters.skills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="inline-flex items-center gap-1 text-[8px] font-black uppercase bg-surface border border-border px-1.5 py-0.5 rounded-sm"
+                      >
+                        {skill}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveSkill(skill)}
+                          className="text-error font-bold"
+                        >
+                          <X className="h-2.5 w-2.5" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
  
       {/* Date Posted options */}
@@ -374,16 +429,25 @@ export function JobsFilter() {
           <span>Date Posted</span>
           <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200 text-foreground-muted", openSections.posted ? "" : "-rotate-90")} />
         </button>
-        {openSections.posted && (
-          <div className="mt-2">
-            <BrutalSelect
-              value={filters.datePosted}
-              onChange={(e) => updateFilters({ datePosted: e.target.value as "any" | "24h" | "week" | "month" })}
-              options={postedDateOptions}
-              className="text-xs font-bold h-8.5"
-            />
-          </div>
-        )}
+        <AnimatePresence>
+          {openSections.posted && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-2">
+                <BrutalSelect
+                  value={filters.datePosted}
+                  onChange={(e) => updateFilters({ datePosted: e.target.value as "any" | "24h" | "week" | "month" })}
+                  options={postedDateOptions}
+                  className="text-xs font-bold h-8.5"
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
  
       {/* AI Match Filters */}
@@ -395,16 +459,25 @@ export function JobsFilter() {
           <span>AI Match Filters</span>
           <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200 text-foreground-muted", openSections.matchFilter ? "" : "-rotate-90")} />
         </button>
-        {openSections.matchFilter && (
-          <div className="mt-2">
-            <BrutalSelect
-              value={filters.matchFilter || "all"}
-              onChange={(e) => updateFilters({ matchFilter: e.target.value as JobFilters["matchFilter"] })}
-              options={aiMatchOptions}
-              className="text-xs font-bold h-8.5"
-            />
-          </div>
-        )}
+        <AnimatePresence>
+          {openSections.matchFilter && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-2">
+                <BrutalSelect
+                  value={filters.matchFilter || "all"}
+                  onChange={(e) => updateFilters({ matchFilter: e.target.value as JobFilters["matchFilter"] })}
+                  options={aiMatchOptions}
+                  className="text-xs font-bold h-8.5"
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
  
       {/* Match Score option */}
@@ -416,16 +489,25 @@ export function JobsFilter() {
           <span>Match Score Minimum</span>
           <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200 text-foreground-muted", openSections.score ? "" : "-rotate-90")} />
         </button>
-        {openSections.score && (
-          <div className="mt-2">
-            <BrutalSelect
-              value={filters.matchScoreMin?.toString() || ""}
-              onChange={(e) => updateFilters({ matchScoreMin: e.target.value ? parseInt(e.target.value, 10) : null })}
-              options={matchScoreOptions}
-              className="text-xs font-bold h-8.5"
-            />
-          </div>
-        )}
+        <AnimatePresence>
+          {openSections.score && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-2">
+                <BrutalSelect
+                  value={filters.matchScoreMin?.toString() || ""}
+                  onChange={(e) => updateFilters({ matchScoreMin: e.target.value ? parseInt(e.target.value, 10) : null })}
+                  options={matchScoreOptions}
+                  className="text-xs font-bold h-8.5"
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
  
     </div>

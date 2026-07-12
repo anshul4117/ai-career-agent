@@ -49,6 +49,10 @@ This roadmap defines the implementation order of the AI Career Agent platform.
 
 ---
 
+
+
+---
+
 ## Phase 1 — Authentication & User Management
 
 **Goal:** Allow users to securely create accounts and access the platform.

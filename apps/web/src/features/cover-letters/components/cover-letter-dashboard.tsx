@@ -1,6 +1,7 @@
 "use client";
  
 import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import type { CoverLetterDraft, CoverLetterTemplate } from "../types/cover-letter.types";
 import { useCoverLetterStore } from "../store/cover-letter.store";
 import { BrutalCard } from "@/components/ui/brutal-card";
@@ -151,14 +152,22 @@ export function CoverLetterDashboard({ onStartNew }: CoverLetterDashboardProps) 
           </div>
  
           {drafts.length > 0 ? (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {drafts.map((draft) => (
-                <BrutalCard 
-                  key={draft.id}
-                  onClick={() => handleSelectDraft(draft)}
-                  className="border-[3px] border-border bg-surface p-4 rounded-sm brutal-shadow hover:brutal-shadow-md cursor-pointer transition-all flex flex-col justify-between min-h-[160px]"
-                >
-                  <div className="space-y-2">
+            <motion.div layout className="grid gap-4 sm:grid-cols-2">
+              <AnimatePresence mode="popLayout">
+                {drafts.map((draft) => (
+                  <motion.div
+                    key={draft.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <BrutalCard 
+                      onClick={() => handleSelectDraft(draft)}
+                      className="border-[3px] border-border bg-surface p-4 rounded-sm brutal-shadow hover:brutal-shadow-md cursor-pointer transition-all flex flex-col justify-between min-h-[160px]"
+                    >
+                      <div className="space-y-2">
                     <div className="flex justify-between items-start gap-1">
                       <span className="text-[7.5px] font-black uppercase text-primary tracking-wider">{draft.company}</span>
                       <button 
@@ -197,8 +206,10 @@ export function CoverLetterDashboard({ onStartNew }: CoverLetterDashboardProps) 
                     </div>
                   </div>
                 </BrutalCard>
-              ))}
-            </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
           ) : (
             <EmptyState
               icon={FileText}
@@ -223,7 +234,7 @@ export function CoverLetterDashboard({ onStartNew }: CoverLetterDashboardProps) 
               <BrutalCard 
                 key={tmpl.id}
                 onClick={() => onStartNew(tmpl.id)}
-                className="border-2 border-border hover:border-primary p-3 bg-surface rounded-sm cursor-pointer transition-colors flex flex-col justify-between space-y-1 brutal-shadow-xs text-xs font-semibold"
+                className="border-2 border-border hover:border-primary p-3 bg-surface rounded-sm cursor-pointer transition-all duration-200 active:scale-[0.98] flex flex-col justify-between space-y-1 brutal-shadow-xs text-xs font-semibold"
               >
                 <div className="flex justify-between items-center">
                   <span className="font-black uppercase text-[10.5px] tracking-tight">{tmpl.name}</span>

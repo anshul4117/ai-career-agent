@@ -15,6 +15,7 @@ import {
   RotateCcw, Sparkles, FileText, ChevronDown, ChevronUp
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function ResumePage() {
   const router = useRouter();
@@ -147,15 +148,23 @@ export default function ResumePage() {
           }}
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {activeResumes.map((resume) => {
-            const template = MOCK_TEMPLATES.find((t) => t.id === resume.templateId) || MOCK_TEMPLATES[0];
-            return (
-              <BrutalCard
-                key={resume.id}
-                className="bg-surface border-[3px] border-border p-5 brutal-shadow flex flex-col justify-between h-full min-h-[220px]"
-              >
-                <div className="space-y-4">
+        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <AnimatePresence mode="popLayout">
+            {activeResumes.map((resume) => {
+              const template = MOCK_TEMPLATES.find((t) => t.id === resume.templateId) || MOCK_TEMPLATES[0];
+              return (
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.2 }}
+                  key={resume.id}
+                >
+                  <BrutalCard
+                    className="bg-surface border-[3px] border-border p-5 brutal-shadow flex flex-col justify-between h-full min-h-[220px]"
+                  >
+                    <div className="space-y-4">
                   {/* Status row: Default tag & score */}
                   <div className="flex items-center justify-between gap-2">
                     {resume.isDefault ? (
@@ -232,11 +241,13 @@ export default function ResumePage() {
                       <Trash2 className="h-3 w-3 shrink-0" /> Delete
                     </BrutalButton>
                   </div>
-                </div>
-              </BrutalCard>
+                  </div>
+                </BrutalCard>
+              </motion.div>
             );
           })}
-        </div>
+          </AnimatePresence>
+        </motion.div>
       )}
 
       {/* Collapsible Archived Resumes Section */}
@@ -251,16 +262,24 @@ export default function ResumePage() {
           </button>
 
           {showArchived && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
-              {archivedResumes.map((resume) => {
-                const template = MOCK_TEMPLATES.find((t) => t.id === resume.templateId) || MOCK_TEMPLATES[0];
+            <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+              <AnimatePresence mode="popLayout">
+                {archivedResumes.map((resume) => {
+                  const template = MOCK_TEMPLATES.find((t) => t.id === resume.templateId) || MOCK_TEMPLATES[0];
                 return (
-                  <BrutalCard
+                  <motion.div
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.2 }}
                     key={resume.id}
-                    className="bg-surface border-[3px] border-dashed border-border p-5 brutal-shadow-sm opacity-75 flex flex-col justify-between h-full min-h-[180px]"
                   >
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
+                    <BrutalCard
+                      className="bg-surface border-[3px] border-dashed border-border p-5 brutal-shadow-sm opacity-75 flex flex-col justify-between h-full min-h-[180px]"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
                         <span className="px-1.5 py-0.5 bg-surface-secondary text-foreground-muted text-[8px] font-bold uppercase tracking-wider border border-border/30 rounded-sm">
                           Archived
                         </span>
@@ -291,11 +310,13 @@ export default function ResumePage() {
                       >
                         <Trash2 className="h-3 w-3 shrink-0" /> Delete
                       </BrutalButton>
-                    </div>
-                  </BrutalCard>
+                      </div>
+                    </BrutalCard>
+                  </motion.div>
                 );
               })}
-            </div>
+              </AnimatePresence>
+            </motion.div>
           )}
         </div>
       )}

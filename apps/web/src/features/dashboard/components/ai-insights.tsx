@@ -13,6 +13,21 @@ const INSIGHT_ICONS: Record<string, LucideIcon> = {
   tip: Compass,
 };
 
+import { motion } from "framer-motion";
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, scale: 0.95 },
+  show: { opacity: 1, scale: 1, transition: { duration: 0.2 } }
+};
+
 export function AIInsights() {
   return (
     <div className="space-y-4 w-full min-w-0">
@@ -21,29 +36,35 @@ export function AIInsights() {
         AI Insights & Tips
       </Heading>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <motion.div 
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="grid gap-4 sm:grid-cols-2"
+      >
         {AI_INSIGHTS.map((insight) => {
           const Icon = INSIGHT_ICONS[insight.type] || Compass;
           return (
-            <BrutalCard
-              key={insight.id}
-              className="bg-surface border-[3px] border-border p-5 flex gap-4 brutal-shadow transition-transform duration-150 hover:translate-x-[-1px] hover:translate-y-[-1px] hover:brutal-shadow-hover"
-            >
-              <div className="h-10 w-10 border-2 border-border bg-primary/10 text-primary flex items-center justify-center brutal-shadow-sm rounded-sm shrink-0">
-                <Icon className="h-5 w-5" />
-              </div>
-              <div className="space-y-1">
-                <Heading level="h4" className="text-sm font-bold uppercase tracking-tight">
-                  {insight.title}
-                </Heading>
-                <Text className="text-foreground-secondary text-xs leading-relaxed">
-                  {insight.description}
-                </Text>
-              </div>
-            </BrutalCard>
+            <motion.div variants={item} key={insight.id}>
+              <BrutalCard
+                className="bg-surface border-[3px] border-border p-5 flex gap-4 brutal-shadow transition-transform duration-150 hover:translate-x-[-1px] hover:translate-y-[-1px] hover:brutal-shadow-hover"
+              >
+                <div className="h-10 w-10 border-2 border-border bg-primary/10 text-primary flex items-center justify-center brutal-shadow-sm rounded-sm shrink-0">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <div className="space-y-1">
+                  <Heading level="h4" className="text-sm font-bold uppercase tracking-tight">
+                    {insight.title}
+                  </Heading>
+                  <Text className="text-foreground-secondary text-xs leading-relaxed">
+                    {insight.description}
+                  </Text>
+                </div>
+              </BrutalCard>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
     </div>
   );
 }

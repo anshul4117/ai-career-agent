@@ -8,6 +8,7 @@ import { Heading, Text } from "@/components/ui/typography";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Upload, FileText, AlertOctagon, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface FileUploaderProps {
   onStartParsing: (role: "engineer" | "frontend" | "backend" | "fullstack" | "analyst") => void;
@@ -116,19 +117,27 @@ export function FileUploader({ onStartParsing }: FileUploaderProps) {
 
         <label 
           htmlFor="resume-file-input"
-          className="h-9 px-4 border-2 border-border bg-surface hover:bg-surface-secondary font-black uppercase text-[10px] flex items-center justify-center cursor-pointer brutal-shadow-xs transition-transform active:translate-x-0 active:translate-y-0"
+          className="h-9 px-4 border-2 border-border bg-surface hover:bg-surface-secondary font-black uppercase text-[10px] flex items-center justify-center cursor-pointer brutal-shadow-xs transition-all duration-200 active:scale-[0.96]"
         >
           Browse Files
         </label>
       </div>
 
       {/* Error alert wrapper */}
-      {error && (
-        <div className="bg-error/10 border-2 border-error p-3 text-error text-[10px] font-black uppercase brutal-shadow-xs flex items-center gap-2 rounded-sm" role="alert">
-          <AlertOctagon className="h-5 w-5 shrink-0" />
-          <span>{error}</span>
-        </div>
-      )}
+      <AnimatePresence>
+        {error && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-error/10 border-2 border-error p-3 text-error text-[10px] font-black uppercase brutal-shadow-xs flex items-center gap-2 rounded-sm" 
+            role="alert"
+          >
+            <AlertOctagon className="h-5 w-5 shrink-0" />
+            <span>{error}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Start Parsing Trigger (Visible only if file is loaded and valid) */}
       <BrutalButton
