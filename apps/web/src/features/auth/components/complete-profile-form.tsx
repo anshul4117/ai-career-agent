@@ -10,6 +10,7 @@ import { LoadingButton } from "./loading-button";
 import { ErrorMessage } from "./error-message";
 import { Text } from "@/components/ui/typography";
 import { Camera, User } from "lucide-react";
+import Image from "next/image";
 import { z } from "zod";
 import { useAuth } from "../hooks/use-auth";
 
@@ -97,8 +98,13 @@ export function CompleteProfileForm() {
           aria-label="Upload profile image"
         >
           {photoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={photoUrl} alt="Avatar" className="h-full w-full object-cover" />
+            <Image 
+              src={photoUrl} 
+              alt="Avatar" 
+              fill
+              sizes="80px"
+              className="object-cover" 
+            />
           ) : (
             <User className="h-8 w-8 text-foreground-muted" />
           )}

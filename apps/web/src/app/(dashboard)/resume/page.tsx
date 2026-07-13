@@ -9,13 +9,139 @@ import { BrutalButton } from "@/components/ui/brutal-button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ResumeSkeleton } from "@/components/ui/skeleton-loaders";
 import { useResumeStore } from "@/features/resume/store/resume.store";
+import { useShallow } from "zustand/react/shallow";
 import { MOCK_TEMPLATES } from "@/features/resume/services/resume.service";
+import type { Resume } from "@/features/resume/types/resume.types";
 import { 
   Plus, Eye, Pencil, Copy, Trash2, Archive, 
   RotateCcw, Sparkles, FileText, ChevronDown, ChevronUp
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+
+const ResumeCard = React.memo(function ResumeCard({
+  resume,
+  onDuplicate,
+  onArchive,
+  onRestore,
+  onDelete
+}: {
+  resume: Resume;
+  onDuplicate: (id: string, title: string) => void;
+  onArchive: (id: string, title: string) => void;
+  onRestore: (id: string, title: string) => void;
+  onDelete: (id: string, title: string) => void;
+}) {
+  const template = MOCK_TEMPLATES.find((t) => t.id === resume.templateId) || MOCK_TEMPLATES[0];
+  const isArchived = resume.status === "archived";
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ duration: 0.2 }}
+    >
+      <BrutalCard
+        className="bg-surface border-[3px] border-border p-5 brutal-shadow flex flex-col justify-between h-full min-h-[220px]"
+      >
+        <div className="space-y-4">
+          {/* Status row: Default tag & score */}
+          <div className="flex items-center justify-between gap-2">
+            {resume.isDefault && !isArchived ? (
+              <span className="px-2 py-0.5 bg-success text-white border-2 border-border text-[8px] font-black uppercase tracking-wider brutal-shadow-sm">
+                Primary Resume
+              </span>
+            ) : isArchived ? (
+              <span className="px-2 py-0.5 bg-foreground text-surface border-2 border-border text-[8px] font-black uppercase tracking-wider brutal-shadow-sm">
+                Archived
+              </span>
+            ) : (
+              <span className="text-[8px] font-black uppercase text-foreground-muted bg-surface-secondary border border-border/30 px-1.5 py-0.5 rounded-sm">
+                Draft Layout
+              </span>
+            )}
+
+            <div className="flex items-center gap-1">
+              <Sparkles className="h-3 w-3 text-primary shrink-0" />
+              <span className="text-[10px] font-black text-foreground">
+                Mock ATS: <strong>{resume.atsScore}%</strong>
+              </span>
+            </div>
+          </div>
+
+          {/* Header metadata */}
+          <div className="space-y-1">
+            <Heading level="h4" className="text-sm font-black uppercase tracking-wider truncate text-foreground">
+              {resume.title}
+            </Heading>
+            <p className="text-[10px] font-semibold text-foreground-secondary flex items-center gap-1.5">
+              Template: <span className="uppercase font-black text-primary">{template.name}</span>
+            </p>
+            <p className="text-[10px] text-foreground-muted font-mono leading-relaxed pt-1 line-clamp-2">
+              {resume.description || "No layout description specified."}
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-3 pt-4 mt-4 border-t border-border/10">
+          <div className="text-[9px] text-foreground-muted font-mono">
+            Last Updated: {formatDate(resume.updatedAt)}
+          </div>
+          
+          {/* Action buttons */}
+          <div className="grid grid-cols-3 gap-1.5">
+            <BrutalButton asChild variant="secondary" className="h-7 p-0 text-[8px] font-black uppercase flex items-center justify-center gap-1">
+              <Link href={`/resume/${resume.id}`}>
+                <Eye className="h-3 w-3 shrink-0" /> View
+              </Link>
+            </BrutalButton>
+            <BrutalButton asChild variant="secondary" className="h-7 p-0 text-[8px] font-black uppercase flex items-center justify-center gap-1">
+              <Link href={`/resume/${resume.id}/edit`}>
+                <Pencil className="h-3 w-3 shrink-0" /> Edit
+              </Link>
+            </BrutalButton>
+            <BrutalButton
+              onClick={() => onDuplicate(resume.id, resume.title)}
+              variant="secondary"
+              className="h-7 p-0 text-[8px] font-black uppercase flex items-center justify-center gap-1"
+            >
+              <Copy className="h-3 w-3 shrink-0" /> Copy
+            </BrutalButton>
+          </div>
+
+          <div className="grid grid-cols-2 gap-1.5">
+            {isArchived ? (
+              <BrutalButton
+                onClick={() => onRestore(resume.id, resume.title)}
+                variant="secondary"
+                className="h-7 p-0 text-[8px] font-black uppercase flex items-center justify-center gap-1 text-primary border-primary/20 hover:border-primary"
+              >
+                <RotateCcw className="h-3 w-3 shrink-0" /> Restore
+              </BrutalButton>
+            ) : (
+              <BrutalButton
+                onClick={() => onArchive(resume.id, resume.title)}
+                variant="secondary"
+                className="h-7 p-0 text-[8px] font-black uppercase flex items-center justify-center gap-1 text-foreground-muted"
+              >
+                <Archive className="h-3 w-3 shrink-0" /> Archive
+              </BrutalButton>
+            )}
+            <BrutalButton
+              onClick={() => onDelete(resume.id, resume.title)}
+              variant="secondary"
+              className="h-7 p-0 text-[8px] font-black uppercase flex items-center justify-center gap-1 text-error border-error/20 hover:border-error"
+            >
+              <Trash2 className="h-3 w-3 shrink-0" /> Delete
+            </BrutalButton>
+          </div>
+        </div>
+      </BrutalCard>
+    </motion.div>
+  );
+});
 
 export default function ResumePage() {
   const router = useRouter();
@@ -27,7 +153,15 @@ export default function ResumePage() {
     duplicateResume,
     archiveResume,
     restoreResume,
-  } = useResumeStore();
+  } = useResumeStore(useShallow(state => ({
+    resumes: state.resumes,
+    isLoading: state.isLoading,
+    loadResumes: state.loadResumes,
+    deleteResume: state.deleteResume,
+    duplicateResume: state.duplicateResume,
+    archiveResume: state.archiveResume,
+    restoreResume: state.restoreResume
+  })));
 
   const [toast, setToast] = useState<string | null>(null);
   const [showArchived, setShowArchived] = useState(false);
@@ -150,102 +284,16 @@ export default function ResumePage() {
       ) : (
         <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <AnimatePresence mode="popLayout">
-            {activeResumes.map((resume) => {
-              const template = MOCK_TEMPLATES.find((t) => t.id === resume.templateId) || MOCK_TEMPLATES[0];
-              return (
-                <motion.div
-                  layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.2 }}
-                  key={resume.id}
-                >
-                  <BrutalCard
-                    className="bg-surface border-[3px] border-border p-5 brutal-shadow flex flex-col justify-between h-full min-h-[220px]"
-                  >
-                    <div className="space-y-4">
-                  {/* Status row: Default tag & score */}
-                  <div className="flex items-center justify-between gap-2">
-                    {resume.isDefault ? (
-                      <span className="px-2 py-0.5 bg-success text-white border-2 border-border text-[8px] font-black uppercase tracking-wider brutal-shadow-sm">
-                        Primary Resume
-                      </span>
-                    ) : (
-                      <span className="text-[8px] font-black uppercase text-foreground-muted bg-surface-secondary border border-border/30 px-1.5 py-0.5 rounded-sm">
-                        Draft Layout
-                      </span>
-                    )}
-
-                    <div className="flex items-center gap-1">
-                      <Sparkles className="h-3 w-3 text-primary shrink-0" />
-                      <span className="text-[10px] font-black text-foreground">
-                        Mock ATS: <strong>{resume.atsScore}%</strong>
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Header metadata */}
-                  <div className="space-y-1">
-                    <Heading level="h4" className="text-sm font-black uppercase tracking-wider truncate text-foreground">
-                      {resume.title}
-                    </Heading>
-                    <p className="text-[10px] font-semibold text-foreground-secondary flex items-center gap-1.5">
-                      Template: <span className="uppercase font-black text-primary">{template.name}</span>
-                    </p>
-                    <p className="text-[10px] text-foreground-muted font-mono leading-relaxed pt-1 line-clamp-2">
-                      {resume.description || "No layout description specified."}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-3 pt-4 mt-4 border-t border-border/10">
-                  <div className="text-[9px] text-foreground-muted font-mono">
-                    Last Updated: {formatDate(resume.updatedAt)}
-                  </div>
-                  
-                  {/* Action buttons */}
-                  <div className="grid grid-cols-3 gap-1.5">
-                    <BrutalButton asChild variant="secondary" className="h-7 p-0 text-[8px] font-black uppercase flex items-center justify-center gap-1">
-                      <Link href={`/resume/${resume.id}`}>
-                        <Eye className="h-3 w-3 shrink-0" /> View
-                      </Link>
-                    </BrutalButton>
-                    <BrutalButton asChild variant="secondary" className="h-7 p-0 text-[8px] font-black uppercase flex items-center justify-center gap-1">
-                      <Link href={`/resume/${resume.id}/edit`}>
-                        <Pencil className="h-3 w-3 shrink-0" /> Edit
-                      </Link>
-                    </BrutalButton>
-                    <BrutalButton
-                      onClick={() => handleDuplicate(resume.id, resume.title)}
-                      variant="secondary"
-                      className="h-7 p-0 text-[8px] font-black uppercase flex items-center justify-center gap-1"
-                    >
-                      <Copy className="h-3 w-3 shrink-0" /> Copy
-                    </BrutalButton>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-1.5">
-                    <BrutalButton
-                      onClick={() => handleArchive(resume.id, resume.title)}
-                      variant="secondary"
-                      className="h-7 p-0 text-[8px] font-black uppercase flex items-center justify-center gap-1 text-foreground-muted"
-                    >
-                      <Archive className="h-3 w-3 shrink-0" /> Archive
-                    </BrutalButton>
-                    <BrutalButton
-                      onClick={() => handleDelete(resume.id, resume.title)}
-                      variant="secondary"
-                      className="h-7 p-0 text-[8px] font-black uppercase flex items-center justify-center gap-1 text-error border-error/20 hover:border-error"
-                    >
-                      <Trash2 className="h-3 w-3 shrink-0" /> Delete
-                    </BrutalButton>
-                  </div>
-                  </div>
-                </BrutalCard>
-              </motion.div>
-            );
-          })}
+            {activeResumes.map((resume) => (
+              <ResumeCard 
+                key={resume.id} 
+                resume={resume} 
+                onDuplicate={handleDuplicate}
+                onArchive={handleArchive}
+                onRestore={handleRestore}
+                onDelete={handleDelete}
+              />
+            ))}
           </AnimatePresence>
         </motion.div>
       )}
@@ -264,57 +312,16 @@ export default function ResumePage() {
           {showArchived && (
             <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
               <AnimatePresence mode="popLayout">
-                {archivedResumes.map((resume) => {
-                  const template = MOCK_TEMPLATES.find((t) => t.id === resume.templateId) || MOCK_TEMPLATES[0];
-                return (
-                  <motion.div
-                    layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.2 }}
-                    key={resume.id}
-                  >
-                    <BrutalCard
-                      className="bg-surface border-[3px] border-dashed border-border p-5 brutal-shadow-sm opacity-75 flex flex-col justify-between h-full min-h-[180px]"
-                    >
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                        <span className="px-1.5 py-0.5 bg-surface-secondary text-foreground-muted text-[8px] font-bold uppercase tracking-wider border border-border/30 rounded-sm">
-                          Archived
-                        </span>
-                        <span className="text-[9px] font-mono text-foreground-muted">
-                          Mock ATS: {resume.atsScore}%
-                        </span>
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-xs uppercase text-foreground-muted truncate line-through">
-                          {resume.title}
-                        </h4>
-                        <p className="text-[9px] text-foreground-muted">Template: {template.name}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-2 pt-4 mt-4 border-t border-border/10">
-                      <BrutalButton
-                        onClick={() => handleRestore(resume.id, resume.title)}
-                        variant="secondary"
-                        className="flex-1 h-7 text-[8px] font-black uppercase flex items-center justify-center gap-1"
-                      >
-                        <RotateCcw className="h-3 w-3 shrink-0" /> Restore
-                      </BrutalButton>
-                      <BrutalButton
-                        onClick={() => handleDelete(resume.id, resume.title)}
-                        variant="secondary"
-                        className="flex-1 h-7 text-[8px] font-black uppercase flex items-center justify-center gap-1 text-error border-error/20 hover:border-error"
-                      >
-                        <Trash2 className="h-3 w-3 shrink-0" /> Delete
-                      </BrutalButton>
-                      </div>
-                    </BrutalCard>
-                  </motion.div>
-                );
-              })}
+                {archivedResumes.map((resume) => (
+                  <ResumeCard 
+                    key={resume.id} 
+                    resume={resume} 
+                    onDuplicate={handleDuplicate}
+                    onArchive={handleArchive}
+                    onRestore={handleRestore}
+                    onDelete={handleDelete}
+                  />
+                ))}
               </AnimatePresence>
             </motion.div>
           )}

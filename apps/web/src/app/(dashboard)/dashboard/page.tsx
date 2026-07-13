@@ -6,13 +6,15 @@ import { AnalyticsCards } from "@/features/dashboard/components/analytics-cards"
 import { ResumeProgressCard } from "@/features/dashboard/components/resume-progress-card";
 import { ProfileCompletionCard } from "@/features/dashboard/components/profile-completion-card";
 import { QuickActions } from "@/features/dashboard/components/quick-actions";
-import { RecommendedJobs } from "@/features/dashboard/components/recommended-jobs";
-import { RecentApplications } from "@/features/dashboard/components/recent-applications";
-import { AIInsights } from "@/features/dashboard/components/ai-insights";
-import { RecentActivity } from "@/features/dashboard/components/recent-activity";
-import { RecentlyViewedJobs } from "@/features/dashboard/components/recently-viewed-jobs";
 import { DashboardSkeleton } from "@/components/ui/skeleton-loaders";
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
+
+const RecommendedJobs = dynamic(() => import("@/features/dashboard/components/recommended-jobs").then(m => m.RecommendedJobs));
+const RecentApplications = dynamic(() => import("@/features/dashboard/components/recent-applications").then(m => m.RecentApplications));
+const AIInsights = dynamic(() => import("@/features/dashboard/components/ai-insights").then(m => m.AIInsights));
+const RecentActivity = dynamic(() => import("@/features/dashboard/components/recent-activity").then(m => m.RecentActivity));
+const RecentlyViewedJobs = dynamic(() => import("@/features/dashboard/components/recently-viewed-jobs").then(m => m.RecentlyViewedJobs));
 
 const containerVariants = {
   hidden: { opacity: 0 },

@@ -17,7 +17,7 @@ interface JobCardProps {
   onSave: (e: React.MouseEvent) => void;
 }
 
-export function JobCard({ job, isSelected, onClick, onSave }: JobCardProps) {
+export const JobCard = React.memo(function JobCard({ job, isSelected, onClick, onSave }: JobCardProps) {
   const profileState = useProfileStore();
 
   const formatSalary = (min: number | null, max: number | null, curr: string) => {
@@ -171,4 +171,4 @@ export function JobCard({ job, isSelected, onClick, onSave }: JobCardProps) {
       </div>
     </BrutalCard>
   );
-}
+});

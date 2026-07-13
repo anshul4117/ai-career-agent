@@ -6,6 +6,7 @@ import { BrutalCard } from "@/components/ui/brutal-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Bookmark, MapPin, DollarSign } from "lucide-react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
  
 interface SavedJobCardProps {
@@ -14,7 +15,7 @@ interface SavedJobCardProps {
   onClick: () => void;
 }
  
-export function SavedJobCard({ job, onUnsave, onClick }: SavedJobCardProps) {
+export const SavedJobCard = React.memo(function SavedJobCard({ job, onUnsave, onClick }: SavedJobCardProps) {
   const formatSalary = (min: number | null, max: number | null, curr: string) => {
     if (min === null && max === null) return "Salary Undisclosed";
     const minK = min ? `${Math.round(min / 1000)}k` : "0";
@@ -64,13 +65,14 @@ export function SavedJobCard({ job, onUnsave, onClick }: SavedJobCardProps) {
         {/* Header (Logo, Title & Unsave Button) */}
         <div className="flex items-start gap-2.5">
           {/* Logo / Initials */}
-          <div className="h-9 w-9 border-2 border-border bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center font-black uppercase text-[10px] rounded-sm shrink-0 brutal-shadow-xs">
+          <div className="relative h-9 w-9 overflow-hidden border-2 border-border bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center font-black uppercase text-[10px] rounded-sm shrink-0 brutal-shadow-xs">
             {job.companyInfo.logoUrl ? (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img
+              <Image
                 src={job.companyInfo.logoUrl}
                 alt={`${job.companyInfo.name} logo`}
-                className="h-full w-full object-contain rounded-sm"
+                fill
+                sizes="36px"
+                className="object-contain rounded-sm"
               />
             ) : (
               companyInitials
@@ -129,4 +131,4 @@ export function SavedJobCard({ job, onUnsave, onClick }: SavedJobCardProps) {
       </div>
     </BrutalCard>
   );
-}
+});

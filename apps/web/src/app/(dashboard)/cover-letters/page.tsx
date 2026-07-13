@@ -3,15 +3,22 @@
 import React, { useEffect } from "react";
 import { PageHeader } from "@/components/shared/page-header";
 import { useCoverLetterStore } from "@/features/cover-letters/store/cover-letter.store";
-import { CoverLetterDashboard } from "@/features/cover-letters/components/cover-letter-dashboard";
-import { CoverLetterWizard } from "@/features/cover-letters/components/cover-letter-wizard";
- 
+import { useShallow } from "zustand/react/shallow";
+import dynamic from "next/dynamic";
+
+const CoverLetterDashboard = dynamic(() => import("@/features/cover-letters/components/cover-letter-dashboard").then(m => m.CoverLetterDashboard));
+const CoverLetterWizard = dynamic(() => import("@/features/cover-letters/components/cover-letter-wizard").then(m => m.CoverLetterWizard));
+
 export default function CoverLettersPage() {
   const { 
     activeView, 
     setActiveView, 
     setActiveDraft 
-  } = useCoverLetterStore();
+  } = useCoverLetterStore(useShallow(state => ({
+    activeView: state.activeView,
+    setActiveView: state.setActiveView,
+    setActiveDraft: state.setActiveDraft
+  })));
  
   // Reset active draft on initial load
   useEffect(() => {

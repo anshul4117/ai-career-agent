@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { BrutalSelect } from "@/components/ui/brutal-select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAlertsStore } from "@/features/jobs/store/alerts.store";
+import { useShallow } from "zustand/react/shallow";
 import { JobAlertSkeleton } from "@/components/ui/skeleton-loaders";
 import type { JobAlert, JobAlertFilters } from "@/features/jobs/types/alerts.types";
 import type { RemoteType, ExperienceLevel, EmploymentType } from "@/features/jobs/types/jobs.types";
@@ -22,8 +23,147 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
  
+const JobAlertCard = React.memo(function JobAlertCard({
+  alert,
+  onToggleActive,
+  onDuplicate,
+  onEdit,
+  onDelete
+}: {
+  alert: JobAlert;
+  onToggleActive: (id: string) => void;
+  onDuplicate: (id: string) => void;
+  onEdit: (alert: JobAlert) => void;
+  onDelete: (id: string) => void;
+}) {
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ duration: 0.2 }}
+    >
+      <BrutalCard
+        className={`border-2 border-border rounded-sm p-4 relative flex flex-col justify-between gap-3 text-left transition-all ${
+          !alert.isActive ? "opacity-75 bg-surface-secondary/30" : "bg-surface"
+        }`}
+      >
+        <div>
+          {/* Header (Title, Toggle & Settings) */}
+          <div className="flex items-start justify-between gap-3">
+            <div className="space-y-1">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <h3 className="text-xs font-black uppercase text-foreground truncate max-w-[150px] leading-tight tracking-tight">
+                  {alert.title}
+                </h3>
+                {alert.isActive ? (
+                  <Badge className="text-[7px] font-bold bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-500/30 px-1 py-0.5 rounded-sm">Active</Badge>
+                ) : (
+                  <Badge className="text-[7px] font-bold bg-gray-100 text-gray-500 dark:text-foreground-muted border border-gray-300 px-1 py-0.5 rounded-sm">Paused</Badge>
+                )}
+              </div>
+              <span className="inline-block text-[8px] font-bold uppercase tracking-wider text-foreground-muted bg-surface-secondary px-1.5 py-0.5 border border-border/10 rounded-sm">
+                {alert.frequency} notifications
+              </span>
+            </div>
+
+            <Switch
+              checked={alert.isActive}
+              onChange={() => onToggleActive(alert.id)}
+              aria-label={`Toggle active state of ${alert.title}`}
+            />
+          </div>
+
+          {/* Filter tags summaries */}
+          <div className="flex flex-wrap gap-1 mt-3">
+            {alert.filters.keyword && (
+              <Badge className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-surface text-foreground">
+                Keyword: {alert.filters.keyword}
+              </Badge>
+            )}
+            {alert.filters.company && (
+              <Badge className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-surface text-foreground">
+                Co: {alert.filters.company}
+              </Badge>
+            )}
+            {alert.filters.location && (
+              <Badge className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-surface text-foreground">
+                Loc: {alert.filters.location}
+              </Badge>
+            )}
+            {alert.filters.remoteType && alert.filters.remoteType.map((rt) => (
+              <Badge key={rt} className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-amber-100 dark:bg-amber-500/20 text-foreground">
+                {rt}
+              </Badge>
+            ))}
+            {alert.filters.salaryMin && (
+              <Badge className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-green-100 dark:bg-green-500/20 text-foreground">
+                &gt;=${Math.round(alert.filters.salaryMin / 1000)}k
+              </Badge>
+            )}
+            {alert.filters.experienceLevel && alert.filters.experienceLevel.map((el) => (
+              <Badge key={el} className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-blue-100 dark:bg-blue-500/20 text-foreground">
+                {el}
+              </Badge>
+            ))}
+            {alert.filters.employmentType && alert.filters.employmentType.map((et) => (
+              <Badge key={et} className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-indigo-100 text-foreground">
+                {et}
+              </Badge>
+            ))}
+          </div>
+
+          {/* Mocked scan schedule metadata */}
+          <div className="mt-3.5 pt-2 border-t border-border/10 text-[8px] font-bold uppercase tracking-wider text-foreground-muted space-y-0.5">
+            <div>Last scan: {alert.lastTriggeredAt ? "4 hours ago" : "Never"}</div>
+            <div>Next scan: {alert.isActive ? "in 20 hours" : "Paused"}</div>
+          </div>
+        </div>
+
+        {/* Actions Footer */}
+        <div className="border-t border-border/10 pt-2.5 flex items-center justify-end gap-1.5">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onDuplicate(alert.id)}
+            className="h-8 px-2 text-[9px] font-black uppercase text-foreground border border-border/20 rounded-sm flex items-center gap-1 hover:bg-surface-secondary"
+          >
+            Duplicate
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onEdit(alert)}
+            className="h-8 px-2 text-[9px] font-black uppercase text-foreground border border-border/20 rounded-sm flex items-center gap-1 hover:bg-surface-secondary"
+          >
+            Edit
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onDelete(alert.id)}
+            className="h-8 px-2 text-[9px] font-black uppercase text-error border border-border/20 rounded-sm flex items-center gap-1 hover:bg-error/5"
+          >
+            Delete
+          </Button>
+        </div>
+      </BrutalCard>
+    </motion.div>
+  );
+});
+
 export default function JobAlertsPage() {
-  const { alerts, fetchAlerts, createAlert, updateAlert, deleteAlert, duplicateAlert, toggleAlertActive, loading } = useAlertsStore();
+  const { alerts, fetchAlerts, createAlert, updateAlert, deleteAlert, duplicateAlert, toggleAlertActive, loading } = useAlertsStore(useShallow(state => ({
+    alerts: state.alerts,
+    fetchAlerts: state.fetchAlerts,
+    createAlert: state.createAlert,
+    updateAlert: state.updateAlert,
+    deleteAlert: state.deleteAlert,
+    duplicateAlert: state.duplicateAlert,
+    toggleAlertActive: state.toggleAlertActive,
+    loading: state.loading
+  })));
   
   // Modal toggle state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -170,122 +310,15 @@ export default function JobAlertsPage() {
         <motion.div layout className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           <AnimatePresence mode="popLayout">
             {alerts.map((alert) => (
-              <motion.div
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.2 }}
+              <JobAlertCard
                 key={alert.id}
-              >
-                <BrutalCard
-              key={alert.id}
-              className={`border-2 border-border rounded-sm p-4 relative flex flex-col justify-between gap-3 text-left transition-all ${
-                !alert.isActive ? "opacity-75 bg-surface-secondary/30" : "bg-surface"
-              }`}
-            >
-              <div>
-                {/* Header (Title, Toggle & Settings) */}
-                <div className="flex items-start justify-between gap-3">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <h3 className="text-xs font-black uppercase text-foreground truncate max-w-[150px] leading-tight tracking-tight">
-                        {alert.title}
-                      </h3>
-                      {alert.isActive ? (
-                        <Badge className="text-[7px] font-bold bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-500/30 px-1 py-0.5 rounded-sm">Active</Badge>
-                      ) : (
-                        <Badge className="text-[7px] font-bold bg-gray-100 text-gray-500 dark:text-foreground-muted border border-gray-300 px-1 py-0.5 rounded-sm">Paused</Badge>
-                      )}
-                    </div>
-                    <span className="inline-block text-[8px] font-bold uppercase tracking-wider text-foreground-muted bg-surface-secondary px-1.5 py-0.5 border border-border/10 rounded-sm">
-                      {alert.frequency} notifications
-                    </span>
-                  </div>
- 
-                  <Switch
-                    checked={alert.isActive}
-                    onChange={() => toggleAlertActive(alert.id)}
-                    aria-label={`Toggle active state of ${alert.title}`}
-                  />
-                </div>
- 
-                {/* Filter tags summaries */}
-                <div className="flex flex-wrap gap-1 mt-3">
-                  {alert.filters.keyword && (
-                    <Badge className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-surface text-foreground">
-                      Keyword: {alert.filters.keyword}
-                    </Badge>
-                  )}
-                  {alert.filters.company && (
-                    <Badge className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-surface text-foreground">
-                      Co: {alert.filters.company}
-                    </Badge>
-                  )}
-                  {alert.filters.location && (
-                    <Badge className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-surface text-foreground">
-                      Loc: {alert.filters.location}
-                    </Badge>
-                  )}
-                  {alert.filters.remoteType && alert.filters.remoteType.map((rt) => (
-                    <Badge key={rt} className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-amber-100 dark:bg-amber-500/20 text-foreground">
-                      {rt}
-                    </Badge>
-                  ))}
-                  {alert.filters.salaryMin && (
-                    <Badge className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-green-100 dark:bg-green-500/20 text-foreground">
-                      &gt;=${Math.round(alert.filters.salaryMin / 1000)}k
-                    </Badge>
-                  )}
-                  {alert.filters.experienceLevel && alert.filters.experienceLevel.map((el) => (
-                    <Badge key={el} className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-blue-100 dark:bg-blue-500/20 text-foreground">
-                      {el}
-                    </Badge>
-                  ))}
-                  {alert.filters.employmentType && alert.filters.employmentType.map((et) => (
-                    <Badge key={et} className="text-[7.5px] font-black uppercase tracking-wider border-2 border-border bg-indigo-100 text-foreground">
-                      {et}
-                    </Badge>
-                  ))}
-                </div>
- 
-                {/* Mocked scan schedule metadata */}
-                <div className="mt-3.5 pt-2 border-t border-border/10 text-[8px] font-bold uppercase tracking-wider text-foreground-muted space-y-0.5">
-                  <div>Last scan: {alert.lastTriggeredAt ? "4 hours ago" : "Never"}</div>
-                  <div>Next scan: {alert.isActive ? "in 20 hours" : "Paused"}</div>
-                </div>
-              </div>
- 
-              {/* Actions Footer */}
-              <div className="border-t border-border/10 pt-2.5 flex items-center justify-end gap-1.5">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => duplicateAlert(alert.id)}
-                  className="h-8 px-2 text-[9px] font-black uppercase text-foreground border border-border/20 rounded-sm flex items-center gap-1 hover:bg-surface-secondary"
-                >
-                  Duplicate
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => openEditModal(alert)}
-                  className="h-8 px-2 text-[9px] font-black uppercase text-foreground border border-border/20 rounded-sm flex items-center gap-1 hover:bg-surface-secondary"
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDelete(alert.id)}
-                  className="h-8 px-2 text-[9px] font-black uppercase text-error border border-border/20 rounded-sm flex items-center gap-1 hover:bg-error/5"
-                >
-                  Delete
-                </Button>
-              </div>
-            </BrutalCard>
-            </motion.div>
-          ))}
+                alert={alert}
+                onToggleActive={toggleAlertActive}
+                onDuplicate={duplicateAlert}
+                onEdit={openEditModal}
+                onDelete={handleDelete}
+              />
+            ))}
           </AnimatePresence>
         </motion.div>
       )}

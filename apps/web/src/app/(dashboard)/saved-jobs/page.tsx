@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { motion, AnimatePresence } from "framer-motion";
 import { SavedJobCard } from "@/features/jobs/components/saved-job-card";
 import { useBookmarkStore } from "@/features/jobs/store/bookmark.store";
+import { useShallow } from "zustand/react/shallow";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { BrutalSelect } from "@/components/ui/brutal-select";
@@ -21,7 +22,14 @@ import {
  
 export default function SavedJobsPage() {
   const router = useRouter();
-  const { savedJobs, recentlyViewed, fetchSavedJobs, toggleSaveJob, loadRecentlyViewed, loading } = useBookmarkStore();
+  const { savedJobs, recentlyViewed, fetchSavedJobs, toggleSaveJob, loadRecentlyViewed, loading } = useBookmarkStore(useShallow(state => ({
+    savedJobs: state.savedJobs,
+    recentlyViewed: state.recentlyViewed,
+    fetchSavedJobs: state.fetchSavedJobs,
+    toggleSaveJob: state.toggleSaveJob,
+    loadRecentlyViewed: state.loadRecentlyViewed,
+    loading: state.loading
+  })));
   const [, startTransition] = useTransition();
   
   // Search and Sort states
@@ -40,27 +48,31 @@ export default function SavedJobsPage() {
   }, [fetchSavedJobs, loadRecentlyViewed]);
  
   // Client-side filtering & sorting
-  let processedSavedJobs = [...savedJobs];
- 
-  if (searchQuery.trim()) {
-    const q = searchQuery.toLowerCase();
-    processedSavedJobs = processedSavedJobs.filter(
-      (job) => job.title.toLowerCase().includes(q) || 
-               job.companyInfo.name.toLowerCase().includes(q) ||
-               job.skillsRequired.some((s) => s.toLowerCase().includes(q))
-    );
-  }
- 
-  // Sorting options
-  if (sortOption === "recent") {
-    processedSavedJobs.sort((a, b) => new Date(b.savedAt || b.postedDate).getTime() - new Date(a.savedAt || a.postedDate).getTime());
-  } else if (sortOption === "company") {
-    processedSavedJobs.sort((a, b) => a.companyInfo.name.localeCompare(b.companyInfo.name));
-  } else if (sortOption === "title") {
-    processedSavedJobs.sort((a, b) => a.title.localeCompare(b.title));
-  } else if (sortOption === "posted") {
-    processedSavedJobs.sort((a, b) => new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime());
-  }
+  const processedSavedJobs = React.useMemo(() => {
+    let result = [...savedJobs];
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (job) => job.title.toLowerCase().includes(q) || 
+                 job.companyInfo.name.toLowerCase().includes(q) ||
+                 job.skillsRequired.some((s) => s.toLowerCase().includes(q))
+      );
+    }
+
+    // Sorting options
+    if (sortOption === "recent") {
+      result.sort((a, b) => new Date(b.savedAt || b.postedDate).getTime() - new Date(a.savedAt || a.postedDate).getTime());
+    } else if (sortOption === "company") {
+      result.sort((a, b) => a.companyInfo.name.localeCompare(b.companyInfo.name));
+    } else if (sortOption === "title") {
+      result.sort((a, b) => a.title.localeCompare(b.title));
+    } else if (sortOption === "posted") {
+      result.sort((a, b) => new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime());
+    }
+
+    return result;
+  }, [savedJobs, searchQuery, sortOption]);
  
   const handleUnsave = (job: import("@/features/jobs/types/jobs.types").Job) => {
     // Optimistic UI updates
