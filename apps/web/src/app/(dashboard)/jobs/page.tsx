@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useJobsStore } from "@/features/jobs/store/jobs.store";
+import { useShallow } from "zustand/react/shallow";
 import { motion, AnimatePresence } from "framer-motion";
 import { PageHeader } from "@/components/shared/page-header";
 import { JobsFilter } from "@/features/jobs/components/jobs-filter";
@@ -54,7 +55,28 @@ export default function JobsPage() {
     addRecentSearch,
     saveSearch,
     removeSavedSearch
-  } = useJobsStore();
+  } = useJobsStore(useShallow((state) => ({
+    jobs: state.jobs,
+    totalCount: state.totalCount,
+    selectedJob: state.selectedJob,
+    loading: state.loading,
+    page: state.page,
+    limit: state.limit,
+    sorting: state.sorting,
+    filters: state.filters,
+    fetchJobs: state.fetchJobs,
+    selectJob: state.selectJob,
+    updateFilters: state.updateFilters,
+    setSorting: state.setSorting,
+    setPage: state.setPage,
+    toggleSaveJob: state.toggleSaveJob,
+    recentSearches: state.recentSearches,
+    savedSearches: state.savedSearches,
+    popularSearches: state.popularSearches,
+    addRecentSearch: state.addRecentSearch,
+    saveSearch: state.saveSearch,
+    removeSavedSearch: state.removeSavedSearch
+  })));
  
   // Search input state
   const [keywordInput, setKeywordInput] = useState(filters.keyword);

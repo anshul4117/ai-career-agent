@@ -10,7 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { NotificationsSkeleton } from "@/components/ui/skeleton-loaders";
 import { useNotificationsStore } from "@/features/notifications/store/notifications.store";
-import type { NotificationCategory } from "@/features/notifications/types/notifications.types";
+import { useShallow } from "zustand/react/shallow";
+import type { NotificationCategory, NotificationItem as NotificationType } from "@/features/notifications/types/notifications.types";
 import { 
   Bell, 
   CheckCheck, 
@@ -48,7 +49,116 @@ const CATEGORY_ICONS: Record<NotificationCategory, LucideIcon> = {
   cover_letter: Mail,
   system: Info,
 };
- 
+
+const formatTime = (isoString: string) => {
+  try {
+    const date = new Date(isoString);
+    const diffMs = Date.now() - date.getTime();
+    const diffMins = Math.floor(diffMs / (60 * 1000));
+    const diffHours = Math.floor(diffMs / (60 * 60 * 1000));
+    const diffDays = Math.floor(diffMs / (24 * 60 * 60 * 1000));
+
+    if (diffMins < 60) return `${Math.max(1, diffMins)}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return `${diffDays}d ago`;
+  } catch {
+    return "recently";
+  }
+};
+
+const NotificationCard = React.memo(function NotificationCard({
+  notif,
+  onView,
+  onMarkRead,
+  onDelete
+}: {
+  notif: NotificationType;
+  onView: (id: string, actionUrl?: string) => void;
+  onMarkRead: (id: string, read: boolean) => void;
+  onDelete: (id: string) => void;
+}) {
+  const Icon = CATEGORY_ICONS[notif.category];
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, scale: 0.95, y: -10 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95, x: -20 }}
+      transition={{ duration: 0.2 }}
+    >
+      <BrutalCard
+        className={cn(
+          "border-2 border-border p-3 flex items-start gap-3.5 rounded-sm relative text-left transition-all brutal-shadow-xs hover:brutal-shadow",
+          notif.read ? "bg-surface" : "bg-surface-secondary/40 border-primary/30"
+        )}
+      >
+        {/* Category Icon */}
+        <div className={cn(
+          "p-2 border border-border rounded-sm shrink-0",
+          notif.read ? "bg-surface text-foreground-muted" : "bg-primary text-white"
+        )}>
+          <Icon className="h-4 w-4" />
+        </div>
+
+        {/* Content Details */}
+        <div className="flex-1 space-y-1 min-w-0">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <h4 className="text-xs font-black uppercase text-foreground leading-tight tracking-tight">
+              {notif.title}
+            </h4>
+            {!notif.read && (
+              <Badge className="text-[7px] font-black uppercase bg-primary text-white border-2 border-border px-1 py-0.5">
+                New
+              </Badge>
+            )}
+          </div>
+          <p className="text-[10px] text-foreground-muted leading-relaxed font-semibold">
+            {notif.description}
+          </p>
+          <div className="flex items-center gap-2 pt-1 text-[8px] font-bold text-foreground-muted uppercase tracking-wider">
+            <span>{CATEGORY_LABELS[notif.category]}</span>
+            <span>•</span>
+            <span>{formatTime(notif.timestamp)}</span>
+          </div>
+        </div>
+
+        {/* Actions (View details & Toggle read & Delete) */}
+        <div className="flex items-center gap-1.5 shrink-0 ml-2">
+          {notif.actionUrl && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onView(notif.id, notif.actionUrl)}
+              className="h-8 px-2 text-[9px] font-black uppercase text-foreground border border-border/20 rounded-sm flex items-center gap-1 hover:bg-surface-secondary"
+              aria-label="View action details"
+            >
+              <Eye className="h-3 w-3" /> View
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onMarkRead(notif.id, !notif.read)}
+            className="h-8 w-8 p-0 flex items-center justify-center border border-border/20 rounded-sm hover:bg-surface-secondary text-foreground"
+            aria-label={notif.read ? "Mark as unread" : "Mark as read"}
+          >
+            <Circle className={cn("h-3 w-3", notif.read ? "fill-none text-foreground-muted" : "fill-primary text-primary")} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onDelete(notif.id)}
+            className="h-8 w-8 p-0 flex items-center justify-center text-error border border-border/20 rounded-sm hover:bg-error/5 hover:border-error"
+            aria-label="Delete notification"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      </BrutalCard>
+    </motion.div>
+  );
+});
+
 export default function NotificationsPage() {
   const router = useRouter();
   const { 
@@ -58,7 +168,14 @@ export default function NotificationsPage() {
     markAsRead, 
     markAllAsRead, 
     deleteNotification 
-  } = useNotificationsStore();
+  } = useNotificationsStore(useShallow(state => ({
+    notifications: state.notifications,
+    loading: state.loading,
+    fetchNotifications: state.fetchNotifications,
+    markAsRead: state.markAsRead,
+    markAllAsRead: state.markAllAsRead,
+    deleteNotification: state.deleteNotification
+  })));
  
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>("all");
   const [readFilter, setReadFilter] = useState<"all" | "unread" | "read">("all");
@@ -67,37 +184,23 @@ export default function NotificationsPage() {
     fetchNotifications();
   }, [fetchNotifications]);
  
-  // Client-side filtering
-  const filteredNotifications = notifications
-    .filter((n) => activeCategory === "all" || n.category === activeCategory)
-    .filter((n) => {
-      if (readFilter === "unread") return !n.read;
-      if (readFilter === "read") return n.read;
-      return true;
-    });
+  // Client-side filtering (Memoized)
+  const filteredNotifications = React.useMemo(() => {
+    return notifications
+      .filter((n) => activeCategory === "all" || n.category === activeCategory)
+      .filter((n) => {
+        if (readFilter === "unread") return !n.read;
+        if (readFilter === "read") return n.read;
+        return true;
+      });
+  }, [notifications, activeCategory, readFilter]);
  
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = React.useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
  
   const handleView = (id: string, actionUrl?: string) => {
     markAsRead(id, true);
     if (actionUrl) {
       router.push(actionUrl);
-    }
-  };
- 
-  const formatTime = (isoString: string) => {
-    try {
-      const date = new Date(isoString);
-      const diffMs = Date.now() - date.getTime();
-      const diffMins = Math.floor(diffMs / (60 * 1000));
-      const diffHours = Math.floor(diffMs / (60 * 60 * 1000));
-      const diffDays = Math.floor(diffMs / (24 * 60 * 60 * 1000));
- 
-      if (diffMins < 60) return `${Math.max(1, diffMins)}m ago`;
-      if (diffHours < 24) return `${diffHours}h ago`;
-      return `${diffDays}d ago`;
-    } catch {
-      return "recently";
     }
   };
  
@@ -201,89 +304,15 @@ export default function NotificationsPage() {
       ) : (
         <motion.div layout className="space-y-3">
           <AnimatePresence mode="popLayout">
-            {filteredNotifications.map((notif) => {
-              const Icon = CATEGORY_ICONS[notif.category];
-              return (
-                <motion.div
-                  key={notif.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, x: -20 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <BrutalCard
-                    className={cn(
-                      "border-2 border-border p-3 flex items-start gap-3.5 rounded-sm relative text-left transition-all brutal-shadow-xs hover:brutal-shadow",
-                      notif.read ? "bg-surface" : "bg-surface-secondary/40 border-primary/30"
-                    )}
-                  >
-                    {/* Category Icon */}
-                    <div className={cn(
-                      "p-2 border border-border rounded-sm shrink-0",
-                      notif.read ? "bg-surface text-foreground-muted" : "bg-primary text-white"
-                    )}>
-                      <Icon className="h-4 w-4" />
-                    </div>
-     
-                    {/* Content Details */}
-                    <div className="flex-1 space-y-1 min-w-0">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <h4 className="text-xs font-black uppercase text-foreground leading-tight tracking-tight">
-                          {notif.title}
-                        </h4>
-                        {!notif.read && (
-                          <Badge className="text-[7px] font-black uppercase bg-primary text-white border-2 border-border px-1 py-0.5">
-                            New
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-[10px] text-foreground-muted leading-relaxed font-semibold">
-                        {notif.description}
-                      </p>
-                      <div className="flex items-center gap-2 pt-1 text-[8px] font-bold text-foreground-muted uppercase tracking-wider">
-                        <span>{CATEGORY_LABELS[notif.category]}</span>
-                        <span>•</span>
-                        <span>{formatTime(notif.timestamp)}</span>
-                      </div>
-                    </div>
-     
-                    {/* Actions (View details & Toggle read & Delete) */}
-                    <div className="flex items-center gap-1.5 shrink-0 ml-2">
-                      {notif.actionUrl && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleView(notif.id, notif.actionUrl)}
-                          className="h-8 px-2 text-[9px] font-black uppercase text-foreground border border-border/20 rounded-sm flex items-center gap-1 hover:bg-surface-secondary"
-                          aria-label="View action details"
-                        >
-                          <Eye className="h-3 w-3" /> View
-                        </Button>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => markAsRead(notif.id, !notif.read)}
-                        className="h-8 w-8 p-0 flex items-center justify-center border border-border/20 rounded-sm hover:bg-surface-secondary text-foreground"
-                        aria-label={notif.read ? "Mark as unread" : "Mark as read"}
-                      >
-                        <Circle className={cn("h-3 w-3", notif.read ? "fill-none text-foreground-muted" : "fill-primary text-primary")} />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => deleteNotification(notif.id)}
-                        className="h-8 w-8 p-0 flex items-center justify-center text-error border border-border/20 rounded-sm hover:bg-error/5 hover:border-error"
-                        aria-label="Delete notification"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
-                  </BrutalCard>
-                </motion.div>
-              );
-            })}
+            {filteredNotifications.map((notif) => (
+              <NotificationCard 
+                key={notif.id}
+                notif={notif}
+                onView={handleView}
+                onMarkRead={markAsRead}
+                onDelete={deleteNotification}
+              />
+            ))}
           </AnimatePresence>
         </motion.div>
       )}

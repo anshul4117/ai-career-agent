@@ -12,7 +12,7 @@ interface CompanyCardProps {
   company: Company;
 }
 
-export function CompanyCard({ company }: CompanyCardProps) {
+export const CompanyCard = React.memo(function CompanyCard({ company }: CompanyCardProps) {
   return (
     <BrutalCard className="border-[3px] border-border brutal-shadow-xs hover:brutal-shadow transition-all bg-surface rounded-sm p-4 relative flex flex-col justify-between gap-4 text-left">
       <div>
@@ -86,4 +86,4 @@ export function CompanyCard({ company }: CompanyCardProps) {
       </div>
     </BrutalCard>
   );
-}
+});

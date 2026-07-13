@@ -2,6 +2,13 @@
 
 All notable changes to the AI Career Agent platform will be documented in this file.
 
+## [0.13.0] - 2026-07-13
+### Added
+- **Performance Optimization**: Achieved a highly optimized production-ready frontend using Next.js `dynamic` imports for heavy components below the fold, resulting in dramatically improved LCP and TTI.
+- **Granular React Rendering**: Migrated Zustand hooks across all Dashboard pages to use `useShallow` for strict slice subscriptions, eliminating re-renders on the global store level. Added `React.memo` wrappers to mapped lists for smooth scaleability up to thousands of items without dropping frames.
+- **Client-Side Filtering Scaling**: Wrapped expensive client-side arrays (`notifications.filter`, `jobAlerts.filter`, etc.) into `useMemo` hooks, saving massive main-thread blocking times.
+- **Image Payload Optimization**: Replaced legacy static `<img>` rendering across profile and feed views with `next/image` pipelines.
+
 ## [0.12.0] - 2026-07-12
 ### Added
 - **Premium Animation System:** Introduced Framer Motion for buttery-smooth page transitions, list layout reordering, and entrance/exit animations.

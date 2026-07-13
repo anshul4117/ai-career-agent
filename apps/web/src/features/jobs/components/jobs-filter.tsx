@@ -17,7 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
  
-export function JobsFilter() {
+export const JobsFilter = React.memo(function JobsFilter() {
   const { filters, updateFilters, resetFilters } = useJobsStore();
  
   // Collapsible section toggles
@@ -512,4 +512,4 @@ export function JobsFilter() {
  
     </div>
   );
-}
+});
