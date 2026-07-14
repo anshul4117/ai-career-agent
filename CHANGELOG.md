@@ -2,6 +2,12 @@
 
 All notable changes to the AI Career Agent platform will be documented in this file.
 
+## [0.14.0] - 2026-07-14
+### Added
+- **Global Feedback System**: Standardized success and error messaging using `sonner`, ensuring consistent global state management for non-blocking feedback.
+- **Destructive Action Safety**: Integrated `ConfirmDialog` via Radix UI and Framer Motion across all modules (Profile, Resumes, Cover Letters, Settings) replacing all legacy `window.confirm()` calls with a programmatic, accessible, and theme-compliant `useConfirm` hook.
+- **Form Accessibility**: Unified inline validation attributes (`role="alert"`, `aria-invalid`) across base input, textarea, and select components.
+
 ## [0.13.0] - 2026-07-13
 ### Added
 - **Performance Optimization**: Achieved a highly optimized production-ready frontend using Next.js `dynamic` imports for heavy components below the fold, resulting in dramatically improved LCP and TTI.

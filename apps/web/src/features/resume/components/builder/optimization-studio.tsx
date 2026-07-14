@@ -6,6 +6,7 @@ import { useResumeOptimizerStore } from "../../store/resume-optimizer.store";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 import { 
   Diff, 
   ListTodo, 
@@ -37,19 +38,13 @@ export function OptimizationStudio() {
  
   // Local state for versions and toast notification
   const [newVersionName, setNewVersionName] = useState("");
-  const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [exportingFormat, setExportingFormat] = useState<string | null>(null);
- 
-  const triggerToast = (msg: string) => {
-    setToastMsg(msg);
-    setTimeout(() => setToastMsg(null), 3000);
-  };
  
   const handleCreateVersion = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newVersionName.trim() || !currentResume) return;
     await createVersion(newVersionName.trim(), currentResume);
-    triggerToast(`Created version "${newVersionName}" successfully!`);
+    toast.success(`Created version "${newVersionName}" successfully!`);
     setNewVersionName("");
   };
  
@@ -57,7 +52,7 @@ export function OptimizationStudio() {
     setExportingFormat(format);
     const path = await exportResume(format);
     setExportingFormat(null);
-    triggerToast(`Exported successfully as ${format.toUpperCase()}! File saved: ${path}`);
+    toast.success(`Exported successfully as ${format.toUpperCase()}! File saved: ${path}`);
   };
  
   if (!analysis) {
@@ -86,13 +81,6 @@ export function OptimizationStudio() {
  
   return (
     <div className="space-y-6 text-left relative">
-      
-      {/* Toast Alert */}
-      {toastMsg && (
-        <div className="fixed bottom-4 right-4 z-50 bg-primary text-white border-2 border-border p-3 text-[10px] font-black uppercase tracking-wider brutal-shadow flex items-center gap-1.5" role="alert">
-          <CheckCircle className="h-4 w-4 stroke-[3px]" /> {toastMsg}
-        </div>
-      )}
  
       {/* Studio Header tabs selector */}
       <div className="flex border-b-2 border-border overflow-x-auto select-none bg-surface shrink-0 rounded-sm">

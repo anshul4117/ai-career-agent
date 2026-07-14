@@ -8,6 +8,7 @@ import { BrutalCard } from "@/components/ui/brutal-card";
 import { Heading } from "@/components/ui/typography";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Check, ShieldAlert, AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
@@ -25,11 +26,11 @@ export function ReviewPanel() {
     setIsSaving(true);
     try {
       await resumeParserService.saveAndSync(reviewState);
-      alert("Successfully synchronized parsed details with your Candidate Profile and created a new Resume Workspace Draft layout!");
+      toast.success("Successfully synchronized parsed details with your Candidate Profile and created a new Resume Workspace Draft layout!");
       resetParserStore();
       router.push("/resume");
     } catch (err) {
-      alert("Failed to synchronize resume data: " + (err as Error).message);
+      toast.error("Failed to synchronize resume data: " + (err as Error).message);
     } finally {
       setIsSaving(false);
     }

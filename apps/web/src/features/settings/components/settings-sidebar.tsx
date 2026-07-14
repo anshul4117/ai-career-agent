@@ -19,6 +19,7 @@ import {
   Clock
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useConfirm } from "@/components/ui/confirm-dialog";
  
 export function SettingsSidebar() {
   const { 
@@ -30,6 +31,7 @@ export function SettingsSidebar() {
     restoreDefaults,
     loadSettings
   } = useSettingsStore();
+  const { confirm, ConfirmationDialog } = useConfirm();
  
   const completion = calculateProfileCompletion();
  
@@ -56,8 +58,14 @@ export function SettingsSidebar() {
     URL.revokeObjectURL(url);
   };
  
-  const handleRestore = () => {
-    if (!window.confirm("Are you sure you want to restore default factory settings? Any unsaved edits will be discarded.")) return;
+  const handleRestore = async () => {
+    const isConfirmed = await confirm({
+      title: "Restore Settings",
+      description: "Are you sure you want to restore default factory settings? Any unsaved edits will be discarded.",
+      isDestructive: true,
+      confirmLabel: "Restore Defaults"
+    });
+    if (!isConfirmed) return;
     restoreDefaults();
     loadSettings();
   };
@@ -140,6 +148,8 @@ export function SettingsSidebar() {
           </div>
         )}
       </BrutalCard>
+      
+      <ConfirmationDialog />
     </div>
   );
 }

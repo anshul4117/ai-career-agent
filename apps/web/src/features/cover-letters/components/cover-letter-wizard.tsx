@@ -7,6 +7,7 @@ import { useResumeStore } from "../../resume/store/resume.store";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 import { 
   Sparkles, 
   Copy, 
@@ -57,13 +58,7 @@ export function CoverLetterWizard({ initialTemplate, onBackToDashboard }: CoverL
  
   // Local active tab for editor block: "editor" | "preview" | "versions"
   const [editorTab, setEditorTab] = useState<"editor" | "preview" | "versions">("editor");
-  const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [exportingFormat, setExportingFormat] = useState<string | null>(null);
- 
-  const triggerToast = (msg: string) => {
-    setToastMsg(msg);
-    setTimeout(() => setToastMsg(null), 3000);
-  };
  
   // Load resumes list on mount
   useEffect(() => {
@@ -94,7 +89,7 @@ export function CoverLetterWizard({ initialTemplate, onBackToDashboard }: CoverL
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!jobTitle.trim() || !company.trim()) {
-      triggerToast("Job Title and Company are required!");
+      toast.error("Job Title and Company are required!");
       return;
     }
  
@@ -111,7 +106,7 @@ export function CoverLetterWizard({ initialTemplate, onBackToDashboard }: CoverL
       targetResume
     );
  
-    triggerToast("AI Cover Letter generated successfully!");
+    toast.success("AI Cover Letter generated successfully!");
     setEditorTab("editor");
   };
  
@@ -126,24 +121,24 @@ export function CoverLetterWizard({ initialTemplate, onBackToDashboard }: CoverL
       template,
       tone
     });
-    triggerToast("Draft document saved successfully!");
+    toast.success("Draft document saved successfully!");
   };
  
   const handleCreateVersion = () => {
     if (!activeDraft) return;
     createVersion(template, tone);
-    triggerToast("Saved active version to history log!");
+    toast.success("Saved active version to history log!");
   };
  
   const handleRestoreVersion = (verId: string) => {
     restoreVersion(verId);
-    triggerToast("Restored selected version draft!");
+    toast.success("Restored selected version draft!");
   };
  
   const handleCopy = () => {
     if (!activeDraft?.content) return;
     navigator.clipboard.writeText(activeDraft.content);
-    triggerToast("Copied to clipboard!");
+    toast.success("Copied to clipboard!");
   };
  
   const handleExport = async (format: "pdf" | "docx") => {
@@ -151,19 +146,12 @@ export function CoverLetterWizard({ initialTemplate, onBackToDashboard }: CoverL
     setExportingFormat(format);
     await new Promise((resolve) => setTimeout(resolve, 800));
     setExportingFormat(null);
-    triggerToast(`Document exported as ${format.toUpperCase()} successfully!`);
+    toast.success(`Document exported as ${format.toUpperCase()} successfully!`);
   };
  
   return (
     <div className="space-y-5 text-left select-none relative">
       
-      {/* Toast popup */}
-      {toastMsg && (
-        <div className="fixed bottom-4 right-4 z-50 bg-primary text-white border-2 border-border p-3 text-[10px] font-black uppercase tracking-wider brutal-shadow flex items-center gap-1.5" role="alert">
-          <CheckCircleIcon className="h-4 w-4 stroke-[3px]" /> {toastMsg}
-        </div>
-      )}
- 
       {/* Navigation Row */}
       <div className="flex items-center gap-2 border-b-2 border-border pb-3 mb-2 select-none">
         <BrutalButton 

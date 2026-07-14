@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Heading } from "@/components/ui/typography";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Briefcase, ArrowLeft, Plus } from "lucide-react";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { useProfileStore } from "@/features/profile/store/profile.store";
 import { ExperienceTimeline } from "@/features/profile/components/experience-timeline";
 import { ProfileDialog } from "@/features/profile/components/profile-dialog";
@@ -14,6 +15,7 @@ import { ExperienceFormValues } from "@/features/profile/schemas/experience.sche
 
 export default function ExperiencePage() {
   const { experience, isLoading, loadProfile, addExperience, updateExperience, deleteExperience } = useProfileStore();
+  const { confirm, ConfirmationDialog } = useConfirm();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingExp, setEditingExp] = useState<Experience | null>(null);
@@ -32,8 +34,14 @@ export default function ExperiencePage() {
     setIsDialogOpen(true);
   };
 
-  const handleDeleteClick = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this experience record?")) {
+  const handleDeleteClick = async (id: string) => {
+    const isConfirmed = await confirm({
+      title: "Delete Experience",
+      description: "Are you sure you want to delete this experience record? This action cannot be undone.",
+      isDestructive: true,
+      confirmLabel: "Delete"
+    });
+    if (isConfirmed) {
       deleteExperience(id);
     }
   };
@@ -107,6 +115,8 @@ export default function ExperiencePage() {
           submitLabel={editingExp ? "Save Changes" : "Save Record"}
         />
       </ProfileDialog>
+      
+      <ConfirmationDialog />
     </div>
   );
 }

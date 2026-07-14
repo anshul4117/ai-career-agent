@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Heading } from "@/components/ui/typography";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Code2, ArrowLeft, Plus } from "lucide-react";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { useProfileStore } from "@/features/profile/store/profile.store";
 import { SkillFilters } from "@/features/profile/components/skill-filters";
 import { SkillsList } from "@/features/profile/components/skills-list";
@@ -15,6 +16,7 @@ import { SkillFormValues } from "@/features/profile/schemas/skill.schema";
 
 export default function SkillsPage() {
   const { skills, isLoading, loadProfile, addSkill, updateSkill, deleteSkill } = useProfileStore();
+  const { confirm, ConfirmationDialog } = useConfirm();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -63,8 +65,14 @@ export default function SkillsPage() {
     setIsDialogOpen(true);
   };
 
-  const handleDeleteClick = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this skill?")) {
+  const handleDeleteClick = async (id: string) => {
+    const isConfirmed = await confirm({
+      title: "Delete Skill",
+      description: "Are you sure you want to delete this skill? This action cannot be undone.",
+      isDestructive: true,
+      confirmLabel: "Delete"
+    });
+    if (isConfirmed) {
       deleteSkill(id);
     }
   };
@@ -144,6 +152,8 @@ export default function SkillsPage() {
           submitLabel={editingSkill ? "Save Changes" : "Add Skill"}
         />
       </ProfileDialog>
+
+      <ConfirmationDialog />
     </div>
   );
 }

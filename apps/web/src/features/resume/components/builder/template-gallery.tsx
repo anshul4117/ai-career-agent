@@ -8,6 +8,7 @@ import { BrutalCard } from "@/components/ui/brutal-card";
 import { Heading, Text } from "@/components/ui/typography";
 import { Star, Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export function TemplateGallery() {
   const { currentResume, updateTemplate } = useBuilderStore();
@@ -68,7 +69,7 @@ export function TemplateGallery() {
   const handleDuplicateTemplate = (templateId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     // Simulate template duplication/cloning by creating a layout message
-    alert(`Cloned template "${templateId.toUpperCase()}" configurations to your clipboard settings!`);
+    toast.success(`Cloned template "${templateId.toUpperCase()}" configurations to your clipboard settings!`);
   };
 
   return (

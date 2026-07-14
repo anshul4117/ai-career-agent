@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { BrutalSelect } from "@/components/ui/brutal-select";
 import { EmptyState } from "@/components/ui/empty-state";
 import { JobsSkeleton } from "@/components/ui/skeleton-loaders";
+import { toast } from "sonner";
 import { 
   Search, 
   SlidersHorizontal, 
@@ -28,7 +29,8 @@ import {
   TrendingUp,
   Save,
   RotateCcw,
-  Sparkles
+  Sparkles,
+  MapPin
 } from "lucide-react";
 import { cn } from "@/lib/utils";
  
@@ -85,16 +87,10 @@ export default function JobsPage() {
   // Layout toggles
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
-  const [toastMsg, setToastMsg] = useState("");
  
   // Save Search popup state
   const [isSaveSearchOpen, setIsSaveSearchOpen] = useState(false);
   const [searchNameInput, setSearchNameInput] = useState("");
- 
-  const triggerToast = (msg: string) => {
-    setToastMsg(msg);
-    setTimeout(() => setToastMsg(""), 3000);
-  };
  
   // Load initial jobs
   useEffect(() => {
@@ -147,7 +143,7 @@ export default function JobsPage() {
  
   const handleLoadSavedSearch = (saved: typeof savedSearches[number]) => {
     updateFilters(saved.filters);
-    triggerToast(`Loaded search: "${saved.name}"`);
+    toast.success(`Loaded search: "${saved.name}"`);
   };
  
   const handleSaveSearchSubmit = (e: React.FormEvent) => {
@@ -157,7 +153,7 @@ export default function JobsPage() {
       saveSearch(name);
       setSearchNameInput("");
       setIsSaveSearchOpen(false);
-      triggerToast("Search filters saved!");
+      toast.success("Search filters saved!");
     }
   };
  
@@ -203,13 +199,6 @@ export default function JobsPage() {
  
   return (
     <div className="space-y-5 pb-12 text-left select-none relative max-w-[1200px] mx-auto w-full">
-      
-      {/* Toast Alert */}
-      {toastMsg && (
-        <div className="fixed bottom-4 right-4 z-50 bg-primary text-white border-2 border-border p-3 text-[10px] font-black uppercase tracking-wider brutal-shadow flex items-center gap-1.5" role="alert">
-          <Check className="h-4 w-4 stroke-[3px]" /> {toastMsg}
-        </div>
-      )}
  
       {/* Header */}
       <PageHeader
@@ -563,7 +552,7 @@ export default function JobsPage() {
                       onSave={(e) => {
                         e.stopPropagation();
                         toggleSaveJob(job.id);
-                        triggerToast(job.isSaved ? "Job removed from saved list" : "Job added to saved list!");
+                        toast.success(job.isSaved ? "Job removed from saved list" : "Job added to saved list!");
                       }}
                     />
                   </motion.div>

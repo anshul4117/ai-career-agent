@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useQualityStore } from "../store/quality.store";
 import { useMatchStore } from "../store/match.store";
+import { toast } from "sonner";
 import { useProfileStore } from "@/features/profile";
 import { 
   Bookmark, 
@@ -42,10 +43,9 @@ const item = {
 
 interface JobDetailsPaneProps {
   job: Job;
-  onToast: (msg: string) => void;
 }
 
-export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
+export function JobDetailsPane({ job }: JobDetailsPaneProps) {
   const { selectJob } = useJobsStore();
   const { toggleSaveJob, addRecentlyViewed, recentlyViewed } = useBookmarkStore();
   const [similarJobs, setSimilarJobs] = useState<Job[]>([]);
@@ -103,7 +103,7 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
         profile: profileState.profile
       }, latestQualityScore, true);
     }
-    onToast("AI match and quality metrics refreshed!");
+    toast.success("AI match and quality metrics refreshed!");
   };
 
   useEffect(() => {
@@ -134,12 +134,12 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
   const handleShare = () => {
     if (typeof window !== "undefined") {
       navigator.clipboard.writeText(window.location.origin + `/jobs/${job.id}`);
-      onToast("Shareable job link copied to clipboard!");
+      toast.success("Shareable job link copied to clipboard!");
     }
   };
 
   const handleApply = () => {
-    onToast(`Redirecting to ${job.companyInfo.name} application site...`);
+    toast.info(`Redirecting to ${job.companyInfo.name} application site...`);
     setTimeout(() => {
       window.open(job.externalApplyUrl, "_blank");
     }, 1000);
@@ -178,7 +178,7 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
             variant="ghost"
             onClick={() => {
               toggleSaveJob(job);
-              onToast(job.isSaved ? "Removed from Saved Jobs" : "Saved to Saved Jobs!");
+              toast.success(job.isSaved ? "Removed from Saved Jobs" : "Saved to Saved Jobs!");
             }}
             className="flex-1 md:flex-none h-10 px-4 border-2 border-border brutal-shadow-xs hover:bg-surface-secondary flex items-center justify-center gap-1.5 font-black uppercase text-xs rounded-sm"
           >
@@ -754,7 +754,7 @@ export function JobDetailsPane({ job, onToast }: JobDetailsPaneProps) {
           variant="ghost"
           onClick={() => {
             toggleSaveJob(job);
-            onToast(job.isSaved ? "Removed from Saved Jobs" : "Saved to Saved Jobs!");
+            toast.success(job.isSaved ? "Removed from Saved Jobs" : "Saved to Saved Jobs!");
           }}
           className="h-11 w-11 border-2 border-border brutal-shadow-xs hover:bg-surface-secondary flex items-center justify-center rounded-sm shrink-0"
           aria-label="Save job"
