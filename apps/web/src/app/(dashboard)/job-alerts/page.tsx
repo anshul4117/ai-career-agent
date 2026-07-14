@@ -22,6 +22,8 @@ import {
   Check
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+import { useConfirm } from "@/components/ui/confirm-dialog";
  
 const JobAlertCard = React.memo(function JobAlertCard({
   alert,
@@ -168,7 +170,7 @@ export default function JobAlertsPage() {
   // Modal toggle state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAlert, setEditingAlert] = useState<JobAlert | null>(null);
-  const [toastMsg, setToastMsg] = useState("");
+  const { confirm, ConfirmationDialog } = useConfirm();
  
   // Form states
   const [formTitle, setFormTitle] = useState("");
@@ -180,11 +182,6 @@ export default function JobAlertsPage() {
   const [formExperienceLevel, setFormExperienceLevel] = useState<ExperienceLevel[]>([]);
   const [formEmploymentType, setFormEmploymentType] = useState<EmploymentType[]>([]);
   const [formFrequency, setFormFrequency] = useState<"instant" | "daily" | "weekly">("daily");
- 
-  const triggerToast = (msg: string) => {
-    setToastMsg(msg);
-    setTimeout(() => setToastMsg(""), 3000);
-  };
  
   useEffect(() => {
     fetchAlerts();
@@ -252,29 +249,29 @@ export default function JobAlertsPage() {
  
     if (editingAlert) {
       await updateAlert(editingAlert.id, alertPayload);
-      triggerToast("Job alert updated successfully");
+      toast.success("Job alert updated successfully");
     } else {
       await createAlert(alertPayload);
-      triggerToast("Job alert created successfully");
+      toast.success("Job alert created successfully");
     }
     setIsModalOpen(false);
   };
  
   const handleDelete = async (id: string) => {
-    if (confirm("Are you sure you want to delete this job alert?")) {
+    const isConfirmed = await confirm({
+      title: "Delete Job Alert",
+      description: "Are you sure you want to delete this job alert?",
+      isDestructive: true,
+      confirmLabel: "Delete Alert"
+    });
+    if (isConfirmed) {
       await deleteAlert(id);
-      triggerToast("Job alert deleted");
+      toast.success("Job alert deleted");
     }
   };
  
   return (
     <div className="space-y-6 pb-12 text-left select-none relative max-w-[1200px] mx-auto w-full">
-      {/* Toast Alert Banner */}
-      {toastMsg && (
-        <div className="fixed bottom-4 right-4 z-50 bg-primary text-white border-2 border-border p-3 text-[10px] font-black uppercase tracking-wider brutal-shadow flex items-center gap-1.5" role="alert">
-          <Check className="h-4 w-4 stroke-[3px]" /> {toastMsg}
-        </div>
-      )}
  
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -550,6 +547,7 @@ export default function JobAlertsPage() {
         )}
       </AnimatePresence>
  
+      <ConfirmationDialog />
     </div>
   );
 }

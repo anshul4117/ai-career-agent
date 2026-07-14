@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Heading, Text } from "@/components/ui/typography";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Award, ArrowLeft, Plus } from "lucide-react";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { useProfileStore } from "@/features/profile/store/profile.store";
 import { CertificationItem } from "@/features/profile/components/certification-item";
 import { ProfileDialog } from "@/features/profile/components/profile-dialog";
@@ -14,6 +15,7 @@ import { CertificationFormValues } from "@/features/profile/schemas/certificatio
 
 export default function CertificationsPage() {
   const { certifications, isLoading, loadProfile, addCertification, updateCertification, deleteCertification } = useProfileStore();
+  const { confirm, ConfirmationDialog } = useConfirm();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCert, setEditingCert] = useState<Certification | null>(null);
@@ -32,8 +34,14 @@ export default function CertificationsPage() {
     setIsDialogOpen(true);
   };
 
-  const handleDeleteClick = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this certification?")) {
+  const handleDeleteClick = async (id: string) => {
+    const isConfirmed = await confirm({
+      title: "Delete Certification",
+      description: "Are you sure you want to delete this certification? This action cannot be undone.",
+      isDestructive: true,
+      confirmLabel: "Delete"
+    });
+    if (isConfirmed) {
       deleteCertification(id);
     }
   };
@@ -134,6 +142,8 @@ export default function CertificationsPage() {
           submitLabel={editingCert ? "Save Changes" : "Save Record"}
         />
       </ProfileDialog>
+      
+      <ConfirmationDialog />
     </div>
   );
 }

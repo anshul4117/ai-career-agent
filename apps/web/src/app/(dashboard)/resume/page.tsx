@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 
 const ResumeCard = React.memo(function ResumeCard({
   resume,
@@ -163,52 +165,53 @@ export default function ResumePage() {
     restoreResume: state.restoreResume
   })));
 
-  const [toast, setToast] = useState<string | null>(null);
+  const { confirm, ConfirmationDialog } = useConfirm();
   const [showArchived, setShowArchived] = useState(false);
 
   useEffect(() => {
     loadResumes();
   }, [loadResumes]);
 
-  const showToastMsg = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 3000);
-  };
-
   const handleDuplicate = async (id: string, title: string) => {
     try {
       await duplicateResume(id);
-      showToastMsg(`Duplicated "${title}"!`);
+      toast.success(`Duplicated "${title}"!`);
     } catch {
-      showToastMsg("Failed to duplicate resume.");
+      toast.error("Failed to duplicate resume.");
     }
   };
 
   const handleArchive = async (id: string, title: string) => {
     try {
       await archiveResume(id);
-      showToastMsg(`Archived "${title}"!`);
+      toast.success(`Archived "${title}"!`);
     } catch {
-      showToastMsg("Failed to archive resume.");
+      toast.error("Failed to archive resume.");
     }
   };
 
   const handleRestore = async (id: string, title: string) => {
     try {
       await restoreResume(id);
-      showToastMsg(`Restored "${title}"!`);
+      toast.success(`Restored "${title}"!`);
     } catch {
-      showToastMsg("Failed to restore resume.");
+      toast.error("Failed to restore resume.");
     }
   };
 
   const handleDelete = async (id: string, title: string) => {
-    if (!window.confirm(`Are you sure you want to permanently delete "${title}"?`)) return;
+    const isConfirmed = await confirm({
+      title: "Delete Resume",
+      description: `Are you sure you want to permanently delete "${title}"?`,
+      isDestructive: true,
+      confirmLabel: "Delete"
+    });
+    if (!isConfirmed) return;
     try {
       await deleteResume(id);
-      showToastMsg(`Deleted "${title}"!`);
+      toast.success(`Deleted "${title}"!`);
     } catch {
-      showToastMsg("Failed to delete resume.");
+      toast.error("Failed to delete resume.");
     }
   };
 
@@ -233,13 +236,6 @@ export default function ResumePage() {
 
   return (
     <div className="space-y-8 w-full min-w-0 pb-16">
-      {/* Toast popup */}
-      {toast && (
-        <div className="fixed bottom-4 right-4 z-50 bg-success border-2 border-border p-3 text-white font-extrabold uppercase text-xs brutal-shadow" role="alert">
-          {toast}
-        </div>
-      )}
-
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="space-y-1">
@@ -327,6 +323,8 @@ export default function ResumePage() {
           )}
         </div>
       )}
+      
+      <ConfirmationDialog />
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { 
   FileText, 
   Plus, 
@@ -35,6 +36,7 @@ export function CoverLetterDashboard({ onStartNew }: CoverLetterDashboardProps) 
     duplicateDraft, 
     saveDraft 
   } = useCoverLetterStore();
+  const { confirm, ConfirmationDialog } = useConfirm();
  
   const [localLoading, setLocalLoading] = React.useState(true);
  
@@ -65,9 +67,15 @@ export function CoverLetterDashboard({ onStartNew }: CoverLetterDashboardProps) 
     loadDrafts(); // reload
   };
  
-  const handleDelete = (e: React.MouseEvent, id: string, title: string) => {
+  const handleDelete = async (e: React.MouseEvent, id: string, title: string) => {
     e.stopPropagation();
-    if (!window.confirm(`Are you sure you want to permanently delete "${title}"?`)) return;
+    const isConfirmed = await confirm({
+      title: "Delete Cover Letter",
+      description: `Are you sure you want to permanently delete "${title}"?`,
+      isDestructive: true,
+      confirmLabel: "Delete"
+    });
+    if (!isConfirmed) return;
     deleteDraft(id);
     loadDrafts();
   };
@@ -247,6 +255,8 @@ export function CoverLetterDashboard({ onStartNew }: CoverLetterDashboardProps) 
         </div>
  
       </div>
+      
+      <ConfirmationDialog />
     </div>
   );
 }

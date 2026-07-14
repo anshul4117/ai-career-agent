@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Heading, Text } from "@/components/ui/typography";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Share2, ArrowLeft, Plus } from "lucide-react";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { useProfileStore } from "@/features/profile/store/profile.store";
 import { SocialLinkItem } from "@/features/profile/components/social-link-item";
 import { ProfileDialog } from "@/features/profile/components/profile-dialog";
@@ -14,6 +15,7 @@ import { SocialLinkFormValues } from "@/features/profile/schemas/social-link.sch
 
 export default function SocialLinksPage() {
   const { socialLinks, isLoading, loadProfile, addSocialLink, updateSocialLink, deleteSocialLink } = useProfileStore();
+  const { confirm, ConfirmationDialog } = useConfirm();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingLink, setEditingLink] = useState<SocialLink | null>(null);
@@ -32,8 +34,14 @@ export default function SocialLinksPage() {
     setIsDialogOpen(true);
   };
 
-  const handleDeleteClick = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this social link?")) {
+  const handleDeleteClick = async (id: string) => {
+    const isConfirmed = await confirm({
+      title: "Delete Social Link",
+      description: "Are you sure you want to delete this social link? This action cannot be undone.",
+      isDestructive: true,
+      confirmLabel: "Delete"
+    });
+    if (isConfirmed) {
       deleteSocialLink(id);
     }
   };
@@ -131,6 +139,8 @@ export default function SocialLinksPage() {
           submitLabel={editingLink ? "Save Changes" : "Save Link"}
         />
       </ProfileDialog>
+      
+      <ConfirmationDialog />
     </div>
   );
 }

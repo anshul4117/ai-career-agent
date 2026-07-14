@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Heading, Text } from "@/components/ui/typography";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { MessageSquare, ArrowLeft, Plus } from "lucide-react";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { useProfileStore } from "@/features/profile/store/profile.store";
 import { LanguageItem } from "@/features/profile/components/language-item";
 import { ProfileDialog } from "@/features/profile/components/profile-dialog";
@@ -14,6 +15,7 @@ import { LanguageFormValues } from "@/features/profile/schemas/language.schema";
 
 export default function LanguagesPage() {
   const { languages, isLoading, loadProfile, addLanguage, updateLanguage, deleteLanguage } = useProfileStore();
+  const { confirm, ConfirmationDialog } = useConfirm();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingLang, setEditingLang] = useState<Language | null>(null);
@@ -32,8 +34,14 @@ export default function LanguagesPage() {
     setIsDialogOpen(true);
   };
 
-  const handleDeleteClick = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this language?")) {
+  const handleDeleteClick = async (id: string) => {
+    const isConfirmed = await confirm({
+      title: "Delete Language",
+      description: "Are you sure you want to delete this language? This action cannot be undone.",
+      isDestructive: true,
+      confirmLabel: "Delete"
+    });
+    if (isConfirmed) {
       deleteLanguage(id);
     }
   };
@@ -128,6 +136,8 @@ export default function LanguagesPage() {
           submitLabel={editingLang ? "Save Changes" : "Save Details"}
         />
       </ProfileDialog>
+      
+      <ConfirmationDialog />
     </div>
   );
 }

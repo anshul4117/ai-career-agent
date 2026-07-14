@@ -1,8 +1,10 @@
 "use client";
- 
+
 import React, { useState } from "react";
+import { toast } from "sonner";
 import { useSettingsStore } from "../store/settings.store";
 import { useResumeStore } from "../../resume/store/resume.store";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -21,6 +23,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+
  
 export function SettingsPanels() {
   const { resumes } = useResumeStore();
@@ -33,6 +36,7 @@ export function SettingsPanels() {
     hasUnsavedChanges,
     loading 
   } = useSettingsStore();
+  const { confirm, ConfirmationDialog } = useConfirm();
  
   // Modals Local State
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
@@ -42,42 +46,35 @@ export function SettingsPanels() {
   
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
-  
-  const [toastMsg, setToastMsg] = useState<string | null>(null);
-  
-  const triggerToast = (msg: string) => {
-    setToastMsg(msg);
-    setTimeout(() => setToastMsg(null), 3000);
-  };
  
   if (!draftSettings) return null;
  
   const handleSaveAll = async () => {
     await saveChanges();
-    triggerToast("All configuration settings saved successfully!");
+    toast.success("All configuration settings saved successfully!");
   };
  
   const handlePasswordChange = (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      alert("New passwords do not match!");
+      toast.error("New passwords do not match!");
       return;
     }
     setPasswordModalOpen(false);
     setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
-    triggerToast("Password updated successfully!");
+    toast.success("Password updated successfully!");
   };
  
   const handleDeleteAccount = () => {
     if (deleteConfirmText !== "DELETE") {
-      alert("Please type DELETE to confirm!");
+      toast.error("Please type DELETE to confirm!");
       return;
     }
     setDeleteModalOpen(false);
     setDeleteConfirmText("");
-    alert("Account deletion simulated successfully! In production, this would delete your profile.");
+    toast.info("Account deletion simulated successfully! In production, this would delete your profile.");
   };
  
   const handleToggleConnection = (providerId: string) => {
@@ -86,7 +83,7 @@ export function SettingsPanels() {
         c.id === providerId ? { ...c, connected: !c.connected, username: !c.connected ? "linked_user" : undefined } : c
       );
     });
-    triggerToast("Updated account connection status!");
+    toast.success("Updated account connection status!");
   };
  
   // Multi-select helper
@@ -103,13 +100,6 @@ export function SettingsPanels() {
  
   return (
     <div className="space-y-6 text-left relative">
-      
-      {/* Toast popup */}
-      {toastMsg && (
-        <div className="fixed bottom-4 right-4 z-50 bg-primary text-white border-2 border-border p-3 text-[10px] font-black uppercase tracking-wider brutal-shadow flex items-center gap-1.5" role="alert">
-          <Check className="h-4 w-4 stroke-[3px]" /> {toastMsg}
-        </div>
-      )}
  
       {/* Active Form Sections */}
       <div className="space-y-6 pb-20">
@@ -138,7 +128,7 @@ export function SettingsPanels() {
               </div>
               <div className="space-y-1">
                 <label className="text-[8.5px] font-black uppercase text-foreground-muted block">Avatar Upload</label>
-                <BrutalButton variant="secondary" size="sm" className="h-7.5 text-[8.5px] font-black uppercase" onClick={() => triggerToast("Avatar file dialog uploaded")}>
+                <BrutalButton variant="secondary" size="sm" className="h-7.5 text-[8.5px] font-black uppercase" onClick={() => toast.success("Avatar file dialog uploaded")}>
                   Upload New
                 </BrutalButton>
               </div>
@@ -786,10 +776,18 @@ export function SettingsPanels() {
               </div>
  
               <div className="flex gap-2 text-[9px] font-black uppercase flex-wrap">
-                <BrutalButton variant="secondary" className="h-8.5 px-3 uppercase text-[8.5px] font-black" onClick={() => triggerToast("Downloaded GDPR data package (.json)")}>
+                <BrutalButton variant="secondary" className="h-8.5 px-3 uppercase text-[8.5px] font-black" onClick={() => toast.success("Downloaded GDPR data package (.json)")}>
                   Download My Data Package
                 </BrutalButton>
-                <BrutalButton variant="secondary" className="h-8.5 px-3 uppercase text-[8.5px] font-black border-rose-200 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10" onClick={() => { if(confirm("Are you sure you want to delete all cached telemetry records? This cannot be undone.")) triggerToast("GDPR data cleanup initiated"); }}>
+                <BrutalButton variant="secondary" className="h-8.5 px-3 uppercase text-[8.5px] font-black border-rose-200 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10" onClick={async () => {
+                  const isConfirmed = await confirm({
+                    title: "Delete Telemetry Data",
+                    description: "Are you sure you want to delete all cached telemetry records? This cannot be undone.",
+                    isDestructive: true,
+                    confirmLabel: "Delete Data"
+                  });
+                  if (isConfirmed) toast.info("GDPR data cleanup initiated");
+                }}>
                   Delete My Telemetry Data
                 </BrutalButton>
               </div>
@@ -915,7 +913,8 @@ export function SettingsPanels() {
           </BrutalCard>
         </div>
       )}
- 
+      
+      <ConfirmationDialog />
     </div>
   );
 }

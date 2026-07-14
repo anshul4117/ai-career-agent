@@ -9,6 +9,7 @@ import { ChevronLeft, Check, AlertCircle } from "lucide-react";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { JobDetailsSkeleton } from "@/components/ui/skeleton-loaders";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -17,13 +18,7 @@ interface PageProps {
 export default function JobDetailPage({ params }: PageProps) {
   const resolvedParams = use(params);
   const { selectJob, selectedJob, loading } = useJobsStore();
-  const [toastMsg, setToastMsg] = useState("");
   const [hasError, setHasError] = useState(false);
-
-  const triggerToast = (msg: string) => {
-    setToastMsg(msg);
-    setTimeout(() => setToastMsg(""), 3000);
-  };
 
   useEffect(() => {
     const fetchTargetJob = async () => {
@@ -64,13 +59,6 @@ export default function JobDetailPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6 pb-12 text-left select-none relative max-w-[1200px] mx-auto w-full">
-      
-      {/* Toast Alert */}
-      {toastMsg && (
-        <div className="fixed bottom-4 right-4 z-50 bg-primary text-white border-2 border-border p-3 text-[10px] font-black uppercase tracking-wider brutal-shadow flex items-center gap-1.5" role="alert">
-          <Check className="h-4 w-4 stroke-[3px]" /> {toastMsg}
-        </div>
-      )}
 
       {/* Back button */}
       <div>
@@ -89,7 +77,7 @@ export default function JobDetailPage({ params }: PageProps) {
       {loading || !selectedJob ? (
         <JobDetailsSkeleton />
       ) : (
-        <JobDetailsPane job={selectedJob} onToast={triggerToast} />
+        <JobDetailsPane job={selectedJob} />
       )}
 
     </div>

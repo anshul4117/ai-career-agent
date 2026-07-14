@@ -26,6 +26,8 @@ import { CareerPreferenceForm } from "@/features/profile/components/career-prefe
 
 // Values Types
 import type { PersonalInfoFormValues, ContactInfoFormValues } from "@/features/profile/schemas/profile.schema";
+import { toast } from "sonner";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import type { SkillFormValues } from "@/features/profile/schemas/skill.schema";
 import type { ExperienceFormValues } from "@/features/profile/schemas/experience.schema";
 import type { EducationFormValues } from "@/features/profile/schemas/education.schema";
@@ -91,6 +93,7 @@ export default function EditProfilePage() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { confirm, ConfirmationDialog } = useConfirm();
   const fromOnboarding = searchParams.get("from") === "onboarding";
 
   // Active section tracked via Intersection Observer
@@ -109,8 +112,6 @@ export default function EditProfilePage() {
   const [activeCertEditor, setActiveCertEditor] = useState<"add" | string | null>(null);
   const [activeLangEditor, setActiveLangEditor] = useState<"add" | string | null>(null);
   const [activeSocEditor, setActiveSocEditor] = useState<"add" | string | null>(null);
-
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Load profile data
   useEffect(() => {
@@ -188,22 +189,15 @@ export default function EditProfilePage() {
     }
   };
 
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
-
   const handlePostSaveRedirect = () => {
     if (fromOnboarding) {
       router.push("/complete-profile");
     }
   };
 
-  const handleBackClick = (e: React.MouseEvent) => {
+  const handleBackClick = async (e: React.MouseEvent) => {
     if (isAnyFormDirty) {
-      const confirmLeave = window.confirm(
-        "You have unsaved edits. Are you sure you want to leave this page?"
-      );
+      const confirmLeave = await confirm({ title: "Unsaved Changes", description: "You have unsaved edits. Are you sure you want to leave this page?", isDestructive: true });
       if (!confirmLeave) {
         e.preventDefault();
       }
@@ -243,7 +237,7 @@ export default function EditProfilePage() {
       },
     });
     setEditPersonal(false);
-    showToast("Personal details updated!");
+    toast.success("Personal details updated!");
     handlePostSaveRedirect();
   };
 
@@ -256,21 +250,21 @@ export default function EditProfilePage() {
       },
     });
     setEditContact(false);
-    showToast("Contact details updated!");
+    toast.success("Contact details updated!");
     handlePostSaveRedirect();
   };
 
   const handlePreferencesSubmit = (values: CareerPreferenceFormValues) => {
     updatePreferences(values);
     setEditPreferences(false);
-    showToast("Career preferences updated!");
+    toast.success("Preferences updated!");
     handlePostSaveRedirect();
   };
 
   const handleSkillSubmit = (values: SkillFormValues) => {
     addSkill(values);
     setActiveSkillEditor(null);
-    showToast("Skill tag added!");
+    toast.success("Skill updated!");
     handlePostSaveRedirect();
   };
 
@@ -282,7 +276,7 @@ export default function EditProfilePage() {
       updateExperience(activeExpEditor, mapped);
     }
     setActiveExpEditor(null);
-    showToast("Experience record updated!");
+    toast.success("Experience updated!");
     handlePostSaveRedirect();
   };
 
@@ -298,7 +292,7 @@ export default function EditProfilePage() {
       updateEducation(activeEduEditor, mapped);
     }
     setActiveEduEditor(null);
-    showToast("Education record updated!");
+    toast.success("Education updated!");
     handlePostSaveRedirect();
   };
 
@@ -316,7 +310,7 @@ export default function EditProfilePage() {
       updateProject(activeProjEditor, mapped);
     }
     setActiveProjEditor(null);
-    showToast("Portfolio project updated!");
+    toast.success("Project updated!");
     handlePostSaveRedirect();
   };
 
@@ -333,7 +327,7 @@ export default function EditProfilePage() {
       updateCertification(activeCertEditor, mapped);
     }
     setActiveCertEditor(null);
-    showToast("Certification updated!");
+    toast.success("Certification updated!");
     handlePostSaveRedirect();
   };
 
@@ -344,7 +338,7 @@ export default function EditProfilePage() {
       updateLanguage(activeLangEditor, values);
     }
     setActiveLangEditor(null);
-    showToast("Language record updated!");
+    toast.success("Language updated!");
     handlePostSaveRedirect();
   };
 
@@ -355,18 +349,12 @@ export default function EditProfilePage() {
       addSocialLink(values);
     }
     setActiveSocEditor(null);
-    showToast("Social profile updated!");
+    toast.success("Social profile updated!");
     handlePostSaveRedirect();
   };
 
   return (
     <div className="space-y-6 w-full min-w-0 pb-16">
-      {/* Toast Alert */}
-      {toastMessage && (
-        <div className="fixed bottom-4 right-4 z-50 bg-success border-2 border-border p-3 text-white font-extrabold uppercase text-xs brutal-shadow" role="alert">
-          {toastMessage}
-        </div>
-      )}
 
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -395,7 +383,7 @@ export default function EditProfilePage() {
           </BrutalButton>
           <BrutalButton
             onClick={() => {
-              showToast("All drafts saved successfully!");
+              toast.success("All drafts saved successfully!");
               handlePostSaveRedirect();
             }}
             className="h-10 px-5 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5"
@@ -615,10 +603,10 @@ export default function EditProfilePage() {
                     >
                       <span>{s.name} ({s.yearsOfExperience}y exp)</span>
                       <button
-                        onClick={() => {
-                          if (window.confirm(`Delete skill "${s.name}"?`)) {
+                        onClick={async () => {
+                          if (await confirm({ title: "Delete Skill", description: `Delete skill "${s.name}"?`, isDestructive: true })) {
                             deleteSkill(s.id);
-                            showToast("Skill deleted!");
+                            toast.success("Skill deleted!");
                           }
                         }}
                         className="text-error hover:text-error-hover transition-colors"
@@ -692,10 +680,10 @@ export default function EditProfilePage() {
                           <Pencil className="h-3.5 w-3.5" />
                         </BrutalButton>
                         <BrutalButton
-                          onClick={() => {
-                            if (window.confirm(`Delete experience "${exp.jobTitle}"?`)) {
+                          onClick={async () => {
+                            if (await confirm({ title: "Delete Experience", description: `Delete experience "${exp.jobTitle}"?`, isDestructive: true })) {
                               deleteExperience(exp.id);
-                              showToast("Experience deleted!");
+                              toast.success("Experience deleted!");
                             }
                           }}
                           variant="secondary"
@@ -771,10 +759,10 @@ export default function EditProfilePage() {
                           <Pencil className="h-3.5 w-3.5" />
                         </BrutalButton>
                         <BrutalButton
-                          onClick={() => {
-                            if (window.confirm(`Delete education "${edu.degree}"?`)) {
+                          onClick={async () => {
+                            if (await confirm({ title: "Delete Education", description: `Delete education "${edu.degree}"?`, isDestructive: true })) {
                               deleteEducation(edu.id);
-                              showToast("Education deleted!");
+                              toast.success("Education deleted!");
                             }
                           }}
                           variant="secondary"
@@ -862,10 +850,10 @@ export default function EditProfilePage() {
                           <Pencil className="h-3.5 w-3.5" />
                         </BrutalButton>
                         <BrutalButton
-                          onClick={() => {
-                            if (window.confirm(`Delete project "${proj.title}"?`)) {
+                          onClick={async () => {
+                            if (await confirm({ title: "Delete Project", description: `Delete project "${proj.title}"?`, isDestructive: true })) {
                               deleteProject(proj.id);
-                              showToast("Project deleted!");
+                              toast.success("Project deleted!");
                             }
                           }}
                           variant="secondary"
@@ -936,10 +924,10 @@ export default function EditProfilePage() {
                           <Pencil className="h-3 w-3" />
                         </BrutalButton>
                         <BrutalButton
-                          onClick={() => {
-                            if (window.confirm(`Delete certification "${c.name}"?`)) {
+                          onClick={async () => {
+                            if (await confirm({ title: "Delete Certification", description: `Delete certification "${c.name}"?`, isDestructive: true })) {
                               deleteCertification(c.id);
-                              showToast("Certification deleted!");
+                              toast.success("Certification deleted!");
                             }
                           }}
                           variant="secondary"
@@ -1011,10 +999,10 @@ export default function EditProfilePage() {
                           <Pencil className="h-3.5 w-3.5" />
                         </button>
                         <button
-                          onClick={() => {
-                            if (window.confirm(`Delete language "${l.language}"?`)) {
+                          onClick={async () => {
+                            if (await confirm({ title: "Delete Language", description: `Delete language "${l.language}"?`, isDestructive: true })) {
                               deleteLanguage(l.id);
-                              showToast("Language deleted!");
+                              toast.success("Language deleted!");
                             }
                           }}
                           className="text-error hover:text-error-hover transition-colors"
@@ -1076,10 +1064,10 @@ export default function EditProfilePage() {
                         </p>
                       </div>
                       <BrutalButton
-                        onClick={() => {
-                          if (window.confirm(`Remove connection for "${s.platform}"?`)) {
+                        onClick={async () => {
+                          if (await confirm({ title: "Remove Connection", description: `Remove connection for "${s.platform}"?`, isDestructive: true })) {
                             deleteSocialLink(s.id);
-                            showToast("Social profile disconnected!");
+                            toast.success("Social profile disconnected!");
                           }
                         }}
                         variant="secondary"
@@ -1143,6 +1131,7 @@ export default function EditProfilePage() {
 
         </div>
       </div>
+      <ConfirmationDialog />
     </div>
   );
 }

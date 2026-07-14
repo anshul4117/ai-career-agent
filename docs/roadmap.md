@@ -477,7 +477,20 @@ Only build after product-market validation.
 
 ## Current Development Focus
 
-**Current Active Phase:** Phase 14 — Performance Optimization (Completed)
+**Current Active Phase:** Phase 15 — Global Feedback System (Completed)
+
+## Phase 15 — Global Feedback System
+
+**Goal:** Standardize application feedback, empty states, and validation UI.
+
+**Status:** Completed
+
+**Tasks:**
+- [x] Create Global `sonner` Toaster component
+- [x] Create `ConfirmDialog` and `useConfirm` Hook
+- [x] Audit and implement `EmptyState` component across all lists
+- [x] Implement standard `role="alert"` validations in Base Form Components
+- [x] Refactor all legacy `window.confirm` dialogues
 
 **Next Task:** Design API contracts and database schema implementation.
 

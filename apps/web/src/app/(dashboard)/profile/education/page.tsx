@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Heading } from "@/components/ui/typography";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { GraduationCap, ArrowLeft, Plus } from "lucide-react";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { useProfileStore } from "@/features/profile/store/profile.store";
 import { EducationTimeline } from "@/features/profile/components/education-timeline";
 import { ProfileDialog } from "@/features/profile/components/profile-dialog";
@@ -15,6 +16,7 @@ import { EducationFormValues } from "@/features/profile/schemas/education.schema
 
 export default function EducationPage() {
   const { education, isLoading, loadProfile, addEducation, updateEducation, deleteEducation } = useProfileStore();
+  const { confirm, ConfirmationDialog } = useConfirm();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingEdu, setEditingEdu] = useState<Education | null>(null);
@@ -33,8 +35,14 @@ export default function EducationPage() {
     setIsDialogOpen(true);
   };
 
-  const handleDeleteClick = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this education record?")) {
+  const handleDeleteClick = async (id: string) => {
+    const isConfirmed = await confirm({
+      title: "Delete Education",
+      description: "Are you sure you want to delete this education record? This action cannot be undone.",
+      isDestructive: true,
+      confirmLabel: "Delete"
+    });
+    if (isConfirmed) {
       deleteEducation(id);
     }
   };
@@ -109,6 +117,8 @@ export default function EducationPage() {
           submitLabel={editingEdu ? "Save Changes" : "Save Record"}
         />
       </ProfileDialog>
+      
+      <ConfirmationDialog />
     </div>
   );
 }

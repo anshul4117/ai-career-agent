@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Heading } from "@/components/ui/typography";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { FolderOpen, ArrowLeft, Plus } from "lucide-react";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { useProfileStore } from "@/features/profile/store/profile.store";
 import { ProjectsGrid } from "@/features/profile/components/projects-grid";
 import { ProfileDialog } from "@/features/profile/components/profile-dialog";
@@ -14,6 +15,7 @@ import { ProjectFormValues } from "@/features/profile/schemas/project.schema";
 
 export default function ProjectsPage() {
   const { projects, isLoading, loadProfile, addProject, updateProject, deleteProject, toggleFeaturedProject } = useProfileStore();
+  const { confirm, ConfirmationDialog } = useConfirm();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProj, setEditingProj] = useState<Project | null>(null);
@@ -32,8 +34,14 @@ export default function ProjectsPage() {
     setIsDialogOpen(true);
   };
 
-  const handleDeleteClick = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this project?")) {
+  const handleDeleteClick = async (id: string) => {
+    const isConfirmed = await confirm({
+      title: "Delete Project",
+      description: "Are you sure you want to delete this project? This action cannot be undone.",
+      isDestructive: true,
+      confirmLabel: "Delete"
+    });
+    if (isConfirmed) {
       deleteProject(id);
     }
   };
@@ -111,6 +119,8 @@ export default function ProjectsPage() {
           submitLabel={editingProj ? "Save Changes" : "Save Project"}
         />
       </ProfileDialog>
+      
+      <ConfirmationDialog />
     </div>
   );
 }

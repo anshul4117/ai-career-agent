@@ -19,6 +19,7 @@ import {
   FileText,
   Clock3
 } from "lucide-react";
+import { useConfirm } from "@/components/ui/confirm-dialog";
  
 interface ApplicationDetailDialogProps {
   application: JobApplication;
@@ -47,6 +48,7 @@ export function ApplicationDetailDialog({
   onUpdateStatus,
   onDelete
 }: ApplicationDetailDialogProps) {
+  const { confirm, ConfirmationDialog } = useConfirm();
   
   // Local states for inputs to avoid multiple store re-renders while typing
   const [recruiterName, setRecruiterName] = React.useState(application.recruiterName);
@@ -444,8 +446,14 @@ export function ApplicationDetailDialog({
         {/* Footer toolbar actions */}
         <div className="border-t border-border/10 pt-4 flex gap-3">
           <Button
-            onClick={() => {
-              if (confirm("Are you sure you want to delete this application?")) {
+            onClick={async () => {
+              const isConfirmed = await confirm({
+                title: "Delete Application",
+                description: "Are you sure you want to delete this application?",
+                isDestructive: true,
+                confirmLabel: "Delete"
+              });
+              if (isConfirmed) {
                 onDelete(application.id);
               }
             }}
@@ -462,6 +470,7 @@ export function ApplicationDetailDialog({
           </Button>
         </div>
         
+        <ConfirmationDialog />
       </motion.div>
     </div>
   );
