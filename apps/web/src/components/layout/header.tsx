@@ -9,10 +9,11 @@ import { Logo } from "@/components/shared/logo";
 import { mockUser } from "@/features/auth/mock/user";
 import { useAuth } from "@/features/auth";
 import { useUiStore } from "@/store";
+import { useSearchStore } from "@/features/search/store/search.store";
 
 export function Header() {
-  const { toggleSidebarCollapsed, searchQuery, setSearchQuery } =
-    useUiStore();
+  const { toggleSidebarCollapsed } = useUiStore();
+  const { globalQuery, setGlobalQuery, setIsOpen } = useSearchStore();
   const { user, isAuthenticated } = useAuth();
   const activeUser = isAuthenticated && user ? {
     name: user.name || `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.email || "",
@@ -48,10 +49,14 @@ export function Header() {
         />
         <Input
           type="search"
-          placeholder="Search jobs, companies..."
+          placeholder="Search jobs... (Cmd+K)"
           className="pl-10"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          value={globalQuery}
+          onClick={() => setIsOpen(true)}
+          onChange={(e) => {
+            setGlobalQuery(e.target.value);
+            setIsOpen(true);
+          }}
           aria-label="Search jobs and companies"
         />
       </div>
