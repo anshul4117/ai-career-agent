@@ -477,7 +477,12 @@ Only build after product-market validation.
 
 ## Current Development Focus
 
-**Current Active Phase:** Phase 15 — Global Feedback System (Completed)
+**Current Active Phase:** Phase 15 — Global Feedback System
+
+- [x] Global Layout & Navigation Shell
+- [x] Global Toast & Feedback System
+- [x] Global Search & Command Palette (Cmd+K / Ctrl+K)
+- [ ] Dark Mode Support (System/Manual)
 
 ## Phase 15 — Global Feedback System
 
