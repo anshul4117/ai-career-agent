@@ -19,6 +19,7 @@ import {
   ArrowRight,
   Bookmark
 } from "lucide-react";
+import { ProductTips } from "@/features/onboarding/components/product-tips";
  
 export default function SavedJobsPage() {
   const router = useRouter();
@@ -97,7 +98,9 @@ export default function SavedJobsPage() {
         title="Saved Jobs"
         description="Review, search, and manage the opportunities you've bookmarked."
       />
- 
+
+      <ProductTips tipId="first-job-saved" />
+
       {loading ? (
         <div className="space-y-4">
           {[...Array(3)].map((_, i) => (

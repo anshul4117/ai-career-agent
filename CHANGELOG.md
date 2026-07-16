@@ -2,6 +2,14 @@
 
 All notable changes to the AI Career Agent platform will be documented in this file.
 
+## [0.16.0] - 2026-07-16
+### Added
+- **First-Time Onboarding & Tour**: Created welcome dialog flow (`WelcomeModal`) and step-by-step guided product tour (`TourOverlay`) targeting core modules (Dashboard, Jobs, Resumes, Cover Letters, Applications, Search).
+- **Lightweight SVG Tour Engine**: Custom viewport calculations using SVG overlay masking paths to highlight items on all layouts.
+- **Getting Started Progress Checklist**: Added progress card tracking profile completion, resumes, bookmarks, alerts, etc., dynamically. Celebrates completion with a custom confetti animation.
+- **Contextual Product Tips**: Added inline product tip card elements displaying one-time help alerts upon saving or parsing entities.
+- **Help Center Resources**: Inserted Help menu dropdown within the Header, including shortcuts dialog and support mock options.
+
 ## [0.15.0] - 2026-07-15
 ### Added
 - **Production-Ready Error Pages**: Created unified, accessible, and theme-compliant error pages for 404 (`not-found.tsx`), route errors (`error.tsx`), and root fatal crashes (`global-error.tsx`).

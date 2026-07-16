@@ -18,13 +18,16 @@ import {
   Link as LinkIcon, 
   Shield, 
   ShieldAlert,
-  Loader2
+  Loader2,
+  HelpCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { useOnboardingStore } from "@/features/onboarding/store/onboarding.store";
 
  
 export function SettingsPanels() {
+  const { enableProductTips, setEnableProductTips, resetTour, resetOnboarding } = useOnboardingStore();
   const { resumes } = useResumeStore();
   const { 
     activeTab, 
@@ -648,6 +651,59 @@ export function SettingsPanels() {
                   <option value="UTC +1 (CET)">UTC +1 (CET)</option>
                   <option value="UTC +5.5 (IST)">UTC +5.5 (IST)</option>
                 </select>
+              </div>
+            </div>
+
+            {/* Onboarding & Tips Section */}
+            <div className="border-t border-border/10 pt-3.5 mt-2 space-y-4">
+              <div className="flex items-center gap-1.5 border-b border-border/5 pb-1">
+                <HelpCircle className="h-4 w-4 text-primary" />
+                <h4 className="text-[9px] font-black uppercase tracking-widest text-foreground">Onboarding & Help Settings</h4>
+              </div>
+
+              <div className="grid gap-3.5 sm:grid-cols-2">
+                <div className="flex flex-col justify-center">
+                  <label className="flex items-center gap-2.5 text-[10.5px] cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={enableProductTips}
+                      onChange={(e) => {
+                        setEnableProductTips(e.target.checked);
+                        toast.success(e.target.checked ? "Product tips enabled" : "Product tips disabled");
+                      }}
+                      className="h-4 w-4 accent-primary"
+                    />
+                    <div className="space-y-0.5">
+                      <span className="font-black uppercase block text-[10px]">Enable Product Tips</span>
+                      <span className="text-[8px] text-foreground-muted block">Show contextual advice banner tips inside dashboard views.</span>
+                    </div>
+                  </label>
+                </div>
+
+                <div className="flex gap-2">
+                  <BrutalButton
+                    type="button"
+                    variant="secondary"
+                    onClick={() => {
+                      resetOnboarding();
+                      toast.success("Onboarding sequence restarted! Welcome modal will appear next visit.");
+                    }}
+                    className="h-8.5 px-3 uppercase text-[8.5px] font-black flex-1"
+                  >
+                    Restart Onboarding
+                  </BrutalButton>
+                  <BrutalButton
+                    type="button"
+                    variant="secondary"
+                    onClick={() => {
+                      resetTour();
+                      toast.success("Product tour restarted! Follow the highlights.");
+                    }}
+                    className="h-8.5 px-3 uppercase text-[8.5px] font-black flex-1"
+                  >
+                    Restart Tour
+                  </BrutalButton>
+                </div>
               </div>
             </div>
           </BrutalCard>

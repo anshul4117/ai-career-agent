@@ -18,8 +18,9 @@ import {
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import { toast } from "sonner";
 import { useConfirm } from "@/components/ui/confirm-dialog";
+import { ProductTips } from "@/features/onboarding/components/product-tips";
+import { toast } from "sonner";
 
 const ResumeCard = React.memo(function ResumeCard({
   resume,
@@ -261,6 +262,8 @@ export default function ResumePage() {
           </BrutalButton>
         </div>
       </div>
+
+      <ProductTips tipId="first-resume" />
 
       {/* Active Resumes Section */}
       {activeResumes.length === 0 ? (
