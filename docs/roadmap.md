@@ -477,13 +477,14 @@ Only build after product-market validation.
 
 ## Current Development Focus
 
-**Current Active Phase:** Phase 16 — Production-Ready Error Boundaries & Offline Support
+**Current Active Phase:** Phase 17 — First-Time Onboarding & Tour System
 
 - [x] Global Layout & Navigation Shell
 - [x] Global Toast & Feedback System
 - [x] Global Search & Command Palette (Cmd+K / Ctrl+K)
 - [x] Dark Mode Support (System/Manual)
 - [x] Error Pages & Boundaries System
+- [x] Onboarding & Product Tour System
 
 ## Phase 16 — Production-Ready Error Boundaries & Offline Support
 
@@ -499,6 +500,21 @@ Only build after product-market validation.
 - [x] Create reusable API NetworkError component
 - [x] Create standardized empty state variants wrapping the brutalist `EmptyState`
 - [x] Design inline animated ErrorBanner component
+
+## Phase 17 — First-Time Onboarding & Tour System
+
+**Goal:** Implement first-time welcome flows, guided product tours, progressive setup checklists, and helper contextual tips.
+
+**Status:** Completed
+
+**Tasks:**
+- [x] Create Onboarding Zustand Store (`onboarding.store.ts`)
+- [x] Create welcome highlights overlay (`WelcomeModal`)
+- [x] Create relative highlight cutout tour renderer (`TourOverlay`)
+- [x] Design dynamic progress task setup list (`Checklist`)
+- [x] Create single-alert contextual tip elements (`ProductTips`)
+- [x] Add Help dropdown menu trigger in header
+- [x] Connect restart and tips toggles in settings panel
 
 **Next Task:** Design API contracts and database schema implementation.
 

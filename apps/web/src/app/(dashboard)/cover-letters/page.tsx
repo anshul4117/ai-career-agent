@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { useCoverLetterStore } from "@/features/cover-letters/store/cover-letter.store";
 import { useShallow } from "zustand/react/shallow";
 import dynamic from "next/dynamic";
+import { ProductTips } from "@/features/onboarding/components/product-tips";
 
 const CoverLetterDashboard = dynamic(() => import("@/features/cover-letters/components/cover-letter-dashboard").then(m => m.CoverLetterDashboard));
 const CoverLetterWizard = dynamic(() => import("@/features/cover-letters/components/cover-letter-wizard").then(m => m.CoverLetterWizard));
@@ -41,6 +42,8 @@ export default function CoverLettersPage() {
           description="Build, edit, and fine-tune your personalized cover letter templates."
         />
       )}
+
+      <ProductTips tipId="first-cover-letter" />
  
       {/* Active Panel View */}
       {activeView === "dashboard" ? (

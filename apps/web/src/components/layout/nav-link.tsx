@@ -26,6 +26,7 @@ export function NavLink({ item, collapsed = false, onNavigate }: NavLinkProps) {
 
   return (
     <Link
+      id={`nav-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
       href={item.href}
       onClick={onNavigate}
       title={collapsed ? item.title : undefined}

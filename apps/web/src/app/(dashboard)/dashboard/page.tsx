@@ -16,6 +16,9 @@ const AIInsights = dynamic(() => import("@/features/dashboard/components/ai-insi
 const RecentActivity = dynamic(() => import("@/features/dashboard/components/recent-activity").then(m => m.RecentActivity));
 const RecentlyViewedJobs = dynamic(() => import("@/features/dashboard/components/recently-viewed-jobs").then(m => m.RecentlyViewedJobs));
 
+import { Checklist } from "@/features/onboarding/components/checklist";
+import { useOnboardingStore } from "@/features/onboarding/store/onboarding.store";
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -35,6 +38,7 @@ const itemVariants = {
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
+  const hasCompletedOnboarding = useOnboardingStore(state => state.hasCompletedOnboarding);
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 550);
@@ -59,6 +63,10 @@ export default function DashboardPage() {
     >
       {/* 1. Welcome Section */}
       <motion.div variants={itemVariants}><WelcomeBanner /></motion.div>
+
+      {!hasCompletedOnboarding && (
+        <motion.div variants={itemVariants}><Checklist /></motion.div>
+      )}
 
       {/* 2. Analytics Cards */}
       <motion.div variants={itemVariants}><AnalyticsCards /></motion.div>
