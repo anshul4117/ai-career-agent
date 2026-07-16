@@ -18,8 +18,7 @@ import type { RemoteType, ExperienceLevel, EmploymentType } from "@/features/job
 import { 
   Bell, 
   Plus, 
-  X, 
-  Check
+  X
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";

@@ -23,14 +23,12 @@ import {
   ChevronRight,
   AlertCircle,
   X,
-  Check,
   Bookmark,
   History,
   TrendingUp,
   Save,
   RotateCcw,
-  Sparkles,
-  MapPin
+  Sparkles
 } from "lucide-react";
 import { cn } from "@/lib/utils";
  

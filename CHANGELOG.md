@@ -2,6 +2,14 @@
 
 All notable changes to the AI Career Agent platform will be documented in this file.
 
+## [0.15.0] - 2026-07-15
+### Added
+- **Production-Ready Error Pages**: Created unified, accessible, and theme-compliant error pages for 404 (`not-found.tsx`), route errors (`error.tsx`), and root fatal crashes (`global-error.tsx`).
+- **Offline Event Handling**: Created the `OfflineState` component with check connection actions and sonner toast alerts.
+- **Network Failure System**: Created the `NetworkError` component for failed API queries with retry state handlers.
+- **Unified Empty States**: Created predefined Empty State components wrapping the Brutalist `EmptyState` for Jobs, Saved Jobs, Applications, Resumes, Cover Letters, Notifications, and Search Results.
+- **Animated Error Banner**: Created `ErrorBanner` inline component supporting info, warning, error, and success variants with framer-motion dismiss transitions.
+
 ## [0.14.0] - 2026-07-14
 ### Added
 - **Global Feedback System**: Standardized success and error messaging using `sonner`, ensuring consistent global state management for non-blocking feedback.
