@@ -477,25 +477,28 @@ Only build after product-market validation.
 
 ## Current Development Focus
 
-**Current Active Phase:** Phase 15 — Global Feedback System
+**Current Active Phase:** Phase 16 — Production-Ready Error Boundaries & Offline Support
 
 - [x] Global Layout & Navigation Shell
 - [x] Global Toast & Feedback System
 - [x] Global Search & Command Palette (Cmd+K / Ctrl+K)
-- [ ] Dark Mode Support (System/Manual)
+- [x] Dark Mode Support (System/Manual)
+- [x] Error Pages & Boundaries System
 
-## Phase 15 — Global Feedback System
+## Phase 16 — Production-Ready Error Boundaries & Offline Support
 
-**Goal:** Standardize application feedback, empty states, and validation UI.
+**Goal:** Establish premium brutalist error handling, offline triggers, network error catchers, and structured recovery states.
 
 **Status:** Completed
 
 **Tasks:**
-- [x] Create Global `sonner` Toaster component
-- [x] Create `ConfirmDialog` and `useConfirm` Hook
-- [x] Audit and implement `EmptyState` component across all lists
-- [x] Implement standard `role="alert"` validations in Base Form Components
-- [x] Refactor all legacy `window.confirm` dialogues
+- [x] Redesign 404 Not Found Page (`app/not-found.tsx`)
+- [x] Implement client-side Route Error Boundary (`app/error.tsx`)
+- [x] Implement fatal root layout Error Boundary (`app/global-error.tsx`)
+- [x] Create reusable OfflineState notifier component
+- [x] Create reusable API NetworkError component
+- [x] Create standardized empty state variants wrapping the brutalist `EmptyState`
+- [x] Design inline animated ErrorBanner component
 
 **Next Task:** Design API contracts and database schema implementation.
 

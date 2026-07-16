@@ -17,7 +17,6 @@ import {
   Palette, 
   Link as LinkIcon, 
   Shield, 
-  Check, 
   ShieldAlert,
   Loader2
 } from "lucide-react";

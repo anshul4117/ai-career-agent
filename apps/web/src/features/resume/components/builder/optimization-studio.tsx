@@ -16,7 +16,6 @@ import {
   ArrowRight,
   Download,
   Sparkles,
-  CheckCircle,
   FileDown
 } from "lucide-react";
 import { cn } from "@/lib/utils";

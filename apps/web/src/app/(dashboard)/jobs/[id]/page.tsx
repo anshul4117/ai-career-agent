@@ -5,11 +5,11 @@ import { useJobsStore } from "@/features/jobs/store/jobs.store";
 import { jobService } from "@/features/jobs/services/job.service";
 import { JobDetailsPane } from "@/features/jobs/components/job-details-pane";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, Check, AlertCircle } from "lucide-react";
+import { ChevronLeft, AlertCircle } from "lucide-react";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { JobDetailsSkeleton } from "@/components/ui/skeleton-loaders";
 import Link from "next/link";
-import { toast } from "sonner";
+
 
 interface PageProps {
   params: Promise<{ id: string }>;
