@@ -477,7 +477,7 @@ Only build after product-market validation.
 
 ## Current Development Focus
 
-**Current Active Phase:** Phase 17 — First-Time Onboarding & Tour System
+**Current Active Phase:** Phase 19 — Lighthouse & Bundle Size Optimization
 
 - [x] Global Layout & Navigation Shell
 - [x] Global Toast & Feedback System
@@ -485,6 +485,8 @@ Only build after product-market validation.
 - [x] Dark Mode Support (System/Manual)
 - [x] Error Pages & Boundaries System
 - [x] Onboarding & Product Tour System
+- [x] Premium Branded Loading System
+- [x] Lighthouse & Bundle Size Optimization
 
 ## Phase 16 — Production-Ready Error Boundaries & Offline Support
 
@@ -515,6 +517,31 @@ Only build after product-market validation.
 - [x] Create single-alert contextual tip elements (`ProductTips`)
 - [x] Add Help dropdown menu trigger in header
 - [x] Connect restart and tips toggles in settings panel
+
+## Phase 18 — Premium Branded Loading System
+
+**Goal:** Replace generic spinners with high-end, Framer Motion animated career-orbiting loaders, overlays, and page transition loading sheets.
+
+**Status:** Completed
+
+**Tasks:**
+- [x] Create core orbit calculation component (`BrandLoader`)
+- [x] Export unified variations (`LoadingScreen`, `LoadingOverlay`, `PageLoader`, `InlineLoader`)
+- [x] Integrate reduced motion standard checking (`useReducedMotion()`)
+- [x] Globally replace Lucide `Loader2` and raw spinners in components/routes
+- [x] Create route-level Next.js loading layers (`loading.tsx`)
+
+## Phase 19 — Lighthouse & Bundle Size Optimization
+
+**Goal:** Conduct complete Lighthouse reviews, optimize crawlability metadata, and apply code splitting to decrease first load sizes.
+
+**Status:** Completed
+
+**Tasks:**
+- [x] Setup dynamic App Router sitemap and robots directives (`sitemap.ts`, `robots.ts`)
+- [x] Complete OpenGraph, Twitter card, and canonical meta configurations
+- [x] Implement dynamic imports to split heavy layout components (`ResumeBuilderLayout`, `CalendarView`, `ApplicationDetailDialog`)
+- [x] Setup lazy loaded client portal for global command palette
 
 **Next Task:** Design API contracts and database schema implementation.
 

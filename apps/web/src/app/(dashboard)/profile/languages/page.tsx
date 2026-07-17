@@ -12,6 +12,7 @@ import { ProfileDialog } from "@/features/profile/components/profile-dialog";
 import { LanguageForm } from "@/features/profile/components/language-form";
 import type { Language } from "@/features/profile/types/language.types";
 import { LanguageFormValues } from "@/features/profile/schemas/language.schema";
+import { PageLoader } from "@/components/ui/brand-loader";
 
 export default function LanguagesPage() {
   const { languages, isLoading, loadProfile, addLanguage, updateLanguage, deleteLanguage } = useProfileStore();
@@ -56,11 +57,7 @@ export default function LanguagesPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-12 h-12 border-[3px] border-foreground border-t-transparent animate-spin brutal-shadow bg-surface rounded-full" />
-      </div>
-    );
+    return <PageLoader label="Loading language skills..." />;
   }
 
   return (

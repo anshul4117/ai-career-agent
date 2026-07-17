@@ -12,6 +12,7 @@ import { ProfileDialog } from "@/features/profile/components/profile-dialog";
 import { SocialLinkForm } from "@/features/profile/components/social-link-form";
 import type { SocialLink } from "@/features/profile/types/social-link.types";
 import { SocialLinkFormValues } from "@/features/profile/schemas/social-link.schema";
+import { PageLoader } from "@/components/ui/brand-loader";
 
 export default function SocialLinksPage() {
   const { socialLinks, isLoading, loadProfile, addSocialLink, updateSocialLink, deleteSocialLink } = useProfileStore();
@@ -56,11 +57,7 @@ export default function SocialLinksPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-12 h-12 border-[3px] border-foreground border-t-transparent animate-spin brutal-shadow bg-surface rounded-full" />
-      </div>
-    );
+    return <PageLoader label="Loading platform socials..." />;
   }
 
   const existingSocialPlatforms = socialLinks.map((l) => l.platform);

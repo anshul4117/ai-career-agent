@@ -3,8 +3,9 @@
 import React from "react";
 import { useParserStore } from "../../store/resume-parser.store";
 import { BrutalCard } from "@/components/ui/brutal-card";
-import { Loader2, FileText, CheckCircle2, Circle } from "lucide-react";
+import { FileText, CheckCircle2, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { InlineLoader } from "@/components/ui/brand-loader";
 
 export function ParseProgress() {
   const { uploadedFile, processingState, progress } = useParserStore();
@@ -83,7 +84,7 @@ export function ParseProgress() {
                 {/* Icon marker */}
                 <div className="pt-0.5 shrink-0">
                   {status === "completed" && <CheckCircle2 className="h-4.5 w-4.5 text-success fill-success/10" />}
-                  {status === "active" && <Loader2 className="h-4.5 w-4.5 text-primary animate-spin" />}
+                  {status === "active" && <InlineLoader />}
                   {status === "pending" && <Circle className="h-4.5 w-4.5 text-foreground-muted" />}
                 </div>
 

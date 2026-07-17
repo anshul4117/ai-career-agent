@@ -8,6 +8,7 @@ import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { InlineLoader } from "@/components/ui/brand-loader";
 import { 
   Sparkles, 
   Copy, 
@@ -283,7 +284,7 @@ export function CoverLetterWizard({ initialTemplate, onBackToDashboard }: CoverL
               className="w-full h-10 text-xs font-black uppercase bg-primary text-white flex items-center justify-center gap-1"
             >
               {loading ? (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                <InlineLoader />
               ) : (
                 <>
                   <Sparkles className="h-4 w-4" /> {activeDraft ? "Re-generate Statement" : "Generate Cover Letter"}

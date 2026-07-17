@@ -11,8 +11,9 @@ import { ErrorMessage } from "@/features/auth/components/error-message";
 import { jobService } from "@/features/jobs/services/job.service";
 import type { Job } from "@/features/jobs/types/jobs.types";
 import { mockResumes } from "@/features/resume/mock/resumes";
-import { FileText, Briefcase, Sparkles, Check, Loader2 } from "lucide-react";
+import { FileText, Briefcase, Sparkles, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PageLoader, InlineLoader } from "@/components/ui/brand-loader";
 
 interface ApplyJobPageProps {
   params: Promise<{ id: string }>;
@@ -81,12 +82,7 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
   };
 
   if (loadingJob) {
-    return (
-      <div className="p-6 text-center max-w-lg mx-auto space-y-4">
-        <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-        <Text className="text-foreground-secondary">Loading application workspace...</Text>
-      </div>
-    );
+    return <PageLoader label="Loading application workspace..." />;
   }
 
   if (!job) {
@@ -219,7 +215,7 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
                 disabled={isSubmitting}
                 className="flex-1 h-12 uppercase font-bold text-sm tracking-wide flex items-center justify-center gap-2"
               >
-                {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+                {isSubmitting && <InlineLoader />}
                 Submit Application
               </BrutalButton>
               

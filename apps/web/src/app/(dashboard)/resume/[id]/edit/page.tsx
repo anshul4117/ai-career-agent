@@ -2,11 +2,16 @@
 
 import React, { useEffect, use } from "react";
 import { useBuilderStore } from "@/features/resume/store/builder.store";
-import { ResumeBuilderLayout } from "@/features/resume/components/builder/builder-layout";
 import { Heading } from "@/components/ui/typography";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { ResumeBuilderSkeleton } from "@/components/ui/skeleton-loaders";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const ResumeBuilderLayout = dynamic(
+  () => import("@/features/resume/components/builder/builder-layout").then((m) => m.ResumeBuilderLayout),
+  { ssr: false, loading: () => <ResumeBuilderSkeleton /> }
+);
 
 interface PageProps {
   params: Promise<{ id: string }>;

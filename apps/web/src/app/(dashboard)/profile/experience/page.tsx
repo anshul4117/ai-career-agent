@@ -12,6 +12,7 @@ import { ProfileDialog } from "@/features/profile/components/profile-dialog";
 import { ExperienceForm } from "@/features/profile/components/experience-form";
 import type { Experience } from "@/features/profile/types/experience.types";
 import { ExperienceFormValues } from "@/features/profile/schemas/experience.schema";
+import { PageLoader } from "@/components/ui/brand-loader";
 
 export default function ExperiencePage() {
   const { experience, isLoading, loadProfile, addExperience, updateExperience, deleteExperience } = useProfileStore();
@@ -60,11 +61,7 @@ export default function ExperiencePage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-12 h-12 border-[3px] border-foreground border-t-transparent animate-spin brutal-shadow bg-surface rounded-full" />
-      </div>
-    );
+    return <PageLoader label="Loading professional experience..." />;
   }
 
   return (

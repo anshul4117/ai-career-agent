@@ -18,12 +18,12 @@ import {
   Link as LinkIcon, 
   Shield, 
   ShieldAlert,
-  Loader2,
   HelpCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useOnboardingStore } from "@/features/onboarding/store/onboarding.store";
+import { InlineLoader } from "@/components/ui/brand-loader";
 
  
 export function SettingsPanels() {
@@ -873,7 +873,7 @@ export function SettingsPanels() {
               className="h-8.5 px-4 text-[9px] font-black uppercase bg-primary text-white flex items-center gap-1.5"
             >
               {loading ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                <InlineLoader />
               ) : (
                 "Save Configuration"
               )}

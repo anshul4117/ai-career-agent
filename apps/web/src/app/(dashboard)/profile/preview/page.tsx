@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { useProfileStore } from "@/features/profile/store/profile.store";
+import { PageLoader } from "@/components/ui/brand-loader";
 import { Heading, Text } from "@/components/ui/typography";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
@@ -39,11 +40,7 @@ export default function ProfilePreviewPage() {
   }, [loadProfile]);
 
   if (isLoading || !profile) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-12 h-12 border-[3px] border-foreground border-t-transparent animate-spin brutal-shadow bg-surface rounded-full" />
-      </div>
-    );
+    return <PageLoader label="Generating profile preview sheet..." />;
   }
 
   const audit = calculateProfileCompletion(

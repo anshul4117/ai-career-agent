@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { Upload, Trash2, Camera, RefreshCw } from "lucide-react";
+import { Upload, Trash2, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/typography";
 import { ProfileAvatar } from "./profile-avatar";
 import { useProfileStore } from "../store/profile.store";
+import { InlineLoader } from "@/components/ui/brand-loader";
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg"];
@@ -92,7 +93,7 @@ export function AvatarUpload() {
             className="h-8 text-xs font-bold border-2 border-border hover:bg-surface rounded-sm uppercase tracking-wider flex items-center gap-1 bg-surface"
           >
             {isUploading ? (
-              <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+              <InlineLoader />
             ) : (
               <Upload className="h-3.5 w-3.5" />
             )}

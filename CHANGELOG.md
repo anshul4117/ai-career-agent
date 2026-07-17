@@ -2,6 +2,20 @@
 
 All notable changes to the AI Career Agent platform will be documented in this file.
 
+## [0.18.0] - 2026-07-16
+### Added
+- **Onboarding Scope Restriction**: Moved onboarding components and store triggers out of global providers (`app-providers.tsx`) into authenticated dashboard layouts (`src/app/(dashboard)/layout.tsx`), preventing leaks on public and error pages.
+- **Lighthouse Production SEO**: Built dynamic sitemap paths (`sitemap.ts`) and crawler instructions (`robots.ts`) in App Router, configured meta tags (OpenGraph, Twitter card properties), and fixed missing image `alt` metadata.
+- **Bundle Size Optimization**: Integrated `next/dynamic` chunk splitting for heavy sub-pages (e.g. `ResumeBuilderLayout` inside edit route, `CalendarView` & `ApplicationDetailDialog` inside applications, and global `CommandPalette`), reducing critical initial-load JS sizes by up to 106 kB.
+
+## [0.17.0] - 2026-07-16
+### Added
+- **Premium Branded Loading System**: Designed `BrandLoader` featuring a center pulsing logo, glowing backdrop, and 8 orbiting upright career icons using Framer Motion.
+- **Unified Variations**: Created `LoadingScreen`, `LoadingOverlay`, `PageLoader`, and `InlineLoader` subcomponents to fit varied loading contexts.
+- **Reduced Motion Support**: Integrated automatic checks for system motion preferences using Framer Motion's `useReducedMotion()`.
+- **Global Integration**: Replaced Lucide `Loader2` and generic CSS border spinners in forms, profile sub-pages, error boundaries, auth guards, and dashboards.
+- **Route-level Loaders**: Added App Router `loading.tsx` loaders for dashboard, jobs, resumes, cover-letters, applications, and settings routes.
+
 ## [0.16.0] - 2026-07-16
 ### Added
 - **First-Time Onboarding & Tour**: Created welcome dialog flow (`WelcomeModal`) and step-by-step guided product tour (`TourOverlay`) targeting core modules (Dashboard, Jobs, Resumes, Cover Letters, Applications, Search).

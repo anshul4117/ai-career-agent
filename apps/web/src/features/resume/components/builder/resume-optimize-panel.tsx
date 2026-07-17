@@ -16,6 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ResumeOptimizerSkeleton } from "@/components/ui/skeleton-loaders";
+import { InlineLoader } from "@/components/ui/brand-loader";
  
 export function ResumeOptimizePanel() {
   const { currentResume } = useBuilderStore();
@@ -79,7 +80,7 @@ export function ResumeOptimizePanel() {
           className="w-full h-8.5 text-[9px] font-black uppercase tracking-wider bg-primary text-white flex items-center justify-center gap-1"
         >
           {loading ? (
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            <InlineLoader />
           ) : (
             <>
               <Sparkles className="h-3.5 w-3.5" /> Optimize Resume

@@ -12,6 +12,7 @@ import { ProfileDialog } from "@/features/profile/components/profile-dialog";
 import { ProjectForm } from "@/features/profile/components/project-form";
 import type { Project } from "@/features/profile/types/project.types";
 import { ProjectFormValues } from "@/features/profile/schemas/project.schema";
+import { PageLoader } from "@/components/ui/brand-loader";
 
 export default function ProjectsPage() {
   const { projects, isLoading, loadProfile, addProject, updateProject, deleteProject, toggleFeaturedProject } = useProfileStore();
@@ -63,11 +64,7 @@ export default function ProjectsPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-12 h-12 border-[3px] border-foreground border-t-transparent animate-spin brutal-shadow bg-surface rounded-full" />
-      </div>
-    );
+    return <PageLoader label="Loading projects repository..." />;
   }
 
   return (

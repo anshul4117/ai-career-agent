@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { PageLoader } from "@/components/ui/brand-loader";
 import { useProfileStore } from "@/features/profile/store/profile.store";
 import { Heading } from "@/components/ui/typography";
 import { BrutalCard } from "@/components/ui/brutal-card";
@@ -205,11 +206,7 @@ export default function EditProfilePage() {
   };
 
   if (isLoading || !profile) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-12 h-12 border-[3px] border-foreground border-t-transparent animate-spin brutal-shadow bg-surface rounded-full" />
-      </div>
-    );
+    return <PageLoader label="Opening profile editor workspace..." />;
   }
 
   // Calculate completion engine results
