@@ -1,92 +1,66 @@
 # AI Career Agent
 
-A production-grade, open-source friendly Career Operating System that empowers job seekers to discover high-quality verified opportunities, adapt their profiles, and manage their applications using intelligent AI pipelines.
+AI Career Agent is a production-grade, engineering-focused Career Operating System. It is designed to empower tech professionals to discover verified job opportunities, optimize their resumes and profiles, and manage their application lifecycle within a unified, high-performance workspace.
 
 ---
-
-## Badges
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.5-000000?style=flat-square&logo=nextdotjs)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.0-61DAFB?style=flat-square&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.0-38B2AC?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
-[![Zustand](https://img.shields.io/badge/Zustand-5.0-orange?style=flat-square)](https://zustand-demo.pmnd.rs/)
-[![OpenAI](https://img.shields.io/badge/AI-OpenAI%20API-412991?style=flat-square&logo=openai)](https://openai.com/)
-[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-336791?style=flat-square&logo=postgresql)](https://www.postgresql.org/)
-[![Prisma](https://img.shields.io/badge/ORM-Prisma-2D3748?style=flat-square&logo=prisma)](https://www.prisma.io/)
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square)](#verification)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
+[![Node.js](https://img.shields.io/badge/Node.js-20.0-339933?style=flat-square&logo=nodedotjs)](https://nodejs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16.0-336791?style=flat-square&logo=postgresql)](https://www.postgresql.org/)
+[![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?style=flat-square&logo=prisma)](https://www.prisma.io/)
+[![Zustand](https://img.shields.io/badge/Zustand-State-orange?style=flat-square)](https://zustand-demo.pmnd.rs/)
+[![OpenAI](https://img.shields.io/badge/OpenAI-API-412991?style=flat-square&logo=openai)](https://openai.com/)
 
 ---
 
-## 1. Project Introduction
+## 1. Project Overview
 
 Finding a job in the modern tech ecosystem is an asymmetric struggle. Job seekers face ghost listings, automated applicant tracking system (ATS) filters, and the cognitive overhead of manually adapting resumes for every application. 
 
-**AI Career Agent** was built to level the playing field. It is a full-featured Career Operating System designed specifically for software engineers, product designers, and tech professionals. 
-
-### Why This Project Exists
-We believe career management should be unified and proactive. Instead of jumping between disconnected job boards, resume editors, cover letter generators, and spreadsheet trackers, AI Career Agent brings the entire lifecycle into a single high-leverage workspace. By utilizing localized vector matching and automated LLM evaluation, it filters out low-trust listings and helps candidates submit optimized applications.
+**AI Career Agent** is a full-featured Career Operating System built specifically for software engineers, product designers, and tech professionals. By consolidating job boards, resume editors, cover letter generators, and application trackers into a single monorepo workspace, it eliminates tool fragmentation. The platform leverages localized vector matching to filter out low-trust listings and helps candidates submit optimized applications.
 
 ---
 
-## 2. Features
+## 2. Feature Overview
 
-- **Authentication**: Secure registration, login, and profile recovery powered by session-guarded auth flows.
-- **Candidate Profile**: A unified dashboard containing contact credentials, work experience logs, education milestones, certified credentials, and language profiles.
-- **Resume Management**: A comprehensive resume builder supporting real-time preview, version control, undo/redo states, and dynamic design theme templates.
+- **Authentication**: Secure registration, login, and session-guarded route protection.
+- **Candidate Profile**: A unified dashboard tracking contact info, experience logs, education, certifications, and languages.
+- **Resume Management**: A comprehensive resume builder supporting real-time preview, version control, undo/redo states, and dynamic typography templates.
 - **Resume Parsing**: Seamless extraction of structured work history, skills, and contact schemas from uploaded PDF resumes.
 - **AI Job Matching**: Localized scoring system that evaluates candidates' suitability for verified, fresh job listings based on skill vectors.
-- **Cover Letter Generator**: Dynamic cover letter engine that writes tailored, tone-adjusted pitches matching the target job description.
 - **Resume Optimization**: Advanced ATS optimization studio providing keyword gaps analysis and bullet-point rewrite suggestions.
+- **Cover Letter Generator**: Dynamic cover letter engine that writes tailored, tone-adjusted pitches matching the target job description.
 - **Applications Tracker**: A visual Kanban board and calendar to manage application status (Saved, Applied, Interviewing, Offered, Rejected) and schedule interviews.
-- **Settings & Preferences**: Interactive settings panel to toggle theme styling, manage onboarding states, and reset helper tips.
 - **Global Search**: An accessible, keyboard-friendly command palette (`⌘+K` / `Ctrl+K`) that searches job histories and caches recent searches.
-- **Notifications**: Central notification system tracking application status updates and interview alerts.
 - **Dashboard**: A comprehensive home feed featuring a getting-started setup checklist, metric charts, and application analytics.
-- **AI Features**: Interactive evaluation loops, automated skills matching, and LLM-assisted copy writing.
+- **Settings**: Interactive settings panel to toggle theme styling, manage onboarding states, and reset helper tips.
+- **Notifications**: Central notification system tracking application status updates and interview alerts.
+- **AI Features**: Interactive evaluation loops, automated skills matching, and LLM-assisted copywriting.
 - **Responsive Design**: Fluid brutalist layout adjustments optimized for mobile, tablet, and widescreen displays.
 
 ---
 
-## 3. Screenshots
+## 3. Live Demo & Resources
 
-The following placeholders represent the current user interface views. Click to expand:
-
-### Landing Page
-![Landing Page UI Placeholder](https://placehold.co/1200x630/fdf8f6/000000?text=AI+Career+Agent+-+Landing+Page)
-
-### Dashboard
-![Dashboard Workspace UI Placeholder](https://placehold.co/1200x630/fdf8f6/000000?text=Candidate+Dashboard+Checklist)
-
-### Jobs Feed
-![Jobs Feed UI Placeholder](https://placehold.co/1200x630/fdf8f6/000000?text=Verified+Jobs+Matching+Feed)
-
-### Resume Builder
-![Resume Builder UI Placeholder](https://placehold.co/1200x630/fdf8f6/000000?text=Brutalist+Resume+Workspace+Editor)
-
-### Resume Parser
-![Resume Parser UI Placeholder](https://placehold.co/1200x630/fdf8f6/000000?text=Intelligent+PDF+Resume+Parser)
-
-### Cover Letters Studio
-![Cover Letters UI Placeholder](https://placehold.co/1200x630/fdf8f6/000000?text=Tailored+Cover+Letter+Workspace)
-
-### Applications Tracker
-![Applications Tracker UI Placeholder](https://placehold.co/1200x630/fdf8f6/000000?text=Application+Kanban+and+Calendar)
-
-### Settings
-![Settings Interface UI Placeholder](https://placehold.co/1200x630/fdf8f6/000000?text=Settings+and+Appearance+Controls)
+- **Production URL**: *(Staging / deployment setup in progress)*
+- **Source Code**: [GitHub Repository](https://github.com/anshul4117/ai-career-agent)
+- **Technical Documentation**: [Docs Directory](docs/)
+- **Author Portfolio**: [Anshul's Portfolio](https://anshul4117-portfolio.vercel.app/)
 
 ---
 
 ## 4. Tech Stack
 
-- **Frontend**: Next.js 15 (App Router, Server Components) + React 19 + TypeScript
+- **Frontend**: Next.js 15 (App Router) + React 19 + TypeScript
 - **Backend**: NestJS (Modular API architecture, Dependency Injection)
-- **Database**: PostgreSQL (Prisma ORM integration)
-- **AI Engine**: OpenAI API (GPT models for parser extraction and adaptation writing)
+- **Database**: PostgreSQL
+- **ORM**: Prisma ORM
 - **State Management**: Zustand (Persisted stores, undo/redo history middleware)
 - **Authentication**: Guarded Session middleware (AuthGuard hooks)
+- **AI Engine**: OpenAI API (GPT models for parser extraction and adaptation writing)
 - **Styling**: Vanilla CSS (Brutalist Design System tokens, dynamic theme root variables)
 - **Animation**: Framer Motion (Orbits, staggered lists, slide sheets)
 - **Deployment**: Docker + Docker Compose + Vercel
@@ -108,7 +82,7 @@ graph TD
   subgraph Packages [Shared Workspaces]
     Types[packages/types: Shared Interfaces]
     Shared[packages/shared: Shared Helpers]
-    Config[packages/config: Shared ESLint/TS configs]
+    Config[packages/config: Shared Configurations]
   end
 
   subgraph Infra [Infrastructure Services]
@@ -150,9 +124,7 @@ ai-career-agent/
 │   │   │   ├── lib/             # Custom utility functions (cn)
 │   │   │   ├── providers/       # Providers context wrappers (Theme, Auth)
 │   │   │   ├── services/        # Fetch API adapters
-│   │   │   ├── store/           # Global Zustand store definitions
-│   │   │   └── types/           # App-specific type interfaces
-│   │   └── package.json
+│   │   │   └── store/           # Global Zustand store definitions
 │   └── api/                     # NestJS API Backend (Modular architecture)
 ├── packages/
 │   ├── shared/                  # Common JavaScript/TypeScript helpers
@@ -160,8 +132,6 @@ ai-career-agent/
 │   └── config/                  # Shared tooling configurations (ESLint, TS)
 ├── docs/                        # Complete technical and design specs
 ├── infra/                       # Infrastructure orchestration configs (Docker)
-├── package.json                 # Monorepo workspaces definition
-└── package-lock.json
 ```
 
 ---
@@ -198,18 +168,9 @@ npx prisma generate
 ```
 
 ### 5. Running the Application
-To run the Next.js web application locally:
+To run the Next.js web application dev server locally:
 ```bash
 npm run dev
-```
-To check TypeScript compiler and linting:
-```bash
-npm run type-check
-npm run lint
-```
-To run a production-ready optimization build:
-```bash
-npm run build
 ```
 
 ---
@@ -238,7 +199,7 @@ The following workspaces scripts can be executed from the root monorepo director
 
 ---
 
-## 10. Project Documentation
+## 10. Documentation
 
 Refer to the primary technical guidelines and specifications in the `/docs` directory:
 
@@ -249,6 +210,10 @@ Refer to the primary technical guidelines and specifications in the `/docs` dire
   - [Monorepo Architecture Blueprints](docs/architecture.md)
   - [Database Schema & Data Model Specification](docs/database.md)
   - [API Endpoint Contracts Specification](docs/api-spec.md)
+  - [Monorepo Code Splitting & Bundle Size Optimization Guide](docs/architecture/bundle-optimization.md)
+  - [Security Vectors & HTTP Headers Policy](docs/architecture/security-report.md)
+  - [SEO Indexes & PWA Mobile Integration Guide](docs/architecture/seo-pwa.md)
+  - [Dependency Health Audit & Lock Resolutions](docs/architecture/dependency-health.md)
 - **Style & Branding**:
   - [Brutalist Design Tokens System](docs/design-system.md)
   - [Branding Assets & Logo Guidelines](docs/branding.md)
@@ -257,15 +222,16 @@ Refer to the primary technical guidelines and specifications in the `/docs` dire
   - [Coding Standards & TypeScript Quality Rules](docs/coding-standards.md)
   - [Active Project Tasks Checklist](docs/tasks.md)
   - [Release Changelog History](CHANGELOG.md)
+  - [Walkthrough of Completed Work](walkthrough.md)
 
 ---
 
 ## 11. Production Features
 
-- **Dark Mode Support**: Dynamic visual theme switcher utilizing CSS properties and dark mode media queries.
+- **Dark Mode**: Dynamic visual theme switcher utilizing CSS variables and media query listeners.
 - **Error Boundaries**: Client-side boundaries (`app/error.tsx`) to catch component failures and fatal layout crashes (`app/global-error.tsx`).
-- **Skeleton Loader Engine**: Reusable loaders (`ResumeBuilderSkeleton`, `CalendarSkeleton`) to prevent content jumps.
-- **Interactive Checklist**: Dynamic setup checklist celebrating completion with Confetti.
+- **Skeleton Loading**: Reusable loaders (`ResumeBuilderSkeleton`, `CalendarSkeleton`) to prevent content jumps.
+- **Toast System**: Custom, animated, and accessible inline banners supporting multiple notification types.
 - **Accessibility (a11y)**: Focus trapping, keyboard navigation, descriptive ARIA tags, and color contrast ratios exceeding WCAG AA.
 - **Performance Optimization**: Dynamic client-side lazy loading (`next/dynamic`) and route splitting.
 - **Security & Headers**: Next.js HTTP security headers (Clickjacking shields, MIME-sniffing protection).
@@ -282,7 +248,7 @@ Refer to the primary technical guidelines and specifications in the `/docs` dire
 
 ---
 
-## 13. Security Features
+## 13. Security Practices
 
 - **Anti-Clickjacking**: Implemented `X-Frame-Options: DENY` via Next.js response headers.
 - **Reverse Tabnabbing Shields**: Explicitly appended `rel="noopener noreferrer"` parameters to all external links.
@@ -298,8 +264,9 @@ Refer to the primary technical guidelines and specifications in the `/docs` dire
 - [x] **Phase 18**: Premium animated loaders orbiting upright icons.
 - [x] **Phase 19**: Code-split dynamic bundles and size optimizations.
 - [x] **Phase 20**: Security headers and dependency health audits.
-- [/] **Phase 21**: API contract specifications and mock database schemas.
-- [ ] **Phase 22**: Core Postgres relational schema migrations and NestJS route controllers.
+- [x] **Phase 21**: PWA mobile viewports, alternates, robots, and sitemap indexes.
+- [x] **Phase 22**: Complete rewrite of technical documentation and developer guides.
+- [/] **Phase 23**: Professional README Overhaul and open-source alignment.
 
 ---
 
