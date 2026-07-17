@@ -1,5 +1,6 @@
 import { AuthGuard } from "@/features/auth";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { DashboardOnboarding } from "@/features/onboarding/components/dashboard-onboarding";
 
 export default function DashboardGroupLayout({
   children,
@@ -9,6 +10,7 @@ export default function DashboardGroupLayout({
   return (
     <AuthGuard>
       <DashboardLayout>{children}</DashboardLayout>
+      <DashboardOnboarding />
     </AuthGuard>
   );
 }

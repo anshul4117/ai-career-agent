@@ -8,6 +8,7 @@ import { useProfileStore } from "@/features/profile/store/profile.store";
 import { CareerPreferenceForm } from "@/features/profile/components/career-preference-form";
 import { CareerPreferenceFormValues } from "@/features/profile/schemas/career-preference.schema";
 import { useRouter } from "next/navigation";
+import { PageLoader } from "@/components/ui/brand-loader";
 
 export default function PreferencesPage() {
   const { preferences, isLoading, loadProfile, updatePreferences } = useProfileStore();
@@ -23,11 +24,7 @@ export default function PreferencesPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-12 h-12 border-[3px] border-foreground border-t-transparent animate-spin brutal-shadow bg-surface rounded-full" />
-      </div>
-    );
+    return <PageLoader label="Loading career preferences..." />;
   }
 
   return (

@@ -13,6 +13,7 @@ import { ProfileDialog } from "@/features/profile/components/profile-dialog";
 import { SkillForm } from "@/features/profile/components/skill-form";
 import type { Skill } from "@/features/profile/types/skill.types";
 import { SkillFormValues } from "@/features/profile/schemas/skill.schema";
+import { PageLoader } from "@/components/ui/brand-loader";
 
 export default function SkillsPage() {
   const { skills, isLoading, loadProfile, addSkill, updateSkill, deleteSkill } = useProfileStore();
@@ -87,11 +88,7 @@ export default function SkillsPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-12 h-12 border-[3px] border-foreground border-t-transparent animate-spin brutal-shadow bg-surface rounded-full" />
-      </div>
-    );
+    return <PageLoader label="Loading candidate skills..." />;
   }
 
   return (

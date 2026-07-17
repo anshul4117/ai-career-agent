@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShieldAlert, Loader2, RefreshCw, ChevronDown, ChevronUp, Flag } from "lucide-react";
+import { ShieldAlert, RefreshCw, ChevronDown, ChevronUp, Flag } from "lucide-react";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { toast } from "sonner";
+import { InlineLoader } from "@/components/ui/brand-loader";
 
 export default function Error({
   error,
@@ -80,7 +81,7 @@ export default function Error({
                 className="h-10 text-xs font-black uppercase tracking-wider brutal-shadow-xs flex items-center justify-center gap-1.5"
               >
                 {isRetrying ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  <InlineLoader />
                 ) : (
                   <RefreshCw className="h-3.5 w-3.5" />
                 )}

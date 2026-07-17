@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { WifiOff, Loader2 } from "lucide-react";
+import { WifiOff } from "lucide-react";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { InlineLoader } from "@/components/ui/brand-loader";
 
 interface OfflineStateProps {
   onBackOnline?: () => void;
@@ -64,7 +65,7 @@ export function OfflineState({ onBackOnline }: OfflineStateProps) {
             variant="default"
             className="h-10 px-5 text-xs font-black uppercase tracking-wider brutal-shadow-xs flex items-center justify-center gap-2"
           >
-            {isChecking && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+            {isChecking && <InlineLoader />}
             {isChecking ? "Checking..." : "Retry Connection"}
           </BrutalButton>
           <BrutalButton

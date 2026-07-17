@@ -12,6 +12,7 @@ import { ProfileDialog } from "@/features/profile/components/profile-dialog";
 import { CertificationForm } from "@/features/profile/components/certification-form";
 import type { Certification } from "@/features/profile/types/certification.types";
 import { CertificationFormValues } from "@/features/profile/schemas/certification.schema";
+import { PageLoader } from "@/components/ui/brand-loader";
 
 export default function CertificationsPage() {
   const { certifications, isLoading, loadProfile, addCertification, updateCertification, deleteCertification } = useProfileStore();
@@ -62,11 +63,7 @@ export default function CertificationsPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-12 h-12 border-[3px] border-foreground border-t-transparent animate-spin brutal-shadow bg-surface rounded-full" />
-      </div>
-    );
+    return <PageLoader label="Loading certifications..." />;
   }
 
   return (

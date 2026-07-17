@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { AlertCircle, Loader2, RefreshCw } from "lucide-react";
+import { AlertCircle, RefreshCw } from "lucide-react";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { InlineLoader } from "@/components/ui/brand-loader";
 
 interface NetworkErrorProps {
   title?: string;
@@ -66,7 +67,7 @@ export function NetworkError({
               variant="default"
               className="h-10 px-5 text-xs font-black uppercase tracking-wider brutal-shadow-xs flex items-center justify-center gap-2"
             >
-              {isRetrying && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+              {isRetrying && <InlineLoader />}
               {isRetrying ? "Retrying..." : "Retry"}
             </BrutalButton>
           )}

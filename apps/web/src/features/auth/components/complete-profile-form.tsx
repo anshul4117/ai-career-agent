@@ -100,7 +100,7 @@ export function CompleteProfileForm() {
           {photoUrl ? (
             <Image 
               src={photoUrl} 
-              alt="Avatar" 
+              alt="Profile Avatar Preview" 
               fill
               sizes="80px"
               className="object-cover" 

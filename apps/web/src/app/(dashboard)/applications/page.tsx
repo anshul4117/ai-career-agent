@@ -11,10 +11,19 @@ import { ApplicationsSkeleton, CalendarSkeleton } from "@/components/ui/skeleton
 import { useApplicationStore } from "@/features/applications/store/application.store";
 import { ApplicationsDashboard } from "@/features/applications/components/applications-dashboard";
 import { KanbanBoard } from "@/features/applications/components/kanban-board";
-import { CalendarView } from "@/features/applications/components/calendar-view";
-import { ApplicationDetailDialog } from "@/features/applications/components/application-detail-dialog";
 import { motion, AnimatePresence } from "framer-motion";
 import type { ApplicationStatus } from "@/types";
+import dynamic from "next/dynamic";
+
+const CalendarView = dynamic(
+  () => import("@/features/applications/components/calendar-view").then((m) => m.CalendarView),
+  { ssr: false, loading: () => <CalendarSkeleton /> }
+);
+
+const ApplicationDetailDialog = dynamic(
+  () => import("@/features/applications/components/application-detail-dialog").then((m) => m.ApplicationDetailDialog),
+  { ssr: false }
+);
 import { 
   Check, 
   Search, 

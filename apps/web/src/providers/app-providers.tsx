@@ -1,34 +1,27 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import type { ReactNode } from "react";
 import { AuthProvider } from "@/features/auth";
 import { ThemeProvider } from "./theme-provider";
 import { Toaster } from "@/components/ui/toaster";
-import { CommandPalette } from "@/features/search";
-import { WelcomeModal } from "@/features/onboarding/components/welcome-modal";
-import { TourOverlay } from "@/features/onboarding/components/tour-overlay";
-import { useOnboardingStore } from "@/features/onboarding/store/onboarding.store";
+import dynamic from "next/dynamic";
+
+const CommandPalette = dynamic(
+  () => import("@/features/search").then((m) => m.CommandPalette),
+  { ssr: false }
+);
 
 interface AppProvidersProps {
   children: ReactNode;
 }
 
 export function AppProviders({ children }: AppProvidersProps) {
-  useEffect(() => {
-    const store = useOnboardingStore.getState();
-    if (!store.hasCompletedOnboarding) {
-      store.setIsWelcomeOpen(true);
-    }
-  }, []);
-
   return (
     <ThemeProvider>
       <AuthProvider>{children}</AuthProvider>
       <Toaster />
       <CommandPalette />
-      <WelcomeModal />
-      <TourOverlay />
     </ThemeProvider>
   );
 }

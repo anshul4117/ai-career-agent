@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useBuilderStore } from "../../store/builder.store";
-import { Cloud, CheckCircle2, RefreshCw } from "lucide-react";
+import { Cloud, CheckCircle2 } from "lucide-react";
+import { InlineLoader } from "@/components/ui/brand-loader";
 
 export function AutoSaveIndicator() {
   const { savingState, lastSaved } = useBuilderStore();
@@ -33,7 +34,7 @@ export function AutoSaveIndicator() {
     <div className="flex items-center gap-1.5 px-3 py-1.5 border-2 border-border bg-surface brutal-shadow-sm text-[10px] font-black uppercase tracking-wider">
       {savingState === "saving" ? (
         <>
-          <RefreshCw className="h-3.5 w-3.5 text-primary animate-spin shrink-0" />
+          <InlineLoader />
           <span className="text-foreground">Saving...</span>
         </>
       ) : lastSaved ? (

@@ -8,7 +8,8 @@ import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Heading, Text } from "@/components/ui/typography";
 import { ErrorMessage } from "@/features/auth/components/error-message";
-import { Mail, Github, Linkedin, HelpCircle, Check, Loader2 } from "lucide-react";
+import { Mail, Github, Linkedin, HelpCircle, Check } from "lucide-react";
+import { InlineLoader } from "@/components/ui/brand-loader";
 
 export default function ContactPage() {
   // Form states
@@ -155,7 +156,7 @@ export default function ContactPage() {
                   disabled={isSubmitting}
                   className="w-full h-12 uppercase font-bold text-sm tracking-wide flex items-center justify-center gap-2"
                 >
-                  {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {isSubmitting && <InlineLoader />}
                   Submit Message
                 </BrutalButton>
               </form>

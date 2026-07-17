@@ -13,6 +13,7 @@ import { EducationForm } from "@/features/profile/components/education-form";
 import type { Education } from "@/features/profile/types/education.types";
 
 import { EducationFormValues } from "@/features/profile/schemas/education.schema";
+import { PageLoader } from "@/components/ui/brand-loader";
 
 export default function EducationPage() {
   const { education, isLoading, loadProfile, addEducation, updateEducation, deleteEducation } = useProfileStore();
@@ -62,11 +63,7 @@ export default function EducationPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-12 h-12 border-[3px] border-foreground border-t-transparent animate-spin brutal-shadow bg-surface rounded-full" />
-      </div>
-    );
+    return <PageLoader label="Loading academic history..." />;
   }
 
   return (

@@ -9,6 +9,7 @@ import { Heading, Text } from "@/components/ui/typography";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Check, X, ArrowRight, ArrowLeft } from "lucide-react";
+import { PageLoader } from "@/components/ui/brand-loader";
 
 export default function CompleteProfileChecklist() {
   const {
@@ -32,11 +33,7 @@ export default function CompleteProfileChecklist() {
   }, [loadProfile]);
 
   if (isLoading || !profile) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-12 h-12 border-[3px] border-foreground border-t-transparent animate-spin brutal-shadow bg-surface rounded-full" />
-      </div>
-    );
+    return <PageLoader label="Loading profile checklist..." />;
   }
 
   const audit = calculateProfileCompletion(
