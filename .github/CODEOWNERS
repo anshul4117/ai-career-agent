@@ -1,0 +1,13 @@
+# Set default owner for everything in the repository
+*       @anshul4117
+
+# Scoped owners for apps
+/apps/web/      @anshul4117
+/apps/api/      @anshul4117
+
+# Shared monorepo packages
+/packages/      @anshul4117
+
+# Infrastructure and Deployment configurations
+/infra/         @anshul4117
+/.github/       @anshul4117

@@ -213,6 +213,7 @@ Refer to the primary technical guidelines and specifications in the `/docs` dire
   - [Security Vectors & HTTP Headers Policy](docs/architecture/security-report.md): Security analysis mapping anti-clickjacking and XSS configurations.
   - [SEO Indexes & PWA Mobile Integration Guide](docs/architecture/seo-pwa.md): PWA mobile compatibility and sitemap generation details.
   - [Dependency Health Audit & Lock Resolutions](docs/architecture/dependency-health.md): Vulnerability scans, circular imports, and unused dependency pruning.
+  - [CI/CD Pipeline Architecture](docs/architecture/ci-cd.md): Continuous integration workflow, automation steps, and PR gates.
 - **Style & Design**:
   - [Brutalist Design Tokens System](docs/design-system.md): Brutalist CSS variable tokens, color palettes, and borders.
   - [Branding Assets & Logo Guidelines](docs/branding.md): Official assets mapping and branding configurations.

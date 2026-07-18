@@ -2,6 +2,10 @@
 
 All notable changes to the AI Career Agent platform will be documented in this file.
 
+## [0.19.0] - 2026-07-18
+### Added
+- **CI/CD Pipeline**: Configured a complete production-grade GitHub Actions workflow (`.github/workflows/ci.yml`) triggering on pushes/PRs to `main` and `dev`. Operates cache optimizations, workspace installs, formatting checks filtered on changed files, lint, type-check compiler runs, and production build checks.
+
 ## [0.18.0] - 2026-07-16
 ### Added
 - **Onboarding Scope Restriction**: Moved onboarding components and store triggers out of global providers (`app-providers.tsx`) into authenticated dashboard layouts (`src/app/(dashboard)/layout.tsx`), preventing leaks on public and error pages.
