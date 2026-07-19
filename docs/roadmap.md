@@ -49,8 +49,6 @@ This roadmap defines the implementation order of the AI Career Agent platform.
 
 ---
 
-
-
 ---
 
 ## Phase 1 — Authentication & User Management
@@ -300,11 +298,11 @@ Users can:
 ---
 
 ## Phase 8 — Application Tracker
- 
+
 **Goal:** Manage application lifecycle.
- 
+
 **Status:** Completed (including Sprint 8.2 Advanced tracker features)
- 
+
 **Priority:** High
 
 **Backend:**
@@ -334,13 +332,14 @@ Users can:
 ---
 
 ## Phase 9 — AI Resume Optimization
- 
+
 **Goal:** Improve resume quality.
- 
+
 **Status:**
+
 - Sprint 9.1 ✅ Complete (Core optimization calculations)
 - Sprint 9.2 ✅ Complete (Advanced optimization studio)
- 
+
 **Priority:** High
 
 **Backend:**
@@ -363,11 +362,11 @@ Users can:
 ---
 
 ## Phase 10 — AI Cover Letter Generator
- 
+
 **Goal:** Generate personalized cover letters.
- 
+
 **Status:** ✅ Complete (Sprint 10)
- 
+
 **Priority:** Medium
 
 **Backend:**
@@ -385,28 +384,30 @@ Users can:
 **Deliverables:** One-click cover letter creation.
 
 **Success Criteria:** Relevant cover letters generated.
- 
+
 ---
- 
+
 ## Phase 11 — Settings & UX Polish
- 
+
 **Goal:** Manage account credentials, themes, job query alerts, AI writing preferences, and mobile layout quality checks.
- 
+
 **Status:**
+
 - Sprint 11.1 ✅ Settings & Preferences Complete
 - Sprint 11.2 ✅ UI/UX Mobile Polish & Skeleton Loading System Complete
 - Sprint 11.3 ✅ Dark Mode Standardization Complete
- 
+
 **Priority:** Medium
- 
+
 **Frontend:**
+
 - Settings sidebar and panels
 - Completion indicators widget
 - Reusable Skeleton loaders & EmptyState components
 - Mobile layout optimizations
- 
+
 **Deliverables:** Centralized settings dashboard, high-fidelity responsive skeletons, and standardized empty states.
- 
+
 ---
 
 ## MVP Release
@@ -477,7 +478,7 @@ Only build after product-market validation.
 
 ## Current Development Focus
 
-**Current Active Phase:** Phase 24 — CI/CD Pipeline
+**Current Active Phase:** Phase 25 — Git Hooks & Code Quality Automation
 
 - [x] Global Layout & Navigation Shell
 - [x] Global Toast & Feedback System
@@ -492,6 +493,7 @@ Only build after product-market validation.
 - [x] SEO & PWA Audits
 - [x] Professional README Overhaul
 - [x] CI/CD Pipeline Installation
+- [x] Git Hooks Automation
 
 ## Phase 16 — Production-Ready Error Boundaries & Offline Support
 
@@ -500,6 +502,7 @@ Only build after product-market validation.
 **Status:** Completed
 
 **Tasks:**
+
 - [x] Redesign 404 Not Found Page (`app/not-found.tsx`)
 - [x] Implement client-side Route Error Boundary (`app/error.tsx`)
 - [x] Implement fatal root layout Error Boundary (`app/global-error.tsx`)
@@ -515,6 +518,7 @@ Only build after product-market validation.
 **Status:** Completed
 
 **Tasks:**
+
 - [x] Create Onboarding Zustand Store (`onboarding.store.ts`)
 - [x] Create welcome highlights overlay (`WelcomeModal`)
 - [x] Create relative highlight cutout tour renderer (`TourOverlay`)
@@ -530,6 +534,7 @@ Only build after product-market validation.
 **Status:** Completed
 
 **Tasks:**
+
 - [x] Create core orbit calculation component (`BrandLoader`)
 - [x] Export unified variations (`LoadingScreen`, `LoadingOverlay`, `PageLoader`, `InlineLoader`)
 - [x] Integrate reduced motion standard checking (`useReducedMotion()`)
@@ -543,6 +548,7 @@ Only build after product-market validation.
 **Status:** Completed
 
 **Tasks:**
+
 - [x] Setup dynamic App Router sitemap and robots directives (`sitemap.ts`, `robots.ts`)
 - [x] Complete OpenGraph, Twitter card, and canonical meta configurations
 - [x] Implement dynamic imports to split heavy layout components (`ResumeBuilderLayout`, `CalendarView`, `ApplicationDetailDialog`)
@@ -555,6 +561,7 @@ Only build after product-market validation.
 **Status:** Completed
 
 **Tasks:**
+
 - [x] Setup dependency overrides to lock secure postcss versions
 - [x] Prune unused type-check package dependencies
 - [x] Verify circular dependencies using madge (0 found)
@@ -566,6 +573,7 @@ Only build after product-market validation.
 **Status:** Completed
 
 **Tasks:**
+
 - [x] Add clickjacking and MIME-sniffing HTTP headers to next.config
 - [x] Audit external target links and secure them using rel="noopener noreferrer"
 
@@ -576,6 +584,7 @@ Only build after product-market validation.
 **Status:** Completed
 
 **Tasks:**
+
 - [x] Configure next.config Viewport exports and device theme-color mappings
 - [x] Implement standalone display configurations in site.webmanifest
 
@@ -586,6 +595,7 @@ Only build after product-market validation.
 **Status:** Completed
 
 **Tasks:**
+
 - [x] Build ASCII directory tree diagram and Mermaid flow chart
 - [x] Prune all visual emojis, screenshots, and large layout banners
 
@@ -596,8 +606,22 @@ Only build after product-market validation.
 **Status:** Completed
 
 **Tasks:**
+
 - [x] Create CI pipeline trigger config (.github/workflows/ci.yml)
 - [x] Document pipeline specifications in docs/architecture/ci-cd.md
+
+## Phase 25 — Git Hooks & Code Quality Automation
+
+**Goal:** Setup Husky and lint-staged to format staged changes and block commit/push actions on static check errors.
+
+**Status:** Completed
+
+**Tasks:**
+
+- [x] Setup Husky prepare hook in root workspaces
+- [x] Build lint-staged formats filter configuration (.lintstagedrc.json)
+- [x] Create pre-commit formatting check and pre-push type safety scripts
+- [x] Document hooks configuration in docs/architecture/git-hooks.md
 
 **Next Task:** Design API contracts and database schema migrations.
 
