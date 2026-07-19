@@ -15,6 +15,7 @@ Include visual screenshots or animations to demonstrate UI/UX updates.
 
 Describe the manual or automated validation steps executed to test these changes.
 Provide command lines executed:
+
 ```bash
 npm run type-check
 npm run lint

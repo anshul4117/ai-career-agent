@@ -1,9 +1,9 @@
 ---
 name: Feature Request
 about: Propose a new feature, optimization, or technical improvement.
-title: 'feat: '
+title: "feat: "
 labels: enhancement
-assignees: ''
+assignees: ""
 ---
 
 ## Feature Proposal

@@ -18,7 +18,7 @@ AI Career Agent is a production-grade, engineering-focused Career Operating Syst
 
 ## 1. Project Overview
 
-Finding a job in the modern tech ecosystem is an asymmetric struggle. Job seekers face ghost listings, automated applicant tracking system (ATS) filters, and the cognitive overhead of manually adapting resumes for every application. 
+Finding a job in the modern tech ecosystem is an asymmetric struggle. Job seekers face ghost listings, automated applicant tracking system (ATS) filters, and the cognitive overhead of manually adapting resumes for every application.
 
 AI Career Agent is a full-featured Career Operating System built specifically for software engineers, product designers, and tech professionals. By consolidating job boards, resume editors, cover letter generators, and application trackers into a single monorepo workspace, it eliminates tool fragmentation. The platform leverages localized vector matching to filter out low-trust listings and helps candidates submit optimized applications.
 
@@ -27,20 +27,24 @@ AI Career Agent is a full-featured Career Operating System built specifically fo
 ## 2. Core Features
 
 ### Authentication & Profile Management
+
 - **Authentication**: Secure registration, login, and session-guarded route protection.
 - **Candidate Profile**: Unified dashboard tracking contact details, experience logs, education, certifications, and languages.
 
 ### Resume & Cover Letter Intelligence
+
 - **Resume Management**: A comprehensive resume builder supporting version control, undo/redo states, and typography templates.
 - **Resume Parsing**: Automated extraction of structured work history, skills, and contact schemas from uploaded PDF resumes.
 - **Resume Optimization**: Advanced ATS optimization studio providing keyword gaps analysis and bullet-point rewrite suggestions.
 - **Cover Letter Generator**: Dynamic cover letter engine that writes tailored, tone-adjusted pitches matching target job descriptions.
 
 ### Job Discovery & Application Tracking
+
 - **Job Discovery**: Localized matching score evaluating candidate suitability based on skill vectors.
 - **Applications Tracker**: A visual Kanban board and calendar to manage application status (Saved, Applied, Interviewing, Offered, Rejected) and schedule interviews.
 
 ### Core System Features
+
 - **Global Search**: An accessible, keyboard-friendly command palette (`⌘+K` / `Ctrl+K`) that searches job histories and caches recent searches.
 - **Dashboard**: Home feed featuring a getting-started setup checklist, metric charts, and application analytics.
 - **Settings**: Interactive settings panel to toggle theme styling, manage onboarding states, and reset helper tips.
@@ -51,7 +55,7 @@ AI Career Agent is a full-featured Career Operating System built specifically fo
 
 ## 3. Live Demo & Resources
 
-- **Production URL**: *Deployment setup in progress*
+- **Production URL**: _Deployment setup in progress_
 - **Source Code**: [GitHub Repository](https://github.com/anshul4117/ai-career-agent)
 - **Technical Documentation**: [Docs Directory](docs/)
 - **Author Portfolio**: [Anshul's Portfolio](https://anshul4117-portfolio.vercel.app/)
@@ -79,7 +83,7 @@ AI Career Agent is a full-featured Career Operating System built specifically fo
 ```mermaid
 graph TD
   User[Browser Client]
-  
+
   subgraph Apps [Monorepo Apps]
     Web[apps/web: Next.js App]
     API[apps/api: NestJS API]
@@ -107,7 +111,9 @@ graph TD
 ```
 
 ### Monorepo Structure & Separation
+
 This project leverages an npm-workspaces monorepo structure. This architecture provides several key advantages:
+
 1. **Shared Type Schema**: Contract interfaces in `packages/types` compile directly for both frontend forms and backend validation controllers, preventing schema misalignment.
 2. **Unified Configuration**: ESLint rules, TypeScript compile configs, and formatting directives are shared, ensuring style consistency across the entire codebase.
 3. **Workspace Isolation**: Dependencies for the web client and API backend are decoupled in separate folders to prevent dependency bloating.
@@ -140,11 +146,13 @@ ai-career-agent/
 ## 7. Getting Started
 
 ### Prerequisites
+
 - Node.js >= 20.0.0
 - npm >= 10.0.0
 - Docker & Docker Compose (for local database services)
 
 ### Installation
+
 1. Clone the repository:
    ```bash
    git clone https://github.com/anshul4117/ai-career-agent.git
@@ -156,6 +164,7 @@ ai-career-agent/
    ```
 
 ### Database Orchestration
+
 1. Spin up the local PostgreSQL database using Docker:
    ```bash
    docker compose -f infra/docker/docker-compose.yml up -d
@@ -166,6 +175,7 @@ ai-career-agent/
    ```
 
 ### Running the Application
+
 - **Development Server**: Starts the Next.js web application dev server locally:
   ```bash
   npm run dev
@@ -189,12 +199,12 @@ ai-career-agent/
 
 The web client expects the following local environment keys:
 
-| Variable Key | Expected Content | Required / Optional | Target Purpose |
-| :--- | :--- | :--- | :--- |
-| `NEXT_PUBLIC_API_URL` | `http://localhost:4000/api` | Required | Target backend API location. |
-| `NEXT_PUBLIC_APP_URL` | `http://localhost:3000` | Required | Host origin location (fallback redirects). |
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | `pk_test_...` | Optional | Client token authentication key. |
-| `CLERK_SECRET_KEY` | `sk_test_...` | Optional | Secure authentication middleware verification. |
+| Variable Key                        | Expected Content            | Required / Optional | Target Purpose                                 |
+| :---------------------------------- | :-------------------------- | :------------------ | :--------------------------------------------- |
+| `NEXT_PUBLIC_API_URL`               | `http://localhost:4000/api` | Required            | Target backend API location.                   |
+| `NEXT_PUBLIC_APP_URL`               | `http://localhost:3000`     | Required            | Host origin location (fallback redirects).     |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | `pk_test_...`               | Optional            | Client token authentication key.               |
+| `CLERK_SECRET_KEY`                  | `sk_test_...`               | Optional            | Secure authentication middleware verification. |
 
 ---
 
@@ -263,6 +273,7 @@ Refer to the primary technical guidelines and specifications in the `/docs` dire
 ## 13. Project Roadmap
 
 ### Completed
+
 - **Phase 16**: Brutalist Error Boundaries, Offline notifier, and recovery paths.
 - **Phase 17**: Persisted first-time onboarding tours, setup checklists, and help panels.
 - **Phase 18**: Premium animated loaders orbiting upright icons.
@@ -272,9 +283,11 @@ Refer to the primary technical guidelines and specifications in the `/docs` dire
 - **Phase 22**: Complete rewrite of technical documentation and developer guides.
 
 ### Currently In Progress
+
 - **Phase 23**: Professional README Overhaul and open-source alignment.
 
 ### Future Enhancements
+
 - **Phase 24**: Core Postgres relational schema migrations and NestJS route controllers.
 
 ---
@@ -282,6 +295,7 @@ Refer to the primary technical guidelines and specifications in the `/docs` dire
 ## 14. Contributing
 
 Contributions are welcome! Please follow these guidelines:
+
 1. Form a clear feature branch: `git checkout -b feature/your-feature-name`.
 2. Ensure your changes compile cleanly without type checks or linting errors: `npm run type-check && npm run lint`.
 3. Submit a pull request detailing the changes made and link the relevant task issue.

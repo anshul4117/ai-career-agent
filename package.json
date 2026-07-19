@@ -19,5 +19,8 @@
   },
   "overrides": {
     "postcss": "^8.5.10"
+  },
+  "devDependencies": {
+    "prettier": "3.9.5"
   }
 }

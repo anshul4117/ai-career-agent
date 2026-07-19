@@ -7,6 +7,7 @@ This document specifies the design, workflow steps, execution parameters, and de
 ## 1. Pipeline Overview
 
 The CI pipeline is designed to safeguard the code quality of the main trunk by automatically triggering audits on every commit:
+
 - **Triggers**: push & pull_request.
 - **Branches**: `main`, `develop`.
 
@@ -54,6 +55,7 @@ graph TD
 ## 3. Pipeline Caching Strategy
 
 To optimize build speeds (reducing runtimes from 3-4 minutes down to under 1.5 minutes), we utilize npm cache keys:
+
 - The setup action `actions/setup-node@v4` automatically resolves lockfile hashes (`package-lock.json`) to generate caching directories (`~/.npm`).
 - Next.js build cache directories (`.next/cache`) are preserved across runs for production compilation stages.
 
