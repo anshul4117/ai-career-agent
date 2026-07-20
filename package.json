@@ -13,7 +13,7 @@
     "lint": "npm run lint --workspace=@ai-career-agent/web",
     "type-check": "npm run type-check --workspace=@ai-career-agent/web",
     "test": "echo \"Test scripts to be configured\"",
-    "prepare": "husky"
+    "prepare": "node -e \"if (process.env.NODE_ENV !== 'production') { try { require('child_process').execSync('husky', { stdio: 'inherit' }) } catch (e) {} }\""
   },
   "engines": {
     "node": ">=20.0.0"
