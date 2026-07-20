@@ -478,7 +478,7 @@ Only build after product-market validation.
 
 ## Current Development Focus
 
-**Current Active Phase:** Phase 24 — CI/CD Pipeline
+**Current Active Phase:** Phase 25 — Git Hooks & Code Quality Automation
 
 - [x] Global Layout & Navigation Shell
 - [x] Global Toast & Feedback System
@@ -493,6 +493,7 @@ Only build after product-market validation.
 - [x] SEO & PWA Audits
 - [x] Professional README Overhaul
 - [x] CI/CD Pipeline Installation
+- [x] Git Hooks Automation
 
 ## Phase 16 — Production-Ready Error Boundaries & Offline Support
 
@@ -608,6 +609,19 @@ Only build after product-market validation.
 
 - [x] Create CI pipeline trigger config (.github/workflows/ci.yml)
 - [x] Document pipeline specifications in docs/architecture/ci-cd.md
+
+## Phase 25 — Git Hooks & Code Quality Automation
+
+**Goal:** Setup Husky and lint-staged to format staged changes and block commit/push actions on static check errors.
+
+**Status:** Completed
+
+**Tasks:**
+
+- [x] Setup Husky prepare hook in root workspaces
+- [x] Build lint-staged formats filter configuration (.lintstagedrc.json)
+- [x] Create pre-commit formatting check and pre-push type safety scripts
+- [x] Document hooks configuration in docs/architecture/git-hooks.md
 
 **Next Task:** Design API contracts and database schema migrations.
 

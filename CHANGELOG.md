@@ -2,6 +2,12 @@
 
 All notable changes to the AI Career Agent platform will be documented in this file.
 
+## [0.20.0] - 2026-07-19
+
+### Added
+
+- **Git Hooks Automation**: Installed Husky and lint-staged at monorepo root. Configured pre-commit hooks to automatically check styles and format staged files (Prettier + ESLint auto-fixes), and pre-push hooks to validate TS types and global linters. Added prepare hook integrations in root packages definitions.
+
 ## [0.19.0] - 2026-07-18
 
 ### Added

@@ -46,3 +46,6 @@ infra/docker/volumes/
 turbo/
 *.tsbuildinfo
 
+# Husky
+.husky/_
+

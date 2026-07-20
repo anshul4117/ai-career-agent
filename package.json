@@ -12,7 +12,8 @@
     "build": "npm run build --workspace=@ai-career-agent/web",
     "lint": "npm run lint --workspace=@ai-career-agent/web",
     "type-check": "npm run type-check --workspace=@ai-career-agent/web",
-    "test": "echo \"Test scripts to be configured\""
+    "test": "echo \"Test scripts to be configured\"",
+    "prepare": "husky"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -21,6 +22,8 @@
     "postcss": "^8.5.10"
   },
   "devDependencies": {
-    "prettier": "3.9.5"
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.9.5"
   }
 }
