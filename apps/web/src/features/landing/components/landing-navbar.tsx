@@ -20,7 +20,10 @@ export function LandingNavbar() {
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 md:h-[72px] md:px-6">
           <Logo />
 
-          <nav className="hidden items-center gap-6 md:flex" aria-label="Landing page navigation">
+          <nav
+            className="hidden items-center gap-6 md:flex"
+            aria-label="Landing page navigation"
+          >
             <Link
               href="#features"
               className="text-sm font-semibold text-foreground-secondary transition-colors hover:text-foreground"
@@ -68,7 +71,7 @@ export function LandingNavbar() {
               variant="secondary"
               size="sm"
               hasLift={false}
-              className="hidden sm:inline-flex border-none hover:bg-surface-secondary text-sm font-bold uppercase tracking-wide"
+              className="hidden sm:inline-flex border-none hover:bg-surface-secondary hover:text-foreground text-sm font-bold uppercase tracking-wide"
               asChild
             >
               <Link href={siteConfig.links.login}>Sign In</Link>
