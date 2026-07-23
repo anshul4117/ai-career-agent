@@ -16,7 +16,11 @@ export type {
 } from "./types/profile.types";
 export type { Skill, SkillLevel } from "./types/skill.types";
 export type { Education } from "./types/education.types";
-export type { Experience, EmploymentType, WorkMode } from "./types/experience.types";
+export type {
+  Experience,
+  EmploymentType,
+  WorkMode,
+} from "./types/experience.types";
 export type { Project } from "./types/project.types";
 export type { Certification } from "./types/certification.types";
 export type { Language, LanguageLevel } from "./types/language.types";
@@ -32,6 +36,7 @@ export { ContactInfoCard } from "./components/contact-info-card";
 export { CareerSummaryCard } from "./components/career-summary-card";
 export { QuickStatsCard } from "./components/quick-stats-card";
 export { QuickActionsCard } from "./components/quick-actions-card";
+export { RecentActivityCard } from "./components/recent-activity-card";
 export { ProfileDialog } from "./components/profile-dialog";
 export { AvatarUpload } from "./components/avatar-upload";
 
@@ -89,14 +94,29 @@ export { CareerPreferenceCard } from "./components/career-preference-card";
 export { useProfileStore } from "./store/profile.store";
 
 // Data
-export { MOCK_PROFILE, AVAILABILITY_LABELS, WORK_PREFERENCE_LABELS } from "./data/profile.mock";
-export { MOCK_SKILLS, SKILL_LEVEL_LABELS, SKILL_CATEGORIES } from "./data/skills.mock";
+export {
+  MOCK_PROFILE,
+  AVAILABILITY_LABELS,
+  WORK_PREFERENCE_LABELS,
+} from "./data/profile.mock";
+export {
+  MOCK_SKILLS,
+  SKILL_LEVEL_LABELS,
+  SKILL_CATEGORIES,
+} from "./data/skills.mock";
 export { MOCK_EDUCATION } from "./data/education.mock";
-export { MOCK_EXPERIENCE, EMPLOYMENT_TYPE_LABELS, WORK_MODE_LABELS } from "./data/experience.mock";
+export {
+  MOCK_EXPERIENCE,
+  EMPLOYMENT_TYPE_LABELS,
+  WORK_MODE_LABELS,
+} from "./data/experience.mock";
 export { MOCK_PROJECTS } from "./data/projects.mock";
 export { MOCK_CERTIFICATIONS } from "./data/certifications.mock";
 export { MOCK_LANGUAGES, LANGUAGE_LEVEL_LABELS } from "./data/languages.mock";
-export { MOCK_SOCIAL_LINKS, SOCIAL_PLATFORM_LABELS } from "./data/social-links.mock";
+export {
+  MOCK_SOCIAL_LINKS,
+  SOCIAL_PLATFORM_LABELS,
+} from "./data/social-links.mock";
 export { MOCK_CAREER_PREFERENCES } from "./data/career-preferences.mock";
 
 // Services
