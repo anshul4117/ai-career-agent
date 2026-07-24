@@ -9,9 +9,7 @@ import { Heading } from "@/components/ui/typography";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { AvatarUpload } from "@/features/profile/components/avatar-upload";
-import { 
-  ArrowLeft, Save, Plus, Pencil, Trash2, Eye
-} from "lucide-react";
+import { ArrowLeft, Save, Plus, Pencil, Trash2, Eye } from "lucide-react";
 
 // Forms
 import { PersonalInfoForm } from "@/features/profile/components/personal-info-form";
@@ -26,7 +24,10 @@ import { SocialLinkForm } from "@/features/profile/components/social-link-form";
 import { CareerPreferenceForm } from "@/features/profile/components/career-preference-form";
 
 // Values Types
-import type { PersonalInfoFormValues, ContactInfoFormValues } from "@/features/profile/schemas/profile.schema";
+import type {
+  PersonalInfoFormValues,
+  ContactInfoFormValues,
+} from "@/features/profile/schemas/profile.schema";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/ui/confirm-dialog";
 import type { SkillFormValues } from "@/features/profile/schemas/skill.schema";
@@ -40,20 +41,63 @@ import type { CareerPreferenceFormValues } from "@/features/profile/schemas/care
 
 import { SOCIAL_PLATFORM_LABELS } from "@/features/profile/data/social-links.mock";
 import { LANGUAGE_LEVEL_LABELS } from "@/features/profile/data/languages.mock";
-import { WORK_MODE_LABELS, EMPLOYMENT_TYPE_LABELS } from "@/features/profile/data/experience.mock";
+import {
+  WORK_MODE_LABELS,
+  EMPLOYMENT_TYPE_LABELS,
+} from "@/features/profile/data/experience.mock";
 import { calculateProfileCompletion } from "@/features/profile/utils/completion-engine";
 
 const SECTIONS = [
-  { id: "personal", label: "Personal", ariaLabel: "Jump to Personal Information form" },
-  { id: "contact", label: "Contact", ariaLabel: "Jump to Contact Information form" },
-  { id: "skills", label: "Skills", ariaLabel: "Jump to Skills and Expertise form" },
-  { id: "experience", label: "Experience", ariaLabel: "Jump to Work Experience form" },
-  { id: "education", label: "Education", ariaLabel: "Jump to Education History form" },
-  { id: "projects", label: "Projects", ariaLabel: "Jump to Portfolio Projects form" },
-  { id: "certifications", label: "Certifications", ariaLabel: "Jump to Certifications form" },
-  { id: "languages", label: "Languages", ariaLabel: "Jump to Languages Spoken form" },
-  { id: "social", label: "Social Links", ariaLabel: "Jump to Social Links form" },
-  { id: "preferences", label: "Preferences", ariaLabel: "Jump to Career Preferences form" },
+  {
+    id: "personal",
+    label: "Personal",
+    ariaLabel: "Jump to Personal Information form",
+  },
+  {
+    id: "contact",
+    label: "Contact",
+    ariaLabel: "Jump to Contact Information form",
+  },
+  {
+    id: "skills",
+    label: "Skills",
+    ariaLabel: "Jump to Skills and Expertise form",
+  },
+  {
+    id: "experience",
+    label: "Experience",
+    ariaLabel: "Jump to Work Experience form",
+  },
+  {
+    id: "education",
+    label: "Education",
+    ariaLabel: "Jump to Education History form",
+  },
+  {
+    id: "projects",
+    label: "Projects",
+    ariaLabel: "Jump to Portfolio Projects form",
+  },
+  {
+    id: "certifications",
+    label: "Certifications",
+    ariaLabel: "Jump to Certifications form",
+  },
+  {
+    id: "languages",
+    label: "Languages",
+    ariaLabel: "Jump to Languages Spoken form",
+  },
+  {
+    id: "social",
+    label: "Social Links",
+    ariaLabel: "Jump to Social Links form",
+  },
+  {
+    id: "preferences",
+    label: "Preferences",
+    ariaLabel: "Jump to Career Preferences form",
+  },
 ];
 
 export default function EditProfilePage() {
@@ -88,6 +132,7 @@ export default function EditProfilePage() {
     updateLanguage,
     deleteLanguage,
     addSocialLink,
+    updateSocialLink,
     deleteSocialLink,
     updatePreferences,
   } = useProfileStore();
@@ -106,13 +151,27 @@ export default function EditProfilePage() {
   const [editPreferences, setEditPreferences] = useState(false);
 
   // List editor states: stores "add" or the id of the item being edited
-  const [activeSkillEditor, setActiveSkillEditor] = useState<"add" | null>(null);
-  const [activeExpEditor, setActiveExpEditor] = useState<"add" | string | null>(null);
-  const [activeEduEditor, setActiveEduEditor] = useState<"add" | string | null>(null);
-  const [activeProjEditor, setActiveProjEditor] = useState<"add" | string | null>(null);
-  const [activeCertEditor, setActiveCertEditor] = useState<"add" | string | null>(null);
-  const [activeLangEditor, setActiveLangEditor] = useState<"add" | string | null>(null);
-  const [activeSocEditor, setActiveSocEditor] = useState<"add" | string | null>(null);
+  const [activeSkillEditor, setActiveSkillEditor] = useState<"add" | null>(
+    null,
+  );
+  const [activeExpEditor, setActiveExpEditor] = useState<"add" | string | null>(
+    null,
+  );
+  const [activeEduEditor, setActiveEduEditor] = useState<"add" | string | null>(
+    null,
+  );
+  const [activeProjEditor, setActiveProjEditor] = useState<
+    "add" | string | null
+  >(null);
+  const [activeCertEditor, setActiveCertEditor] = useState<
+    "add" | string | null
+  >(null);
+  const [activeLangEditor, setActiveLangEditor] = useState<
+    "add" | string | null
+  >(null);
+  const [activeSocEditor, setActiveSocEditor] = useState<"add" | string | null>(
+    null,
+  );
 
   // Load profile data
   useEffect(() => {
@@ -135,7 +194,10 @@ export default function EditProfilePage() {
       });
     };
 
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    const observer = new IntersectionObserver(
+      observerCallback,
+      observerOptions,
+    );
 
     SECTIONS.forEach((section) => {
       const el = document.getElementById(section.id);
@@ -152,7 +214,8 @@ export default function EditProfilePage() {
 
   // Monitor if any form is currently dirty
   const isAnyFormDirty = useMemo(() => {
-    return editPersonal ||
+    return (
+      editPersonal ||
       editContact ||
       editPreferences ||
       !!activeSkillEditor ||
@@ -161,11 +224,19 @@ export default function EditProfilePage() {
       !!activeProjEditor ||
       !!activeCertEditor ||
       !!activeLangEditor ||
-      !!activeSocEditor;
+      !!activeSocEditor
+    );
   }, [
-    editPersonal, editContact, editPreferences,
-    activeSkillEditor, activeExpEditor, activeEduEditor,
-    activeProjEditor, activeCertEditor, activeLangEditor, activeSocEditor
+    editPersonal,
+    editContact,
+    editPreferences,
+    activeSkillEditor,
+    activeExpEditor,
+    activeEduEditor,
+    activeProjEditor,
+    activeCertEditor,
+    activeLangEditor,
+    activeSocEditor,
   ]);
 
   // Unsaved changes browser prompt
@@ -173,7 +244,8 @@ export default function EditProfilePage() {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (isAnyFormDirty) {
         e.preventDefault();
-        e.returnValue = "You have unsaved changes. Are you sure you want to leave?";
+        e.returnValue =
+          "You have unsaved changes. Are you sure you want to leave?";
         return e.returnValue;
       }
     };
@@ -196,9 +268,49 @@ export default function EditProfilePage() {
     }
   };
 
+  // Memoize initial values for PersonalInfoForm based on current profile & socialLinks state
+  const personalInitialValues = useMemo(() => {
+    if (!profile)
+      return {
+        firstName: "",
+        lastName: "",
+        headline: "",
+        email: "",
+        phone: "",
+        location: "",
+        portfolioUrl: "",
+        githubUrl: "",
+        linkedinUrl: "",
+      };
+
+    const githubUrl =
+      socialLinks.find((link) => link.platform === "github")?.url || "";
+    const linkedinUrl =
+      socialLinks.find((link) => link.platform === "linkedin")?.url || "";
+    const portfolioUrl =
+      socialLinks.find((link) => link.platform === "portfolio")?.url || "";
+
+    return {
+      firstName: profile.personal.firstName || "",
+      lastName: profile.personal.lastName || "",
+      headline: profile.career.headline || "",
+      email: profile.contact.email || "",
+      phone: profile.contact.phone || "",
+      location: `${profile.contact.city || ""}, ${profile.contact.country || ""}`,
+      portfolioUrl,
+      githubUrl,
+      linkedinUrl,
+    };
+  }, [profile, socialLinks]);
+
   const handleBackClick = async (e: React.MouseEvent) => {
     if (isAnyFormDirty) {
-      const confirmLeave = await confirm({ title: "Unsaved Changes", description: "You have unsaved edits. Are you sure you want to leave this page?", isDestructive: true });
+      const confirmLeave = await confirm({
+        title: "Unsaved Changes",
+        description:
+          "You have unsaved edits. Are you sure you want to leave this page?",
+        isDestructive: true,
+      });
       if (!confirmLeave) {
         e.preventDefault();
       }
@@ -219,23 +331,75 @@ export default function EditProfilePage() {
     certifications,
     languages,
     socialLinks,
-    preferences
+    preferences,
   );
 
   // Handle CRUD Form submits
-  const handlePersonalSubmit = (values: PersonalInfoFormValues) => {
-    setProfile({
-      ...profile,
-      personal: {
-        ...values,
-        dateOfBirth: values.dateOfBirth ?? null,
-        gender: values.gender ?? null,
-        nationality: values.nationality ?? null,
-      },
-    });
-    setEditPersonal(false);
-    toast.success("Personal details updated!");
-    handlePostSaveRedirect();
+
+  // Handle CRUD Form submits
+  const handlePersonalSubmit = async (values: PersonalInfoFormValues) => {
+    // Simulate API loading, success, and error feedback as requested by Sprint 1.2
+    const toastId = toast.loading("Saving personal details...");
+
+    try {
+      // Simulate network request delay
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      const [city = "", country = ""] = values.location
+        .split(",")
+        .map((s) => s.trim());
+
+      setProfile({
+        ...profile,
+        personal: {
+          firstName: values.firstName,
+          lastName: values.lastName,
+          dateOfBirth: profile.personal.dateOfBirth,
+          gender: profile.personal.gender,
+          nationality: profile.personal.nationality,
+        },
+        career: {
+          ...profile.career,
+          headline: values.headline,
+        },
+        contact: {
+          ...profile.contact,
+          email: values.email,
+          phone: values.phone,
+          city,
+          country,
+        },
+      });
+
+      // Synchronize socialLinks
+      const upsertSocialLink = (
+        platform: "github" | "linkedin" | "portfolio",
+        url: string,
+      ) => {
+        const existing = socialLinks.find((link) => link.platform === platform);
+        if (existing) {
+          if (url) {
+            updateSocialLink(existing.id, { url });
+          } else {
+            deleteSocialLink(existing.id);
+          }
+        } else if (url) {
+          addSocialLink({ platform, url });
+        }
+      };
+
+      upsertSocialLink("github", values.githubUrl || "");
+      upsertSocialLink("linkedin", values.linkedinUrl || "");
+      upsertSocialLink("portfolio", values.portfolioUrl || "");
+
+      setEditPersonal(false);
+      toast.success("Personal details updated!", { id: toastId });
+      handlePostSaveRedirect();
+    } catch {
+      toast.error("Failed to save personal details. Please try again.", {
+        id: toastId,
+      });
+    }
   };
 
   const handleContactSubmit = (values: ContactInfoFormValues) => {
@@ -352,7 +516,6 @@ export default function EditProfilePage() {
 
   return (
     <div className="space-y-6 w-full min-w-0 pb-16">
-
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="space-y-1">
@@ -364,7 +527,10 @@ export default function EditProfilePage() {
             <ArrowLeft className="h-4 w-4" />
             {fromOnboarding ? "Back to Checklist" : "Back to Profile"}
           </Link>
-          <Heading level="h2" className="text-2xl md:text-3xl font-black uppercase tracking-tight">
+          <Heading
+            level="h2"
+            className="text-2xl md:text-3xl font-black uppercase tracking-tight"
+          >
             Edit Profile
           </Heading>
         </div>
@@ -392,7 +558,7 @@ export default function EditProfilePage() {
       </div>
 
       {/* Mobile Sticky Section Menu trigger (Visible on Mobile only, sticky below header) */}
-      <nav 
+      <nav
         className="md:hidden w-full sticky top-[64px] z-30 bg-surface border-y-[3px] border-border py-3 px-4 -mx-4 flex items-center gap-3 overflow-x-auto scrollbar-none transition-all duration-300"
         aria-label="Profile section swiper"
       >
@@ -423,19 +589,23 @@ export default function EditProfilePage() {
 
       {/* Main Two-Column Layout */}
       <div className="flex flex-col md:flex-row gap-6 items-start relative w-full min-w-0">
-        
         {/* LEFT SIDEBAR (Sticky - Hidden on Mobile) */}
-        <aside 
+        <aside
           className="hidden md:block w-72 shrink-0 sticky top-24 bg-surface border-3 border-border p-5 brutal-shadow max-h-[calc(100vh-120px)] overflow-y-auto"
           aria-label="Profile section settings sidebar"
         >
           {/* Profile Completion Card */}
           <div className="space-y-2.5 border-b-2 border-border/10 pb-5 mb-5">
-            <Heading level="h4" className="text-[10px] font-black uppercase text-foreground-muted tracking-wider">
+            <Heading
+              level="h4"
+              className="text-[10px] font-black uppercase text-foreground-muted tracking-wider"
+            >
               Profile Strength
             </Heading>
             <div className="flex justify-between items-end">
-              <span className="text-2xl font-black text-foreground">{audit.percentage}%</span>
+              <span className="text-2xl font-black text-foreground">
+                {audit.percentage}%
+              </span>
               <span className="text-[9px] font-black uppercase text-success bg-success/15 border border-success px-1.5 py-0.5 rounded-sm">
                 Completeness
               </span>
@@ -450,7 +620,10 @@ export default function EditProfilePage() {
 
           {/* Jump To Navigation */}
           <div className="space-y-3">
-            <Heading level="h4" className="text-[10px] font-black uppercase text-foreground-muted tracking-wider">
+            <Heading
+              level="h4"
+              className="text-[10px] font-black uppercase text-foreground-muted tracking-wider"
+            >
               Jump To
             </Heading>
             <nav className="space-y-2.5 flex flex-col w-full">
@@ -478,19 +651,24 @@ export default function EditProfilePage() {
 
         {/* RIGHT CONTENT: Forms Canvas */}
         <div className="flex-1 w-full space-y-8 min-w-0">
-          
           {/* Avatar Upload */}
           <AvatarUpload />
 
           {/* 1. Personal Information */}
-          <BrutalCard id="personal" className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28">
+          <BrutalCard
+            id="personal"
+            className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28"
+          >
             {editPersonal ? (
               <div className="space-y-4">
-                <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+                <Heading
+                  level="h4"
+                  className="text-base font-black uppercase tracking-tight"
+                >
                   Edit Personal Info
                 </Heading>
                 <PersonalInfoForm
-                  initialValues={profile.personal}
+                  initialValues={personalInitialValues}
                   onSubmit={handlePersonalSubmit}
                   onCancel={() => setEditPersonal(false)}
                 />
@@ -498,7 +676,10 @@ export default function EditProfilePage() {
             ) : (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+                  <Heading
+                    level="h4"
+                    className="text-base font-black uppercase tracking-tight"
+                  >
                     Personal Information
                   </Heading>
                   <BrutalButton
@@ -511,21 +692,57 @@ export default function EditProfilePage() {
                   </BrutalButton>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm pt-2">
-                  <p><strong>First Name:</strong> {profile.personal.firstName}</p>
-                  <p><strong>Last Name:</strong> {profile.personal.lastName}</p>
-                  <p><strong>Date of Birth:</strong> {profile.personal.dateOfBirth || "—"}</p>
-                  <p><strong>Gender:</strong> {profile.personal.gender || "—"}</p>
-                  <p className="md:col-span-2"><strong>Nationality:</strong> {profile.personal.nationality || "—"}</p>
+                  <p>
+                    <strong>First Name:</strong> {profile.personal.firstName}
+                  </p>
+                  <p>
+                    <strong>Last Name:</strong> {profile.personal.lastName}
+                  </p>
+                  <p>
+                    <strong>Professional Headline:</strong>{" "}
+                    {profile.career.headline || "—"}
+                  </p>
+                  <p>
+                    <strong>Email Address:</strong> {profile.contact.email}
+                  </p>
+                  <p>
+                    <strong>Phone Number:</strong> {profile.contact.phone}
+                  </p>
+                  <p>
+                    <strong>Location:</strong> {profile.contact.city},{" "}
+                    {profile.contact.country}
+                  </p>
+                  <p>
+                    <strong>Portfolio URL:</strong>{" "}
+                    {socialLinks.find((l) => l.platform === "portfolio")?.url ||
+                      "—"}
+                  </p>
+                  <p>
+                    <strong>GitHub URL:</strong>{" "}
+                    {socialLinks.find((l) => l.platform === "github")?.url ||
+                      "—"}
+                  </p>
+                  <p className="md:col-span-2">
+                    <strong>LinkedIn URL:</strong>{" "}
+                    {socialLinks.find((l) => l.platform === "linkedin")?.url ||
+                      "—"}
+                  </p>
                 </div>
               </div>
             )}
           </BrutalCard>
 
           {/* 2. Contact Information */}
-          <BrutalCard id="contact" className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28">
+          <BrutalCard
+            id="contact"
+            className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28"
+          >
             {editContact ? (
               <div className="space-y-4">
-                <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+                <Heading
+                  level="h4"
+                  className="text-base font-black uppercase tracking-tight"
+                >
                   Edit Contact Info
                 </Heading>
                 <ContactInfoForm
@@ -537,7 +754,10 @@ export default function EditProfilePage() {
             ) : (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+                  <Heading
+                    level="h4"
+                    className="text-base font-black uppercase tracking-tight"
+                  >
                     Contact Information
                   </Heading>
                   <BrutalButton
@@ -550,20 +770,34 @@ export default function EditProfilePage() {
                   </BrutalButton>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm pt-2">
-                  <p><strong>Email Address:</strong> {profile.contact.email}</p>
-                  <p><strong>Phone Number:</strong> {profile.contact.phone}</p>
-                  <p><strong>City:</strong> {profile.contact.city}</p>
-                  <p><strong>Country:</strong> {profile.contact.country}</p>
+                  <p>
+                    <strong>Email Address:</strong> {profile.contact.email}
+                  </p>
+                  <p>
+                    <strong>Phone Number:</strong> {profile.contact.phone}
+                  </p>
+                  <p>
+                    <strong>City:</strong> {profile.contact.city}
+                  </p>
+                  <p>
+                    <strong>Country:</strong> {profile.contact.country}
+                  </p>
                 </div>
               </div>
             )}
           </BrutalCard>
 
           {/* 3. Skills */}
-          <BrutalCard id="skills" className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28">
+          <BrutalCard
+            id="skills"
+            className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28"
+          >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+                <Heading
+                  level="h4"
+                  className="text-base font-black uppercase tracking-tight"
+                >
                   Skills & Expertise
                 </Heading>
                 {!activeSkillEditor && (
@@ -578,7 +812,10 @@ export default function EditProfilePage() {
 
               {activeSkillEditor === "add" ? (
                 <div className="border-2 border-border p-4 bg-surface-secondary space-y-4 rounded-sm brutal-shadow-sm">
-                  <Heading level="h5" className="text-xs font-black uppercase tracking-wider">
+                  <Heading
+                    level="h5"
+                    className="text-xs font-black uppercase tracking-wider"
+                  >
                     Add New Skill Tag
                   </Heading>
                   <SkillForm
@@ -589,7 +826,8 @@ export default function EditProfilePage() {
                 </div>
               ) : skills.length === 0 ? (
                 <div className="text-center py-6 border-2 border-dashed border-border/20 text-xs text-foreground-secondary">
-                  No skills configured. Add a technical tag to showcase your stack.
+                  No skills configured. Add a technical tag to showcase your
+                  stack.
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2.5">
@@ -598,10 +836,18 @@ export default function EditProfilePage() {
                       key={s.id}
                       className="px-2.5 py-1.5 border-2 border-border bg-surface-secondary text-[10px] font-extrabold uppercase rounded-sm flex items-center gap-2 brutal-shadow-sm"
                     >
-                      <span>{s.name} ({s.yearsOfExperience}y exp)</span>
+                      <span>
+                        {s.name} ({s.yearsOfExperience}y exp)
+                      </span>
                       <button
                         onClick={async () => {
-                          if (await confirm({ title: "Delete Skill", description: `Delete skill "${s.name}"?`, isDestructive: true })) {
+                          if (
+                            await confirm({
+                              title: "Delete Skill",
+                              description: `Delete skill "${s.name}"?`,
+                              isDestructive: true,
+                            })
+                          ) {
                             deleteSkill(s.id);
                             toast.success("Skill deleted!");
                           }
@@ -619,10 +865,16 @@ export default function EditProfilePage() {
           </BrutalCard>
 
           {/* 4. Experience */}
-          <BrutalCard id="experience" className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28">
+          <BrutalCard
+            id="experience"
+            className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28"
+          >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+                <Heading
+                  level="h4"
+                  className="text-base font-black uppercase tracking-tight"
+                >
                   Work Experience
                 </Heading>
                 {!activeExpEditor && (
@@ -637,14 +889,27 @@ export default function EditProfilePage() {
 
               {activeExpEditor ? (
                 <div className="border-2 border-border p-4 bg-surface-secondary space-y-4 rounded-sm brutal-shadow-sm">
-                  <Heading level="h5" className="text-xs font-black uppercase tracking-wider">
-                    {activeExpEditor === "add" ? "Add Work Experience" : "Edit Experience Record"}
+                  <Heading
+                    level="h5"
+                    className="text-xs font-black uppercase tracking-wider"
+                  >
+                    {activeExpEditor === "add"
+                      ? "Add Work Experience"
+                      : "Edit Experience Record"}
                   </Heading>
                   <ExperienceForm
-                    initialValues={activeExpEditor === "add" ? null : experience.find(e => e.id === activeExpEditor)}
+                    initialValues={
+                      activeExpEditor === "add"
+                        ? null
+                        : experience.find((e) => e.id === activeExpEditor)
+                    }
                     onSubmit={handleExpSubmit}
                     onCancel={() => setActiveExpEditor(null)}
-                    submitLabel={activeExpEditor === "add" ? "Add Experience" : "Save Record"}
+                    submitLabel={
+                      activeExpEditor === "add"
+                        ? "Add Experience"
+                        : "Save Record"
+                    }
                   />
                 </div>
               ) : experience.length === 0 ? (
@@ -654,17 +919,26 @@ export default function EditProfilePage() {
               ) : (
                 <div className="space-y-4">
                   {experience.map((exp) => (
-                    <div key={exp.id} className="border-2 border-border p-4 rounded-sm flex justify-between gap-4 bg-surface-secondary/20">
+                    <div
+                      key={exp.id}
+                      className="border-2 border-border p-4 rounded-sm flex justify-between gap-4 bg-surface-secondary/20"
+                    >
                       <div className="space-y-1 text-xs">
-                        <h5 className="font-extrabold uppercase text-foreground">{exp.jobTitle}</h5>
+                        <h5 className="font-extrabold uppercase text-foreground">
+                          {exp.jobTitle}
+                        </h5>
                         <p className="text-foreground-secondary font-semibold">
-                          {exp.companyName} • {exp.location} ({WORK_MODE_LABELS[exp.workMode]})
+                          {exp.companyName} • {exp.location} (
+                          {WORK_MODE_LABELS[exp.workMode]})
                         </p>
                         <p className="text-foreground-muted font-mono text-[10px]">
-                          {exp.startDate} – {exp.currentPosition ? "Present" : exp.endDate}
+                          {exp.startDate} –{" "}
+                          {exp.currentPosition ? "Present" : exp.endDate}
                         </p>
                         {exp.description && (
-                          <p className="text-foreground-secondary leading-relaxed pt-1.5">{exp.description}</p>
+                          <p className="text-foreground-secondary leading-relaxed pt-1.5">
+                            {exp.description}
+                          </p>
                         )}
                       </div>
                       <div className="flex flex-col gap-2 shrink-0">
@@ -678,7 +952,13 @@ export default function EditProfilePage() {
                         </BrutalButton>
                         <BrutalButton
                           onClick={async () => {
-                            if (await confirm({ title: "Delete Experience", description: `Delete experience "${exp.jobTitle}"?`, isDestructive: true })) {
+                            if (
+                              await confirm({
+                                title: "Delete Experience",
+                                description: `Delete experience "${exp.jobTitle}"?`,
+                                isDestructive: true,
+                              })
+                            ) {
                               deleteExperience(exp.id);
                               toast.success("Experience deleted!");
                             }
@@ -698,10 +978,16 @@ export default function EditProfilePage() {
           </BrutalCard>
 
           {/* 5. Education */}
-          <BrutalCard id="education" className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28">
+          <BrutalCard
+            id="education"
+            className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28"
+          >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+                <Heading
+                  level="h4"
+                  className="text-base font-black uppercase tracking-tight"
+                >
                   Education History
                 </Heading>
                 {!activeEduEditor && (
@@ -716,34 +1002,57 @@ export default function EditProfilePage() {
 
               {activeEduEditor ? (
                 <div className="border-2 border-border p-4 bg-surface-secondary space-y-4 rounded-sm brutal-shadow-sm">
-                  <Heading level="h5" className="text-xs font-black uppercase tracking-wider">
-                    {activeEduEditor === "add" ? "Add Education Record" : "Edit Education Record"}
+                  <Heading
+                    level="h5"
+                    className="text-xs font-black uppercase tracking-wider"
+                  >
+                    {activeEduEditor === "add"
+                      ? "Add Education Record"
+                      : "Edit Education Record"}
                   </Heading>
                   <EducationForm
-                    initialValues={activeEduEditor === "add" ? null : education.find(e => e.id === activeEduEditor)}
+                    initialValues={
+                      activeEduEditor === "add"
+                        ? null
+                        : education.find((e) => e.id === activeEduEditor)
+                    }
                     onSubmit={handleEduSubmit}
                     onCancel={() => setActiveEduEditor(null)}
-                    submitLabel={activeEduEditor === "add" ? "Add Education" : "Save Record"}
+                    submitLabel={
+                      activeEduEditor === "add"
+                        ? "Add Education"
+                        : "Save Record"
+                    }
                   />
                 </div>
               ) : education.length === 0 ? (
                 <div className="text-center py-6 border-2 border-dashed border-border/20 text-xs text-foreground-secondary">
-                  No education history configured. Add qualifications to your profile.
+                  No education history configured. Add qualifications to your
+                  profile.
                 </div>
               ) : (
                 <div className="space-y-4">
                   {education.map((edu) => (
-                    <div key={edu.id} className="border-2 border-border p-4 rounded-sm flex justify-between gap-4 bg-surface-secondary/20">
+                    <div
+                      key={edu.id}
+                      className="border-2 border-border p-4 rounded-sm flex justify-between gap-4 bg-surface-secondary/20"
+                    >
                       <div className="space-y-1 text-xs">
-                        <h5 className="font-extrabold uppercase text-foreground">{edu.degree}</h5>
+                        <h5 className="font-extrabold uppercase text-foreground">
+                          {edu.degree}
+                        </h5>
                         <p className="text-foreground-secondary font-semibold">
                           {edu.fieldOfStudy} • {edu.institution}
                         </p>
                         <p className="text-foreground-muted font-mono text-[10px]">
-                          {edu.startDate} – {edu.currentStudy ? "Present" : edu.endDate} • Grade: {edu.cgpa}
+                          {edu.startDate} –{" "}
+                          {edu.currentStudy ? "Present" : edu.endDate} • Grade:{" "}
+                          {edu.cgpa}
                         </p>
                         {edu.description && (
-                          <p className="text-foreground-secondary leading-relaxed pt-1">{edu.description}</p>
+                          <p className="text-foreground-secondary leading-relaxed pt-1">
+                            {edu.description}
+                          </p>
                         )}
                       </div>
                       <div className="flex flex-col gap-2 shrink-0">
@@ -757,7 +1066,13 @@ export default function EditProfilePage() {
                         </BrutalButton>
                         <BrutalButton
                           onClick={async () => {
-                            if (await confirm({ title: "Delete Education", description: `Delete education "${edu.degree}"?`, isDestructive: true })) {
+                            if (
+                              await confirm({
+                                title: "Delete Education",
+                                description: `Delete education "${edu.degree}"?`,
+                                isDestructive: true,
+                              })
+                            ) {
                               deleteEducation(edu.id);
                               toast.success("Education deleted!");
                             }
@@ -777,10 +1092,16 @@ export default function EditProfilePage() {
           </BrutalCard>
 
           {/* 6. Projects */}
-          <BrutalCard id="projects" className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28">
+          <BrutalCard
+            id="projects"
+            className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28"
+          >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+                <Heading
+                  level="h4"
+                  className="text-base font-black uppercase tracking-tight"
+                >
                   Portfolio Projects
                 </Heading>
                 {!activeProjEditor && (
@@ -795,29 +1116,48 @@ export default function EditProfilePage() {
 
               {activeProjEditor ? (
                 <div className="border-2 border-border p-4 bg-surface-secondary space-y-4 rounded-sm brutal-shadow-sm">
-                  <Heading level="h5" className="text-xs font-black uppercase tracking-wider">
-                    {activeProjEditor === "add" ? "Add Portfolio Project" : "Edit Project Record"}
+                  <Heading
+                    level="h5"
+                    className="text-xs font-black uppercase tracking-wider"
+                  >
+                    {activeProjEditor === "add"
+                      ? "Add Portfolio Project"
+                      : "Edit Project Record"}
                   </Heading>
                   <ProjectForm
-                    initialValues={activeProjEditor === "add" ? null : projects.find(p => p.id === activeProjEditor)}
+                    initialValues={
+                      activeProjEditor === "add"
+                        ? null
+                        : projects.find((p) => p.id === activeProjEditor)
+                    }
                     onSubmit={handleProjSubmit}
                     onCancel={() => setActiveProjEditor(null)}
-                    submitLabel={activeProjEditor === "add" ? "Add Project" : "Save Record"}
+                    submitLabel={
+                      activeProjEditor === "add" ? "Add Project" : "Save Record"
+                    }
                   />
                 </div>
               ) : projects.length === 0 ? (
                 <div className="text-center py-6 border-2 border-dashed border-border/20 text-xs text-foreground-secondary">
-                  No projects configured. Highlight your side-projects or open source work.
+                  No projects configured. Highlight your side-projects or open
+                  source work.
                 </div>
               ) : (
                 <div className="space-y-4">
                   {projects.map((proj) => (
-                    <div key={proj.id} className="border-2 border-border p-4 rounded-sm flex justify-between gap-4 bg-surface-secondary/20">
+                    <div
+                      key={proj.id}
+                      className="border-2 border-border p-4 rounded-sm flex justify-between gap-4 bg-surface-secondary/20"
+                    >
                       <div className="space-y-1 text-xs">
                         <div className="flex items-center gap-2">
-                          <h5 className="font-extrabold uppercase text-foreground">{proj.title}</h5>
+                          <h5 className="font-extrabold uppercase text-foreground">
+                            {proj.title}
+                          </h5>
                           {proj.featured && (
-                            <span className="bg-primary/25 border border-primary text-[8px] px-1.5 py-0.2 uppercase font-black">Featured</span>
+                            <span className="bg-primary/25 border border-primary text-[8px] px-1.5 py-0.2 uppercase font-black">
+                              Featured
+                            </span>
                           )}
                         </div>
                         <p className="text-foreground-secondary font-semibold">
@@ -826,11 +1166,16 @@ export default function EditProfilePage() {
                         <p className="text-foreground-muted font-mono text-[10px]">
                           {proj.startDate} – {proj.endDate || "Present"}
                         </p>
-                        <p className="text-foreground-secondary leading-relaxed pt-1">{proj.description}</p>
+                        <p className="text-foreground-secondary leading-relaxed pt-1">
+                          {proj.description}
+                        </p>
                         {proj.techStack.length > 0 && (
                           <div className="flex flex-wrap gap-1 pt-2">
                             {proj.techStack.map((tech, i) => (
-                              <span key={i} className="px-1.5 py-0.5 border border-border text-[8px] font-bold uppercase bg-surface">
+                              <span
+                                key={i}
+                                className="px-1.5 py-0.5 border border-border text-[8px] font-bold uppercase bg-surface"
+                              >
                                 {tech}
                               </span>
                             ))}
@@ -848,7 +1193,13 @@ export default function EditProfilePage() {
                         </BrutalButton>
                         <BrutalButton
                           onClick={async () => {
-                            if (await confirm({ title: "Delete Project", description: `Delete project "${proj.title}"?`, isDestructive: true })) {
+                            if (
+                              await confirm({
+                                title: "Delete Project",
+                                description: `Delete project "${proj.title}"?`,
+                                isDestructive: true,
+                              })
+                            ) {
                               deleteProject(proj.id);
                               toast.success("Project deleted!");
                             }
@@ -868,10 +1219,16 @@ export default function EditProfilePage() {
           </BrutalCard>
 
           {/* 7. Certifications */}
-          <BrutalCard id="certifications" className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28">
+          <BrutalCard
+            id="certifications"
+            className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28"
+          >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+                <Heading
+                  level="h4"
+                  className="text-base font-black uppercase tracking-tight"
+                >
                   Certifications
                 </Heading>
                 {!activeCertEditor && (
@@ -886,14 +1243,25 @@ export default function EditProfilePage() {
 
               {activeCertEditor ? (
                 <div className="border-2 border-border p-4 bg-surface-secondary space-y-4 rounded-sm brutal-shadow-sm">
-                  <Heading level="h5" className="text-xs font-black uppercase tracking-wider">
-                    {activeCertEditor === "add" ? "Add Certification" : "Edit Certification Record"}
+                  <Heading
+                    level="h5"
+                    className="text-xs font-black uppercase tracking-wider"
+                  >
+                    {activeCertEditor === "add"
+                      ? "Add Certification"
+                      : "Edit Certification Record"}
                   </Heading>
                   <CertificationForm
-                    initialValues={activeCertEditor === "add" ? null : certifications.find(c => c.id === activeCertEditor)}
+                    initialValues={
+                      activeCertEditor === "add"
+                        ? null
+                        : certifications.find((c) => c.id === activeCertEditor)
+                    }
                     onSubmit={handleCertSubmit}
                     onCancel={() => setActiveCertEditor(null)}
-                    submitLabel={activeCertEditor === "add" ? "Add Cert" : "Save Record"}
+                    submitLabel={
+                      activeCertEditor === "add" ? "Add Cert" : "Save Record"
+                    }
                   />
                 </div>
               ) : certifications.length === 0 ? (
@@ -903,12 +1271,20 @@ export default function EditProfilePage() {
               ) : (
                 <div className="grid gap-4 sm:grid-cols-2">
                   {certifications.map((c) => (
-                    <div key={c.id} className="border-2 border-border p-4 rounded-sm flex justify-between gap-3 bg-surface-secondary/20">
+                    <div
+                      key={c.id}
+                      className="border-2 border-border p-4 rounded-sm flex justify-between gap-3 bg-surface-secondary/20"
+                    >
                       <div className="text-xs space-y-1">
                         <h5 className="font-extrabold uppercase">{c.name}</h5>
-                        <p className="text-foreground-secondary font-semibold">{c.issuingOrganization}</p>
+                        <p className="text-foreground-secondary font-semibold">
+                          {c.issuingOrganization}
+                        </p>
                         <p className="text-foreground-muted font-mono text-[9px]">
-                          Issued: {c.issueDate} {c.neverExpires ? "• Permanent" : `• Expires: ${c.expiryDate}`}
+                          Issued: {c.issueDate}{" "}
+                          {c.neverExpires
+                            ? "• Permanent"
+                            : `• Expires: ${c.expiryDate}`}
                         </p>
                       </div>
                       <div className="flex gap-2 shrink-0 self-start">
@@ -922,7 +1298,13 @@ export default function EditProfilePage() {
                         </BrutalButton>
                         <BrutalButton
                           onClick={async () => {
-                            if (await confirm({ title: "Delete Certification", description: `Delete certification "${c.name}"?`, isDestructive: true })) {
+                            if (
+                              await confirm({
+                                title: "Delete Certification",
+                                description: `Delete certification "${c.name}"?`,
+                                isDestructive: true,
+                              })
+                            ) {
                               deleteCertification(c.id);
                               toast.success("Certification deleted!");
                             }
@@ -942,10 +1324,16 @@ export default function EditProfilePage() {
           </BrutalCard>
 
           {/* 8. Languages */}
-          <BrutalCard id="languages" className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28">
+          <BrutalCard
+            id="languages"
+            className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28"
+          >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+                <Heading
+                  level="h4"
+                  className="text-base font-black uppercase tracking-tight"
+                >
                   Languages
                 </Heading>
                 {!activeLangEditor && (
@@ -960,14 +1348,27 @@ export default function EditProfilePage() {
 
               {activeLangEditor ? (
                 <div className="border-2 border-border p-4 bg-surface-secondary space-y-4 rounded-sm brutal-shadow-sm">
-                  <Heading level="h5" className="text-xs font-black uppercase tracking-wider">
-                    {activeLangEditor === "add" ? "Add Language" : "Edit Language"}
+                  <Heading
+                    level="h5"
+                    className="text-xs font-black uppercase tracking-wider"
+                  >
+                    {activeLangEditor === "add"
+                      ? "Add Language"
+                      : "Edit Language"}
                   </Heading>
                   <LanguageForm
-                    initialValues={activeLangEditor === "add" ? null : languages.find(l => l.id === activeLangEditor)}
+                    initialValues={
+                      activeLangEditor === "add"
+                        ? null
+                        : languages.find((l) => l.id === activeLangEditor)
+                    }
                     onSubmit={handleLangSubmit}
                     onCancel={() => setActiveLangEditor(null)}
-                    submitLabel={activeLangEditor === "add" ? "Add Language" : "Save Record"}
+                    submitLabel={
+                      activeLangEditor === "add"
+                        ? "Add Language"
+                        : "Save Record"
+                    }
                   />
                 </div>
               ) : languages.length === 0 ? (
@@ -984,7 +1385,9 @@ export default function EditProfilePage() {
                       <div className="space-y-0.5">
                         <span>{l.language}</span>
                         <div className="text-[8px] text-foreground-muted">
-                          {l.nativeLanguage ? "Native" : `Speaking: ${LANGUAGE_LEVEL_LABELS[l.speakingLevel]}`}
+                          {l.nativeLanguage
+                            ? "Native"
+                            : `Speaking: ${LANGUAGE_LEVEL_LABELS[l.speakingLevel]}`}
                         </div>
                       </div>
                       <div className="flex gap-1">
@@ -997,7 +1400,13 @@ export default function EditProfilePage() {
                         </button>
                         <button
                           onClick={async () => {
-                            if (await confirm({ title: "Delete Language", description: `Delete language "${l.language}"?`, isDestructive: true })) {
+                            if (
+                              await confirm({
+                                title: "Delete Language",
+                                description: `Delete language "${l.language}"?`,
+                                isDestructive: true,
+                              })
+                            ) {
                               deleteLanguage(l.id);
                               toast.success("Language deleted!");
                             }
@@ -1016,10 +1425,16 @@ export default function EditProfilePage() {
           </BrutalCard>
 
           {/* 9. Social Links */}
-          <BrutalCard id="social" className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28">
+          <BrutalCard
+            id="social"
+            className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28"
+          >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+                <Heading
+                  level="h4"
+                  className="text-base font-black uppercase tracking-tight"
+                >
                   Social Profiles
                 </Heading>
                 {!activeSocEditor && (
@@ -1034,7 +1449,10 @@ export default function EditProfilePage() {
 
               {activeSocEditor ? (
                 <div className="border-2 border-border p-4 bg-surface-secondary space-y-4 rounded-sm brutal-shadow-sm">
-                  <Heading level="h5" className="text-xs font-black uppercase tracking-wider">
+                  <Heading
+                    level="h5"
+                    className="text-xs font-black uppercase tracking-wider"
+                  >
                     Add Social Connection
                   </Heading>
                   <SocialLinkForm
@@ -1046,12 +1464,16 @@ export default function EditProfilePage() {
                 </div>
               ) : socialLinks.length === 0 ? (
                 <div className="text-center py-6 border-2 border-dashed border-border/20 text-xs text-foreground-secondary">
-                  No social profiles connected. Connect your GitHub or LinkedIn profile.
+                  No social profiles connected. Connect your GitHub or LinkedIn
+                  profile.
                 </div>
               ) : (
                 <div className="grid gap-3 sm:grid-cols-2">
                   {socialLinks.map((s) => (
-                    <div key={s.id} className="border-2 border-border p-3.5 rounded-sm flex justify-between items-center bg-surface-secondary/20">
+                    <div
+                      key={s.id}
+                      className="border-2 border-border p-3.5 rounded-sm flex justify-between items-center bg-surface-secondary/20"
+                    >
                       <div className="space-y-0.5 text-xs truncate">
                         <strong className="uppercase text-[10px] text-foreground-muted">
                           {SOCIAL_PLATFORM_LABELS[s.platform] || s.platform}
@@ -1062,7 +1484,13 @@ export default function EditProfilePage() {
                       </div>
                       <BrutalButton
                         onClick={async () => {
-                          if (await confirm({ title: "Remove Connection", description: `Remove connection for "${s.platform}"?`, isDestructive: true })) {
+                          if (
+                            await confirm({
+                              title: "Remove Connection",
+                              description: `Remove connection for "${s.platform}"?`,
+                              isDestructive: true,
+                            })
+                          ) {
                             deleteSocialLink(s.id);
                             toast.success("Social profile disconnected!");
                           }
@@ -1081,10 +1509,16 @@ export default function EditProfilePage() {
           </BrutalCard>
 
           {/* 10. Career Preferences */}
-          <BrutalCard id="preferences" className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28">
+          <BrutalCard
+            id="preferences"
+            className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0 scroll-mt-28"
+          >
             {editPreferences ? (
               <div className="space-y-4">
-                <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+                <Heading
+                  level="h4"
+                  className="text-base font-black uppercase tracking-tight"
+                >
                   Edit Career Preferences
                 </Heading>
                 <CareerPreferenceForm
@@ -1096,7 +1530,10 @@ export default function EditProfilePage() {
             ) : (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+                  <Heading
+                    level="h4"
+                    className="text-base font-black uppercase tracking-tight"
+                  >
                     Career Preferences
                   </Heading>
                   <BrutalButton
@@ -1109,23 +1546,49 @@ export default function EditProfilePage() {
                   </BrutalButton>
                 </div>
                 {!preferences ? (
-                  <p className="text-xs text-foreground-muted">No preferences configured.</p>
+                  <p className="text-xs text-foreground-muted">
+                    No preferences configured.
+                  </p>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs pt-2">
-                    <p><strong>Preferred Role:</strong> {preferences.preferredRole}</p>
-                    <p><strong>Job Type:</strong> {EMPLOYMENT_TYPE_LABELS[preferences.employmentType] || preferences.employmentType}</p>
-                    <p><strong>Preferred Location:</strong> {preferences.preferredLocation} ({WORK_MODE_LABELS[preferences.workMode]})</p>
-                    <p><strong>Expected Salary:</strong> {preferences.currency} {preferences.expectedSalary}</p>
-                    <p><strong>Notice Period:</strong> {preferences.noticePeriod}</p>
-                    <p><strong>Target Industry:</strong> {preferences.preferredIndustry}</p>
-                    <p><strong>Shift preference:</strong> {preferences.preferredShift}</p>
-                    <p><strong>Relocation:</strong> {preferences.relocationWillingness ? "Yes" : "No"}</p>
+                    <p>
+                      <strong>Preferred Role:</strong>{" "}
+                      {preferences.preferredRole}
+                    </p>
+                    <p>
+                      <strong>Job Type:</strong>{" "}
+                      {EMPLOYMENT_TYPE_LABELS[preferences.employmentType] ||
+                        preferences.employmentType}
+                    </p>
+                    <p>
+                      <strong>Preferred Location:</strong>{" "}
+                      {preferences.preferredLocation} (
+                      {WORK_MODE_LABELS[preferences.workMode]})
+                    </p>
+                    <p>
+                      <strong>Expected Salary:</strong> {preferences.currency}{" "}
+                      {preferences.expectedSalary}
+                    </p>
+                    <p>
+                      <strong>Notice Period:</strong> {preferences.noticePeriod}
+                    </p>
+                    <p>
+                      <strong>Target Industry:</strong>{" "}
+                      {preferences.preferredIndustry}
+                    </p>
+                    <p>
+                      <strong>Shift preference:</strong>{" "}
+                      {preferences.preferredShift}
+                    </p>
+                    <p>
+                      <strong>Relocation:</strong>{" "}
+                      {preferences.relocationWillingness ? "Yes" : "No"}
+                    </p>
                   </div>
                 )}
               </div>
             )}
           </BrutalCard>
-
         </div>
       </div>
       <ConfirmationDialog />

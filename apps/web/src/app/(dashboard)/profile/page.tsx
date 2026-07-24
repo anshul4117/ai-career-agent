@@ -203,7 +203,7 @@ export default function ProfilePage() {
             <RecentActivityCard />
           </motion.div>
           <motion.div variants={itemVariants}>
-            <PersonalInfoCard personal={profile.personal} />
+            <PersonalInfoCard profile={profile} socialLinks={socialLinks} />
           </motion.div>
           <motion.div variants={itemVariants}>
             <ContactInfoCard contact={profile.contact} />
