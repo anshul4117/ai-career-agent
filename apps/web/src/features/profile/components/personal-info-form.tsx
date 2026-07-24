@@ -3,24 +3,18 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { personalInfoSchema, type PersonalInfoFormValues } from "../schemas/profile.schema";
+import {
+  personalInfoSchema,
+  type PersonalInfoFormValues,
+} from "../schemas/profile.schema";
 import { BrutalInput } from "@/components/ui/brutal-input";
-import { BrutalSelect } from "@/components/ui/brutal-select";
 import { BrutalButton } from "@/components/ui/brutal-button";
-import type { PersonalInfo } from "../types/profile.types";
 
 interface PersonalInfoFormProps {
-  initialValues: PersonalInfo;
+  initialValues: PersonalInfoFormValues;
   onSubmit: (values: PersonalInfoFormValues) => void;
   onCancel: () => void;
 }
-
-const genderOptions = [
-  { value: "prefer_not_to_say", label: "Prefer not to say" },
-  { value: "male", label: "Male" },
-  { value: "female", label: "Female" },
-  { value: "non_binary", label: "Non-binary" },
-];
 
 export function PersonalInfoForm({
   initialValues,
@@ -31,15 +25,19 @@ export function PersonalInfoForm({
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting, isDirty },
+    formState: { errors, isSubmitting },
   } = useForm<PersonalInfoFormValues>({
     resolver: zodResolver(personalInfoSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
-      dateOfBirth: "",
-      gender: "prefer_not_to_say",
-      nationality: "",
+      headline: "",
+      email: "",
+      phone: "",
+      location: "",
+      portfolioUrl: "",
+      githubUrl: "",
+      linkedinUrl: "",
     },
   });
 
@@ -47,9 +45,13 @@ export function PersonalInfoForm({
     reset({
       firstName: initialValues.firstName || "",
       lastName: initialValues.lastName || "",
-      dateOfBirth: initialValues.dateOfBirth || "",
-      gender: initialValues.gender || "prefer_not_to_say",
-      nationality: initialValues.nationality || "",
+      headline: initialValues.headline || "",
+      email: initialValues.email || "",
+      phone: initialValues.phone || "",
+      location: initialValues.location || "",
+      portfolioUrl: initialValues.portfolioUrl || "",
+      githubUrl: initialValues.githubUrl || "",
+      linkedinUrl: initialValues.linkedinUrl || "",
     });
   }, [initialValues, reset]);
 
@@ -58,7 +60,7 @@ export function PersonalInfoForm({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <BrutalInput
           label="First Name"
-          placeholder="e.g. John"
+          placeholder="e.g. Anshul"
           required
           error={errors.firstName?.message}
           {...register("firstName")}
@@ -66,61 +68,89 @@ export function PersonalInfoForm({
 
         <BrutalInput
           label="Last Name"
-          placeholder="e.g. Doe"
+          placeholder="e.g. Kumar"
           required
           error={errors.lastName?.message}
           {...register("lastName")}
         />
       </div>
 
+      <BrutalInput
+        label="Professional Headline"
+        placeholder="e.g. Full Stack Developer | AI Specialist"
+        required
+        error={errors.headline?.message}
+        {...register("headline")}
+      />
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <BrutalInput
-          label="Date of Birth"
-          type="date"
-          error={errors.dateOfBirth?.message as string}
-          {...register("dateOfBirth")}
+          label="Email Address"
+          type="email"
+          placeholder="e.g. user@domain.com"
+          required
+          error={errors.email?.message}
+          {...register("email")}
         />
 
-        <BrutalSelect
-          label="Gender"
-          options={genderOptions}
-          error={errors.gender?.message}
-          {...register("gender")}
+        <BrutalInput
+          label="Phone Number"
+          type="tel"
+          placeholder="e.g. +91 98765 43210"
+          required
+          error={errors.phone?.message}
+          {...register("phone")}
         />
       </div>
 
       <BrutalInput
-        label="Nationality"
-        placeholder="e.g. Indian"
-        error={errors.nationality?.message as string}
-        {...register("nationality")}
+        label="Location"
+        placeholder="e.g. Bengaluru, India"
+        required
+        error={errors.location?.message}
+        {...register("location")}
       />
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <BrutalInput
+          label="Portfolio URL"
+          placeholder="e.g. https://portfolio.com"
+          error={errors.portfolioUrl?.message}
+          {...register("portfolioUrl")}
+        />
+
+        <BrutalInput
+          label="GitHub URL"
+          placeholder="e.g. https://github.com/user"
+          error={errors.githubUrl?.message}
+          {...register("githubUrl")}
+        />
+
+        <BrutalInput
+          label="LinkedIn URL"
+          placeholder="e.g. https://linkedin.com/in/user"
+          error={errors.linkedinUrl?.message}
+          {...register("linkedinUrl")}
+        />
+      </div>
 
       <div className="flex items-center justify-end gap-3 pt-3 border-t-2 border-border/10">
         <BrutalButton
           type="button"
           variant="secondary"
-          onClick={() => reset()}
-          disabled={!isDirty || isSubmitting}
-          className="h-10 px-4 text-xs font-bold uppercase tracking-wider"
-        >
-          Reset
-        </BrutalButton>
-        <BrutalButton
-          type="button"
-          variant="secondary"
           onClick={onCancel}
           disabled={isSubmitting}
-          className="h-10 px-4 text-xs font-bold uppercase tracking-wider"
+          className="px-4 py-2 text-xs font-bold uppercase tracking-wider"
         >
           Cancel
         </BrutalButton>
         <BrutalButton
           type="submit"
-          disabled={!isDirty || isSubmitting}
-          className="h-10 px-5 text-xs font-bold uppercase tracking-wider"
+          variant="default"
+          disabled={isSubmitting}
+          className="px-4 py-2 text-xs font-bold uppercase tracking-wider"
         >
-          {isSubmitting ? "Saving..." : "Save Changes"}
+          {isSubmitting ? "Saving..." : "Save Details"}
         </BrutalButton>
       </div>
     </form>
