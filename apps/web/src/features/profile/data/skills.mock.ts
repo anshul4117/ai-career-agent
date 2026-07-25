@@ -6,7 +6,7 @@ export const MOCK_SKILLS: Skill[] = [
   {
     id: "sk_1",
     name: "TypeScript",
-    category: "Languages",
+    category: "Programming Language",
     level: "expert",
     yearsOfExperience: 4,
     featured: true,
@@ -16,7 +16,7 @@ export const MOCK_SKILLS: Skill[] = [
   {
     id: "sk_2",
     name: "React & Next.js",
-    category: "Frameworks / Libraries",
+    category: "Frontend",
     level: "expert",
     yearsOfExperience: 3,
     featured: true,
@@ -26,7 +26,7 @@ export const MOCK_SKILLS: Skill[] = [
   {
     id: "sk_3",
     name: "Node.js & Express",
-    category: "Frameworks / Libraries",
+    category: "Backend",
     level: "advanced",
     yearsOfExperience: 3,
     featured: true,
@@ -36,7 +36,7 @@ export const MOCK_SKILLS: Skill[] = [
   {
     id: "sk_4",
     name: "PostgreSQL & Prisma",
-    category: "Databases",
+    category: "Database",
     level: "advanced",
     yearsOfExperience: 2,
     featured: false,
@@ -46,7 +46,7 @@ export const MOCK_SKILLS: Skill[] = [
   {
     id: "sk_5",
     name: "Docker & Containerization",
-    category: "DevOps & Cloud",
+    category: "Cloud",
     level: "intermediate",
     yearsOfExperience: 1,
     featured: false,
@@ -56,7 +56,7 @@ export const MOCK_SKILLS: Skill[] = [
   {
     id: "sk_6",
     name: "Tailwind CSS",
-    category: "UI & Styling",
+    category: "Frontend",
     level: "expert",
     yearsOfExperience: 3,
     featured: false,
@@ -66,7 +66,7 @@ export const MOCK_SKILLS: Skill[] = [
   {
     id: "sk_7",
     name: "Git & GitHub Actions",
-    category: "DevOps & Cloud",
+    category: "DevOps",
     level: "advanced",
     yearsOfExperience: 3,
     featured: false,
@@ -83,10 +83,14 @@ export const SKILL_LEVEL_LABELS: Record<string, string> = {
 };
 
 export const SKILL_CATEGORIES = [
-  "Languages",
-  "Frameworks / Libraries",
-  "Databases",
-  "DevOps & Cloud",
-  "UI & Styling",
-  "Other Technologies",
+  "Frontend",
+  "Backend",
+  "Database",
+  "DevOps",
+  "Cloud",
+  "Mobile",
+  "Programming Language",
+  "Testing",
+  "AI",
+  "Other",
 ];

@@ -9,7 +9,7 @@ import { Heading } from "@/components/ui/typography";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { AvatarUpload } from "@/features/profile/components/avatar-upload";
-import { ArrowLeft, Save, Plus, Pencil, Trash2, Eye } from "lucide-react";
+import { ArrowLeft, Save, Plus, Pencil, Trash2, Eye, Star } from "lucide-react";
 
 // Forms
 import { PersonalInfoForm } from "@/features/profile/components/personal-info-form";
@@ -22,6 +22,8 @@ import { CertificationForm } from "@/features/profile/components/certification-f
 import { LanguageForm } from "@/features/profile/components/language-form";
 import { SocialLinkForm } from "@/features/profile/components/social-link-form";
 import { CareerPreferenceForm } from "@/features/profile/components/career-preference-form";
+import { ProfileDialog } from "@/features/profile/components/profile-dialog";
+import { SkillBadge } from "@/features/profile/components/skill-badge";
 
 // Values Types
 import type {
@@ -115,6 +117,7 @@ export default function EditProfilePage() {
     loadProfile,
     setProfile,
     addSkill,
+    updateSkill,
     deleteSkill,
     addExperience,
     updateExperience,
@@ -150,9 +153,12 @@ export default function EditProfilePage() {
   const [editContact, setEditContact] = useState(false);
   const [editPreferences, setEditPreferences] = useState(false);
 
-  // List editor states: stores "add" or the id of the item being edited
-  const [activeSkillEditor, setActiveSkillEditor] = useState<"add" | null>(
-    null,
+  const [activeSkillEditor, setActiveSkillEditor] = useState<
+    "add" | string | null
+  >(null);
+  const activeSkill = useMemo(
+    () => skills.find((s) => s.id === activeSkillEditor) || null,
+    [skills, activeSkillEditor],
   );
   const [activeExpEditor, setActiveExpEditor] = useState<"add" | string | null>(
     null,
@@ -422,11 +428,36 @@ export default function EditProfilePage() {
     handlePostSaveRedirect();
   };
 
-  const handleSkillSubmit = (values: SkillFormValues) => {
-    addSkill(values);
-    setActiveSkillEditor(null);
-    toast.success("Skill updated!");
-    handlePostSaveRedirect();
+  const handleSkillSubmit = async (values: SkillFormValues) => {
+    // Simulate API loading, success, and error feedback as requested by Sprint 1.3
+    const isAdding = activeSkillEditor === "add";
+    const toastId = toast.loading(
+      isAdding ? "Adding skill tag..." : "Saving skill changes...",
+    );
+
+    try {
+      // Simulate network request delay
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      if (isAdding) {
+        addSkill(values);
+      } else if (activeSkillEditor) {
+        updateSkill(activeSkillEditor, values);
+      }
+
+      setActiveSkillEditor(null);
+      toast.success(
+        isAdding
+          ? "Skill tag added successfully!"
+          : "Skill details updated successfully!",
+        { id: toastId },
+      );
+      handlePostSaveRedirect();
+    } catch {
+      toast.error("Failed to save skill details. Please try again.", {
+        id: toastId,
+      });
+    }
   };
 
   const handleExpSubmit = (values: ExperienceFormValues) => {
@@ -800,63 +831,103 @@ export default function EditProfilePage() {
                 >
                   Skills & Expertise
                 </Heading>
-                {!activeSkillEditor && (
-                  <BrutalButton
-                    onClick={() => setActiveSkillEditor("add")}
-                    className="h-8 px-3 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1"
-                  >
-                    <Plus className="h-3.5 w-3.5" /> Add Skill
-                  </BrutalButton>
-                )}
+                <BrutalButton
+                  onClick={() => setActiveSkillEditor("add")}
+                  className="h-8 px-3 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1"
+                >
+                  <Plus className="h-3.5 w-3.5" /> Add Skill
+                </BrutalButton>
               </div>
 
-              {activeSkillEditor === "add" ? (
-                <div className="border-2 border-border p-4 bg-surface-secondary space-y-4 rounded-sm brutal-shadow-sm">
-                  <Heading
-                    level="h5"
-                    className="text-xs font-black uppercase tracking-wider"
-                  >
-                    Add New Skill Tag
-                  </Heading>
-                  <SkillForm
-                    onSubmit={handleSkillSubmit}
-                    onCancel={() => setActiveSkillEditor(null)}
-                    submitLabel="Add Skill"
-                  />
-                </div>
-              ) : skills.length === 0 ? (
-                <div className="text-center py-6 border-2 border-dashed border-border/20 text-xs text-foreground-secondary">
+              {/* Dialog for Add/Edit Skill */}
+              <ProfileDialog
+                isOpen={activeSkillEditor !== null}
+                onClose={() => setActiveSkillEditor(null)}
+                title={
+                  activeSkillEditor === "add"
+                    ? "Add New Skill Tag"
+                    : "Edit Skill Details"
+                }
+              >
+                <SkillForm
+                  initialValues={activeSkill}
+                  onSubmit={handleSkillSubmit}
+                  onCancel={() => setActiveSkillEditor(null)}
+                  submitLabel={
+                    activeSkillEditor === "add" ? "Add Skill" : "Save Changes"
+                  }
+                  existingSkills={skills}
+                />
+              </ProfileDialog>
+
+              {skills.length === 0 ? (
+                <div className="text-center py-8 border-2 border-dashed border-border/20 text-xs text-foreground-secondary">
                   No skills configured. Add a technical tag to showcase your
                   stack.
                 </div>
               ) : (
-                <div className="flex flex-wrap gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {skills.map((s) => (
                     <div
                       key={s.id}
-                      className="px-2.5 py-1.5 border-2 border-border bg-surface-secondary text-[10px] font-extrabold uppercase rounded-sm flex items-center gap-2 brutal-shadow-sm"
+                      className="border-2 border-border bg-surface-secondary/40 p-4 rounded-sm flex items-center justify-between gap-4 brutal-shadow-sm hover:brutal-shadow transition-all"
                     >
-                      <span>
-                        {s.name} ({s.yearsOfExperience}y exp)
-                      </span>
-                      <button
-                        onClick={async () => {
-                          if (
-                            await confirm({
-                              title: "Delete Skill",
-                              description: `Delete skill "${s.name}"?`,
-                              isDestructive: true,
-                            })
-                          ) {
-                            deleteSkill(s.id);
-                            toast.success("Skill deleted!");
-                          }
-                        }}
-                        className="text-error hover:text-error-hover transition-colors"
-                        aria-label={`Delete ${s.name}`}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
+                      <div className="space-y-1 text-xs min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {s.featured && (
+                            <Star
+                              className="h-3.5 w-3.5 fill-warning text-warning shrink-0"
+                              aria-hidden="true"
+                            />
+                          )}
+                          <span className="font-extrabold uppercase text-foreground truncate max-w-[120px]">
+                            {s.name}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2 text-[10px] text-foreground-secondary pt-0.5">
+                          <span className="font-bold uppercase bg-surface-secondary border border-border/20 px-1 py-0.5 rounded-sm">
+                            {s.category}
+                          </span>
+                          <span className="font-mono font-bold">
+                            {s.yearsOfExperience}y exp
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <SkillBadge
+                          level={s.level}
+                          className="text-[8px] px-1 py-0 shadow-none border border-border/10 uppercase"
+                        />
+
+                        <BrutalButton
+                          onClick={() => setActiveSkillEditor(s.id)}
+                          variant="secondary"
+                          className="h-7 w-7 p-0 flex items-center justify-center rounded-sm"
+                          aria-label={`Edit skill ${s.name}`}
+                        >
+                          <Pencil className="h-3 w-3" />
+                        </BrutalButton>
+                        <BrutalButton
+                          onClick={async () => {
+                            if (
+                              await confirm({
+                                title: "Delete Skill",
+                                description: `Delete skill "${s.name}"?`,
+                                isDestructive: true,
+                              })
+                            ) {
+                              deleteSkill(s.id);
+                              toast.success("Skill deleted!");
+                            }
+                          }}
+                          variant="secondary"
+                          className="h-7 w-7 p-0 flex items-center justify-center text-error hover:bg-error/10 hover:border-error rounded-sm"
+                          aria-label={`Delete skill ${s.name}`}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </BrutalButton>
+                      </div>
                     </div>
                   ))}
                 </div>
