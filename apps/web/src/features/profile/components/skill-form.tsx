@@ -16,6 +16,7 @@ interface SkillFormProps {
   onSubmit: (values: SkillFormValues) => void;
   onCancel: () => void;
   submitLabel?: string;
+  existingSkills?: Skill[];
 }
 
 const levelOptions = [
@@ -35,11 +36,13 @@ export function SkillForm({
   onSubmit,
   onCancel,
   submitLabel = "Save Skill",
+  existingSkills = [],
 }: SkillFormProps) {
   const {
     register,
     handleSubmit,
     reset,
+    setError,
     formState: { errors, isSubmitting, isDirty },
   } = useForm<SkillFormValues>({
     resolver: zodResolver(skillSchema),
@@ -51,6 +54,7 @@ export function SkillForm({
       featured: false,
     },
   });
+
   useEffect(() => {
     if (initialValues) {
       reset({
@@ -71,8 +75,26 @@ export function SkillForm({
     }
   }, [initialValues, reset]);
 
+  const handleFormSubmit = (values: SkillFormValues) => {
+    const isDuplicate = existingSkills.some(
+      (s) =>
+        s.name.toLowerCase().trim() === values.name.toLowerCase().trim() &&
+        s.id !== initialValues?.id,
+    );
+
+    if (isDuplicate) {
+      setError("name", {
+        type: "manual",
+        message: "This skill has already been added to your profile",
+      });
+      return;
+    }
+
+    onSubmit(values);
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5">
       <BrutalInput
         label="Skill Name"
         placeholder="e.g. TypeScript, Product Management"
