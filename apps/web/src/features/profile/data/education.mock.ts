@@ -13,7 +13,9 @@ export const MOCK_EDUCATION: Education[] = [
     endDate: "2024-05-30",
     currentStudy: false,
     cgpa: "8.5 / 10",
-    description: "Specialized in Software Engineering and Machine Learning. Head of coding club and active participant in national hackathons.",
+    description:
+      "Specialized in Software Engineering and Machine Learning. Head of coding club and active participant in national hackathons.",
+    highestEducation: true,
     createdAt: "2025-01-15T10:30:00Z",
     updatedAt: "2026-06-28T14:22:00Z",
   },
@@ -27,7 +29,9 @@ export const MOCK_EDUCATION: Education[] = [
     endDate: "2020-03-30",
     currentStudy: false,
     cgpa: "92.4%",
-    description: "Completed with distinction. Core subjects: Physics, Chemistry, Mathematics, Computer Science.",
+    description:
+      "Completed with distinction. Core subjects: Physics, Chemistry, Mathematics, Computer Science.",
+    highestEducation: false,
     createdAt: "2025-01-15T10:30:00Z",
     updatedAt: "2026-06-28T14:22:00Z",
   },

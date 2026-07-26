@@ -14,9 +14,17 @@ import type { Education } from "@/features/profile/types/education.types";
 
 import { EducationFormValues } from "@/features/profile/schemas/education.schema";
 import { PageLoader } from "@/components/ui/brand-loader";
+import { toast } from "sonner";
 
 export default function EducationPage() {
-  const { education, isLoading, loadProfile, addEducation, updateEducation, deleteEducation } = useProfileStore();
+  const {
+    education,
+    isLoading,
+    loadProfile,
+    addEducation,
+    updateEducation,
+    deleteEducation,
+  } = useProfileStore();
   const { confirm, ConfirmationDialog } = useConfirm();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -39,27 +47,50 @@ export default function EducationPage() {
   const handleDeleteClick = async (id: string) => {
     const isConfirmed = await confirm({
       title: "Delete Education",
-      description: "Are you sure you want to delete this education record? This action cannot be undone.",
+      description:
+        "Are you sure you want to delete this education record? This action cannot be undone.",
       isDestructive: true,
-      confirmLabel: "Delete"
+      confirmLabel: "Delete",
     });
     if (isConfirmed) {
       deleteEducation(id);
     }
   };
 
-  const handleFormSubmit = (values: EducationFormValues) => {
-    const mappedValues = {
-      ...values,
-      description: values.description ?? null,
-      endDate: values.endDate ?? null,
-    };
-    if (editingEdu) {
-      updateEducation(editingEdu.id, mappedValues);
-    } else {
-      addEducation(mappedValues);
+  const handleFormSubmit = async (values: EducationFormValues) => {
+    const isAdding = !editingEdu;
+    const toastId = toast.loading(
+      isAdding ? "Adding education entry..." : "Saving education changes...",
+    );
+
+    try {
+      // Simulate network request delay (800ms) as requested by Sprint 1.4
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      const mappedValues = {
+        ...values,
+        description: values.description ?? null,
+        endDate: values.endDate ?? null,
+      };
+
+      if (editingEdu) {
+        updateEducation(editingEdu.id, mappedValues);
+      } else {
+        addEducation(mappedValues);
+      }
+
+      setIsDialogOpen(false);
+      toast.success(
+        isAdding
+          ? "Education history added successfully!"
+          : "Education details updated successfully!",
+        { id: toastId },
+      );
+    } catch {
+      toast.error("Failed to save education details. Please try again.", {
+        id: toastId,
+      });
     }
-    setIsDialogOpen(false);
   };
 
   if (isLoading) {
@@ -78,7 +109,10 @@ export default function EducationPage() {
             <ArrowLeft className="h-4 w-4" />
             Back to Profile
           </Link>
-          <Heading level="h2" className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center gap-2">
+          <Heading
+            level="h2"
+            className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center gap-2"
+          >
             <GraduationCap className="h-6 w-6 text-primary shrink-0" />
             Education History
           </Heading>
@@ -112,9 +146,10 @@ export default function EducationPage() {
           onSubmit={handleFormSubmit}
           onCancel={() => setIsDialogOpen(false)}
           submitLabel={editingEdu ? "Save Changes" : "Save Record"}
+          existingEducation={education}
         />
       </ProfileDialog>
-      
+
       <ConfirmationDialog />
     </div>
   );

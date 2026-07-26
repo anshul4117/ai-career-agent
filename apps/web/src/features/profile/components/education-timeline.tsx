@@ -27,11 +27,15 @@ export function EducationTimeline({
           <GraduationCap className="h-6 w-6" aria-hidden="true" />
         </div>
         <div className="space-y-1.5 max-w-sm">
-          <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+          <Heading
+            level="h4"
+            className="text-base font-black uppercase tracking-tight"
+          >
             No Education Added Yet
           </Heading>
           <Text className="text-foreground-secondary text-xs leading-relaxed">
-            Record academic qualifications and degrees to build a professional career timeline.
+            Record academic qualifications and degrees to build a professional
+            career timeline.
           </Text>
         </div>
         <BrutalButton
@@ -45,10 +49,17 @@ export function EducationTimeline({
     );
   }
 
-  // Sort education by start date descending
-  const sortedEdu = [...education].sort(
-    (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-  );
+  // Sort education by end date (latest first). Current study is always considered latest.
+  const sortedEdu = [...education].sort((a, b) => {
+    if (a.currentStudy && !b.currentStudy) return -1;
+    if (!a.currentStudy && b.currentStudy) return 1;
+    if (a.currentStudy && b.currentStudy) {
+      return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+    }
+    const aEnd = a.endDate ? new Date(a.endDate).getTime() : 0;
+    const bEnd = b.endDate ? new Date(b.endDate).getTime() : 0;
+    return bEnd - aEnd;
+  });
 
   return (
     <div className="relative pl-6 border-l-[3px] border-border space-y-6 ml-3 py-2">
@@ -58,11 +69,7 @@ export function EducationTimeline({
           <div className="absolute -left-[37px] top-1.5 h-6 w-6 rounded-full border-2 border-border bg-surface flex items-center justify-center brutal-shadow-sm select-none">
             <GraduationCap className="h-3 w-3 text-foreground" />
           </div>
-          <EducationItem
-            edu={edu}
-            onEdit={onEdit}
-            onDelete={onDelete}
-          />
+          <EducationItem edu={edu} onEdit={onEdit} onDelete={onDelete} />
         </div>
       ))}
     </div>
