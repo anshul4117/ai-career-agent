@@ -21,32 +21,39 @@ export const educationSchema = z
       .trim(),
     location: z
       .string()
-      .min(1, "Location is required")
       .max(100, "Location must be under 100 characters")
-      .trim(),
+      .trim()
+      .optional()
+      .or(z.literal("")),
     startDate: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, "Start date must be in YYYY-MM-DD format"),
     endDate: z
-      .preprocess((val) => (val === "" ? null : val), z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "End date must be in YYYY-MM-DD format").nullable().optional()),
-    currentStudy: z.boolean(),
-    cgpa: z
       .string()
-      .min(1, "Grade/CGPA/Percentage is required")
-      .max(20, "Grade too long"),
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "End date must be in YYYY-MM-DD format")
+      .or(z.literal(""))
+      .nullable()
+      .optional(),
+    currentStudy: z.boolean(),
+    cgpa: z.string().max(20, "Grade too long").optional().or(z.literal("")),
     description: z
-      .preprocess((val) => (val === "" ? null : val), z.string().max(500, "Description must be under 500 characters").nullable().optional()),
+      .string()
+      .max(500, "Description must be under 500 characters")
+      .or(z.literal(""))
+      .nullable()
+      .optional(),
+    highestEducation: z.boolean().default(false),
   })
   .refine(
     (data) => {
       if (data.currentStudy) return true;
-      if (!data.endDate) return false;
+      if (!data.endDate || data.endDate === "") return false;
       return new Date(data.startDate) <= new Date(data.endDate);
     },
     {
       message: "End date must be after the start date",
       path: ["endDate"],
-    }
+    },
   );
 
 export type EducationFormValues = z.infer<typeof educationSchema>;

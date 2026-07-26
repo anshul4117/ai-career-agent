@@ -3,7 +3,10 @@
 import React, { useEffect } from "react";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { educationSchema, type EducationFormValues } from "../schemas/education.schema";
+import {
+  educationSchema,
+  type EducationFormValues,
+} from "../schemas/education.schema";
 import { BrutalInput } from "@/components/ui/brutal-input";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -15,6 +18,7 @@ interface EducationFormProps {
   onSubmit: (values: EducationFormValues) => void;
   onCancel: () => void;
   submitLabel?: string;
+  existingEducation?: Education[];
 }
 
 export function EducationForm({
@@ -22,6 +26,7 @@ export function EducationForm({
   onSubmit,
   onCancel,
   submitLabel = "Save Education",
+  existingEducation = [],
 }: EducationFormProps) {
   const {
     register,
@@ -29,9 +34,12 @@ export function EducationForm({
     setValue,
     watch,
     reset,
+    setError,
     formState: { errors, isSubmitting, isDirty },
   } = useForm<EducationFormValues>({
-    resolver: zodResolver(educationSchema) as unknown as Resolver<EducationFormValues>,
+    resolver: zodResolver(
+      educationSchema,
+    ) as unknown as Resolver<EducationFormValues>,
     defaultValues: {
       degree: "",
       fieldOfStudy: "",
@@ -42,6 +50,7 @@ export function EducationForm({
       currentStudy: false,
       cgpa: "",
       description: "",
+      highestEducation: false,
     },
   });
 
@@ -54,12 +63,13 @@ export function EducationForm({
         degree: initialValues.degree,
         fieldOfStudy: initialValues.fieldOfStudy,
         institution: initialValues.institution,
-        location: initialValues.location,
+        location: initialValues.location || "",
         startDate: initialValues.startDate,
         endDate: initialValues.endDate || "",
         currentStudy: initialValues.currentStudy,
-        cgpa: initialValues.cgpa,
+        cgpa: initialValues.cgpa || "",
         description: initialValues.description || "",
+        highestEducation: initialValues.highestEducation || false,
       });
     } else {
       reset({
@@ -72,6 +82,7 @@ export function EducationForm({
         currentStudy: false,
         cgpa: "",
         description: "",
+        highestEducation: false,
       });
     }
   }, [initialValues, reset]);
@@ -83,8 +94,31 @@ export function EducationForm({
     }
   }, [currentStudy, setValue]);
 
+  const handleFormSubmit = (values: EducationFormValues) => {
+    const isDuplicate = existingEducation.some(
+      (edu) =>
+        edu.institution.toLowerCase().trim() ===
+          values.institution.toLowerCase().trim() &&
+        edu.degree.toLowerCase().trim() ===
+          values.degree.toLowerCase().trim() &&
+        edu.startDate === values.startDate &&
+        edu.id !== initialValues?.id,
+    );
+
+    if (isDuplicate) {
+      setError("institution", {
+        type: "manual",
+        message:
+          "An identical degree at this institution with the same start date has already been added.",
+      });
+      return;
+    }
+
+    onSubmit(values);
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5">
       <BrutalInput
         label="Degree / Qualification"
         placeholder="e.g. Bachelor of Technology (B.Tech), MBA"
@@ -113,7 +147,6 @@ export function EducationForm({
         <BrutalInput
           label="Location"
           placeholder="e.g. Bengaluru, India"
-          required
           error={errors.location?.message}
           {...register("location")}
         />
@@ -121,7 +154,6 @@ export function EducationForm({
         <BrutalInput
           label="Grade / CGPA / Percentage"
           placeholder="e.g. 8.5 / 10, 92.4%"
-          required
           error={errors.cgpa?.message}
           {...register("cgpa")}
         />
@@ -146,12 +178,19 @@ export function EducationForm({
         />
       </div>
 
-      <div className="pt-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
         <Checkbox
           id="currentStudy"
           label="I am currently studying here"
           error={errors.currentStudy?.message}
           {...register("currentStudy")}
+        />
+
+        <Checkbox
+          id="highestEducation"
+          label="This is my highest education level"
+          error={errors.highestEducation?.message}
+          {...register("highestEducation")}
         />
       </div>
 

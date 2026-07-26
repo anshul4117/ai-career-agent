@@ -1,7 +1,14 @@
 "use client";
 
 import React from "react";
-import { GraduationCap, Calendar, MapPin, Pencil, Trash2 } from "lucide-react";
+import {
+  GraduationCap,
+  Calendar,
+  MapPin,
+  Pencil,
+  Trash2,
+  Star,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Heading, Text } from "@/components/ui/typography";
 import type { Education } from "../types/education.types";
@@ -17,7 +24,10 @@ export function EducationItem({ edu, onEdit, onDelete }: EducationItemProps) {
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "Present";
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
+    });
   };
 
   const startFormatted = formatDate(edu.startDate);
@@ -31,9 +41,21 @@ export function EducationItem({ edu, onEdit, onDelete }: EducationItemProps) {
         </div>
 
         <div className="space-y-1.5 min-w-0">
-          <Heading level="h4" className="text-base font-black uppercase tracking-tight truncate">
-            {edu.degree}
-          </Heading>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Heading
+              level="h4"
+              className="text-base font-black uppercase tracking-tight truncate"
+            >
+              {edu.degree}
+            </Heading>
+            {edu.highestEducation && (
+              <span className="px-2 py-0.5 border border-border bg-warning text-black text-[9px] font-black uppercase brutal-shadow-sm flex items-center gap-1 shrink-0">
+                <Star className="h-3 w-3 fill-current" />
+                Highest
+              </span>
+            )}
+          </div>
+
           <p className="font-bold text-sm text-foreground-secondary truncate">
             {edu.fieldOfStudy}
           </p>
@@ -46,13 +68,17 @@ export function EducationItem({ edu, onEdit, onDelete }: EducationItemProps) {
               <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
               {startFormatted} – {endFormatted}
             </span>
-            <span className="flex items-center gap-1 font-bold">
-              <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
-              {edu.location}
-            </span>
-            <span className="px-2 py-0.5 border border-border bg-surface-secondary text-[10px] font-black uppercase text-foreground brutal-shadow-sm">
-              Grade: {edu.cgpa}
-            </span>
+            {edu.location && (
+              <span className="flex items-center gap-1 font-bold">
+                <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
+                {edu.location}
+              </span>
+            )}
+            {edu.cgpa && (
+              <span className="px-2 py-0.5 border border-border bg-surface-secondary text-[10px] font-black uppercase text-foreground brutal-shadow-sm">
+                Grade: {edu.cgpa}
+              </span>
+            )}
           </div>
 
           {edu.description && (

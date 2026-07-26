@@ -166,6 +166,24 @@ export default function EditProfilePage() {
   const [activeEduEditor, setActiveEduEditor] = useState<"add" | string | null>(
     null,
   );
+  const activeEdu = useMemo(
+    () => education.find((e) => e.id === activeEduEditor) || null,
+    [education, activeEduEditor],
+  );
+  const sortedEducation = useMemo(() => {
+    return [...education].sort((a, b) => {
+      if (a.currentStudy && !b.currentStudy) return -1;
+      if (!a.currentStudy && b.currentStudy) return 1;
+      if (a.currentStudy && b.currentStudy) {
+        return (
+          new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+        );
+      }
+      const aEnd = a.endDate ? new Date(a.endDate).getTime() : 0;
+      const bEnd = b.endDate ? new Date(b.endDate).getTime() : 0;
+      return bEnd - aEnd;
+    });
+  }, [education]);
   const [activeProjEditor, setActiveProjEditor] = useState<
     "add" | string | null
   >(null);
@@ -472,20 +490,41 @@ export default function EditProfilePage() {
     handlePostSaveRedirect();
   };
 
-  const handleEduSubmit = (values: EducationFormValues) => {
-    const mapped = {
-      ...values,
-      description: values.description ?? null,
-      endDate: values.endDate ?? null,
-    };
-    if (activeEduEditor === "add") {
-      addEducation(mapped);
-    } else if (activeEduEditor) {
-      updateEducation(activeEduEditor, mapped);
+  const handleEduSubmit = async (values: EducationFormValues) => {
+    const isAdding = activeEduEditor === "add";
+    const toastId = toast.loading(
+      isAdding ? "Adding education entry..." : "Saving education changes...",
+    );
+
+    try {
+      // Simulate network request delay (800ms) as requested by Sprint 1.4
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      const mapped = {
+        ...values,
+        description: values.description ?? null,
+        endDate: values.endDate ?? null,
+      };
+
+      if (isAdding) {
+        addEducation(mapped);
+      } else if (activeEduEditor) {
+        updateEducation(activeEduEditor, mapped);
+      }
+
+      setActiveEduEditor(null);
+      toast.success(
+        isAdding
+          ? "Education history added successfully!"
+          : "Education details updated successfully!",
+        { id: toastId },
+      );
+      handlePostSaveRedirect();
+    } catch {
+      toast.error("Failed to save education details. Please try again.", {
+        id: toastId,
+      });
     }
-    setActiveEduEditor(null);
-    toast.success("Education updated!");
-    handlePostSaveRedirect();
   };
 
   const handleProjSubmit = (values: ProjectFormValues) => {
@@ -1061,64 +1100,67 @@ export default function EditProfilePage() {
                 >
                   Education History
                 </Heading>
-                {!activeEduEditor && (
-                  <BrutalButton
-                    onClick={() => setActiveEduEditor("add")}
-                    className="h-8 px-3 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1"
-                  >
-                    <Plus className="h-3.5 w-3.5" /> Add Education
-                  </BrutalButton>
-                )}
+                <BrutalButton
+                  onClick={() => setActiveEduEditor("add")}
+                  className="h-8 px-3 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1"
+                >
+                  <Plus className="h-3.5 w-3.5" /> Add Education
+                </BrutalButton>
               </div>
 
-              {activeEduEditor ? (
-                <div className="border-2 border-border p-4 bg-surface-secondary space-y-4 rounded-sm brutal-shadow-sm">
-                  <Heading
-                    level="h5"
-                    className="text-xs font-black uppercase tracking-wider"
-                  >
-                    {activeEduEditor === "add"
-                      ? "Add Education Record"
-                      : "Edit Education Record"}
-                  </Heading>
-                  <EducationForm
-                    initialValues={
-                      activeEduEditor === "add"
-                        ? null
-                        : education.find((e) => e.id === activeEduEditor)
-                    }
-                    onSubmit={handleEduSubmit}
-                    onCancel={() => setActiveEduEditor(null)}
-                    submitLabel={
-                      activeEduEditor === "add"
-                        ? "Add Education"
-                        : "Save Record"
-                    }
-                  />
-                </div>
-              ) : education.length === 0 ? (
+              {/* Dialog for Add/Edit Education */}
+              <ProfileDialog
+                isOpen={activeEduEditor !== null}
+                onClose={() => setActiveEduEditor(null)}
+                title={
+                  activeEduEditor === "add"
+                    ? "Add Education Record"
+                    : "Edit Education Record"
+                }
+              >
+                <EducationForm
+                  initialValues={activeEdu}
+                  onSubmit={handleEduSubmit}
+                  onCancel={() => setActiveEduEditor(null)}
+                  submitLabel={
+                    activeEduEditor === "add" ? "Add Education" : "Save Record"
+                  }
+                  existingEducation={education}
+                />
+              </ProfileDialog>
+
+              {education.length === 0 ? (
                 <div className="text-center py-6 border-2 border-dashed border-border/20 text-xs text-foreground-secondary">
                   No education history configured. Add qualifications to your
                   profile.
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {education.map((edu) => (
+                  {sortedEducation.map((edu) => (
                     <div
                       key={edu.id}
                       className="border-2 border-border p-4 rounded-sm flex justify-between gap-4 bg-surface-secondary/20"
                     >
                       <div className="space-y-1 text-xs">
-                        <h5 className="font-extrabold uppercase text-foreground">
-                          {edu.degree}
-                        </h5>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h5 className="font-extrabold uppercase text-foreground">
+                            {edu.degree}
+                          </h5>
+                          {edu.highestEducation && (
+                            <span className="px-1.5 py-0.5 border border-border bg-warning text-black text-[8px] font-black uppercase brutal-shadow-sm flex items-center gap-1 shrink-0 select-none">
+                              <Star className="h-2.5 w-2.5 fill-current" />
+                              Highest
+                            </span>
+                          )}
+                        </div>
                         <p className="text-foreground-secondary font-semibold">
                           {edu.fieldOfStudy} • {edu.institution}
                         </p>
                         <p className="text-foreground-muted font-mono text-[10px]">
                           {edu.startDate} –{" "}
-                          {edu.currentStudy ? "Present" : edu.endDate} • Grade:{" "}
-                          {edu.cgpa}
+                          {edu.currentStudy ? "Present" : edu.endDate}
+                          {edu.location && ` • ${edu.location}`}
+                          {edu.cgpa && ` • Grade: ${edu.cgpa}`}
                         </p>
                         {edu.description && (
                           <p className="text-foreground-secondary leading-relaxed pt-1">
