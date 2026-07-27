@@ -12,6 +12,7 @@ import { ResumePreviewSkeleton } from "@/components/ui/skeleton-loaders";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MOCK_TEMPLATES } from "@/features/resume/services/resume.service";
 import { ArrowLeft, Printer, Share2, Copy, Pencil } from "lucide-react";
+import { UploadedResumeDetailsView } from "@/features/resume/components/uploaded-resume-details-view";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -23,8 +24,17 @@ export default function ResumePreviewPage({ params }: PageProps) {
   const router = useRouter();
 
   // Stores
-  const { currentResume, isLoading, loadResume, duplicateResume } =
-    useResumeStore();
+  const {
+    currentResume,
+    isLoading,
+    loadResume,
+    duplicateResume,
+    uploadedResumes,
+  } = useResumeStore();
+
+  const isUploadedResume =
+    id.startsWith("res_") || uploadedResumes.some((r) => r.id === id);
+
   const {
     profile,
     loadProfile,
@@ -42,6 +52,10 @@ export default function ResumePreviewPage({ params }: PageProps) {
     loadResume(id);
     loadProfile();
   }, [id, loadResume, loadProfile]);
+
+  if (isUploadedResume) {
+    return <UploadedResumeDetailsView id={id} />;
+  }
 
   const showToastMsg = (msg: string) => {
     setToast(msg);

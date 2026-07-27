@@ -23,12 +23,13 @@ interface ResumeState {
   archiveResume: (id: string) => Promise<Resume>;
   restoreResume: (id: string) => Promise<Resume>;
 
-  // Uploaded Resumes State (Sprint 1.7)
+  // Uploaded Resumes State (Sprint 1.7 & 1.8)
   uploadedResumes: UploadedResume[];
   uploadResume: (file: File) => Promise<void>;
   deleteUploadedResume: (id: string) => Promise<void>;
   renameUploadedResume: (id: string, newName: string) => Promise<void>;
   setDefaultUploadedResume: (id: string) => Promise<void>;
+  downloadResume: (id: string) => Promise<void>;
 }
 
 const formatBytes = (bytes: number): string => {
@@ -106,6 +107,10 @@ export const useResumeStore = create<ResumeState>((set, get) => ({
   },
 
   loadResume: async (id: string) => {
+    if (id.startsWith("res_")) {
+      // For uploaded resumes, just return null or simulated mock Resume matching ID
+      return null;
+    }
     set({ isLoading: true, error: null });
     try {
       const resume = await resumeService.getOne(id);
@@ -149,6 +154,10 @@ export const useResumeStore = create<ResumeState>((set, get) => ({
   },
 
   deleteResume: async (id) => {
+    if (id.startsWith("res_")) {
+      await get().deleteUploadedResume(id);
+      return;
+    }
     set({ isLoading: true, error: null });
     try {
       await resumeService.delete(id);
@@ -166,6 +175,49 @@ export const useResumeStore = create<ResumeState>((set, get) => ({
   },
 
   duplicateResume: async (id) => {
+    if (id.startsWith("res_")) {
+      set({ isLoading: true });
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      let duplicated: UploadedResume | null = null;
+      set((state) => {
+        const target = state.uploadedResumes.find((r) => r.id === id);
+        if (!target) return { isLoading: false };
+
+        const ext = target.fileName.split(".").pop();
+        const baseName = target.fileName.substring(
+          0,
+          target.fileName.lastIndexOf("."),
+        );
+        const newFileName = `${baseName}-copy.${ext}`;
+
+        duplicated = {
+          ...target,
+          id: `res_${Date.now()}`,
+          fileName: newFileName,
+          uploadedAt: new Date().toISOString(),
+          isDefault: false,
+          version: 1,
+          versionHistory: [
+            {
+              version: 1,
+              fileName: newFileName,
+              uploadedAt: new Date().toISOString(),
+              fileSize: target.fileSize,
+            },
+          ],
+        };
+
+        return {
+          uploadedResumes: [...state.uploadedResumes, duplicated],
+          isLoading: false,
+        };
+      });
+
+      if (!duplicated) throw new Error("Duplication failed");
+      return duplicated as unknown as Resume;
+    }
+
     set({ isLoading: true, error: null });
     try {
       const copy = await resumeService.duplicate(id);
@@ -316,5 +368,11 @@ export const useResumeStore = create<ResumeState>((set, get) => ({
         isLoading: false,
       };
     });
+  },
+
+  downloadResume: async () => {
+    set({ isLoading: true });
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    set({ isLoading: false });
   },
 }));
