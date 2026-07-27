@@ -11,13 +11,17 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface FileUploaderProps {
-  onStartParsing: (role: "engineer" | "frontend" | "backend" | "fullstack" | "analyst") => void;
+  onStartParsing: (
+    role: "engineer" | "frontend" | "backend" | "fullstack" | "analyst",
+  ) => void;
 }
 
 export function FileUploader({ onStartParsing }: FileUploaderProps) {
   const { setUploadedFile, setError, error } = useParserStore();
   const [dragActive, setDragActive] = useState(false);
-  const [rolePreset, setRolePreset] = useState<"engineer" | "frontend" | "backend" | "fullstack" | "analyst">("engineer");
+  const [rolePreset, setRolePreset] = useState<
+    "engineer" | "frontend" | "backend" | "fullstack" | "analyst"
+  >("engineer");
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -59,63 +63,85 @@ export function FileUploader({ onStartParsing }: FileUploaderProps) {
 
   return (
     <div className="space-y-6 max-w-xl mx-auto select-none">
-      
       {/* Configuration Option: Choose Mock AI Role Preset */}
       <BrutalCard className="p-4 bg-primary/5 border-2 border-border brutal-shadow-xs space-y-3">
         <div className="flex items-center gap-1.5">
           <Sparkles className="h-4.5 w-4.5 text-primary shrink-0" />
-          <Heading level="h4" className="text-xs font-black uppercase tracking-widest text-foreground">
+          <Heading
+            level="h4"
+            className="text-xs font-black uppercase tracking-widest text-foreground"
+          >
             Mock AI Parsing Preset
           </Heading>
         </div>
         <p className="text-[10px] text-foreground-secondary leading-relaxed">
-          Select a role profile to simulate parsing extraction values. The confidence engine will automatically rate fields accordingly.
+          Select a role profile to simulate parsing extraction values. The
+          confidence engine will automatically rate fields accordingly.
         </p>
         <select
           value={rolePreset}
-          onChange={(e) => setRolePreset(e.target.value as "engineer" | "frontend" | "backend" | "fullstack" | "analyst")}
+          onChange={(e) =>
+            setRolePreset(
+              e.target.value as
+                "engineer" | "frontend" | "backend" | "fullstack" | "analyst",
+            )
+          }
           className="border-2 border-border bg-surface p-2 text-[10px] font-black uppercase rounded-sm brutal-shadow-xs h-10 w-full cursor-pointer focus:ring-0 focus:outline-none"
         >
-          <option value="engineer">Senior Software Engineer (Go/AWS Systems)</option>
-          <option value="frontend">Frontend Developer (React/TS Lead UI)</option>
-          <option value="backend">Backend Developer (Node/Mongo Core API)</option>
-          <option value="fullstack">Full Stack Developer (Next.js/Postgres Product)</option>
+          <option value="engineer">
+            Senior Software Engineer (Go/AWS Systems)
+          </option>
+          <option value="frontend">
+            Frontend Developer (React/TS Lead UI)
+          </option>
+          <option value="backend">
+            Backend Developer (Node/Mongo Core API)
+          </option>
+          <option value="fullstack">
+            Full Stack Developer (Next.js/Postgres Product)
+          </option>
           <option value="analyst">Data Analyst (Python BI Analyst)</option>
         </select>
       </BrutalCard>
 
       {/* Drag Zone Container */}
-      <div 
+      <div
         onDragEnter={handleDrag}
         onDragOver={handleDrag}
         onDragLeave={handleDrag}
         onDrop={handleDrop}
         className={cn(
           "border-[3px] border-dashed border-border p-8 text-center bg-surface brutal-shadow transition-all relative rounded-sm flex flex-col items-center justify-center min-h-[250px]",
-          dragActive && "border-primary bg-primary/5 scale-[0.99]"
+          dragActive && "border-primary bg-primary/5 scale-[0.99]",
         )}
       >
-        <input 
-          type="file" 
-          id="resume-file-input" 
-          onChange={handleFileChange} 
-          accept=".pdf,.docx" 
-          className="hidden" 
+        <input
+          type="file"
+          id="resume-file-input"
+          onChange={handleFileChange}
+          accept=".pdf,.docx"
+          className="hidden"
         />
 
         <div className="p-4 border-2 border-border bg-surface-secondary/40 brutal-shadow-xs mb-4 rounded-sm flex items-center justify-center">
           <Upload className="h-8 w-8 text-foreground-secondary" />
         </div>
 
-        <Heading level="h3" className="text-sm font-black uppercase tracking-wider mb-2">
+        <Heading
+          level="h3"
+          className="text-sm font-black uppercase tracking-wider mb-2"
+        >
           Drag & Drop Resume File
         </Heading>
 
-        <Text variant="muted" className="text-[10px] max-w-sm mb-4 leading-relaxed font-semibold">
+        <Text
+          variant="muted"
+          className="text-[10px] max-w-sm mb-4 leading-relaxed font-semibold"
+        >
           Accepts PDF and DOCX files. Maximum file limit is 5MB.
         </Text>
 
-        <label 
+        <label
           htmlFor="resume-file-input"
           className="h-9 px-4 border-2 border-border bg-surface hover:bg-surface-secondary font-black uppercase text-[10px] flex items-center justify-center cursor-pointer brutal-shadow-xs transition-all duration-200 active:scale-[0.96]"
         >
@@ -126,11 +152,11 @@ export function FileUploader({ onStartParsing }: FileUploaderProps) {
       {/* Error alert wrapper */}
       <AnimatePresence>
         {error && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="bg-error/10 border-2 border-error p-3 text-error text-[10px] font-black uppercase brutal-shadow-xs flex items-center gap-2 rounded-sm" 
+            className="bg-error/10 border-2 border-error p-3 text-error text-[10px] font-black uppercase brutal-shadow-xs flex items-center gap-2 rounded-sm"
             role="alert"
           >
             <AlertOctagon className="h-5 w-5 shrink-0" />
@@ -146,7 +172,6 @@ export function FileUploader({ onStartParsing }: FileUploaderProps) {
       >
         <FileText className="h-4 w-4 mr-2" /> Start AI Parsing Workflow
       </BrutalButton>
-
     </div>
   );
 }

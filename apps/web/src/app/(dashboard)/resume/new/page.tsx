@@ -8,7 +8,14 @@ import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { useResumeStore } from "@/features/resume/store/resume.store";
 import { MOCK_TEMPLATES } from "@/features/resume/services/resume.service";
-import { ArrowLeft, ArrowRight, Check, Sparkles, FileText, Bookmark } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Sparkles,
+  FileText,
+  Bookmark,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function NewResumePage() {
@@ -21,11 +28,12 @@ export default function NewResumePage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isDefault, setIsDefault] = useState(false);
-  
+
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const activeTemplate = MOCK_TEMPLATES.find((t) => t.id === selectedTemplate) || MOCK_TEMPLATES[0];
+  const activeTemplate =
+    MOCK_TEMPLATES.find((t) => t.id === selectedTemplate) || MOCK_TEMPLATES[0];
 
   const handleNextStep = () => {
     setError(null);
@@ -78,7 +86,10 @@ export default function NewResumePage() {
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div className="space-y-1">
-          <Heading level="h2" className="text-2xl md:text-3xl font-black uppercase tracking-tight">
+          <Heading
+            level="h2"
+            className="text-2xl md:text-3xl font-black uppercase tracking-tight"
+          >
             Create Resume
           </Heading>
           <p className="text-foreground-secondary text-xs">
@@ -92,7 +103,7 @@ export default function NewResumePage() {
         {[
           { num: 1, label: "Template" },
           { num: 2, label: "Details" },
-          { num: 3, label: "Confirm" }
+          { num: 3, label: "Confirm" },
         ].map((item) => (
           <div
             key={item.num}
@@ -101,8 +112,8 @@ export default function NewResumePage() {
               step === item.num
                 ? "bg-primary text-white brutal-shadow-sm"
                 : step > item.num
-                ? "bg-surface-secondary text-foreground-secondary line-through"
-                : "bg-surface text-foreground-muted"
+                  ? "bg-surface-secondary text-foreground-secondary line-through"
+                  : "bg-surface text-foreground-muted",
             )}
           >
             {item.num}. {item.label}
@@ -119,11 +130,14 @@ export default function NewResumePage() {
       {/* Step 1: Choose Template */}
       {step === 1 && (
         <div className="space-y-4">
-          <Heading level="h4" className="text-xs font-black uppercase text-foreground-secondary flex items-center gap-1.5">
+          <Heading
+            level="h4"
+            className="text-xs font-black uppercase text-foreground-secondary flex items-center gap-1.5"
+          >
             <Sparkles className="h-4.5 w-4.5 text-primary" />
             Step 1: Select Template Layout
           </Heading>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {MOCK_TEMPLATES.map((tmpl) => (
               <button
@@ -132,13 +146,22 @@ export default function NewResumePage() {
                 onClick={() => setSelectedTemplate(tmpl.id)}
                 className={cn(
                   "p-5 border-3 border-border text-left brutal-shadow-sm flex flex-col justify-between transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:brutal-shadow",
-                  selectedTemplate === tmpl.id ? "bg-[#FFFCEB]" : "bg-surface"
+                  selectedTemplate === tmpl.id ? "bg-[#FFFCEB]" : "bg-surface",
                 )}
               >
                 <div className="space-y-4 w-full">
                   {/* Miniature template header mock color box */}
-                  <div className={cn("h-16 w-full border-2 border-border rounded-sm brutal-shadow-sm flex items-center justify-center font-mono text-[9px] uppercase tracking-wider font-extrabold", tmpl.previewColor)}>
-                    <span className={cn("px-2 py-0.5 border border-border bg-surface text-foreground shadow-sm")}>
+                  <div
+                    className={cn(
+                      "h-16 w-full border-2 border-border rounded-sm brutal-shadow-sm flex items-center justify-center font-mono text-[9px] uppercase tracking-wider font-extrabold",
+                      tmpl.previewColor,
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "px-2 py-0.5 border border-border bg-surface text-foreground shadow-sm",
+                      )}
+                    >
                       {tmpl.name}
                     </span>
                   </div>
@@ -146,7 +169,9 @@ export default function NewResumePage() {
                     <span className="px-1.5 py-0.5 border border-border bg-surface text-[8px] font-black uppercase">
                       {tmpl.category}
                     </span>
-                    <h5 className="font-black text-sm uppercase text-foreground pt-1">{tmpl.name}</h5>
+                    <h5 className="font-black text-sm uppercase text-foreground pt-1">
+                      {tmpl.name}
+                    </h5>
                     <p className="text-xs text-foreground-muted leading-relaxed">
                       {tmpl.description}
                     </p>
@@ -176,7 +201,10 @@ export default function NewResumePage() {
       {/* Step 2: Resume Details */}
       {step === 2 && (
         <div className="space-y-6">
-          <Heading level="h4" className="text-xs font-black uppercase text-foreground-secondary flex items-center gap-1.5">
+          <Heading
+            level="h4"
+            className="text-xs font-black uppercase text-foreground-secondary flex items-center gap-1.5"
+          >
             <FileText className="h-4.5 w-4.5 text-primary" />
             Step 2: Define Resume Metadata
           </Heading>
@@ -184,7 +212,10 @@ export default function NewResumePage() {
           <BrutalCard className="bg-surface border-3 border-border p-6 space-y-5 brutal-shadow">
             {/* Title Field */}
             <div className="space-y-2">
-              <label htmlFor="resume-title" className="font-bold text-xs uppercase text-foreground-secondary flex items-center gap-1">
+              <label
+                htmlFor="resume-title"
+                className="font-bold text-xs uppercase text-foreground-secondary flex items-center gap-1"
+              >
                 Resume Title
                 <span className="text-error">*</span>
               </label>
@@ -201,7 +232,10 @@ export default function NewResumePage() {
 
             {/* Description Field */}
             <div className="space-y-2">
-              <label htmlFor="resume-desc" className="font-bold text-xs uppercase text-foreground-secondary">
+              <label
+                htmlFor="resume-desc"
+                className="font-bold text-xs uppercase text-foreground-secondary"
+              >
                 Description / Target Target
               </label>
               <textarea
@@ -222,7 +256,10 @@ export default function NewResumePage() {
                 onChange={(e) => setIsDefault(e.target.checked)}
                 className="h-4 w-4 accent-primary border-border cursor-pointer shrink-0"
               />
-              <label htmlFor="resume-default" className="text-xs font-black uppercase text-foreground cursor-pointer select-none">
+              <label
+                htmlFor="resume-default"
+                className="text-xs font-black uppercase text-foreground cursor-pointer select-none"
+              >
                 Set as Primary Resume (Default)
               </label>
             </div>
@@ -251,44 +288,71 @@ export default function NewResumePage() {
       {/* Step 3: Confirmation */}
       {step === 3 && (
         <div className="space-y-6">
-          <Heading level="h4" className="text-xs font-black uppercase text-foreground-secondary flex items-center gap-1.5">
+          <Heading
+            level="h4"
+            className="text-xs font-black uppercase text-foreground-secondary flex items-center gap-1.5"
+          >
             <Bookmark className="h-4.5 w-4.5 text-primary" />
             Step 3: Confirm Resume Draft Setup
           </Heading>
 
           <BrutalCard className="bg-surface border-3 border-border p-6 space-y-6 brutal-shadow">
-            <Heading level="h4" className="text-base font-black uppercase tracking-tight border-b-2 border-border pb-3">
+            <Heading
+              level="h4"
+              className="text-base font-black uppercase tracking-tight border-b-2 border-border pb-3"
+            >
               Summary
             </Heading>
-            
+
             <div className="space-y-4 text-sm">
               <div className="grid grid-cols-3 gap-2">
-                <span className="font-extrabold uppercase text-foreground-secondary text-xs col-span-1">Title:</span>
-                <span className="font-bold text-foreground col-span-2">{title}</span>
-              </div>
-              
-              <div className="grid grid-cols-3 gap-2">
-                <span className="font-extrabold uppercase text-foreground-secondary text-xs col-span-1">Description:</span>
-                <span className="text-foreground-secondary col-span-2">{description || "—"}</span>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2">
-                <span className="font-extrabold uppercase text-foreground-secondary text-xs col-span-1">Template:</span>
-                <span className="col-span-2 inline-flex items-center gap-2">
-                  <span className={cn("h-4 w-12 border border-border rounded-sm", activeTemplate.previewColor)} />
-                  <strong className="uppercase text-xs">{activeTemplate.name}</strong>
+                <span className="font-extrabold uppercase text-foreground-secondary text-xs col-span-1">
+                  Title:
+                </span>
+                <span className="font-bold text-foreground col-span-2">
+                  {title}
                 </span>
               </div>
 
               <div className="grid grid-cols-3 gap-2">
-                <span className="font-extrabold uppercase text-foreground-secondary text-xs col-span-1">Primary status:</span>
+                <span className="font-extrabold uppercase text-foreground-secondary text-xs col-span-1">
+                  Description:
+                </span>
+                <span className="text-foreground-secondary col-span-2">
+                  {description || "—"}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                <span className="font-extrabold uppercase text-foreground-secondary text-xs col-span-1">
+                  Template:
+                </span>
+                <span className="col-span-2 inline-flex items-center gap-2">
+                  <span
+                    className={cn(
+                      "h-4 w-12 border border-border rounded-sm",
+                      activeTemplate.previewColor,
+                    )}
+                  />
+                  <strong className="uppercase text-xs">
+                    {activeTemplate.name}
+                  </strong>
+                </span>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                <span className="font-extrabold uppercase text-foreground-secondary text-xs col-span-1">
+                  Primary status:
+                </span>
                 <span className="col-span-2">
                   {isDefault ? (
                     <span className="px-2 py-0.5 bg-success text-white border-2 border-border text-[9px] font-black uppercase brutal-shadow-sm">
                       Default Resume
                     </span>
                   ) : (
-                    <span className="text-foreground-muted text-xs">Standard variant</span>
+                    <span className="text-foreground-muted text-xs">
+                      Standard variant
+                    </span>
                   )}
                 </span>
               </div>

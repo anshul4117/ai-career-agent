@@ -1,7 +1,13 @@
-import type { 
-  ResumePersonal, ResumeSummary, ResumeSkill, 
-  ResumeExperience, ResumeEducation, ResumeProject, 
-  ResumeCertification, ResumeLanguage, ResumeSocialLink 
+import type {
+  ResumePersonal,
+  ResumeSummary,
+  ResumeSkill,
+  ResumeExperience,
+  ResumeEducation,
+  ResumeProject,
+  ResumeCertification,
+  ResumeLanguage,
+  ResumeSocialLink,
 } from "./resume.types";
 
 export interface ExtractedData {
@@ -44,7 +50,7 @@ export interface ReviewState {
 
 export interface ParserAdapter {
   parseResume(
-    fileName: string, 
-    rolePreset: "engineer" | "frontend" | "backend" | "fullstack" | "analyst"
+    fileName: string,
+    rolePreset: "engineer" | "frontend" | "backend" | "fullstack" | "analyst",
   ): Promise<{ data: ExtractedData; confidence: SectionConfidence }>;
 }

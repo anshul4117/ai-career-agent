@@ -73,7 +73,17 @@ export function getInitialResumeContent(): ResumeContent {
       platform: s.platform,
       url: s.url,
     })),
-    sectionsOrder: ["personal", "summary", "experience", "education", "skills", "projects", "certifications", "languages", "socialLinks"],
+    sectionsOrder: [
+      "personal",
+      "summary",
+      "experience",
+      "education",
+      "skills",
+      "projects",
+      "certifications",
+      "languages",
+      "socialLinks",
+    ],
     hiddenSections: [],
     customSections: [],
   };
@@ -124,9 +134,9 @@ export const builderService = {
   },
 
   updateSection: async (
-    id: string, 
-    sectionId: keyof ResumeContent, 
-    data: ResumeContent[keyof ResumeContent]
+    id: string,
+    sectionId: keyof ResumeContent,
+    data: ResumeContent[keyof ResumeContent],
   ): Promise<Resume> => {
     return new Promise((resolve, reject) => {
       setTimeout(async () => {
@@ -137,8 +147,11 @@ export const builderService = {
             return;
           }
           // Update the specific section with type-safe casting
-          (resume.content as unknown as Record<string, unknown>)[sectionId] = data;
-          const updated = await resumeService.update(id, { content: resume.content });
+          (resume.content as unknown as Record<string, unknown>)[sectionId] =
+            data;
+          const updated = await resumeService.update(id, {
+            content: resume.content,
+          });
           resolve(updated);
         } catch (err) {
           reject(err);
@@ -147,7 +160,11 @@ export const builderService = {
     });
   },
 
-  deleteSectionItem: async (id: string, sectionId: keyof ResumeContent, itemId: string): Promise<Resume> => {
+  deleteSectionItem: async (
+    id: string,
+    sectionId: keyof ResumeContent,
+    itemId: string,
+  ): Promise<Resume> => {
     return new Promise((resolve, reject) => {
       setTimeout(async () => {
         try {
@@ -158,9 +175,14 @@ export const builderService = {
           }
           const list = resume.content[sectionId];
           if (Array.isArray(list)) {
-            const filteredList = (list as Array<{ id: string }>).filter((item) => item.id !== itemId);
-            (resume.content as unknown as Record<string, unknown>)[sectionId] = filteredList;
-            const updated = await resumeService.update(id, { content: resume.content });
+            const filteredList = (list as Array<{ id: string }>).filter(
+              (item) => item.id !== itemId,
+            );
+            (resume.content as unknown as Record<string, unknown>)[sectionId] =
+              filteredList;
+            const updated = await resumeService.update(id, {
+              content: resume.content,
+            });
             resolve(updated);
           } else {
             reject(new Error("Section is not a list"));

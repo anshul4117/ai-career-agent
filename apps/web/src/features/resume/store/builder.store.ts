@@ -1,8 +1,13 @@
 "use client";
 
 import { create } from "zustand";
-import type { 
-  Resume, ResumeContent, ResumePersonal, ResumeSummary, CustomSection, CustomSectionItem
+import type {
+  Resume,
+  ResumeContent,
+  ResumePersonal,
+  ResumeSummary,
+  CustomSection,
+  CustomSectionItem,
 } from "../types/resume.types";
 import { builderService } from "../services/builder.service";
 
@@ -19,7 +24,7 @@ interface BuilderState {
   lastSaved: Date | null;
   isLoading: boolean;
   error: string | null;
-  
+
   // History Undo/Redo Stacks
   past: HistoryEntry[];
   future: HistoryEntry[];
@@ -28,23 +33,49 @@ interface BuilderState {
   setActiveSection: (sectionId: string) => void;
   updatePersonal: (personal: ResumePersonal) => void;
   updateSummary: (summary: ResumeSummary) => void;
-  
+
   addListSectionItem: (
-    sectionId: "experience" | "education" | "skills" | "projects" | "certifications" | "languages" | "socialLinks",
-    item: Record<string, unknown>
+    sectionId:
+      | "experience"
+      | "education"
+      | "skills"
+      | "projects"
+      | "certifications"
+      | "languages"
+      | "socialLinks",
+    item: Record<string, unknown>,
   ) => void;
   updateListSectionItem: (
-    sectionId: "experience" | "education" | "skills" | "projects" | "certifications" | "languages" | "socialLinks",
+    sectionId:
+      | "experience"
+      | "education"
+      | "skills"
+      | "projects"
+      | "certifications"
+      | "languages"
+      | "socialLinks",
     itemId: string,
-    item: Record<string, unknown>
+    item: Record<string, unknown>,
   ) => void;
   deleteListSectionItem: (
-    sectionId: "experience" | "education" | "skills" | "projects" | "certifications" | "languages" | "socialLinks",
-    itemId: string
+    sectionId:
+      | "experience"
+      | "education"
+      | "skills"
+      | "projects"
+      | "certifications"
+      | "languages"
+      | "socialLinks",
+    itemId: string,
   ) => void;
-  
+
   updateTemplate: (templateId: string) => void;
-  updateMetadata: (title: string, description: string, isDefault: boolean, status: "active" | "archived") => void;
+  updateMetadata: (
+    title: string,
+    description: string,
+    isDefault: boolean,
+    status: "active" | "archived",
+  ) => void;
   forceSave: () => Promise<void>;
   resetStore: () => void;
 
@@ -57,7 +88,11 @@ interface BuilderState {
   reorderSections: (newOrder: string[]) => void;
   reorderSectionItems: (sectionId: string, newItems: unknown[]) => void;
   moveSection: (sectionId: string, direction: "up" | "down") => void;
-  moveItem: (sectionId: string, itemId: string, direction: "up" | "down") => void;
+  moveItem: (
+    sectionId: string,
+    itemId: string,
+    direction: "up" | "down",
+  ) => void;
   toggleSectionVisibility: (sectionId: string) => void;
   duplicateSectionItem: (sectionId: string, itemId: string) => void;
 
@@ -65,8 +100,15 @@ interface BuilderState {
   addCustomSection: (title: string) => void;
   deleteCustomSection: (sectionId: string) => void;
   updateCustomSectionTitle: (sectionId: string, title: string) => void;
-  addCustomSectionItem: (sectionId: string, item: Omit<CustomSectionItem, "id">) => void;
-  updateCustomSectionItem: (sectionId: string, itemId: string, updatedItem: Partial<Omit<CustomSectionItem, "id">>) => void;
+  addCustomSectionItem: (
+    sectionId: string,
+    item: Omit<CustomSectionItem, "id">,
+  ) => void;
+  updateCustomSectionItem: (
+    sectionId: string,
+    itemId: string,
+    updatedItem: Partial<Omit<CustomSectionItem, "id">>,
+  ) => void;
   deleteCustomSectionItem: (sectionId: string, itemId: string) => void;
 }
 
@@ -74,7 +116,10 @@ let saveTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
 const triggerAutoSave = (
   get: () => { currentResume: Resume | null },
-  set: (state: Partial<BuilderState> | ((state: BuilderState) => Partial<BuilderState>)) => void
+  set: (
+    state:
+      Partial<BuilderState> | ((state: BuilderState) => Partial<BuilderState>),
+  ) => void,
 ) => {
   set({ unsavedChanges: true, savingState: "idle" });
 
@@ -89,15 +134,15 @@ const triggerAutoSave = (
     set({ savingState: "saving" });
     try {
       await builderService.saveResume(resume);
-      set({ 
-        savingState: "saved", 
-        unsavedChanges: false, 
-        lastSaved: new Date() 
+      set({
+        savingState: "saved",
+        unsavedChanges: false,
+        lastSaved: new Date(),
       });
     } catch (err) {
-      set({ 
-        savingState: "idle", 
-        error: (err as Error).message || "Auto-save failed" 
+      set({
+        savingState: "idle",
+        error: (err as Error).message || "Auto-save failed",
       });
     }
   }, 1000);
@@ -189,7 +234,17 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       const resume = await builderService.loadResume(id);
       if (resume && resume.content) {
         if (!resume.content.sectionsOrder) {
-          resume.content.sectionsOrder = ["personal", "summary", "experience", "education", "skills", "projects", "certifications", "languages", "socialLinks"];
+          resume.content.sectionsOrder = [
+            "personal",
+            "summary",
+            "experience",
+            "education",
+            "skills",
+            "projects",
+            "certifications",
+            "languages",
+            "socialLinks",
+          ];
         }
         if (!resume.content.hiddenSections) {
           resume.content.hiddenSections = [];
@@ -198,12 +253,12 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
           resume.content.customSections = [];
         }
       }
-      set({ 
-        currentResume: resume, 
-        isLoading: false, 
+      set({
+        currentResume: resume,
+        isLoading: false,
         lastSaved: new Date(resume.updatedAt),
         past: [],
-        future: []
+        future: [],
       });
       return resume;
     } catch (err) {
@@ -283,8 +338,8 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     set((state) => {
       if (!state.currentResume || !state.currentResume.content) return {};
       const list = state.currentResume.content[sectionId] || [];
-      const updatedList = (list as Array<{ id: string }>).map((item) => 
-        item.id === itemId ? { ...item, ...updatedItem } : item
+      const updatedList = (list as Array<{ id: string }>).map((item) =>
+        item.id === itemId ? { ...item, ...updatedItem } : item,
       );
       return {
         currentResume: {
@@ -304,7 +359,9 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     set((state) => {
       if (!state.currentResume || !state.currentResume.content) return {};
       const list = state.currentResume.content[sectionId] || [];
-      const updatedList = (list as Array<{ id: string }>).filter((item) => item.id !== itemId);
+      const updatedList = (list as Array<{ id: string }>).filter(
+        (item) => item.id !== itemId,
+      );
       return {
         currentResume: {
           ...state.currentResume,
@@ -362,15 +419,15 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     set({ savingState: "saving" });
     try {
       await builderService.saveResume(resume);
-      set({ 
-        savingState: "saved", 
-        unsavedChanges: false, 
-        lastSaved: new Date() 
+      set({
+        savingState: "saved",
+        unsavedChanges: false,
+        lastSaved: new Date(),
       });
     } catch (err) {
-      set({ 
-        savingState: "idle", 
-        error: (err as Error).message || "Save failed" 
+      set({
+        savingState: "idle",
+        error: (err as Error).message || "Save failed",
       });
     }
   },
@@ -417,8 +474,10 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
 
       if (sectionId.startsWith("custom_")) {
         const customs = state.currentResume.content.customSections || [];
-        const updatedCustoms = customs.map((sec) => 
-          sec.id === sectionId ? { ...sec, items: newItems as CustomSectionItem[] } : sec
+        const updatedCustoms = customs.map((sec) =>
+          sec.id === sectionId
+            ? { ...sec, items: newItems as CustomSectionItem[] }
+            : sec,
         );
         return {
           currentResume: {
@@ -436,7 +495,8 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
           ...state.currentResume,
           content: {
             ...state.currentResume.content,
-            [sectionId]: newItems as unknown as ResumeContent[keyof ResumeContent],
+            [sectionId]:
+              newItems as unknown as ResumeContent[keyof ResumeContent],
           },
         },
       };
@@ -448,7 +508,17 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     get().commitHistory();
     set((state) => {
       if (!state.currentResume || !state.currentResume.content) return {};
-      const order = state.currentResume.content.sectionsOrder || ["personal", "summary", "experience", "education", "skills", "projects", "certifications", "languages", "socialLinks"];
+      const order = state.currentResume.content.sectionsOrder || [
+        "personal",
+        "summary",
+        "experience",
+        "education",
+        "skills",
+        "projects",
+        "certifications",
+        "languages",
+        "socialLinks",
+      ];
       const index = order.indexOf(sectionId);
       if (index === -1) return {};
 
@@ -508,7 +578,8 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
         };
       }
 
-      const list = state.currentResume.content[sectionId as keyof ResumeContent];
+      const list =
+        state.currentResume.content[sectionId as keyof ResumeContent];
       if (!Array.isArray(list)) return {};
 
       const items = [...list] as unknown as Array<{ id: string }>;
@@ -591,10 +662,13 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
         };
       }
 
-      const list = state.currentResume.content[sectionId as keyof ResumeContent];
+      const list =
+        state.currentResume.content[sectionId as keyof ResumeContent];
       if (!Array.isArray(list)) return {};
 
-      const items = [...list] as unknown as Array<{ id: string } & Record<string, unknown>>;
+      const items = [...list] as unknown as Array<
+        { id: string } & Record<string, unknown>
+      >;
       const index = items.findIndex((i) => i.id === itemId);
       if (index === -1) return {};
 
@@ -674,8 +748,8 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     set((state) => {
       if (!state.currentResume || !state.currentResume.content) return {};
       const customs = state.currentResume.content.customSections || [];
-      const updatedCustoms = customs.map((sec) => 
-        sec.id === sectionId ? { ...sec, title } : sec
+      const updatedCustoms = customs.map((sec) =>
+        sec.id === sectionId ? { ...sec, title } : sec,
       );
       return {
         currentResume: {
@@ -734,8 +808,8 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       if (secIndex === -1) return {};
 
       const section = customs[secIndex];
-      const updatedItems = section.items.map((i) => 
-        i.id === itemId ? { ...i, ...updatedItem } : i
+      const updatedItems = section.items.map((i) =>
+        i.id === itemId ? { ...i, ...updatedItem } : i,
       );
 
       const newCustoms = [...customs];

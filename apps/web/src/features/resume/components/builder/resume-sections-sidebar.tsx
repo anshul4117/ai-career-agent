@@ -2,9 +2,17 @@
 
 import React, { useEffect, useRef } from "react";
 import { useBuilderStore } from "../../store/builder.store";
-import { 
-  User, FileText, Briefcase, GraduationCap, Award, 
-  FolderGit2, FileBadge, Languages, Share2, EyeOff
+import {
+  User,
+  FileText,
+  Briefcase,
+  GraduationCap,
+  Award,
+  FolderGit2,
+  FileBadge,
+  Languages,
+  Share2,
+  EyeOff,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -21,9 +29,9 @@ interface ResumeSectionsSidebarProps {
   isMobileHeader?: boolean;
 }
 
-export function ResumeSectionsSidebar({ 
-  isCollapsed = false, 
-  isMobileHeader = false 
+export function ResumeSectionsSidebar({
+  isCollapsed = false,
+  isMobileHeader = false,
 }: ResumeSectionsSidebarProps) {
   const { currentResume, activeSection, setActiveSection } = useBuilderStore();
   const activeTabRef = useRef<HTMLButtonElement | null>(null);
@@ -41,16 +49,37 @@ export function ResumeSectionsSidebar({
   if (!currentResume || !currentResume.content) return null;
 
   const content = currentResume.content;
-  const order = content.sectionsOrder || ["personal", "summary", "experience", "education", "skills", "projects", "certifications", "languages", "socialLinks"];
+  const order = content.sectionsOrder || [
+    "personal",
+    "summary",
+    "experience",
+    "education",
+    "skills",
+    "projects",
+    "certifications",
+    "languages",
+    "socialLinks",
+  ];
   const hiddenSections = content.hiddenSections || [];
   const customSections = content.customSections || [];
 
   // Map built-in sections details
-  const builtInMap: Record<string, { label: string; icon: React.ComponentType<{ className?: string }>; isCompleted: boolean }> = {
+  const builtInMap: Record<
+    string,
+    {
+      label: string;
+      icon: React.ComponentType<{ className?: string }>;
+      isCompleted: boolean;
+    }
+  > = {
     personal: {
       label: "Personal Info",
       icon: User,
-      isCompleted: !!(content.personal?.firstName && content.personal?.lastName && content.personal?.email),
+      isCompleted: !!(
+        content.personal?.firstName &&
+        content.personal?.lastName &&
+        content.personal?.email
+      ),
     },
     summary: {
       label: "Summary",
@@ -97,7 +126,7 @@ export function ResumeSectionsSidebar({
   // Build the list in order
   const sections: SectionItem[] = order.map((sectionId) => {
     const isHidden = hiddenSections.includes(sectionId);
-    
+
     // Check if custom
     if (sectionId.startsWith("custom_")) {
       const customSec = customSections.find((c) => c.id === sectionId);
@@ -132,10 +161,12 @@ export function ResumeSectionsSidebar({
 
   const handleSectionClick = (sectionId: string) => {
     setActiveSection(sectionId);
-    
+
     // Temporarily set scroll block to prevent observer conflicts
     if (typeof window !== "undefined") {
-      (window as Window & { isScrollingToSection?: boolean }).isScrollingToSection = true;
+      (
+        window as Window & { isScrollingToSection?: boolean }
+      ).isScrollingToSection = true;
     }
 
     const el = document.getElementById(`editor-${sectionId}`);
@@ -145,7 +176,9 @@ export function ResumeSectionsSidebar({
 
     setTimeout(() => {
       if (typeof window !== "undefined") {
-        (window as Window & { isScrollingToSection?: boolean }).isScrollingToSection = false;
+        (
+          window as Window & { isScrollingToSection?: boolean }
+        ).isScrollingToSection = false;
       }
     }, 800);
   };
@@ -167,13 +200,17 @@ export function ResumeSectionsSidebar({
                 isActive
                   ? "bg-primary text-white border-foreground brutal-shadow-xs"
                   : "bg-surface text-foreground border-border hover:bg-surface-secondary",
-                sec.isHidden && "opacity-60 border-dashed"
+                sec.isHidden && "opacity-60 border-dashed",
               )}
             >
               <Icon className="h-3.5 w-3.5 shrink-0" />
               <span>{sec.label}</span>
               {sec.isHidden && <EyeOff className="h-3 w-3 text-error ml-0.5" />}
-              {sec.isCompleted && <span className="text-[7px] bg-success text-white px-1 rounded-sm">✔</span>}
+              {sec.isCompleted && (
+                <span className="text-[7px] bg-success text-white px-1 rounded-sm">
+                  ✔
+                </span>
+              )}
             </button>
           );
         })}
@@ -194,7 +231,7 @@ export function ResumeSectionsSidebar({
         {sections.map((sec) => {
           const Icon = sec.icon;
           const isActive = activeSection === sec.id;
-          
+
           if (isCollapsed) {
             // Collapsed (Icon-only) Mode
             return (
@@ -206,13 +243,13 @@ export function ResumeSectionsSidebar({
                   isActive
                     ? "bg-primary text-white border-foreground brutal-shadow-xs"
                     : "bg-surface text-foreground border-border hover:bg-surface-secondary",
-                  sec.isHidden && "opacity-50 border-dashed"
+                  sec.isHidden && "opacity-50 border-dashed",
                 )}
                 title={`${sec.label}${sec.isHidden ? " (Hidden)" : ""}`}
                 aria-label={sec.label}
               >
                 <Icon className="h-4.5 w-4.5" />
-                
+
                 {/* Completion status dot */}
                 {sec.isCompleted && (
                   <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-success border border-white" />
@@ -237,21 +274,25 @@ export function ResumeSectionsSidebar({
                 isActive
                   ? "bg-primary text-white border-foreground brutal-shadow-xs translate-x-[-1px] translate-y-[-1px]"
                   : "bg-surface text-foreground border-border hover:bg-surface-secondary",
-                sec.isHidden && "opacity-60 border-dashed"
+                sec.isHidden && "opacity-60 border-dashed",
               )}
             >
               <Icon className="h-4.5 w-4.5 shrink-0" />
               <span className="truncate flex-1">{sec.label}</span>
-              
+
               <div className="shrink-0 flex items-center justify-center gap-1.5">
                 {sec.isHidden && (
                   <EyeOff className="h-3.5 w-3.5 text-error shrink-0" />
                 )}
                 {sec.isCompleted ? (
-                  <span className={cn(
-                    "flex items-center justify-center h-4 w-4 border rounded-full text-[8px]",
-                    isActive ? "bg-white dark:bg-surface text-primary border-white" : "bg-success text-white border-success"
-                  )}>
+                  <span
+                    className={cn(
+                      "flex items-center justify-center h-4 w-4 border rounded-full text-[8px]",
+                      isActive
+                        ? "bg-white dark:bg-surface text-primary border-white"
+                        : "bg-success text-white border-success",
+                    )}
+                  >
                     ✔
                   </span>
                 ) : (

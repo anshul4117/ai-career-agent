@@ -2,9 +2,9 @@ import type { ResumeTheme } from "../types/resume.types";
 
 export const DEFAULT_THEME: ResumeTheme = {
   primaryColor: "#0f172a", // Slate 900
-  accentColor: "#2563eb",  // Blue 600
+  accentColor: "#2563eb", // Blue 600
   backgroundColor: "#ffffff",
-  textColor: "#334155",    // Slate 700
+  textColor: "#334155", // Slate 700
   headingColor: "#0f172a",
   headingFont: "Inter",
   bodyFont: "Inter",
@@ -22,7 +22,7 @@ export const DEFAULT_THEME: ResumeTheme = {
   borderStyle: "border-none",
   dividerStyle: "divider-solid",
   sectionBackground: "bg-transparent",
-  activePreset: "default"
+  activePreset: "default",
 };
 
 export const THEME_PRESETS: Record<string, ResumeTheme> = {
@@ -49,7 +49,7 @@ export const THEME_PRESETS: Record<string, ResumeTheme> = {
     borderStyle: "border-none",
     dividerStyle: "divider-solid",
     sectionBackground: "bg-transparent",
-    activePreset: "professional"
+    activePreset: "professional",
   },
   corporate: {
     primaryColor: "#1e3a8a",
@@ -73,7 +73,7 @@ export const THEME_PRESETS: Record<string, ResumeTheme> = {
     borderStyle: "border-none",
     dividerStyle: "divider-solid",
     sectionBackground: "bg-transparent",
-    activePreset: "corporate"
+    activePreset: "corporate",
   },
   developer: {
     primaryColor: "#10b981",
@@ -97,7 +97,7 @@ export const THEME_PRESETS: Record<string, ResumeTheme> = {
     borderStyle: "border-2 border-solid",
     dividerStyle: "divider-dashed",
     sectionBackground: "bg-slate-50/50 dark:bg-surface-secondary/50",
-    activePreset: "developer"
+    activePreset: "developer",
   },
   creative: {
     primaryColor: "#db2777",
@@ -121,7 +121,7 @@ export const THEME_PRESETS: Record<string, ResumeTheme> = {
     borderStyle: "border-2 border-solid",
     dividerStyle: "divider-solid",
     sectionBackground: "bg-slate-100 dark:bg-surface-hover/50",
-    activePreset: "creative"
+    activePreset: "creative",
   },
   minimal: {
     primaryColor: "#000000",
@@ -145,7 +145,7 @@ export const THEME_PRESETS: Record<string, ResumeTheme> = {
     borderStyle: "border-none",
     dividerStyle: "divider-none",
     sectionBackground: "bg-transparent",
-    activePreset: "minimal"
+    activePreset: "minimal",
   },
   classic: {
     primaryColor: "#000000",
@@ -169,8 +169,8 @@ export const THEME_PRESETS: Record<string, ResumeTheme> = {
     borderStyle: "border-none",
     dividerStyle: "divider-solid",
     sectionBackground: "bg-transparent",
-    activePreset: "classic"
-  }
+    activePreset: "classic",
+  },
 };
 
 const LOCAL_STORAGE_KEY_PREFIX = "ai-career-agent:theme:";
@@ -178,7 +178,9 @@ const LOCAL_STORAGE_KEY_PREFIX = "ai-career-agent:theme:";
 export const themeService = {
   loadTheme(resumeId: string): ResumeTheme {
     if (typeof window === "undefined") return { ...DEFAULT_THEME };
-    const saved = localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${resumeId}`);
+    const saved = localStorage.getItem(
+      `${LOCAL_STORAGE_KEY_PREFIX}${resumeId}`,
+    );
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -191,7 +193,10 @@ export const themeService = {
 
   saveTheme(resumeId: string, theme: ResumeTheme): void {
     if (typeof window === "undefined") return;
-    localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${resumeId}`, JSON.stringify(theme));
+    localStorage.setItem(
+      `${LOCAL_STORAGE_KEY_PREFIX}${resumeId}`,
+      JSON.stringify(theme),
+    );
   },
 
   resetTheme(resumeId: string): ResumeTheme {
@@ -208,5 +213,5 @@ export const themeService = {
   duplicateTheme(sourceId: string, targetId: string): void {
     const sourceTheme = this.loadTheme(sourceId);
     this.saveTheme(targetId, sourceTheme);
-  }
+  },
 };

@@ -29,7 +29,10 @@ interface ExportState {
 
   // Actions
   updateSettings: (updates: Partial<ExportSettings>) => void;
-  addExportLog: (format: "pdf" | "print" | "html" | "json", templateId: string) => void;
+  addExportLog: (
+    format: "pdf" | "print" | "html" | "json",
+    templateId: string,
+  ) => void;
   loadExportHistory: (resumeId: string) => void;
   setExporting: (state: boolean) => void;
 }
@@ -56,14 +59,16 @@ export const useExportStore = create<ExportState>((set, get) => ({
 
   updateSettings: (updates) => {
     set((state) => ({
-      settings: { ...state.settings, ...updates }
+      settings: { ...state.settings, ...updates },
     }));
   },
 
   loadExportHistory: (resumeId) => {
     let history: ExportLog[] = [];
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${resumeId}`);
+      const saved = localStorage.getItem(
+        `${LOCAL_STORAGE_KEY_PREFIX}${resumeId}`,
+      );
       if (saved) {
         try {
           history = JSON.parse(saved);
@@ -81,18 +86,21 @@ export const useExportStore = create<ExportState>((set, get) => ({
       id: Math.random().toString(36).substring(2, 9),
       timestamp: new Date().toLocaleString(),
       format,
-      templateId
+      templateId,
     };
 
     const updated = [newLog, ...exportHistory].slice(0, 20); // Keep last 20 logs
     set({ exportHistory: updated });
 
     if (typeof window !== "undefined" && resumeId) {
-      localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${resumeId}`, JSON.stringify(updated));
+      localStorage.setItem(
+        `${LOCAL_STORAGE_KEY_PREFIX}${resumeId}`,
+        JSON.stringify(updated),
+      );
     }
   },
 
   setExporting: (state) => {
     set({ isExporting: state });
-  }
+  },
 }));

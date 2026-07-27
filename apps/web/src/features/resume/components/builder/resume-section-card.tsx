@@ -4,9 +4,16 @@ import React, { useState } from "react";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Heading } from "@/components/ui/typography";
-import { 
-  ChevronDown, ChevronUp, Plus, GripVertical, 
-  Eye, EyeOff, ArrowUp, ArrowDown, Trash2 
+import {
+  ChevronDown,
+  ChevronUp,
+  Plus,
+  GripVertical,
+  Eye,
+  EyeOff,
+  ArrowUp,
+  ArrowDown,
+  Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -18,7 +25,7 @@ interface ResumeSectionCardProps {
   addItemLabel?: string;
   children: React.ReactNode;
   className?: string;
-  
+
   // Controls (Sprint 3.3)
   dragHandleProps?: Record<string, unknown>;
   isHidden?: boolean;
@@ -43,7 +50,7 @@ export function ResumeSectionCard({
   onMoveUp,
   onMoveDown,
   onDeleteSection,
-  onTitleChange
+  onTitleChange,
 }: ResumeSectionCardProps) {
   const [isExpanded, setIsExpanded] = useState(true);
 
@@ -53,7 +60,7 @@ export function ResumeSectionCard({
       className={cn(
         "bg-surface border-[3px] border-border brutal-shadow-sm scroll-mt-24 w-full transition-all duration-150",
         isHidden && "opacity-75 border-dashed bg-surface-secondary/10",
-        className
+        className,
       )}
     >
       {/* Header Panel */}
@@ -61,8 +68,8 @@ export function ResumeSectionCard({
         <div className="flex items-center gap-2.5 flex-1 min-w-0">
           {/* Grip Handle */}
           {dragHandleProps && (
-            <div 
-              {...dragHandleProps} 
+            <div
+              {...dragHandleProps}
               className="p-1 border border-border/20 hover:bg-surface-secondary cursor-grab active:cursor-grabbing shrink-0"
               aria-label="Drag to reorder section"
             >
@@ -70,7 +77,7 @@ export function ResumeSectionCard({
             </div>
           )}
           <Icon className="h-5 w-5 text-primary shrink-0" />
-          
+
           {/* Editable title for custom sections */}
           {onTitleChange ? (
             <input
@@ -81,7 +88,10 @@ export function ResumeSectionCard({
               placeholder="Custom Section Title"
             />
           ) : (
-            <Heading level="h4" className="text-sm font-black uppercase tracking-wider text-foreground truncate">
+            <Heading
+              level="h4"
+              className="text-sm font-black uppercase tracking-wider text-foreground truncate"
+            >
               {title}
             </Heading>
           )}
@@ -179,12 +189,14 @@ export function ResumeSectionCard({
       <div
         className={cn(
           "transition-all duration-200 ease-in-out overflow-hidden",
-          isExpanded && !isHidden ? "max-h-[3000px] p-4 opacity-100" : "max-h-0 opacity-0 pointer-events-none"
+          isExpanded && !isHidden
+            ? "max-h-[3000px] p-4 opacity-100"
+            : "max-h-0 opacity-0 pointer-events-none",
         )}
       >
         {children}
       </div>
-      
+
       {/* Fallback state when hidden */}
       {isHidden && (
         <div className="p-4 bg-surface-secondary/5 text-center text-xs font-bold uppercase text-foreground-muted select-none">

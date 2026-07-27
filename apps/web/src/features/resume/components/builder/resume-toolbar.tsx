@@ -6,7 +6,15 @@ import { useBuilderStore } from "../../store/builder.store";
 import { MOCK_TEMPLATES } from "../../services/resume.service";
 import { AutoSaveIndicator } from "./autosave-indicator";
 import { BrutalButton } from "@/components/ui/brutal-button";
-import { ArrowLeft, Save, Layout, Undo2, Redo2, Menu, FileText } from "lucide-react";
+import {
+  ArrowLeft,
+  Save,
+  Layout,
+  Undo2,
+  Redo2,
+  Menu,
+  FileText,
+} from "lucide-react";
 
 interface ResumeToolbarProps {
   onToggleSidebar?: () => void;
@@ -14,17 +22,21 @@ interface ResumeToolbarProps {
   onExportClick?: () => void;
 }
 
-export function ResumeToolbar({ onToggleSidebar, isSidebarCollapsed, onExportClick }: ResumeToolbarProps) {
-  const { 
-    currentResume, 
-    updateTemplate, 
-    updateMetadata, 
-    forceSave, 
+export function ResumeToolbar({
+  onToggleSidebar,
+  isSidebarCollapsed,
+  onExportClick,
+}: ResumeToolbarProps) {
+  const {
+    currentResume,
+    updateTemplate,
+    updateMetadata,
+    forceSave,
     savingState,
     past,
     future,
     undo,
-    redo
+    redo,
   } = useBuilderStore();
 
   if (!currentResume) return null;
@@ -34,7 +46,7 @@ export function ResumeToolbar({ onToggleSidebar, isSidebarCollapsed, onExportCli
       e.target.value,
       currentResume.description,
       currentResume.isDefault,
-      currentResume.status
+      currentResume.status,
     );
   };
 
@@ -44,7 +56,6 @@ export function ResumeToolbar({ onToggleSidebar, isSidebarCollapsed, onExportCli
 
   return (
     <header className="border-b-3 border-border bg-surface px-4 py-3 flex flex-col md:flex-row md:items-center justify-between gap-3 sticky top-0 z-30 select-none min-h-[64px]">
-      
       {/* Title & Navigation Section */}
       <div className="flex items-center gap-2.5 w-full md:w-auto min-w-0">
         <Link
@@ -54,19 +65,21 @@ export function ResumeToolbar({ onToggleSidebar, isSidebarCollapsed, onExportCli
         >
           <ArrowLeft className="h-4.5 w-4.5" />
         </Link>
-        
+
         {/* Sidebar Toggle Button (Visible only on desktop/tablet) */}
         {onToggleSidebar && (
           <button
             type="button"
             onClick={onToggleSidebar}
             className="hidden md:flex h-10 w-10 items-center justify-center border-[3px] border-border bg-surface brutal-shadow-xs hover:translate-x-[-1px] hover:translate-y-[-1px] hover:brutal-shadow-xs transition-all active:translate-x-0 active:translate-y-0 shrink-0"
-            aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-label={
+              isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"
+            }
           >
             <Menu className="h-4.5 w-4.5" />
           </button>
         )}
- 
+
         <div className="flex-1 min-w-0">
           <input
             type="text"
@@ -77,10 +90,9 @@ export function ResumeToolbar({ onToggleSidebar, isSidebarCollapsed, onExportCli
           />
         </div>
       </div>
- 
+
       {/* Toolbar Controls Section - Horizontally scrolls on mobile */}
       <div className="flex flex-nowrap items-center gap-2.5 overflow-x-auto scrollbar-none w-full md:w-auto pb-1 md:pb-0 shrink-0 max-w-full justify-start md:justify-end">
-        
         {/* Undo / Redo Controls */}
         <div className="flex items-center gap-1 border-2 border-border bg-surface p-1 brutal-shadow-xs shrink-0 h-10">
           <button
@@ -102,7 +114,7 @@ export function ResumeToolbar({ onToggleSidebar, isSidebarCollapsed, onExportCli
             <Redo2 className="h-4 w-4" />
           </button>
         </div>
- 
+
         {/* Template Selector */}
         <div className="flex items-center gap-2 border-2 border-border bg-surface px-2.5 shrink-0 h-10 brutal-shadow-xs">
           <Layout className="h-4 w-4 text-foreground-muted" />
@@ -118,7 +130,7 @@ export function ResumeToolbar({ onToggleSidebar, isSidebarCollapsed, onExportCli
             ))}
           </select>
         </div>
- 
+
         {/* AutoSave and Action Buttons */}
         <div className="flex items-center gap-2 shrink-0">
           <AutoSaveIndicator />
@@ -143,7 +155,6 @@ export function ResumeToolbar({ onToggleSidebar, isSidebarCollapsed, onExportCli
             </BrutalButton>
           )}
         </div>
-
       </div>
     </header>
   );

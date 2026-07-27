@@ -6,10 +6,15 @@ export const exportService = {
    * PDF Generator / Print Abstraction
    * Uses dynamic stylesheet injection to override physical `@page` rules and layout styles
    */
-  async printResume(resume: Resume, settings: ExportSettings): Promise<boolean> {
+  async printResume(
+    resume: Resume,
+    settings: ExportSettings,
+  ): Promise<boolean> {
     return new Promise((resolve) => {
       // Find or create styling block
-      let styleEl = document.getElementById("resume-print-overrides") as HTMLStyleElement | null;
+      let styleEl = document.getElementById(
+        "resume-print-overrides",
+      ) as HTMLStyleElement | null;
       if (!styleEl) {
         styleEl = document.createElement("style");
         styleEl.id = "resume-print-overrides";
@@ -20,7 +25,7 @@ export const exportService = {
       const marginMap = {
         narrow: "10mm",
         normal: "20mm",
-        wide: "30mm"
+        wide: "30mm",
       };
 
       const scaleVal = settings.scale / 100;
@@ -62,19 +67,27 @@ export const exportService = {
           }
 
           /* Grayscale toggle override */
-          ${settings.hideColors ? `
+          ${
+            settings.hideColors
+              ? `
             #resume-print-preview-container {
               filter: grayscale(1) !important;
             }
-          ` : ""}
+          `
+              : ""
+          }
 
           /* Section breaks toggle */
-          ${settings.sectionBreaks ? `
+          ${
+            settings.sectionBreaks
+              ? `
             .transition-all > div {
               page-break-after: always !important;
               break-after: page !important;
             }
-          ` : ""}
+          `
+              : ""
+          }
         }
       `;
 
@@ -101,7 +114,7 @@ export const exportService = {
     link.download = filename;
     document.body.appendChild(link);
     link.click();
-    
+
     // Clean up
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
@@ -120,9 +133,17 @@ export const exportService = {
    * Direct HTML file exporter
    */
   downloadHTML(resume: Resume) {
-    const personal = resume.content?.personal || { firstName: "John", lastName: "Doe", headline: "Headline", email: "", phone: "", city: "", country: "" };
+    const personal = resume.content?.personal || {
+      firstName: "John",
+      lastName: "Doe",
+      headline: "Headline",
+      email: "",
+      phone: "",
+      city: "",
+      country: "",
+    };
     const summary = resume.content?.summary || { summary: "" };
-    
+
     // Compile clean, simple standalone styled resume HTML markup
     const htmlContent = `
 <!DOCTYPE html>
@@ -180,12 +201,16 @@ export const exportService = {
     Location: ${personal.city || ""}, ${personal.country || ""}
   </div>
 
-  ${summary.summary ? `
+  ${
+    summary.summary
+      ? `
   <div class="section">
     <div class="section-title">Summary</div>
     <p>${summary.summary}</p>
   </div>
-  ` : ""}
+  `
+      : ""
+  }
 
   <div class="section">
     <div class="section-title">Export Details</div>
@@ -197,5 +222,5 @@ export const exportService = {
 
     const filename = `${resume.title.toLowerCase().replace(/\s+/g, "-")}-resume.html`;
     this.triggerDownload(filename, htmlContent, "text/html");
-  }
+  },
 };

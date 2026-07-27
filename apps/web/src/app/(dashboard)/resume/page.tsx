@@ -1,332 +1,421 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Heading } from "@/components/ui/typography";
-import { BrutalCard } from "@/components/ui/brutal-card";
-import { BrutalButton } from "@/components/ui/brutal-button";
-import { EmptyState } from "@/components/ui/empty-state";
-import { ResumeSkeleton } from "@/components/ui/skeleton-loaders";
 import { useResumeStore } from "@/features/resume/store/resume.store";
 import { useShallow } from "zustand/react/shallow";
-import { MOCK_TEMPLATES } from "@/features/resume/services/resume.service";
-import type { Resume } from "@/features/resume/types/resume.types";
-import { 
-  Plus, Eye, Pencil, Copy, Trash2, Archive, 
-  RotateCcw, Sparkles, FileText, ChevronDown, ChevronUp
-} from "lucide-react";
-import { formatDate } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { Heading, Text } from "@/components/ui/typography";
+import { BrutalCard } from "@/components/ui/brutal-card";
+import { BrutalButton } from "@/components/ui/brutal-button";
+import { ResumeUploader } from "@/features/resume/components/resume-uploader";
+import { RenameDialog } from "@/features/resume/components/rename-dialog";
 import { useConfirm } from "@/components/ui/confirm-dialog";
-import { ProductTips } from "@/features/onboarding/components/product-tips";
 import { toast } from "sonner";
+import {
+  FileText,
+  Eye,
+  Download,
+  Pencil,
+  Trash2,
+  Sparkles,
+  History,
+  Calendar,
+  HardDrive,
+  ShieldCheck,
+} from "lucide-react";
+import { formatDate, cn } from "@/lib/utils";
+import type { UploadedResume } from "@/features/resume/types/resume.types";
 
-const ResumeCard = React.memo(function ResumeCard({
-  resume,
-  onDuplicate,
-  onArchive,
-  onRestore,
-  onDelete
-}: {
-  resume: Resume;
-  onDuplicate: (id: string, title: string) => void;
-  onArchive: (id: string, title: string) => void;
-  onRestore: (id: string, title: string) => void;
-  onDelete: (id: string, title: string) => void;
-}) {
-  const template = MOCK_TEMPLATES.find((t) => t.id === resume.templateId) || MOCK_TEMPLATES[0];
-  const isArchived = resume.status === "archived";
-
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.2 }}
-    >
-      <BrutalCard
-        className="bg-surface border-[3px] border-border p-5 brutal-shadow flex flex-col justify-between h-full min-h-[220px]"
-      >
-        <div className="space-y-4">
-          {/* Status row: Default tag & score */}
-          <div className="flex items-center justify-between gap-2">
-            {resume.isDefault && !isArchived ? (
-              <span className="px-2 py-0.5 bg-success text-white border-2 border-border text-[8px] font-black uppercase tracking-wider brutal-shadow-sm">
-                Primary Resume
-              </span>
-            ) : isArchived ? (
-              <span className="px-2 py-0.5 bg-foreground text-surface border-2 border-border text-[8px] font-black uppercase tracking-wider brutal-shadow-sm">
-                Archived
-              </span>
-            ) : (
-              <span className="text-[8px] font-black uppercase text-foreground-muted bg-surface-secondary border border-border/30 px-1.5 py-0.5 rounded-sm">
-                Draft Layout
-              </span>
-            )}
-
-            <div className="flex items-center gap-1">
-              <Sparkles className="h-3 w-3 text-primary shrink-0" />
-              <span className="text-[10px] font-black text-foreground">
-                Mock ATS: <strong>{resume.atsScore}%</strong>
-              </span>
-            </div>
-          </div>
-
-          {/* Header metadata */}
-          <div className="space-y-1">
-            <Heading level="h4" className="text-sm font-black uppercase tracking-wider truncate text-foreground">
-              {resume.title}
-            </Heading>
-            <p className="text-[10px] font-semibold text-foreground-secondary flex items-center gap-1.5">
-              Template: <span className="uppercase font-black text-primary">{template.name}</span>
-            </p>
-            <p className="text-[10px] text-foreground-muted font-mono leading-relaxed pt-1 line-clamp-2">
-              {resume.description || "No layout description specified."}
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-3 pt-4 mt-4 border-t border-border/10">
-          <div className="text-[9px] text-foreground-muted font-mono">
-            Last Updated: {formatDate(resume.updatedAt)}
-          </div>
-          
-          {/* Action buttons */}
-          <div className="grid grid-cols-3 gap-1.5">
-            <BrutalButton asChild variant="secondary" className="h-7 p-0 text-[8px] font-black uppercase flex items-center justify-center gap-1">
-              <Link href={`/resume/${resume.id}`}>
-                <Eye className="h-3 w-3 shrink-0" /> View
-              </Link>
-            </BrutalButton>
-            <BrutalButton asChild variant="secondary" className="h-7 p-0 text-[8px] font-black uppercase flex items-center justify-center gap-1">
-              <Link href={`/resume/${resume.id}/edit`}>
-                <Pencil className="h-3 w-3 shrink-0" /> Edit
-              </Link>
-            </BrutalButton>
-            <BrutalButton
-              onClick={() => onDuplicate(resume.id, resume.title)}
-              variant="secondary"
-              className="h-7 p-0 text-[8px] font-black uppercase flex items-center justify-center gap-1"
-            >
-              <Copy className="h-3 w-3 shrink-0" /> Copy
-            </BrutalButton>
-          </div>
-
-          <div className="grid grid-cols-2 gap-1.5">
-            {isArchived ? (
-              <BrutalButton
-                onClick={() => onRestore(resume.id, resume.title)}
-                variant="secondary"
-                className="h-7 p-0 text-[8px] font-black uppercase flex items-center justify-center gap-1 text-primary border-primary/20 hover:border-primary"
-              >
-                <RotateCcw className="h-3 w-3 shrink-0" /> Restore
-              </BrutalButton>
-            ) : (
-              <BrutalButton
-                onClick={() => onArchive(resume.id, resume.title)}
-                variant="secondary"
-                className="h-7 p-0 text-[8px] font-black uppercase flex items-center justify-center gap-1 text-foreground-muted"
-              >
-                <Archive className="h-3 w-3 shrink-0" /> Archive
-              </BrutalButton>
-            )}
-            <BrutalButton
-              onClick={() => onDelete(resume.id, resume.title)}
-              variant="secondary"
-              className="h-7 p-0 text-[8px] font-black uppercase flex items-center justify-center gap-1 text-error border-error/20 hover:border-error"
-            >
-              <Trash2 className="h-3 w-3 shrink-0" /> Delete
-            </BrutalButton>
-          </div>
-        </div>
-      </BrutalCard>
-    </motion.div>
-  );
-});
-
-export default function ResumePage() {
-  const router = useRouter();
+export default function ResumeManagementPage() {
   const {
-    resumes,
-    isLoading,
-    loadResumes,
-    deleteResume,
-    duplicateResume,
-    archiveResume,
-    restoreResume,
-  } = useResumeStore(useShallow(state => ({
-    resumes: state.resumes,
-    isLoading: state.isLoading,
-    loadResumes: state.loadResumes,
-    deleteResume: state.deleteResume,
-    duplicateResume: state.duplicateResume,
-    archiveResume: state.archiveResume,
-    restoreResume: state.restoreResume
-  })));
+    uploadedResumes,
+    uploadResume,
+    deleteUploadedResume,
+    renameUploadedResume,
+    setDefaultUploadedResume,
+  } = useResumeStore(
+    useShallow((state) => ({
+      uploadedResumes: state.uploadedResumes,
+      uploadResume: state.uploadResume,
+      deleteUploadedResume: state.deleteUploadedResume,
+      renameUploadedResume: state.renameUploadedResume,
+      setDefaultUploadedResume: state.setDefaultUploadedResume,
+    })),
+  );
 
   const { confirm, ConfirmationDialog } = useConfirm();
-  const [showArchived, setShowArchived] = useState(false);
+  const [selectedResumeId, setSelectedResumeId] = useState<string | null>(
+    uploadedResumes.find((r) => r.isDefault)?.id ||
+      uploadedResumes[0]?.id ||
+      null,
+  );
 
-  useEffect(() => {
-    loadResumes();
-  }, [loadResumes]);
+  const [renameTarget, setRenameTarget] = useState<UploadedResume | null>(null);
 
-  const handleDuplicate = async (id: string, title: string) => {
-    try {
-      await duplicateResume(id);
-      toast.success(`Duplicated "${title}"!`);
-    } catch {
-      toast.error("Failed to duplicate resume.");
-    }
-  };
+  const selectedResume =
+    uploadedResumes.find((r) => r.id === selectedResumeId) ||
+    uploadedResumes[0];
 
-  const handleArchive = async (id: string, title: string) => {
-    try {
-      await archiveResume(id);
-      toast.success(`Archived "${title}"!`);
-    } catch {
-      toast.error("Failed to archive resume.");
-    }
-  };
+  const existingNames = uploadedResumes.map((r) => r.fileName);
 
-  const handleRestore = async (id: string, title: string) => {
-    try {
-      await restoreResume(id);
-      toast.success(`Restored "${title}"!`);
-    } catch {
-      toast.error("Failed to restore resume.");
-    }
-  };
-
-  const handleDelete = async (id: string, title: string) => {
+  const handleDelete = async (id: string, name: string) => {
     const isConfirmed = await confirm({
       title: "Delete Resume",
-      description: `Are you sure you want to permanently delete "${title}"?`,
+      description: `Are you sure you want to delete "${name}"? This will permanently remove all version history.`,
       isDestructive: true,
-      confirmLabel: "Delete"
+      confirmLabel: "Delete File",
     });
-    if (!isConfirmed) return;
-    try {
-      await deleteResume(id);
-      toast.success(`Deleted "${title}"!`);
-    } catch {
-      toast.error("Failed to delete resume.");
+
+    if (isConfirmed) {
+      const toastId = toast.loading("Deleting resume record...");
+      try {
+        await deleteUploadedResume(id);
+        toast.success("Resume deleted successfully!", { id: toastId });
+        if (selectedResumeId === id) {
+          setSelectedResumeId(
+            uploadedResumes.find((r) => r.id !== id)?.id || null,
+          );
+        }
+      } catch {
+        toast.error("Failed to delete resume.", { id: toastId });
+      }
     }
   };
 
-  const activeResumes = resumes.filter((r) => r.status === "active");
-  const archivedResumes = resumes.filter((r) => r.status === "archived");
+  const handleSetDefault = async (id: string, name: string) => {
+    const toastId = toast.loading("Updating primary resume...");
+    try {
+      await setDefaultUploadedResume(id);
+      toast.success(`"${name}" set as your primary resume!`, { id: toastId });
+    } catch {
+      toast.error("Failed to update default resume.", { id: toastId });
+    }
+  };
 
-  if (isLoading && resumes.length === 0) {
-    return (
-      <div className="space-y-8 w-full min-w-0 pb-16">
-        <div className="space-y-1">
-          <Heading level="h2" className="text-2xl md:text-3xl font-black uppercase tracking-tight">
-            Resume Workspace
-          </Heading>
-          <p className="text-foreground-secondary text-xs">
-            Manage your multiple resume layouts, customize formats, and track ATS scores.
-          </p>
-        </div>
-        <ResumeSkeleton />
-      </div>
-    );
-  }
+  const handleDownload = (name: string) => {
+    toast.info(`Mock Download: Initiated transfer for ${name}`);
+  };
+
+  const handleRenameSubmit = async (newName: string) => {
+    if (!renameTarget) return;
+    const toastId = toast.loading("Renaming resume file...");
+    try {
+      await renameUploadedResume(renameTarget.id, newName);
+      toast.success("Resume renamed successfully!", { id: toastId });
+      setRenameTarget(null);
+    } catch {
+      toast.error("Failed to rename resume.", { id: toastId });
+    }
+  };
 
   return (
-    <div className="space-y-8 w-full min-w-0 pb-16">
+    <div className="space-y-6 w-full min-w-0">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="space-y-1">
-          <Heading level="h2" className="text-2xl md:text-3xl font-black uppercase tracking-tight">
-            Resume Workspace
+          <Heading
+            level="h2"
+            className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center gap-2"
+          >
+            <FileText className="h-6 w-6 text-primary shrink-0" />
+            Resume Management
           </Heading>
-          <p className="text-foreground-secondary text-xs">
-            Manage your multiple resume layouts, customize formats, and track ATS scores.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2.5 shrink-0 self-start">
-          <BrutalButton asChild variant="secondary" className="h-10 px-5 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-            <Link href="/resume/import">
-              <Sparkles className="h-4 w-4 text-primary" />
-              Import Resume
-            </Link>
-          </BrutalButton>
-          <BrutalButton asChild className="h-10 px-5 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-            <Link href="/resume/new">
-              <Plus className="h-4 w-4" />
-              Create Resume
-            </Link>
-          </BrutalButton>
+          <Text className="text-foreground-secondary text-xs">
+            Upload, update versions, and preview your ATS-optimized resumes.
+          </Text>
         </div>
       </div>
 
-      <ProductTips tipId="first-resume" />
+      {/* Dashboard Stats Cards */}
+      {selectedResume && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 border-2 border-border p-4 bg-surface-secondary brutal-shadow-sm">
+          <div className="space-y-1">
+            <p className="text-[10px] uppercase font-bold text-foreground-secondary tracking-tight flex items-center gap-1.5">
+              <FileText className="h-3.5 w-3.5 text-primary" /> Primary Resume
+            </p>
+            <p
+              className="font-mono text-xs font-black text-foreground truncate"
+              title={selectedResume.fileName}
+            >
+              {selectedResume.fileName}
+            </p>
+          </div>
 
-      {/* Active Resumes Section */}
-      {activeResumes.length === 0 ? (
-        <EmptyState
-          icon={FileText}
-          title="No Resumes Configured"
-          description="You don't have any active resume layouts yet. Create a layout from scratch or upload your existing resume to parse details."
-          primaryAction={{
-            label: "Create New Layout",
-            onClick: () => router.push("/resume/new")
-          }}
-          secondaryAction={{
-            label: "Import Existing Resume",
-            onClick: () => router.push("/resume/import")
-          }}
-        />
-      ) : (
-        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <AnimatePresence mode="popLayout">
-            {activeResumes.map((resume) => (
-              <ResumeCard 
-                key={resume.id} 
-                resume={resume} 
-                onDuplicate={handleDuplicate}
-                onArchive={handleArchive}
-                onRestore={handleRestore}
-                onDelete={handleDelete}
-              />
-            ))}
-          </AnimatePresence>
-        </motion.div>
-      )}
+          <div className="space-y-1 border-t-2 md:border-t-0 md:border-l-2 border-border/10 pt-2.5 md:pt-0 md:pl-4">
+            <p className="text-[10px] uppercase font-bold text-foreground-secondary tracking-tight flex items-center gap-1.5">
+              <ShieldCheck className="h-3.5 w-3.5 text-success" /> Resume Status
+            </p>
+            <p className="text-xs font-black text-foreground truncate uppercase">
+              {selectedResume.status}
+            </p>
+          </div>
 
-      {/* Collapsible Archived Resumes Section */}
-      {archivedResumes.length > 0 && (
-        <div className="pt-8 border-t-2 border-border/10">
-          <button
-            onClick={() => setShowArchived(!showArchived)}
-            className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-foreground-muted hover:text-foreground transition-colors"
-          >
-            {showArchived ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-            Archived Draft Layouts ({archivedResumes.length})
-          </button>
+          <div className="space-y-1 border-t-2 lg:border-t-0 lg:border-l-2 border-border/10 pt-2.5 lg:pt-0 lg:pl-4 md:col-span-2 lg:col-span-1">
+            <p className="text-[10px] uppercase font-bold text-foreground-secondary tracking-tight flex items-center gap-1.5">
+              <Sparkles className="h-3.5 w-3.5 text-warning" /> Mock ATS Score
+            </p>
+            <p className="font-mono text-sm font-black text-foreground">
+              {selectedResume.atsScore}% Score
+            </p>
+          </div>
 
-          {showArchived && (
-            <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
-              <AnimatePresence mode="popLayout">
-                {archivedResumes.map((resume) => (
-                  <ResumeCard 
-                    key={resume.id} 
-                    resume={resume} 
-                    onDuplicate={handleDuplicate}
-                    onArchive={handleArchive}
-                    onRestore={handleRestore}
-                    onDelete={handleDelete}
-                  />
-                ))}
-              </AnimatePresence>
-            </motion.div>
-          )}
+          <div className="space-y-1 border-t-2 lg:border-t-0 lg:border-l-2 border-border/10 pt-2.5 lg:pt-0 lg:pl-4 md:col-span-2 lg:col-span-1">
+            <p className="text-[10px] uppercase font-bold text-foreground-secondary tracking-tight flex items-center gap-1.5">
+              <HardDrive className="h-3.5 w-3.5 text-primary" /> Size & Version
+            </p>
+            <p className="text-xs font-semibold text-foreground truncate">
+              {selectedResume.fileSize} • v{selectedResume.version}
+            </p>
+          </div>
         </div>
       )}
-      
+
+      {/* Main Content Layout Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left column: Upload & Resume List */}
+        <div className="lg:col-span-2 space-y-6 min-w-0">
+          {/* Direct File Uploader */}
+          <BrutalCard className="bg-surface border-[3px] border-border p-6 brutal-shadow">
+            <ResumeUploader
+              onUpload={uploadResume}
+              existingNames={existingNames}
+            />
+          </BrutalCard>
+
+          {/* Uploaded Resumes List */}
+          <BrutalCard className="bg-surface border-[3px] border-border p-6 brutal-shadow">
+            <div className="space-y-4">
+              <Heading
+                level="h4"
+                className="text-sm font-black uppercase tracking-wider flex items-center gap-2"
+              >
+                <FileText className="h-5 w-5 text-primary" />
+                Uploaded Documents
+              </Heading>
+
+              {uploadedResumes.length === 0 ? (
+                <div className="py-8 text-center space-y-2 border-2 border-dashed border-border/20 rounded-sm">
+                  <Text className="text-foreground-secondary text-xs">
+                    No uploaded resumes found. Drag a file above to add one.
+                  </Text>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {uploadedResumes.map((resume) => (
+                    <div
+                      key={resume.id}
+                      onClick={() => setSelectedResumeId(resume.id)}
+                      className={cn(
+                        "border-2 p-4 rounded-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer transition-all",
+                        selectedResumeId === resume.id
+                          ? "border-primary bg-primary/5 brutal-shadow-xs"
+                          : "border-border bg-surface-secondary/20 hover:border-foreground",
+                      )}
+                    >
+                      <div className="space-y-1 text-xs min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-extrabold text-foreground truncate uppercase select-none">
+                            {resume.fileName}
+                          </span>
+                          {resume.isDefault && (
+                            <span className="px-1.5 py-0.2 border border-border bg-success text-white text-[8px] font-black uppercase tracking-wider brutal-shadow-xs select-none shrink-0">
+                              Primary
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-foreground-secondary font-semibold font-mono text-[10px]">
+                          v{resume.version} • {resume.fileSize} • Uploaded{" "}
+                          {formatDate(resume.uploadedAt)}
+                        </p>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-1.5 self-end sm:self-auto shrink-0">
+                        <BrutalButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSetDefault(resume.id, resume.fileName);
+                          }}
+                          disabled={resume.isDefault}
+                          variant="secondary"
+                          className="h-7 px-2 text-[9px] font-bold uppercase tracking-wider"
+                          aria-label={`Set ${resume.fileName} as default`}
+                        >
+                          Default
+                        </BrutalButton>
+                        <BrutalButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setRenameTarget(resume);
+                          }}
+                          variant="secondary"
+                          className="h-7 w-7 p-0 flex items-center justify-center"
+                          aria-label={`Rename ${resume.fileName}`}
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </BrutalButton>
+                        <BrutalButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(resume.id, resume.fileName);
+                          }}
+                          variant="secondary"
+                          className="h-7 w-7 p-0 flex items-center justify-center text-error border-error/20 hover:border-error"
+                          aria-label={`Delete ${resume.fileName}`}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </BrutalButton>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </BrutalCard>
+        </div>
+
+        {/* Right column: Preview Panel & History */}
+        <div className="lg:col-span-1 space-y-6 min-w-0">
+          {selectedResume ? (
+            <div className="space-y-6">
+              {/* Preview Details Card */}
+              <BrutalCard className="bg-surface border-[3px] border-border p-6 brutal-shadow">
+                <div className="space-y-5">
+                  <div className="flex items-center justify-between border-b-2 border-border/10 pb-2.5">
+                    <Heading
+                      level="h4"
+                      className="text-sm font-black uppercase tracking-wider flex items-center gap-2"
+                    >
+                      <Eye className="h-4.5 w-4.5 text-primary" />
+                      Mock Preview
+                    </Heading>
+                    <Link
+                      href={`/resume/preview?id=${selectedResume.id}`}
+                      passHref
+                    >
+                      <BrutalButton className="h-7 px-2.5 text-[9px] font-black uppercase tracking-wider flex items-center gap-1">
+                        <Eye className="h-3 w-3" /> Full Preview
+                      </BrutalButton>
+                    </Link>
+                  </div>
+
+                  <div className="space-y-3 text-xs border-2 border-border p-4 bg-surface-secondary/40 brutal-shadow-xs">
+                    <div className="space-y-1">
+                      <p className="text-[10px] uppercase font-bold text-foreground-secondary">
+                        Document Title
+                      </p>
+                      <p className="font-extrabold text-foreground truncate uppercase">
+                        {selectedResume.fileName}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 pt-1 border-t border-border/10">
+                      <div>
+                        <p className="text-[10px] uppercase font-bold text-foreground-secondary">
+                          ATS Rank
+                        </p>
+                        <p className="font-black text-warning font-mono">
+                          {selectedResume.atsScore}% Rating
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase font-bold text-foreground-secondary">
+                          Version
+                        </p>
+                        <p className="font-mono font-bold text-foreground">
+                          v{selectedResume.version}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 pt-1 border-t border-border/10">
+                      <div>
+                        <p className="text-[10px] uppercase font-bold text-foreground-secondary">
+                          File Size
+                        </p>
+                        <p className="font-mono text-foreground font-semibold">
+                          {selectedResume.fileSize}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase font-bold text-foreground-secondary">
+                          Status
+                        </p>
+                        <p className="font-bold text-success uppercase text-[10px]">
+                          {selectedResume.status}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 border-t border-border/10">
+                      <BrutalButton
+                        onClick={() => handleDownload(selectedResume.fileName)}
+                        className="w-full h-8 text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5"
+                      >
+                        <Download className="h-3.5 w-3.5" /> Download File
+                      </BrutalButton>
+                    </div>
+                  </div>
+                </div>
+              </BrutalCard>
+
+              {/* Version History List Card */}
+              <BrutalCard className="bg-surface border-[3px] border-border p-6 brutal-shadow">
+                <div className="space-y-4">
+                  <Heading
+                    level="h4"
+                    className="text-sm font-black uppercase tracking-wider flex items-center gap-2"
+                  >
+                    <History className="h-4.5 w-4.5 text-primary" />
+                    Version History
+                  </Heading>
+
+                  <div className="relative pl-4 border-l-2 border-border ml-2 space-y-4 py-1">
+                    {selectedResume.versionHistory.map((historyItem) => (
+                      <div key={historyItem.version} className="relative">
+                        <div className="absolute -left-[21px] top-1.5 h-2 w-2 rounded-full border border-border bg-foreground" />
+                        <div className="text-xs space-y-0.5">
+                          <p className="font-bold text-foreground">
+                            Version {historyItem.version}
+                          </p>
+                          <p className="text-foreground-secondary truncate font-medium uppercase text-[10px]">
+                            {historyItem.fileName}
+                          </p>
+                          <div className="flex items-center gap-2 text-[9px] text-foreground-muted font-mono pt-0.5">
+                            <span className="flex items-center gap-0.5">
+                              <Calendar className="h-2.5 w-2.5" />
+                              {formatDate(historyItem.uploadedAt)}
+                            </span>
+                            <span>•</span>
+                            <span className="flex items-center gap-0.5">
+                              <HardDrive className="h-2.5 w-2.5" />
+                              {historyItem.fileSize}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </BrutalCard>
+            </div>
+          ) : (
+            <div className="h-full flex items-center justify-center py-12 text-center text-xs text-foreground-secondary">
+              Select a resume to view statistics and history.
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Rename Modal Dialog */}
+      <RenameDialog
+        isOpen={renameTarget !== null}
+        onClose={() => setRenameTarget(null)}
+        originalName={renameTarget?.fileName || ""}
+        existingNames={existingNames}
+        onRename={handleRenameSubmit}
+      />
+
       <ConfirmationDialog />
     </div>
   );

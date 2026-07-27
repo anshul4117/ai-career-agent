@@ -8,9 +8,18 @@ import { RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function ThemePanel() {
-  const { currentTheme, updateTheme, applyPreset, resetTheme } = useThemeStore();
+  const { currentTheme, updateTheme, applyPreset, resetTheme } =
+    useThemeStore();
 
-  const handleColorChange = (key: "primaryColor" | "accentColor" | "backgroundColor" | "textColor" | "headingColor", val: string) => {
+  const handleColorChange = (
+    key:
+      | "primaryColor"
+      | "accentColor"
+      | "backgroundColor"
+      | "textColor"
+      | "headingColor",
+    val: string,
+  ) => {
     updateTheme({ [key]: val });
   };
 
@@ -19,17 +28,19 @@ export function ThemePanel() {
     { value: "Times New Roman", label: "Classical Serif (Times)" },
     { value: "Georgia", label: "Book Serif (Georgia)" },
     { value: "Playfair Display", label: "Elegant Serif (Playfair)" },
-    { value: "Fira Code", label: "Monospace (Fira Code)" }
+    { value: "Fira Code", label: "Monospace (Fira Code)" },
   ];
 
   const presets = Object.keys(THEME_PRESETS);
 
   return (
     <div className="space-y-6 p-3 select-none pb-20">
-      
       {/* 1. PRESETS BLOCK */}
       <div className="space-y-2">
-        <Heading level="h5" className="text-[10px] font-black uppercase tracking-widest text-foreground-secondary border-b-2 border-border/10 pb-1 mb-1">
+        <Heading
+          level="h5"
+          className="text-[10px] font-black uppercase tracking-widest text-foreground-secondary border-b-2 border-border/10 pb-1 mb-1"
+        >
           Theme Presets
         </Heading>
         <div className="grid grid-cols-2 gap-2">
@@ -44,7 +55,7 @@ export function ThemePanel() {
                   "px-2.5 py-1.5 border-2 text-[10px] font-black uppercase tracking-wider transition-all rounded-sm",
                   isActive
                     ? "bg-primary text-white border-foreground brutal-shadow-xs translate-x-[-1px] translate-y-[-1px]"
-                    : "bg-surface text-foreground border-border hover:bg-surface-secondary"
+                    : "bg-surface text-foreground border-border hover:bg-surface-secondary",
                 )}
               >
                 {preset}
@@ -63,10 +74,13 @@ export function ThemePanel() {
 
       {/* 2. COLORS CONFIGURATION */}
       <div className="space-y-3">
-        <Heading level="h5" className="text-[10px] font-black uppercase tracking-widest text-foreground-secondary border-b-2 border-border/10 pb-1">
+        <Heading
+          level="h5"
+          className="text-[10px] font-black uppercase tracking-widest text-foreground-secondary border-b-2 border-border/10 pb-1"
+        >
           Color Palette
         </Heading>
-        
+
         {/* Colors Row */}
         <div className="space-y-2">
           {[
@@ -74,12 +88,22 @@ export function ThemePanel() {
             { key: "accentColor", label: "Accent / Dividers" },
             { key: "backgroundColor", label: "Page Background" },
             { key: "textColor", label: "Body Text Color" },
-            { key: "headingColor", label: "Headings Color" }
+            { key: "headingColor", label: "Headings Color" },
           ].map((item) => {
-            const key = item.key as "primaryColor" | "accentColor" | "backgroundColor" | "textColor" | "headingColor";
+            const key = item.key as
+              | "primaryColor"
+              | "accentColor"
+              | "backgroundColor"
+              | "textColor"
+              | "headingColor";
             return (
-              <div key={key} className="flex items-center justify-between gap-3 border border-border/20 p-1.5 rounded-sm bg-surface">
-                <label className="text-[10px] font-black uppercase text-foreground-secondary">{item.label}</label>
+              <div
+                key={key}
+                className="flex items-center justify-between gap-3 border border-border/20 p-1.5 rounded-sm bg-surface"
+              >
+                <label className="text-[10px] font-black uppercase text-foreground-secondary">
+                  {item.label}
+                </label>
                 <div className="flex items-center gap-2">
                   <input
                     type="text"
@@ -102,49 +126,72 @@ export function ThemePanel() {
 
       {/* 3. TYPOGRAPHY */}
       <div className="space-y-3">
-        <Heading level="h5" className="text-[10px] font-black uppercase tracking-widest text-foreground-secondary border-b-2 border-border/10 pb-1">
+        <Heading
+          level="h5"
+          className="text-[10px] font-black uppercase tracking-widest text-foreground-secondary border-b-2 border-border/10 pb-1"
+        >
           Typography
         </Heading>
-        
+
         {/* Heading Font */}
         <div className="flex flex-col gap-1">
-          <label className="text-[9px] font-black uppercase text-foreground-secondary">Headings Font</label>
+          <label className="text-[9px] font-black uppercase text-foreground-secondary">
+            Headings Font
+          </label>
           <select
             value={currentTheme.headingFont}
             onChange={(e) => updateTheme({ headingFont: e.target.value })}
             className="border-2 border-border bg-surface p-1.5 text-[10px] font-bold uppercase rounded-sm brutal-shadow-sm h-10 w-full"
           >
-            {fontOptions.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+            {fontOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </select>
         </div>
 
         {/* Body Font */}
         <div className="flex flex-col gap-1">
-          <label className="text-[9px] font-black uppercase text-foreground-secondary">Body Text Font</label>
+          <label className="text-[9px] font-black uppercase text-foreground-secondary">
+            Body Text Font
+          </label>
           <select
             value={currentTheme.bodyFont}
             onChange={(e) => updateTheme({ bodyFont: e.target.value })}
             className="border-2 border-border bg-surface p-1.5 text-[10px] font-bold uppercase rounded-sm brutal-shadow-sm h-10 w-full"
           >
-            {fontOptions.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+            {fontOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </select>
         </div>
 
         {/* Font size, Line Height, Letter Spacing */}
         <div className="grid grid-cols-2 gap-2.5">
           <div className="flex flex-col gap-1">
-            <label className="text-[9px] font-black uppercase text-foreground-secondary">Font Size</label>
+            <label className="text-[9px] font-black uppercase text-foreground-secondary">
+              Font Size
+            </label>
             <select
               value={currentTheme.fontSize}
               onChange={(e) => updateTheme({ fontSize: e.target.value })}
               className="border-2 border-border bg-surface p-1.5 text-[10px] font-bold uppercase rounded-sm brutal-shadow-sm h-10"
             >
-              {["9px", "10px", "11px", "12px", "13px"].map((sz) => <option key={sz} value={sz}>{sz}</option>)}
+              {["9px", "10px", "11px", "12px", "13px"].map((sz) => (
+                <option key={sz} value={sz}>
+                  {sz}
+                </option>
+              ))}
             </select>
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-[9px] font-black uppercase text-foreground-secondary">Line Height</label>
+            <label className="text-[9px] font-black uppercase text-foreground-secondary">
+              Line Height
+            </label>
             <select
               value={currentTheme.lineHeight}
               onChange={(e) => updateTheme({ lineHeight: e.target.value })}
@@ -157,7 +204,9 @@ export function ThemePanel() {
           </div>
 
           <div className="flex flex-col gap-1 col-span-2">
-            <label className="text-[9px] font-black uppercase text-foreground-secondary">Letter Spacing</label>
+            <label className="text-[9px] font-black uppercase text-foreground-secondary">
+              Letter Spacing
+            </label>
             <select
               value={currentTheme.letterSpacing}
               onChange={(e) => updateTheme({ letterSpacing: e.target.value })}
@@ -173,13 +222,18 @@ export function ThemePanel() {
 
       {/* 4. LAYOUT OPTIONS */}
       <div className="space-y-3">
-        <Heading level="h5" className="text-[10px] font-black uppercase tracking-widest text-foreground-secondary border-b-2 border-border/10 pb-1">
+        <Heading
+          level="h5"
+          className="text-[10px] font-black uppercase tracking-widest text-foreground-secondary border-b-2 border-border/10 pb-1"
+        >
           Layout Structure
         </Heading>
 
         {/* Grid Columns */}
         <div className="space-y-1">
-          <label className="text-[9px] font-black uppercase text-foreground-secondary">Column Split</label>
+          <label className="text-[9px] font-black uppercase text-foreground-secondary">
+            Column Split
+          </label>
           <div className="grid grid-cols-2 gap-2">
             {[1, 2].map((col) => {
               const isActive = currentTheme.columns === col;
@@ -190,7 +244,9 @@ export function ThemePanel() {
                   onClick={() => updateTheme({ columns: col as 1 | 2 })}
                   className={cn(
                     "py-1.5 border-2 text-[10px] font-black uppercase rounded-sm",
-                    isActive ? "bg-primary text-white border-foreground" : "bg-surface hover:bg-surface-secondary"
+                    isActive
+                      ? "bg-primary text-white border-foreground"
+                      : "bg-surface hover:bg-surface-secondary",
                   )}
                 >
                   {col} Column{col > 1 ? "s" : ""}
@@ -203,7 +259,9 @@ export function ThemePanel() {
         {/* Sidebar position */}
         {currentTheme.columns === 2 && (
           <div className="space-y-1">
-            <label className="text-[9px] font-black uppercase text-foreground-secondary">Sidebar Position</label>
+            <label className="text-[9px] font-black uppercase text-foreground-secondary">
+              Sidebar Position
+            </label>
             <div className="grid grid-cols-2 gap-2">
               {["left", "right"].map((pos) => {
                 const isActive = currentTheme.sidebarPosition === pos;
@@ -211,10 +269,14 @@ export function ThemePanel() {
                   <button
                     key={pos}
                     type="button"
-                    onClick={() => updateTheme({ sidebarPosition: pos as "left" | "right" })}
+                    onClick={() =>
+                      updateTheme({ sidebarPosition: pos as "left" | "right" })
+                    }
                     className={cn(
                       "py-1.5 border-2 text-[10px] font-black uppercase rounded-sm",
-                      isActive ? "bg-primary text-white border-foreground" : "bg-surface hover:bg-surface-secondary"
+                      isActive
+                        ? "bg-primary text-white border-foreground"
+                        : "bg-surface hover:bg-surface-secondary",
                     )}
                   >
                     {pos}
@@ -227,7 +289,9 @@ export function ThemePanel() {
 
         {/* Width mode */}
         <div className="space-y-1">
-          <label className="text-[9px] font-black uppercase text-foreground-secondary">Canvas Width</label>
+          <label className="text-[9px] font-black uppercase text-foreground-secondary">
+            Canvas Width
+          </label>
           <div className="grid grid-cols-2 gap-2">
             {["compact", "wide"].map((w) => {
               const isActive = currentTheme.widthMode === w;
@@ -235,10 +299,14 @@ export function ThemePanel() {
                 <button
                   key={w}
                   type="button"
-                  onClick={() => updateTheme({ widthMode: w as "compact" | "wide" })}
+                  onClick={() =>
+                    updateTheme({ widthMode: w as "compact" | "wide" })
+                  }
                   className={cn(
                     "py-1.5 border-2 text-[10px] font-black uppercase rounded-sm",
-                    isActive ? "bg-primary text-white border-foreground" : "bg-surface hover:bg-surface-secondary"
+                    isActive
+                      ? "bg-primary text-white border-foreground"
+                      : "bg-surface hover:bg-surface-secondary",
                   )}
                 >
                   {w}
@@ -251,13 +319,18 @@ export function ThemePanel() {
 
       {/* 5. SPACING CONTROLS */}
       <div className="space-y-3">
-        <Heading level="h5" className="text-[10px] font-black uppercase tracking-widest text-foreground-secondary border-b-2 border-border/10 pb-1">
+        <Heading
+          level="h5"
+          className="text-[10px] font-black uppercase tracking-widest text-foreground-secondary border-b-2 border-border/10 pb-1"
+        >
           Margins & Spacing
         </Heading>
 
         {/* Margins */}
         <div className="flex flex-col gap-1">
-          <label className="text-[9px] font-black uppercase text-foreground-secondary">Page Outer Margins</label>
+          <label className="text-[9px] font-black uppercase text-foreground-secondary">
+            Page Outer Margins
+          </label>
           <select
             value={currentTheme.margins}
             onChange={(e) => updateTheme({ margins: e.target.value })}
@@ -272,7 +345,9 @@ export function ThemePanel() {
 
         {/* Section Spacing */}
         <div className="flex flex-col gap-1">
-          <label className="text-[9px] font-black uppercase text-foreground-secondary">Section Gaps</label>
+          <label className="text-[9px] font-black uppercase text-foreground-secondary">
+            Section Gaps
+          </label>
           <select
             value={currentTheme.sectionSpacing}
             onChange={(e) => updateTheme({ sectionSpacing: e.target.value })}
@@ -286,7 +361,9 @@ export function ThemePanel() {
 
         {/* Paragraph Spacing */}
         <div className="flex flex-col gap-1">
-          <label className="text-[9px] font-black uppercase text-foreground-secondary">Paragraph Gaps</label>
+          <label className="text-[9px] font-black uppercase text-foreground-secondary">
+            Paragraph Gaps
+          </label>
           <select
             value={currentTheme.paragraphSpacing}
             onChange={(e) => updateTheme({ paragraphSpacing: e.target.value })}
@@ -300,7 +377,9 @@ export function ThemePanel() {
 
         {/* Item Spacing */}
         <div className="flex flex-col gap-1">
-          <label className="text-[9px] font-black uppercase text-foreground-secondary">List Entry Gaps</label>
+          <label className="text-[9px] font-black uppercase text-foreground-secondary">
+            List Entry Gaps
+          </label>
           <select
             value={currentTheme.itemSpacing}
             onChange={(e) => updateTheme({ itemSpacing: e.target.value })}
@@ -315,13 +394,18 @@ export function ThemePanel() {
 
       {/* 6. BORDER AND SHAPES */}
       <div className="space-y-3">
-        <Heading level="h5" className="text-[10px] font-black uppercase tracking-widest text-foreground-secondary border-b-2 border-border/10 pb-1">
+        <Heading
+          level="h5"
+          className="text-[10px] font-black uppercase tracking-widest text-foreground-secondary border-b-2 border-border/10 pb-1"
+        >
           Borders & Styling
         </Heading>
 
         {/* Rounded Corners */}
         <div className="flex flex-col gap-1">
-          <label className="text-[9px] font-black uppercase text-foreground-secondary">Corner Rounding</label>
+          <label className="text-[9px] font-black uppercase text-foreground-secondary">
+            Corner Rounding
+          </label>
           <select
             value={currentTheme.roundedCorners}
             onChange={(e) => updateTheme({ roundedCorners: e.target.value })}
@@ -336,7 +420,9 @@ export function ThemePanel() {
 
         {/* Border Style */}
         <div className="flex flex-col gap-1">
-          <label className="text-[9px] font-black uppercase text-foreground-secondary">Border Style</label>
+          <label className="text-[9px] font-black uppercase text-foreground-secondary">
+            Border Style
+          </label>
           <select
             value={currentTheme.borderStyle}
             onChange={(e) => updateTheme({ borderStyle: e.target.value })}
@@ -350,7 +436,9 @@ export function ThemePanel() {
 
         {/* Divider Style */}
         <div className="flex flex-col gap-1">
-          <label className="text-[9px] font-black uppercase text-foreground-secondary">Section Dividers</label>
+          <label className="text-[9px] font-black uppercase text-foreground-secondary">
+            Section Dividers
+          </label>
           <select
             value={currentTheme.dividerStyle}
             onChange={(e) => updateTheme({ dividerStyle: e.target.value })}
@@ -364,19 +452,24 @@ export function ThemePanel() {
 
         {/* Section Background */}
         <div className="flex flex-col gap-1">
-          <label className="text-[9px] font-black uppercase text-foreground-secondary">Card Background</label>
+          <label className="text-[9px] font-black uppercase text-foreground-secondary">
+            Card Background
+          </label>
           <select
             value={currentTheme.sectionBackground}
             onChange={(e) => updateTheme({ sectionBackground: e.target.value })}
             className="border-2 border-border bg-surface p-1.5 text-[10px] font-bold uppercase rounded-sm brutal-shadow-sm h-10"
           >
             <option value="bg-transparent">Transparent</option>
-            <option value="bg-slate-50/50 dark:bg-surface-secondary/50">Subtle Slate</option>
-            <option value="bg-slate-100 dark:bg-surface-hover/50">Solid Slate tint</option>
+            <option value="bg-slate-50/50 dark:bg-surface-secondary/50">
+              Subtle Slate
+            </option>
+            <option value="bg-slate-100 dark:bg-surface-hover/50">
+              Solid Slate tint
+            </option>
           </select>
         </div>
       </div>
-
     </div>
   );
 }
