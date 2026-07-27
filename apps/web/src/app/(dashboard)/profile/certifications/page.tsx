@@ -15,7 +15,14 @@ import { CertificationFormValues } from "@/features/profile/schemas/certificatio
 import { PageLoader } from "@/components/ui/brand-loader";
 
 export default function CertificationsPage() {
-  const { certifications, isLoading, loadProfile, addCertification, updateCertification, deleteCertification } = useProfileStore();
+  const {
+    certifications,
+    isLoading,
+    loadProfile,
+    addCertification,
+    updateCertification,
+    deleteCertification,
+  } = useProfileStore();
   const { confirm, ConfirmationDialog } = useConfirm();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -38,9 +45,10 @@ export default function CertificationsPage() {
   const handleDeleteClick = async (id: string) => {
     const isConfirmed = await confirm({
       title: "Delete Certification",
-      description: "Are you sure you want to delete this certification? This action cannot be undone.",
+      description:
+        "Are you sure you want to delete this certification? This action cannot be undone.",
       isDestructive: true,
-      confirmLabel: "Delete"
+      confirmLabel: "Delete",
     });
     if (isConfirmed) {
       deleteCertification(id);
@@ -77,7 +85,10 @@ export default function CertificationsPage() {
             <ArrowLeft className="h-4 w-4" />
             Back to Profile
           </Link>
-          <Heading level="h2" className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center gap-2">
+          <Heading
+            level="h2"
+            className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center gap-2"
+          >
             <Award className="h-6 w-6 text-primary shrink-0" />
             Manage Certifications
           </Heading>
@@ -98,11 +109,15 @@ export default function CertificationsPage() {
             <Award className="h-6 w-6" aria-hidden="true" />
           </div>
           <div className="space-y-1.5 max-w-sm">
-            <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+            <Heading
+              level="h4"
+              className="text-base font-black uppercase tracking-tight"
+            >
               No Certifications Added Yet
             </Heading>
             <Text className="text-foreground-secondary text-xs leading-relaxed">
-              Add professional certifications, courses, or licenses to boost your matching diagnostics scores.
+              Add professional certifications, courses, or licenses to boost
+              your matching diagnostics scores.
             </Text>
           </div>
           <BrutalButton
@@ -139,7 +154,7 @@ export default function CertificationsPage() {
           submitLabel={editingCert ? "Save Changes" : "Save Record"}
         />
       </ProfileDialog>
-      
+
       <ConfirmationDialog />
     </div>
   );

@@ -17,7 +17,12 @@ const sizeClasses = {
   lg: "h-24 w-24 text-2xl",
 };
 
-export function ProfileAvatar({ url, initials, size = "lg", className }: ProfileAvatarProps) {
+export function ProfileAvatar({
+  url,
+  initials,
+  size = "lg",
+  className,
+}: ProfileAvatarProps) {
   return (
     <div
       className={cn(
@@ -29,7 +34,13 @@ export function ProfileAvatar({ url, initials, size = "lg", className }: Profile
       aria-label={`Avatar for ${initials}`}
     >
       {url ? (
-        <Image src={url} alt="Profile avatar" fill unoptimized className="object-cover" />
+        <Image
+          src={url}
+          alt="Profile avatar"
+          fill
+          unoptimized
+          className="object-cover"
+        />
       ) : (
         <span className="text-foreground">{initials}</span>
       )}

@@ -26,7 +26,10 @@ export function QuickActionsCard() {
   return (
     <BrutalCard className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0">
       <div className="space-y-4">
-        <Heading level="h4" className="text-base font-black uppercase tracking-tight flex items-center gap-2">
+        <Heading
+          level="h4"
+          className="text-base font-black uppercase tracking-tight flex items-center gap-2"
+        >
           <Zap className="h-5 w-5 text-primary" aria-hidden="true" />
           Quick Actions
         </Heading>

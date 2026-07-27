@@ -17,7 +17,7 @@ export const socialLinkSchema = z.object({
     ],
     {
       errorMap: () => ({ message: "Please select a supported platform" }),
-    }
+    },
   ),
   url: z
     .string()

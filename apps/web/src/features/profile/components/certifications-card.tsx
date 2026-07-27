@@ -10,9 +10,14 @@ interface CertificationsCardProps {
   certifications: Certification[];
 }
 
-export function CertificationsCard({ certifications }: CertificationsCardProps) {
+export function CertificationsCard({
+  certifications,
+}: CertificationsCardProps) {
   const previewCerts = [...certifications]
-    .sort((a, b) => new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime(),
+    )
     .slice(0, 2);
 
   return (
@@ -20,7 +25,10 @@ export function CertificationsCard({ certifications }: CertificationsCardProps) 
       <div className="space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between gap-4">
-          <Heading level="h4" className="text-base font-black uppercase tracking-tight flex items-center gap-2">
+          <Heading
+            level="h4"
+            className="text-base font-black uppercase tracking-tight flex items-center gap-2"
+          >
             <Award className="h-5 w-5 text-primary" aria-hidden="true" />
             Certifications
           </Heading>

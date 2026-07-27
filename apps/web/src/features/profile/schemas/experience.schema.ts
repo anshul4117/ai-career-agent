@@ -14,9 +14,12 @@ export const experienceSchema = z
       .min(1, "Company name is required")
       .max(100, "Company name must be under 100 characters")
       .trim(),
-    employmentType: z.enum(["full-time", "part-time", "internship", "contract", "freelance"], {
-      errorMap: () => ({ message: "Please select an employment type" }),
-    }),
+    employmentType: z.enum(
+      ["full-time", "part-time", "internship", "contract", "freelance"],
+      {
+        errorMap: () => ({ message: "Please select an employment type" }),
+      },
+    ),
     location: z
       .string()
       .min(1, "Location is required")
@@ -29,37 +32,31 @@ export const experienceSchema = z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, "Start date must be in YYYY-MM-DD format"),
     endDate: z
-      .preprocess((val) => (val === "" ? null : val), z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "End date must be in YYYY-MM-DD format").nullable().optional()),
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "End date must be in YYYY-MM-DD format")
+      .or(z.literal(""))
+      .nullable()
+      .optional(),
     currentPosition: z.boolean(),
     description: z
       .string()
       .min(1, "Description is required")
       .max(1000, "Description must be under 1000 characters")
       .trim(),
-    technologiesUsed: z
-      .preprocess(
-        (val) => {
-          if (typeof val === "string") {
-            return val
-              .split(",")
-              .map((t) => t.trim())
-              .filter(Boolean);
-          }
-          return val;
-        },
-        z.array(z.string())
-      ),
+    technologiesUsed: z.array(z.string()).default([]),
+    responsibilities: z.array(z.string()).default([]),
+    achievements: z.array(z.string()).default([]),
   })
   .refine(
     (data) => {
       if (data.currentPosition) return true;
-      if (!data.endDate) return false;
+      if (!data.endDate || data.endDate === "") return false;
       return new Date(data.startDate) <= new Date(data.endDate);
     },
     {
       message: "End date must be after the start date",
       path: ["endDate"],
-    }
+    },
   );
 
 export type ExperienceFormValues = z.infer<typeof experienceSchema>;

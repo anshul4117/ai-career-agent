@@ -29,7 +29,7 @@ export function SkillBadge({ level, className }: SkillBadgeProps) {
       className={cn(
         "text-[10px] font-black uppercase border-2 px-2 py-0.5 rounded-sm brutal-shadow-sm select-none shrink-0",
         levelColors[level],
-        className
+        className,
       )}
     >
       {levelLabels[level]}

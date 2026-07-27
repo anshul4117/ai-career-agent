@@ -13,9 +13,17 @@ import { ExperienceForm } from "@/features/profile/components/experience-form";
 import type { Experience } from "@/features/profile/types/experience.types";
 import { ExperienceFormValues } from "@/features/profile/schemas/experience.schema";
 import { PageLoader } from "@/components/ui/brand-loader";
+import { toast } from "sonner";
 
 export default function ExperiencePage() {
-  const { experience, isLoading, loadProfile, addExperience, updateExperience, deleteExperience } = useProfileStore();
+  const {
+    experience,
+    isLoading,
+    loadProfile,
+    addExperience,
+    updateExperience,
+    deleteExperience,
+  } = useProfileStore();
   const { confirm, ConfirmationDialog } = useConfirm();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -38,26 +46,49 @@ export default function ExperiencePage() {
   const handleDeleteClick = async (id: string) => {
     const isConfirmed = await confirm({
       title: "Delete Experience",
-      description: "Are you sure you want to delete this experience record? This action cannot be undone.",
+      description:
+        "Are you sure you want to delete this experience record? This action cannot be undone.",
       isDestructive: true,
-      confirmLabel: "Delete"
+      confirmLabel: "Delete",
     });
     if (isConfirmed) {
       deleteExperience(id);
     }
   };
 
-  const handleFormSubmit = (values: ExperienceFormValues) => {
-    const mappedValues = {
-      ...values,
-      endDate: values.endDate ?? null,
-    };
-    if (editingExp) {
-      updateExperience(editingExp.id, mappedValues);
-    } else {
-      addExperience(mappedValues);
+  const handleFormSubmit = async (values: ExperienceFormValues) => {
+    const isAdding = !editingExp;
+    const toastId = toast.loading(
+      isAdding ? "Adding work experience..." : "Saving experience changes...",
+    );
+
+    try {
+      // Simulate network request delay (800ms) as requested
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      const mappedValues = {
+        ...values,
+        endDate: values.endDate ?? null,
+      };
+
+      if (editingExp) {
+        updateExperience(editingExp.id, mappedValues);
+      } else {
+        addExperience(mappedValues);
+      }
+
+      setIsDialogOpen(false);
+      toast.success(
+        isAdding
+          ? "Work experience added successfully!"
+          : "Work experience updated successfully!",
+        { id: toastId },
+      );
+    } catch {
+      toast.error("Failed to save experience details. Please try again.", {
+        id: toastId,
+      });
     }
-    setIsDialogOpen(false);
   };
 
   if (isLoading) {
@@ -76,7 +107,10 @@ export default function ExperiencePage() {
             <ArrowLeft className="h-4 w-4" />
             Back to Profile
           </Link>
-          <Heading level="h2" className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center gap-2">
+          <Heading
+            level="h2"
+            className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center gap-2"
+          >
             <Briefcase className="h-6 w-6 text-primary shrink-0" />
             Work Experience
           </Heading>
@@ -110,9 +144,10 @@ export default function ExperiencePage() {
           onSubmit={handleFormSubmit}
           onCancel={() => setIsDialogOpen(false)}
           submitLabel={editingExp ? "Save Changes" : "Save Record"}
+          existingExperiences={experience}
         />
       </ProfileDialog>
-      
+
       <ConfirmationDialog />
     </div>
   );

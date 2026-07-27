@@ -11,7 +11,8 @@ import { useRouter } from "next/navigation";
 import { PageLoader } from "@/components/ui/brand-loader";
 
 export default function PreferencesPage() {
-  const { preferences, isLoading, loadProfile, updatePreferences } = useProfileStore();
+  const { preferences, isLoading, loadProfile, updatePreferences } =
+    useProfileStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -37,12 +38,16 @@ export default function PreferencesPage() {
           <ArrowLeft className="h-4 w-4" />
           Back to Profile
         </Link>
-        <Heading level="h2" className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center gap-2">
+        <Heading
+          level="h2"
+          className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center gap-2"
+        >
           <Settings className="h-6 w-6 text-primary shrink-0" />
           Career Preferences
         </Heading>
         <Text className="text-foreground-secondary text-xs">
-          Configure job roles, expected package, location preferences, and sponsorship details to optimize matcher algorithms.
+          Configure job roles, expected package, location preferences, and
+          sponsorship details to optimize matcher algorithms.
         </Text>
       </div>
 

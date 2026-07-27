@@ -163,6 +163,17 @@ export default function EditProfilePage() {
   const [activeExpEditor, setActiveExpEditor] = useState<"add" | string | null>(
     null,
   );
+  const activeExp = useMemo(
+    () => experience.find((e) => e.id === activeExpEditor) || null,
+    [experience, activeExpEditor],
+  );
+  const sortedExperience = useMemo(() => {
+    return [...experience].sort((a, b) => {
+      if (a.currentPosition && !b.currentPosition) return -1;
+      if (!a.currentPosition && b.currentPosition) return 1;
+      return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+    });
+  }, [experience]);
   const [activeEduEditor, setActiveEduEditor] = useState<"add" | string | null>(
     null,
   );
@@ -478,16 +489,40 @@ export default function EditProfilePage() {
     }
   };
 
-  const handleExpSubmit = (values: ExperienceFormValues) => {
-    const mapped = { ...values, endDate: values.endDate ?? null };
-    if (activeExpEditor === "add") {
-      addExperience(mapped);
-    } else if (activeExpEditor) {
-      updateExperience(activeExpEditor, mapped);
+  const handleExpSubmit = async (values: ExperienceFormValues) => {
+    const isAdding = activeExpEditor === "add";
+    const toastId = toast.loading(
+      isAdding ? "Adding work experience..." : "Saving experience changes...",
+    );
+
+    try {
+      // Simulate network request delay (800ms) as requested
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      const mapped = {
+        ...values,
+        endDate: values.endDate ?? null,
+      };
+
+      if (isAdding) {
+        addExperience(mapped);
+      } else if (activeExpEditor) {
+        updateExperience(activeExpEditor, mapped);
+      }
+
+      setActiveExpEditor(null);
+      toast.success(
+        isAdding
+          ? "Work experience added successfully!"
+          : "Work experience updated successfully!",
+        { id: toastId },
+      );
+      handlePostSaveRedirect();
+    } catch {
+      toast.error("Failed to save experience details. Please try again.", {
+        id: toastId,
+      });
     }
-    setActiveExpEditor(null);
-    toast.success("Experience updated!");
-    handlePostSaveRedirect();
   };
 
   const handleEduSubmit = async (values: EducationFormValues) => {
@@ -987,59 +1022,60 @@ export default function EditProfilePage() {
                 >
                   Work Experience
                 </Heading>
-                {!activeExpEditor && (
-                  <BrutalButton
-                    onClick={() => setActiveExpEditor("add")}
-                    className="h-8 px-3 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1"
-                  >
-                    <Plus className="h-3.5 w-3.5" /> Add Experience
-                  </BrutalButton>
-                )}
+                <BrutalButton
+                  onClick={() => setActiveExpEditor("add")}
+                  className="h-8 px-3 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1"
+                >
+                  <Plus className="h-3.5 w-3.5" /> Add Experience
+                </BrutalButton>
               </div>
 
-              {activeExpEditor ? (
-                <div className="border-2 border-border p-4 bg-surface-secondary space-y-4 rounded-sm brutal-shadow-sm">
-                  <Heading
-                    level="h5"
-                    className="text-xs font-black uppercase tracking-wider"
-                  >
-                    {activeExpEditor === "add"
-                      ? "Add Work Experience"
-                      : "Edit Experience Record"}
-                  </Heading>
-                  <ExperienceForm
-                    initialValues={
-                      activeExpEditor === "add"
-                        ? null
-                        : experience.find((e) => e.id === activeExpEditor)
-                    }
-                    onSubmit={handleExpSubmit}
-                    onCancel={() => setActiveExpEditor(null)}
-                    submitLabel={
-                      activeExpEditor === "add"
-                        ? "Add Experience"
-                        : "Save Record"
-                    }
-                  />
-                </div>
-              ) : experience.length === 0 ? (
+              {/* Dialog for Add/Edit Experience */}
+              <ProfileDialog
+                isOpen={activeExpEditor !== null}
+                onClose={() => setActiveExpEditor(null)}
+                title={
+                  activeExpEditor === "add"
+                    ? "Add Work Experience"
+                    : "Edit Experience Record"
+                }
+              >
+                <ExperienceForm
+                  initialValues={activeExp}
+                  onSubmit={handleExpSubmit}
+                  onCancel={() => setActiveExpEditor(null)}
+                  submitLabel={
+                    activeExpEditor === "add" ? "Add Experience" : "Save Record"
+                  }
+                  existingExperiences={experience}
+                />
+              </ProfileDialog>
+
+              {experience.length === 0 ? (
                 <div className="text-center py-6 border-2 border-dashed border-border/20 text-xs text-foreground-secondary">
                   No work history configured. List your career experience.
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {experience.map((exp) => (
+                  {sortedExperience.map((exp) => (
                     <div
                       key={exp.id}
                       className="border-2 border-border p-4 rounded-sm flex justify-between gap-4 bg-surface-secondary/20"
                     >
                       <div className="space-y-1 text-xs">
-                        <h5 className="font-extrabold uppercase text-foreground">
-                          {exp.jobTitle}
-                        </h5>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h5 className="font-extrabold uppercase text-foreground">
+                            {exp.jobTitle}
+                          </h5>
+                          {exp.currentPosition && (
+                            <span className="px-1.5 py-0.5 border border-border bg-success text-white text-[8px] font-black uppercase brutal-shadow-sm select-none">
+                              Present
+                            </span>
+                          )}
+                        </div>
                         <p className="text-foreground-secondary font-semibold">
                           {exp.companyName} • {exp.location} (
-                          {WORK_MODE_LABELS[exp.workMode]})
+                          {WORK_MODE_LABELS[exp.workMode] || exp.workMode})
                         </p>
                         <p className="text-foreground-muted font-mono text-[10px]">
                           {exp.startDate} –{" "}
@@ -1050,6 +1086,19 @@ export default function EditProfilePage() {
                             {exp.description}
                           </p>
                         )}
+                        {exp.technologiesUsed &&
+                          exp.technologiesUsed.length > 0 && (
+                            <div className="flex flex-wrap gap-1 pt-1.5">
+                              {exp.technologiesUsed.map((tech) => (
+                                <span
+                                  key={tech}
+                                  className="px-1.5 py-0.2 border border-border/20 bg-surface-secondary text-[8px] font-extrabold uppercase rounded-sm text-foreground-secondary"
+                                >
+                                  {tech}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                       </div>
                       <div className="flex flex-col gap-2 shrink-0">
                         <BrutalButton

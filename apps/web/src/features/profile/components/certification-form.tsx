@@ -3,7 +3,10 @@
 import React, { useEffect } from "react";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { certificationSchema, type CertificationFormValues } from "../schemas/certification.schema";
+import {
+  certificationSchema,
+  type CertificationFormValues,
+} from "../schemas/certification.schema";
 import { BrutalInput } from "@/components/ui/brutal-input";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -30,7 +33,9 @@ export function CertificationForm({
     reset,
     formState: { errors, isSubmitting, isDirty },
   } = useForm<CertificationFormValues>({
-    resolver: zodResolver(certificationSchema) as unknown as Resolver<CertificationFormValues>,
+    resolver: zodResolver(
+      certificationSchema,
+    ) as unknown as Resolver<CertificationFormValues>,
     defaultValues: {
       name: "",
       issuingOrganization: "",

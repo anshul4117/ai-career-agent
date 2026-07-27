@@ -15,7 +15,14 @@ import { LanguageFormValues } from "@/features/profile/schemas/language.schema";
 import { PageLoader } from "@/components/ui/brand-loader";
 
 export default function LanguagesPage() {
-  const { languages, isLoading, loadProfile, addLanguage, updateLanguage, deleteLanguage } = useProfileStore();
+  const {
+    languages,
+    isLoading,
+    loadProfile,
+    addLanguage,
+    updateLanguage,
+    deleteLanguage,
+  } = useProfileStore();
   const { confirm, ConfirmationDialog } = useConfirm();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -38,9 +45,10 @@ export default function LanguagesPage() {
   const handleDeleteClick = async (id: string) => {
     const isConfirmed = await confirm({
       title: "Delete Language",
-      description: "Are you sure you want to delete this language? This action cannot be undone.",
+      description:
+        "Are you sure you want to delete this language? This action cannot be undone.",
       isDestructive: true,
-      confirmLabel: "Delete"
+      confirmLabel: "Delete",
     });
     if (isConfirmed) {
       deleteLanguage(id);
@@ -71,7 +79,10 @@ export default function LanguagesPage() {
             <ArrowLeft className="h-4 w-4" />
             Back to Profile
           </Link>
-          <Heading level="h2" className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center gap-2">
+          <Heading
+            level="h2"
+            className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center gap-2"
+          >
             <MessageSquare className="h-6 w-6 text-primary shrink-0" />
             Manage Languages
           </Heading>
@@ -92,11 +103,15 @@ export default function LanguagesPage() {
             <MessageSquare className="h-6 w-6" aria-hidden="true" />
           </div>
           <div className="space-y-1.5 max-w-sm">
-            <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+            <Heading
+              level="h4"
+              className="text-base font-black uppercase tracking-tight"
+            >
               No Languages Added Yet
             </Heading>
             <Text className="text-foreground-secondary text-xs leading-relaxed">
-              List the languages you speak and write to showcase your communication strengths.
+              List the languages you speak and write to showcase your
+              communication strengths.
             </Text>
           </div>
           <BrutalButton
@@ -133,7 +148,7 @@ export default function LanguagesPage() {
           submitLabel={editingLang ? "Save Changes" : "Save Details"}
         />
       </ProfileDialog>
-      
+
       <ConfirmationDialog />
     </div>
   );

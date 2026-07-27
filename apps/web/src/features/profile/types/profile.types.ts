@@ -2,7 +2,8 @@
 
 export type Gender = "male" | "female" | "non_binary" | "prefer_not_to_say";
 export type WorkPreference = "remote" | "hybrid" | "onsite";
-export type AvailabilityStatus = "actively_looking" | "open_to_offers" | "not_looking";
+export type AvailabilityStatus =
+  "actively_looking" | "open_to_offers" | "not_looking";
 
 export interface ProfileAvatar {
   url: string | null;

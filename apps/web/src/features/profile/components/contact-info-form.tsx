@@ -3,7 +3,10 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { contactInfoSchema, type ContactInfoFormValues } from "../schemas/profile.schema";
+import {
+  contactInfoSchema,
+  type ContactInfoFormValues,
+} from "../schemas/profile.schema";
 import { BrutalInput } from "@/components/ui/brutal-input";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import type { ContactInfo } from "../types/profile.types";

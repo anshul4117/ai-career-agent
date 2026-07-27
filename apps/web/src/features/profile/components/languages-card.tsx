@@ -19,8 +19,14 @@ export function LanguagesCard({ languages }: LanguagesCardProps) {
       <div className="space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between gap-4">
-          <Heading level="h4" className="text-base font-black uppercase tracking-tight flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-primary" aria-hidden="true" />
+          <Heading
+            level="h4"
+            className="text-base font-black uppercase tracking-tight flex items-center gap-2"
+          >
+            <MessageSquare
+              className="h-5 w-5 text-primary"
+              aria-hidden="true"
+            />
             Languages
           </Heading>
         </div>
@@ -43,7 +49,12 @@ export function LanguagesCard({ languages }: LanguagesCardProps) {
                   {lang.language}
                 </span>
                 <span className="text-[9px] font-black uppercase text-foreground-muted select-none">
-                  ({lang.nativeLanguage ? "Native" : LANGUAGE_LEVEL_LABELS[lang.speakingLevel] || lang.speakingLevel})
+                  (
+                  {lang.nativeLanguage
+                    ? "Native"
+                    : LANGUAGE_LEVEL_LABELS[lang.speakingLevel] ||
+                      lang.speakingLevel}
+                  )
                 </span>
               </div>
             ))}

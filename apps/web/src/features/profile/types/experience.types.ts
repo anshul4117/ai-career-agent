@@ -1,6 +1,7 @@
 /** Experience Module — Type Definitions */
 
-export type EmploymentType = "full-time" | "part-time" | "internship" | "contract" | "freelance";
+export type EmploymentType =
+  "full-time" | "part-time" | "internship" | "contract" | "freelance";
 export type WorkMode = "remote" | "hybrid" | "onsite";
 
 export interface Experience {
@@ -15,6 +16,8 @@ export interface Experience {
   currentPosition: boolean;
   description: string;
   technologiesUsed: string[]; // e.g. ["TypeScript", "Next.js"]
+  responsibilities?: string[];
+  achievements?: string[];
   createdAt: string;
   updatedAt: string;
 }

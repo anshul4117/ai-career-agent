@@ -25,7 +25,10 @@ interface SocialLinkItemProps {
   onDelete: (id: string) => void;
 }
 
-const PLATFORM_ICONS: Record<SocialPlatform, React.ComponentType<{ className?: string }>> = {
+const PLATFORM_ICONS: Record<
+  SocialPlatform,
+  React.ComponentType<{ className?: string }>
+> = {
   github: Github,
   linkedin: Linkedin,
   portfolio: Globe,
@@ -37,7 +40,11 @@ const PLATFORM_ICONS: Record<SocialPlatform, React.ComponentType<{ className?: s
   stackoverflow: Globe,
 };
 
-export function SocialLinkItem({ link, onEdit, onDelete }: SocialLinkItemProps) {
+export function SocialLinkItem({
+  link,
+  onEdit,
+  onDelete,
+}: SocialLinkItemProps) {
   const [copied, setCopied] = useState(false);
   const Icon = PLATFORM_ICONS[link.platform] || Globe;
 
@@ -59,7 +66,10 @@ export function SocialLinkItem({ link, onEdit, onDelete }: SocialLinkItemProps) 
         </div>
 
         <div className="space-y-0.5 min-w-0">
-          <Heading level="h4" className="text-sm font-black uppercase tracking-tight truncate">
+          <Heading
+            level="h4"
+            className="text-sm font-black uppercase tracking-tight truncate"
+          >
             {SOCIAL_PLATFORM_LABELS[link.platform] || link.platform}
           </Heading>
           <a
@@ -69,7 +79,9 @@ export function SocialLinkItem({ link, onEdit, onDelete }: SocialLinkItemProps) 
             className="text-xs text-foreground-secondary hover:text-primary hover:underline truncate flex items-center gap-1 min-w-0 block"
             aria-label={`Open ${SOCIAL_PLATFORM_LABELS[link.platform]}`}
           >
-            <span className="truncate max-w-[200px] sm:max-w-xs">{link.url}</span>
+            <span className="truncate max-w-[200px] sm:max-w-xs">
+              {link.url}
+            </span>
             <ExternalLink className="h-3 w-3 shrink-0" />
           </a>
         </div>

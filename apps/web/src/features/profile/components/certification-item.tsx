@@ -12,11 +12,18 @@ interface CertificationItemProps {
   onDelete: (id: string) => void;
 }
 
-export function CertificationItem({ cert, onEdit, onDelete }: CertificationItemProps) {
+export function CertificationItem({
+  cert,
+  onEdit,
+  onDelete,
+}: CertificationItemProps) {
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "No Expiration";
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
+    });
   };
 
   return (
@@ -27,7 +34,10 @@ export function CertificationItem({ cert, onEdit, onDelete }: CertificationItemP
         </div>
 
         <div className="space-y-1.5 min-w-0">
-          <Heading level="h4" className="text-base font-black uppercase tracking-tight truncate">
+          <Heading
+            level="h4"
+            className="text-base font-black uppercase tracking-tight truncate"
+          >
             {cert.name}
           </Heading>
           <p className="font-bold text-xs text-foreground-secondary truncate">
@@ -37,7 +47,10 @@ export function CertificationItem({ cert, onEdit, onDelete }: CertificationItemP
           <div className="flex flex-wrap items-center gap-3 text-[10px] text-foreground-muted font-mono pt-1">
             <span className="flex items-center gap-1 font-bold">
               <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
-              Issued: {formatDate(cert.issueDate)} – {cert.neverExpires ? "Never Expires" : `Expires: ${formatDate(cert.expiryDate)}`}
+              Issued: {formatDate(cert.issueDate)} –{" "}
+              {cert.neverExpires
+                ? "Never Expires"
+                : `Expires: ${formatDate(cert.expiryDate)}`}
             </span>
             {cert.credentialId && (
               <span className="px-2 py-0.5 border border-border bg-surface-secondary font-black uppercase text-[9px] text-foreground brutal-shadow-sm">

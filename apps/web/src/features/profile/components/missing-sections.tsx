@@ -22,14 +22,23 @@ export function MissingSections({ missingSections }: MissingSectionsProps) {
   return (
     <BrutalCard className="bg-[#FFE2E2] border-[3px] border-border p-5 brutal-shadow w-full min-w-0">
       <div className="space-y-4">
-        <Heading level="h4" className="text-xs font-black uppercase tracking-wider flex items-center gap-2 text-foreground">
-          <AlertTriangle className="h-4.5 w-4.5 text-error shrink-0" aria-hidden="true" />
+        <Heading
+          level="h4"
+          className="text-xs font-black uppercase tracking-wider flex items-center gap-2 text-foreground"
+        >
+          <AlertTriangle
+            className="h-4.5 w-4.5 text-error shrink-0"
+            aria-hidden="true"
+          />
           Missing Sections ({missingSections.length})
         </Heading>
 
         <div className="divide-y-2 divide-border/10">
           {missingSections.map((item) => (
-            <div key={item.id} className="py-3.5 first:pt-0 last:pb-0 space-y-1">
+            <div
+              key={item.id}
+              className="py-3.5 first:pt-0 last:pb-0 space-y-1"
+            >
               <div className="text-xs font-extrabold uppercase text-foreground">
                 • {item.label}
               </div>

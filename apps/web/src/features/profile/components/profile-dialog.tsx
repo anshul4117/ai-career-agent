@@ -38,7 +38,7 @@ export function ProfileDialog({
 
     // Focus close button or first interactive element
     const focusable = dialogRef.current?.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex="0"]'
+      'button, [href], input, select, textarea, [tabindex="0"]',
     );
     if (focusable && focusable.length > 0) {
       (focusable[0] as HTMLElement).focus();
@@ -66,12 +66,16 @@ export function ProfileDialog({
         ref={dialogRef}
         className={cn(
           "relative w-full max-w-lg bg-surface border-[3px] border-border p-6 brutal-shadow rounded-md overflow-hidden max-h-[90vh] flex flex-col z-10 animate-in fade-in zoom-in-95 duration-150",
-          className
+          className,
         )}
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b-3 border-border pb-3 shrink-0">
-          <Heading level="h3" id="dialog-title" className="text-lg font-black uppercase tracking-tight">
+          <Heading
+            level="h3"
+            id="dialog-title"
+            className="text-lg font-black uppercase tracking-tight"
+          >
             {title}
           </Heading>
           <Button
@@ -86,9 +90,7 @@ export function ProfileDialog({
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto pt-4 pb-2 pr-1">
-          {children}
-        </div>
+        <div className="flex-1 overflow-y-auto pt-4 pb-2 pr-1">{children}</div>
       </div>
     </div>
   );

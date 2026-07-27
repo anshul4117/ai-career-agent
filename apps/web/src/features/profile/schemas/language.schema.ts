@@ -2,9 +2,12 @@
 
 import { z } from "zod";
 
-const languageLevelSchema = z.enum(["beginner", "intermediate", "advanced", "fluent", "native"], {
-  errorMap: () => ({ message: "Please select a valid proficiency level" }),
-});
+const languageLevelSchema = z.enum(
+  ["beginner", "intermediate", "advanced", "fluent", "native"],
+  {
+    errorMap: () => ({ message: "Please select a valid proficiency level" }),
+  },
+);
 
 export const languageSchema = z.object({
   language: z

@@ -19,7 +19,10 @@ export function SocialLinksCard({ socialLinks }: SocialLinksCardProps) {
       <div className="space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between gap-4">
-          <Heading level="h4" className="text-base font-black uppercase tracking-tight flex items-center gap-2">
+          <Heading
+            level="h4"
+            className="text-base font-black uppercase tracking-tight flex items-center gap-2"
+          >
             <Share2 className="h-5 w-5 text-primary" aria-hidden="true" />
             Social Links
           </Heading>

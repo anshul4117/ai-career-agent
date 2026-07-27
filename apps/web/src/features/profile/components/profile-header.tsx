@@ -15,19 +15,33 @@ interface ProfileHeaderProps {
   showEdit?: boolean;
 }
 
-export function ProfileHeader({ profile, className, showEdit = false }: ProfileHeaderProps) {
+export function ProfileHeader({
+  profile,
+  className,
+  showEdit = false,
+}: ProfileHeaderProps) {
   const { avatar, personal, career, contact, availability } = profile;
   const fullName = `${personal.firstName} ${personal.lastName}`;
   const availabilityInfo = AVAILABILITY_LABELS[availability];
 
   return (
-    <div className={`bg-surface border-[3px] border-border p-5 md:p-6 brutal-shadow w-full min-w-0 ${className || ""}`}>
+    <div
+      className={`bg-surface border-[3px] border-border p-5 md:p-6 brutal-shadow w-full min-w-0 ${className || ""}`}
+    >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
         <div className="flex flex-col sm:flex-row sm:items-center gap-5 min-w-0 flex-1">
-          <ProfileAvatar url={avatar.url} initials={avatar.initials} size="lg" className="shrink-0" />
-          
+          <ProfileAvatar
+            url={avatar.url}
+            initials={avatar.initials}
+            size="lg"
+            className="shrink-0"
+          />
+
           <div className="space-y-1.5 min-w-0 flex-1">
-            <Heading level="h2" className="text-2xl md:text-3xl font-black uppercase tracking-tight truncate">
+            <Heading
+              level="h2"
+              className="text-2xl md:text-3xl font-black uppercase tracking-tight truncate"
+            >
               {fullName}
             </Heading>
             <Text className="text-foreground-secondary text-sm font-semibold leading-normal">
@@ -43,8 +57,8 @@ export function ProfileHeader({ profile, className, showEdit = false }: ProfileH
                   availabilityInfo.color === "success"
                     ? "bg-success text-white"
                     : availabilityInfo.color === "warning"
-                    ? "bg-warning text-white"
-                    : "bg-error text-white"
+                      ? "bg-warning text-white"
+                      : "bg-error text-white"
                 }`}
               >
                 {availabilityInfo.label}
@@ -54,7 +68,11 @@ export function ProfileHeader({ profile, className, showEdit = false }: ProfileH
         </div>
 
         {showEdit && (
-          <BrutalButton asChild variant="secondary" className="h-10 px-4 uppercase font-bold text-xs tracking-wider shrink-0 self-start sm:self-center">
+          <BrutalButton
+            asChild
+            variant="secondary"
+            className="h-10 px-4 uppercase font-bold text-xs tracking-wider shrink-0 self-start sm:self-center"
+          >
             <Link href="/profile/edit" aria-label="Edit profile">
               <Pencil className="h-4 w-4 mr-1.5" />
               Edit Profile
