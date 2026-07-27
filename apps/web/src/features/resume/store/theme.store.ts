@@ -25,11 +25,13 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
 
   loadTheme: (resumeId) => {
     const theme = themeService.loadTheme(resumeId);
-    
+
     // Load favorites from local storage
     let favorites: string[] = [];
     if (typeof window !== "undefined") {
-      const savedFavs = localStorage.getItem("ai-career-agent:favorite-templates");
+      const savedFavs = localStorage.getItem(
+        "ai-career-agent:favorite-templates",
+      );
       if (savedFavs) {
         try {
           favorites = JSON.parse(savedFavs);
@@ -52,7 +54,7 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
   updateTheme: (updates) => {
     const { currentTheme, resumeId } = get();
     const newTheme = { ...currentTheme, ...updates };
-    
+
     // If layout columns or width changed, it's a discrete layout preset override
     if (updates.activePreset === undefined) {
       newTheme.activePreset = "custom";
@@ -62,19 +64,19 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
 
     if (resumeId) {
       themeService.saveTheme(resumeId, newTheme);
-      
+
       // Update builder store to trigger debounced auto-save & history tracking!
       const builderStore = useBuilderStore.getState();
       if (builderStore.currentResume && builderStore.currentResume.content) {
         builderStore.commitHistory();
         builderStore.currentResume.theme = newTheme;
-        
+
         // Trigger save callback in builder store
         useBuilderStore.setState({
           currentResume: {
             ...builderStore.currentResume,
-            theme: newTheme
-          }
+            theme: newTheme,
+          },
         });
         // Call auto-save trigger
         builderStore.forceSave();
@@ -90,14 +92,17 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
   toggleFavoriteTemplate: (templateId) => {
     const { favoritedTemplates } = get();
     const isFav = favoritedTemplates.includes(templateId);
-    const newFavs = isFav 
-      ? favoritedTemplates.filter(id => id !== templateId)
+    const newFavs = isFav
+      ? favoritedTemplates.filter((id) => id !== templateId)
       : [...favoritedTemplates, templateId];
 
     set({ favoritedTemplates: newFavs });
 
     if (typeof window !== "undefined") {
-      localStorage.setItem("ai-career-agent:favorite-templates", JSON.stringify(newFavs));
+      localStorage.setItem(
+        "ai-career-agent:favorite-templates",
+        JSON.stringify(newFavs),
+      );
     }
   },
 
@@ -106,7 +111,7 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
     if (resumeId) {
       const theme = themeService.resetTheme(resumeId);
       set({ currentTheme: theme });
-      
+
       // Update builder store
       const builderStore = useBuilderStore.getState();
       if (builderStore.currentResume) {
@@ -115,10 +120,10 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
         useBuilderStore.setState({
           currentResume: {
             ...builderStore.currentResume,
-            theme
-          }
+            theme,
+          },
         });
       }
     }
-  }
+  },
 }));

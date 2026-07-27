@@ -11,9 +11,21 @@ export function ParseProgress() {
   const { uploadedFile, processingState, progress } = useParserStore();
 
   const stages = [
-    { id: "uploading", label: "File Uploading & Reader", desc: "Checking file signature and reading raw document stream" },
-    { id: "extracting", label: "Text Elements Extraction", desc: "Extracting content blocks and raw text patterns" },
-    { id: "parsing", label: "AI Structuring & Confidence Engine", desc: "Modeling personal info, listings, and matching entities" }
+    {
+      id: "uploading",
+      label: "File Uploading & Reader",
+      desc: "Checking file signature and reading raw document stream",
+    },
+    {
+      id: "extracting",
+      label: "Text Elements Extraction",
+      desc: "Extracting content blocks and raw text patterns",
+    },
+    {
+      id: "parsing",
+      label: "AI Structuring & Confidence Engine",
+      desc: "Modeling personal info, listings, and matching entities",
+    },
   ];
 
   // Helper to map visual status
@@ -30,7 +42,6 @@ export function ParseProgress() {
 
   return (
     <div className="max-w-xl mx-auto space-y-6 select-none">
-      
       {/* File Info */}
       {uploadedFile && (
         <BrutalCard className="p-4 bg-surface border-2 border-border brutal-shadow-xs flex items-center gap-3">
@@ -61,7 +72,7 @@ export function ParseProgress() {
         {/* Outer track */}
         <div className="w-full h-6 border-3 border-border bg-slate-100 dark:bg-surface-hover rounded-none relative overflow-hidden">
           {/* Inner neon fill */}
-          <div 
+          <div
             className="h-full bg-primary border-r-2 border-border transition-all duration-150 ease-out"
             style={{ width: `${progress}%` }}
           />
@@ -73,26 +84,34 @@ export function ParseProgress() {
         {stages.map((stage) => {
           const status = getStageStatus(stage.id);
           return (
-            <div 
+            <div
               key={stage.id}
               className={cn(
                 "border-2 border-border p-3 rounded-sm transition-colors",
-                status === "active" ? "bg-surface brutal-shadow-xs border-primary" : "bg-surface-secondary/20 opacity-70"
+                status === "active"
+                  ? "bg-surface brutal-shadow-xs border-primary"
+                  : "bg-surface-secondary/20 opacity-70",
               )}
             >
               <div className="flex items-start gap-3">
                 {/* Icon marker */}
                 <div className="pt-0.5 shrink-0">
-                  {status === "completed" && <CheckCircle2 className="h-4.5 w-4.5 text-success fill-success/10" />}
+                  {status === "completed" && (
+                    <CheckCircle2 className="h-4.5 w-4.5 text-success fill-success/10" />
+                  )}
                   {status === "active" && <InlineLoader />}
-                  {status === "pending" && <Circle className="h-4.5 w-4.5 text-foreground-muted" />}
+                  {status === "pending" && (
+                    <Circle className="h-4.5 w-4.5 text-foreground-muted" />
+                  )}
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <h4 className={cn(
-                    "text-[10px] font-black uppercase tracking-wider",
-                    status === "active" ? "text-primary" : "text-foreground"
-                  )}>
+                  <h4
+                    className={cn(
+                      "text-[10px] font-black uppercase tracking-wider",
+                      status === "active" ? "text-primary" : "text-foreground",
+                    )}
+                  >
                     {stage.label}
                   </h4>
                   <p className="text-[10px] text-foreground-secondary pt-0.5 leading-relaxed font-semibold">
@@ -104,7 +123,6 @@ export function ParseProgress() {
           );
         })}
       </div>
-
     </div>
   );
 }

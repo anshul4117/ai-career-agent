@@ -9,8 +9,11 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 
 const ResumeBuilderLayout = dynamic(
-  () => import("@/features/resume/components/builder/builder-layout").then((m) => m.ResumeBuilderLayout),
-  { ssr: false, loading: () => <ResumeBuilderSkeleton /> }
+  () =>
+    import("@/features/resume/components/builder/builder-layout").then(
+      (m) => m.ResumeBuilderLayout,
+    ),
+  { ssr: false, loading: () => <ResumeBuilderSkeleton /> },
 );
 
 interface PageProps {
@@ -21,7 +24,15 @@ export default function EditResumePage({ params }: PageProps) {
   const resolvedParams = use(params);
   const id = resolvedParams.id;
 
-  const { currentResume, isLoading, error, loadResume, resetStore, undo, redo } = useBuilderStore();
+  const {
+    currentResume,
+    isLoading,
+    error,
+    loadResume,
+    resetStore,
+    undo,
+    redo,
+  } = useBuilderStore();
 
   useEffect(() => {
     loadResume(id);
@@ -60,7 +71,10 @@ export default function EditResumePage({ params }: PageProps) {
     return (
       <div className="space-y-6">
         <div className="space-y-1">
-          <Heading level="h2" className="text-2xl font-black uppercase tracking-tight">
+          <Heading
+            level="h2"
+            className="text-2xl font-black uppercase tracking-tight"
+          >
             Resume Builder Workspace
           </Heading>
           <p className="text-foreground-secondary text-xs">
@@ -79,9 +93,15 @@ export default function EditResumePage({ params }: PageProps) {
           ⚠ Workspace Load Failed
         </div>
         <div className="space-y-1.5">
-          <Heading level="h2" className="text-xl font-black uppercase">Resume Draft Not Found</Heading>
+          <Heading level="h2" className="text-xl font-black uppercase">
+            Resume Draft Not Found
+          </Heading>
           <p className="text-xs text-foreground-secondary leading-relaxed">
-            The workspace was unable to load parameters for resume draft ID: <code className="font-mono bg-surface-secondary px-1 border border-border/20">{id}</code>.
+            The workspace was unable to load parameters for resume draft ID:{" "}
+            <code className="font-mono bg-surface-secondary px-1 border border-border/20">
+              {id}
+            </code>
+            .
           </p>
         </div>
         <BrutalButton asChild className="h-11 px-5 uppercase font-bold text-xs">

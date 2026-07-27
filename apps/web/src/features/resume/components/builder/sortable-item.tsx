@@ -38,5 +38,7 @@ export function SortableItem({ id, children }: SortableItemProps) {
     ...(listeners as unknown as Record<string, unknown>),
   };
 
-  return <>{children({ ref: setNodeRef, style, dragHandleProps, isDragging })}</>;
+  return (
+    <>{children({ ref: setNodeRef, style, dragHandleProps, isDragging })}</>
+  );
 }

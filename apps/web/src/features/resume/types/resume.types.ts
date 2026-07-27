@@ -95,7 +95,7 @@ export interface ResumeContent {
   certifications: ResumeCertification[];
   languages: ResumeLanguage[];
   socialLinks: ResumeSocialLink[];
-  
+
   // Custom configurations (Sprint 3.3)
   sectionsOrder?: string[];
   hiddenSections?: string[];
@@ -160,4 +160,23 @@ export interface ResumeTemplate {
   category: string;
   previewColor: string; // Neon accents for Brutalist look
   recommendedFor?: string;
+}
+
+export interface UploadedResumeVersion {
+  version: number;
+  fileName: string;
+  uploadedAt: string;
+  fileSize: string;
+}
+
+export interface UploadedResume {
+  id: string;
+  fileName: string;
+  fileSize: string;
+  uploadedAt: string;
+  status: "Completed" | "Pending" | "Failed";
+  atsScore: number;
+  isDefault: boolean;
+  version: number;
+  versionHistory: UploadedResumeVersion[];
 }

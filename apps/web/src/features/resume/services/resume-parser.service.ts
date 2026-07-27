@@ -11,7 +11,11 @@ const mapLanguageLevel = (lvl: string): LanguageLevel => {
   if (normalized.includes("native")) return "native";
   if (normalized.includes("fluent")) return "fluent";
   if (normalized.includes("advanced")) return "advanced";
-  if (normalized.includes("conversational") || normalized.includes("intermediate")) return "intermediate";
+  if (
+    normalized.includes("conversational") ||
+    normalized.includes("intermediate")
+  )
+    return "intermediate";
   return "beginner";
 };
 
@@ -31,7 +35,7 @@ export const resumeParserService = {
   validateFile(file: File): string | null {
     const allowedTypes = [
       "application/pdf",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
 
     if (!allowedTypes.includes(file.type)) {
@@ -51,7 +55,7 @@ export const resumeParserService = {
    */
   async parseResumeWorkflow(
     file: File,
-    rolePreset: "engineer" | "frontend" | "backend" | "fullstack" | "analyst"
+    rolePreset: "engineer" | "frontend" | "backend" | "fullstack" | "analyst",
   ): Promise<void> {
     const store = useParserStore.getState();
     store.setError(null);
@@ -80,7 +84,10 @@ export const resumeParserService = {
       }
 
       // Execute mock parsing
-      const { data, confidence } = await mockParserAdapter.parseResume(file.name, rolePreset);
+      const { data, confidence } = await mockParserAdapter.parseResume(
+        file.name,
+        rolePreset,
+      );
 
       // 4. Completed stage (90% to 100%)
       store.setProgress(100);
@@ -88,7 +95,10 @@ export const resumeParserService = {
       useParserStore.setState({ confidenceScores: confidence });
       store.initReviewState(data);
     } catch (err) {
-      store.setError((err as Error).message || "An unexpected error occurred during parsing.");
+      store.setError(
+        (err as Error).message ||
+          "An unexpected error occurred during parsing.",
+      );
     }
   },
 
@@ -100,40 +110,47 @@ export const resumeParserService = {
     const resumeStore = useResumeStore.getState();
 
     // 1. Update Candidate Profile personal information
-    if (review.personal.action === "accept" || review.personal.action === "edit") {
+    if (
+      review.personal.action === "accept" ||
+      review.personal.action === "edit"
+    ) {
       const personal = review.personal.value;
       const currentProfile = profileStore.profile;
-      
+
       if (currentProfile) {
         profileStore.setProfile({
           ...currentProfile,
           personal: {
             ...currentProfile.personal,
             firstName: personal.firstName,
-            lastName: personal.lastName
+            lastName: personal.lastName,
           },
           contact: {
             ...currentProfile.contact,
             email: personal.email,
             phone: personal.phone,
             city: personal.city,
-            country: personal.country
+            country: personal.country,
           },
           career: {
             ...currentProfile.career,
             headline: personal.headline,
-            summary: review.summary.value.summary
-          }
+            summary: review.summary.value.summary,
+          },
         });
       }
     }
 
     // 2. Add experiences (no duplicates check)
-    if (review.experience.action === "accept" && review.experience.value.length > 0) {
+    if (
+      review.experience.action === "accept" &&
+      review.experience.value.length > 0
+    ) {
       review.experience.value.forEach((exp) => {
         const isDuplicate = profileStore.experience.some(
-          (e) => e.companyName.toLowerCase() === exp.companyName.toLowerCase() &&
-                 e.jobTitle.toLowerCase() === exp.jobTitle.toLowerCase()
+          (e) =>
+            e.companyName.toLowerCase() === exp.companyName.toLowerCase() &&
+            e.jobTitle.toLowerCase() === exp.jobTitle.toLowerCase(),
         );
         if (!isDuplicate) {
           profileStore.addExperience({
@@ -146,18 +163,22 @@ export const resumeParserService = {
             endDate: exp.endDate || null,
             currentPosition: exp.currentPosition,
             description: exp.description,
-            technologiesUsed: []
+            technologiesUsed: [],
           });
         }
       });
     }
 
     // 3. Add education (no duplicates check)
-    if (review.education.action === "accept" && review.education.value.length > 0) {
+    if (
+      review.education.action === "accept" &&
+      review.education.value.length > 0
+    ) {
       review.education.value.forEach((edu) => {
         const isDuplicate = profileStore.education.some(
-          (e) => e.institution.toLowerCase() === edu.institution.toLowerCase() &&
-                 e.degree.toLowerCase() === edu.degree.toLowerCase()
+          (e) =>
+            e.institution.toLowerCase() === edu.institution.toLowerCase() &&
+            e.degree.toLowerCase() === edu.degree.toLowerCase(),
         );
         if (!isDuplicate) {
           profileStore.addEducation({
@@ -169,7 +190,7 @@ export const resumeParserService = {
             endDate: edu.endDate || null,
             currentStudy: edu.currentStudy,
             cgpa: edu.cgpa,
-            description: ""
+            description: "",
           });
         }
       });
@@ -179,7 +200,7 @@ export const resumeParserService = {
     if (review.skills.action === "accept" && review.skills.value.length > 0) {
       review.skills.value.forEach((skill) => {
         const isDuplicate = profileStore.skills.some(
-          (s) => s.name.toLowerCase() === skill.name.toLowerCase()
+          (s) => s.name.toLowerCase() === skill.name.toLowerCase(),
         );
         if (!isDuplicate) {
           profileStore.addSkill({
@@ -187,17 +208,20 @@ export const resumeParserService = {
             category: "Technical",
             level: skill.level,
             yearsOfExperience: parseInt(skill.yearsOfExperience, 10) || 1,
-            featured: false
+            featured: false,
           });
         }
       });
     }
 
     // 5. Add projects (no duplicates check)
-    if (review.projects.action === "accept" && review.projects.value.length > 0) {
+    if (
+      review.projects.action === "accept" &&
+      review.projects.value.length > 0
+    ) {
       review.projects.value.forEach((proj) => {
         const isDuplicate = profileStore.projects.some(
-          (p) => p.title.toLowerCase() === proj.title.toLowerCase()
+          (p) => p.title.toLowerCase() === proj.title.toLowerCase(),
         );
         if (!isDuplicate) {
           profileStore.addProject({
@@ -211,17 +235,20 @@ export const resumeParserService = {
             role: proj.role,
             startDate: "2023-01",
             endDate: null,
-            featured: false
+            featured: false,
           });
         }
       });
     }
 
     // 6. Add certifications
-    if (review.certifications.action === "accept" && review.certifications.value.length > 0) {
+    if (
+      review.certifications.action === "accept" &&
+      review.certifications.value.length > 0
+    ) {
       review.certifications.value.forEach((cert) => {
         const isDuplicate = profileStore.certifications.some(
-          (c) => c.name.toLowerCase() === cert.name.toLowerCase()
+          (c) => c.name.toLowerCase() === cert.name.toLowerCase(),
         );
         if (!isDuplicate) {
           profileStore.addCertification({
@@ -231,17 +258,20 @@ export const resumeParserService = {
             expiryDate: null,
             credentialId: "",
             credentialUrl: "",
-            neverExpires: true
+            neverExpires: true,
           });
         }
       });
     }
 
     // 7. Add languages
-    if (review.languages.action === "accept" && review.languages.value.length > 0) {
+    if (
+      review.languages.action === "accept" &&
+      review.languages.value.length > 0
+    ) {
       review.languages.value.forEach((lang) => {
         const isDuplicate = profileStore.languages.some(
-          (l) => l.language.toLowerCase() === lang.language.toLowerCase()
+          (l) => l.language.toLowerCase() === lang.language.toLowerCase(),
         );
         if (!isDuplicate) {
           profileStore.addLanguage({
@@ -249,22 +279,25 @@ export const resumeParserService = {
             readingLevel: mapLanguageLevel(lang.speakingLevel),
             writingLevel: mapLanguageLevel(lang.speakingLevel),
             speakingLevel: mapLanguageLevel(lang.speakingLevel),
-            nativeLanguage: lang.nativeLanguage
+            nativeLanguage: lang.nativeLanguage,
           });
         }
       });
     }
 
     // 8. Add social links
-    if (review.socialLinks.action === "accept" && review.socialLinks.value.length > 0) {
+    if (
+      review.socialLinks.action === "accept" &&
+      review.socialLinks.value.length > 0
+    ) {
       review.socialLinks.value.forEach((link) => {
         const isDuplicate = profileStore.socialLinks.some(
-          (s) => s.platform.toLowerCase() === link.platform.toLowerCase()
+          (s) => s.platform.toLowerCase() === link.platform.toLowerCase(),
         );
         if (!isDuplicate) {
           profileStore.addSocialLink({
             platform: mapSocialPlatform(link.platform),
-            url: link.url
+            url: link.url,
           });
         }
       });
@@ -276,7 +309,8 @@ export const resumeParserService = {
 
     await resumeStore.createResume({
       title: `Parsed - ${personalData.firstName || "Imported"} Resume`,
-      description: "Automatically initialized draft from parsed resume PDF/DOCX file.",
+      description:
+        "Automatically initialized draft from parsed resume PDF/DOCX file.",
       templateId: "modern",
       status: "active",
       isDefault: false,
@@ -288,27 +322,47 @@ export const resumeParserService = {
           email: personalData.email,
           phone: personalData.phone,
           city: personalData.city,
-          country: personalData.country
+          country: personalData.country,
         },
         summary: {
-          summary: summaryData.summary
+          summary: summaryData.summary,
         },
-        experience: review.experience.action === "accept" ? review.experience.value : [],
-        education: review.education.action === "accept" ? review.education.value : [],
+        experience:
+          review.experience.action === "accept" ? review.experience.value : [],
+        education:
+          review.education.action === "accept" ? review.education.value : [],
         skills: review.skills.action === "accept" ? review.skills.value : [],
-        projects: review.projects.action === "accept" ? review.projects.value : [],
-        certifications: review.certifications.action === "accept" ? review.certifications.value : [],
-        languages: review.languages.action === "accept" ? review.languages.value : [],
-        socialLinks: review.socialLinks.action === "accept" ? review.socialLinks.value : [],
-        sectionsOrder: ["personal", "summary", "experience", "education", "skills", "projects", "certifications", "languages", "socialLinks"],
+        projects:
+          review.projects.action === "accept" ? review.projects.value : [],
+        certifications:
+          review.certifications.action === "accept"
+            ? review.certifications.value
+            : [],
+        languages:
+          review.languages.action === "accept" ? review.languages.value : [],
+        socialLinks:
+          review.socialLinks.action === "accept"
+            ? review.socialLinks.value
+            : [],
+        sectionsOrder: [
+          "personal",
+          "summary",
+          "experience",
+          "education",
+          "skills",
+          "projects",
+          "certifications",
+          "languages",
+          "socialLinks",
+        ],
         hiddenSections: [],
-        customSections: []
-      }
+        customSections: [],
+      },
     });
 
     // Profile stores completion engine trigger
     if (typeof profileStore.syncCompletion === "function") {
       profileStore.syncCompletion();
     }
-  }
+  },
 };

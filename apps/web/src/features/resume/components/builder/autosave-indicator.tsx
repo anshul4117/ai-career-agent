@@ -21,7 +21,9 @@ export function AutoSaveIndicator() {
       } else if (diffSec < 60) {
         setTimeText(`Saved ${diffSec}s ago`);
       } else {
-        setTimeText(`Saved at ${new Date(lastSaved).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`);
+        setTimeText(
+          `Saved at ${new Date(lastSaved).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}`,
+        );
       }
     };
 

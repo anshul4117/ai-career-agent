@@ -1,11 +1,17 @@
 "use client";
 
 import { create } from "zustand";
-import type { ExtractedData, SectionConfidence, ReviewState, ReviewAction } from "../types/parser.types";
+import type {
+  ExtractedData,
+  SectionConfidence,
+  ReviewState,
+  ReviewAction,
+} from "../types/parser.types";
 
 interface ParserStoreState {
   uploadedFile: File | null;
-  processingState: "idle" | "uploading" | "extracting" | "parsing" | "completed" | "error";
+  processingState:
+    "idle" | "uploading" | "extracting" | "parsing" | "completed" | "error";
   progress: number;
   parsedData: ExtractedData | null;
   confidenceScores: SectionConfidence | null;
@@ -14,14 +20,29 @@ interface ParserStoreState {
 
   // Actions
   setUploadedFile: (file: File | null) => void;
-  setProcessingState: (state: "idle" | "uploading" | "extracting" | "parsing" | "completed" | "error") => void;
+  setProcessingState: (
+    state:
+      "idle" | "uploading" | "extracting" | "parsing" | "completed" | "error",
+  ) => void;
   setProgress: (p: number) => void;
   setError: (err: string | null) => void;
   initReviewState: (data: ExtractedData) => void;
-  updateReviewAction: (section: keyof ReviewState, action: ReviewAction) => void;
+  updateReviewAction: (
+    section: keyof ReviewState,
+    action: ReviewAction,
+  ) => void;
   updateReviewValue: (
-    section: "personal" | "summary", 
-    value: { firstName?: string; lastName?: string; headline?: string; email?: string; phone?: string; city?: string; country?: string; summary?: string }
+    section: "personal" | "summary",
+    value: {
+      firstName?: string;
+      lastName?: string;
+      headline?: string;
+      email?: string;
+      phone?: string;
+      city?: string;
+      country?: string;
+      summary?: string;
+    },
   ) => void;
   resetParserStore: () => void;
 }
@@ -40,12 +61,13 @@ export const useParserStore = create<ParserStoreState>((set) => ({
   ...INITIAL_STATE,
 
   setUploadedFile: (file) => set({ uploadedFile: file }),
-  
+
   setProcessingState: (state) => set({ processingState: state }),
-  
+
   setProgress: (p) => set({ progress: p }),
-  
-  setError: (err) => set({ error: err, processingState: err ? "error" : "idle" }),
+
+  setError: (err) =>
+    set({ error: err, processingState: err ? "error" : "idle" }),
 
   initReviewState: (data) => {
     const review: ReviewState = {
@@ -70,9 +92,9 @@ export const useParserStore = create<ParserStoreState>((set) => ({
           ...state.reviewState,
           [section]: {
             ...state.reviewState[section],
-            action
-          }
-        }
+            action,
+          },
+        },
       };
     });
   },
@@ -85,12 +107,12 @@ export const useParserStore = create<ParserStoreState>((set) => ({
           ...state.reviewState,
           [section]: {
             ...state.reviewState[section],
-            value
-          }
-        }
+            value,
+          },
+        },
       };
     });
   },
 
-  resetParserStore: () => set(INITIAL_STATE)
+  resetParserStore: () => set(INITIAL_STATE),
 }));

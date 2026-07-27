@@ -25,43 +25,43 @@ export function TemplateGallery() {
         return {
           category: "Academic & Traditional",
           recommendedFor: "Lawyers, Academics, Executives",
-          color: "bg-[#e2e8f0]"
+          color: "bg-[#e2e8f0]",
         };
       case "modern":
         return {
           category: "Professional & Modern",
           recommendedFor: "Software Engineers, Product Managers",
-          color: "bg-[#bfdbfe]"
+          color: "bg-[#bfdbfe]",
         };
       case "minimal":
         return {
           category: "Clean & Simple",
           recommendedFor: "Minimalists, Designers, Writers",
-          color: "bg-[#f1f5f9]"
+          color: "bg-[#f1f5f9]",
         };
       case "professional":
         return {
           category: "Executive & Corporate",
           recommendedFor: "Finance, Consulting, Sales",
-          color: "bg-[#cbd5e1]"
+          color: "bg-[#cbd5e1]",
         };
       case "developer":
         return {
           category: "Monospace & Technical",
           recommendedFor: "Developers, DevOps, System Admins",
-          color: "bg-[#0f172a] text-white"
+          color: "bg-[#0f172a] text-white",
         };
       case "creative":
         return {
           category: "Artistic & Colorful",
           recommendedFor: "Artists, Designers, Marketers",
-          color: "bg-[#fef08a]"
+          color: "bg-[#fef08a]",
         };
       default:
         return {
           category: "General",
           recommendedFor: "All professionals",
-          color: "bg-surface"
+          color: "bg-surface",
         };
     }
   };
@@ -69,12 +69,17 @@ export function TemplateGallery() {
   const handleDuplicateTemplate = (templateId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     // Simulate template duplication/cloning by creating a layout message
-    toast.success(`Cloned template "${templateId.toUpperCase()}" configurations to your clipboard settings!`);
+    toast.success(
+      `Cloned template "${templateId.toUpperCase()}" configurations to your clipboard settings!`,
+    );
   };
 
   return (
     <div className="space-y-4 p-3 select-none">
-      <Heading level="h5" className="text-[10px] font-black uppercase tracking-widest text-foreground-secondary border-b-2 border-border/10 pb-2 mb-2">
+      <Heading
+        level="h5"
+        className="text-[10px] font-black uppercase tracking-widest text-foreground-secondary border-b-2 border-border/10 pb-2 mb-2"
+      >
         Available Templates ({MOCK_TEMPLATES.length})
       </Heading>
 
@@ -90,7 +95,9 @@ export function TemplateGallery() {
               onClick={() => updateTemplate(tmpl.id)}
               className={cn(
                 "border-2 border-border p-3.5 cursor-pointer hover:bg-surface-secondary/20 transition-all duration-150 rounded-sm",
-                isActive ? "border-primary bg-primary/5 brutal-shadow-xs" : "bg-surface brutal-shadow-xs"
+                isActive
+                  ? "border-primary bg-primary/5 brutal-shadow-xs"
+                  : "bg-surface brutal-shadow-xs",
               )}
             >
               <div className="flex justify-between items-start gap-2">
@@ -115,14 +122,21 @@ export function TemplateGallery() {
                   {/* Favorite Toggle */}
                   <button
                     type="button"
-                    onClick={(e) => { e.stopPropagation(); toggleFavoriteTemplate(tmpl.id); }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFavoriteTemplate(tmpl.id);
+                    }}
                     className={cn(
                       "p-1 border border-border rounded-sm hover:bg-surface transition-colors h-7 w-7 flex items-center justify-center",
-                      isFav ? "bg-amber-100 dark:bg-amber-500/20 border-amber-400 dark:border-amber-500/40 text-amber-500" : "bg-surface text-foreground-muted"
+                      isFav
+                        ? "bg-amber-100 dark:bg-amber-500/20 border-amber-400 dark:border-amber-500/40 text-amber-500"
+                        : "bg-surface text-foreground-muted",
                     )}
                     aria-label="Favorite Template"
                   >
-                    <Star className={cn("h-4.5 w-4.5", isFav && "fill-amber-400")} />
+                    <Star
+                      className={cn("h-4.5 w-4.5", isFav && "fill-amber-400")}
+                    />
                   </button>
 
                   {/* Duplicate */}
@@ -138,19 +152,25 @@ export function TemplateGallery() {
               </div>
 
               {/* Template Preview thumbnail mock box */}
-              <div className={cn(
-                "h-20 w-full mt-2.5 border border-border flex items-center justify-center text-[10px] font-bold uppercase rounded-sm border-dashed",
-                meta.color
-              )}>
+              <div
+                className={cn(
+                  "h-20 w-full mt-2.5 border border-border flex items-center justify-center text-[10px] font-bold uppercase rounded-sm border-dashed",
+                  meta.color,
+                )}
+              >
                 {tmpl.name} Layout
               </div>
 
-              <Text variant="muted" className="text-[10px] mt-2.5 leading-relaxed font-semibold">
+              <Text
+                variant="muted"
+                className="text-[10px] mt-2.5 leading-relaxed font-semibold"
+              >
                 {tmpl.description}
               </Text>
 
               <div className="mt-2 text-[9px] font-mono text-foreground-secondary bg-surface-secondary/40 p-1.5 border border-border/10 rounded-sm">
-                <span className="font-bold text-foreground">For:</span> {meta.recommendedFor}
+                <span className="font-bold text-foreground">For:</span>{" "}
+                {meta.recommendedFor}
               </div>
             </BrutalCard>
           );

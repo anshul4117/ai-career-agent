@@ -1,47 +1,53 @@
 import type { Resume, ResumeTemplate } from "../types/resume.types";
 
 export const MOCK_TEMPLATES: ResumeTemplate[] = [
-  { 
-    id: "classic", 
-    name: "Classic", 
-    description: "Traditional centered serif design, perfect for corporate and conservative fields.", 
+  {
+    id: "classic",
+    name: "Classic",
+    description:
+      "Traditional centered serif design, perfect for corporate and conservative fields.",
     category: "Corporate",
-    previewColor: "bg-[#f3f4f6]"
+    previewColor: "bg-[#f3f4f6]",
   },
-  { 
-    id: "modern", 
-    name: "Modern", 
-    description: "Balanced grid spacing with custom accents and clean sans-serif typography.", 
+  {
+    id: "modern",
+    name: "Modern",
+    description:
+      "Balanced grid spacing with custom accents and clean sans-serif typography.",
     category: "Modern",
-    previewColor: "bg-primary/20"
+    previewColor: "bg-primary/20",
   },
-  { 
-    id: "minimal", 
-    name: "Minimal", 
-    description: "Ultra-compact single column layout with minimal headings and maximum density.", 
+  {
+    id: "minimal",
+    name: "Minimal",
+    description:
+      "Ultra-compact single column layout with minimal headings and maximum density.",
     category: "Clean",
-    previewColor: "bg-[#ffffff]"
+    previewColor: "bg-[#ffffff]",
   },
-  { 
-    id: "professional", 
-    name: "Professional", 
-    description: "Business-focused header band with secondary detail columns, great for managers.", 
+  {
+    id: "professional",
+    name: "Professional",
+    description:
+      "Business-focused header band with secondary detail columns, great for managers.",
     category: "Executive",
-    previewColor: "bg-[#1e293b]"
+    previewColor: "bg-[#1e293b]",
   },
-  { 
-    id: "developer", 
-    name: "Developer", 
-    description: "Clean monospace coding elements, perfect for showing technical skills.", 
+  {
+    id: "developer",
+    name: "Developer",
+    description:
+      "Clean monospace coding elements, perfect for showing technical skills.",
     category: "Tech",
-    previewColor: "bg-[#0f172a]"
+    previewColor: "bg-[#0f172a]",
   },
-  { 
-    id: "creative", 
-    name: "Creative", 
-    description: "Bold brutalist styling, bright background accents, and unique borders.", 
+  {
+    id: "creative",
+    name: "Creative",
+    description:
+      "Bold brutalist styling, bright background accents, and unique borders.",
     category: "Design",
-    previewColor: "bg-[#ffde4d]"
+    previewColor: "bg-[#ffde4d]",
   },
 ];
 
@@ -51,7 +57,8 @@ const INITIAL_RESUMES: Resume[] = [
   {
     id: "res_001",
     title: "Senior Full Stack Resume",
-    description: "Optimized for software engineer, technical lead, and developer manager applications.",
+    description:
+      "Optimized for software engineer, technical lead, and developer manager applications.",
     templateId: "developer",
     status: "active",
     isDefault: true,
@@ -62,14 +69,15 @@ const INITIAL_RESUMES: Resume[] = [
   {
     id: "res_002",
     title: "Agile Project Manager Draft",
-    description: "Highlighting agile methodologies, team delivery, and product lifecycle support.",
+    description:
+      "Highlighting agile methodologies, team delivery, and product lifecycle support.",
     templateId: "modern",
     status: "active",
     isDefault: false,
     atsScore: 78,
     createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
     updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-  }
+  },
 ];
 
 function getStoredResumes(): Resume[] {
@@ -105,12 +113,16 @@ export const resumeService = {
     return list.find((r) => r.id === id);
   },
 
-  create: async (data: Omit<Resume, "id" | "atsScore" | "createdAt" | "updatedAt">): Promise<Resume> => {
+  create: async (
+    data: Omit<Resume, "id" | "atsScore" | "createdAt" | "updatedAt">,
+  ): Promise<Resume> => {
     const list = getStoredResumes();
-    
+
     // If setting default, unset other defaults
     if (data.isDefault) {
-      list.forEach((r) => { r.isDefault = false; });
+      list.forEach((r) => {
+        r.isDefault = false;
+      });
     }
 
     const newResume: Resume = {
@@ -126,7 +138,10 @@ export const resumeService = {
     return newResume;
   },
 
-  update: async (id: string, updates: Partial<Omit<Resume, "id" | "createdAt" | "updatedAt">>): Promise<Resume> => {
+  update: async (
+    id: string,
+    updates: Partial<Omit<Resume, "id" | "createdAt" | "updatedAt">>,
+  ): Promise<Resume> => {
     const list = getStoredResumes();
     const index = list.findIndex((r) => r.id === id);
     if (index === -1) throw new Error("Resume not found");
@@ -152,7 +167,7 @@ export const resumeService = {
   delete: async (id: string): Promise<void> => {
     const list = getStoredResumes();
     const filtered = list.filter((r) => r.id !== id);
-    
+
     // Ensure at least one active resume stays default if we deleted the default one
     if (list.find((r) => r.id === id)?.isDefault && filtered.length > 0) {
       const firstActive = filtered.find((r) => r.status === "active");
@@ -188,9 +203,11 @@ export const resumeService = {
 
     target.status = "archived";
     target.isDefault = false; // Archived resumes cannot be default
-    
+
     // If it was default, find another active to be default
-    const activeResumes = list.filter((r) => r.status === "active" && r.id !== id);
+    const activeResumes = list.filter(
+      (r) => r.status === "active" && r.id !== id,
+    );
     if (activeResumes.length > 0 && !activeResumes.some((r) => r.isDefault)) {
       activeResumes[0].isDefault = true;
     }
@@ -205,7 +222,7 @@ export const resumeService = {
     if (!target) throw new Error("Resume not found");
 
     target.status = "active";
-    
+
     // If it's the only active one, set default
     const activeCount = list.filter((r) => r.status === "active").length;
     if (activeCount === 1) {
@@ -214,5 +231,5 @@ export const resumeService = {
 
     setStoredResumes(list);
     return target;
-  }
+  },
 };

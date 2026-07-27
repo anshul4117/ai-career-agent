@@ -22,14 +22,15 @@ export default function ResumeImportPage() {
     };
   }, [resetParserStore]);
 
-  const handleStartParsing = async (rolePreset: "engineer" | "frontend" | "backend" | "fullstack" | "analyst") => {
+  const handleStartParsing = async (
+    rolePreset: "engineer" | "frontend" | "backend" | "fullstack" | "analyst",
+  ) => {
     if (!uploadedFile) return;
     await resumeParserService.parseResumeWorkflow(uploadedFile, rolePreset);
   };
 
   return (
     <div className="space-y-6 w-full min-w-0 pb-16">
-      
       {/* Header / Breadcrumb navigation */}
       <div className="flex items-center gap-3">
         <Link
@@ -42,28 +43,36 @@ export default function ResumeImportPage() {
         <div className="space-y-0.5">
           <div className="flex items-center gap-1.5">
             <Sparkles className="h-4 w-4 text-primary shrink-0 animate-pulse" />
-            <Heading level="h2" className="text-xl md:text-2xl font-black uppercase tracking-tight">
+            <Heading
+              level="h2"
+              className="text-xl md:text-2xl font-black uppercase tracking-tight"
+            >
               AI Resume Parser
             </Heading>
           </div>
           <p className="text-foreground-secondary text-[10px]">
-            Extract structured details from PDF/DOCX resumes to Candidate Profile and builder forms.
+            Extract structured details from PDF/DOCX resumes to Candidate
+            Profile and builder forms.
           </p>
         </div>
       </div>
 
       {/* Main Workflow Switcher Card */}
       <BrutalCard className="p-6 bg-surface border-[3px] border-border brutal-shadow">
-        
         {/* State: IDLE or ERROR */}
         {(processingState === "idle" || processingState === "error") && (
           <div className="space-y-4">
             <div className="max-w-xl mx-auto text-center space-y-2 mb-4">
-              <Heading level="h3" className="text-sm font-black uppercase tracking-wider text-foreground">
+              <Heading
+                level="h3"
+                className="text-sm font-black uppercase tracking-wider text-foreground"
+              >
                 Upload Resume Document
               </Heading>
               <p className="text-[10px] text-foreground-secondary leading-relaxed">
-                Provide your existing resume. The parser will extract job experiences, education listings, skills tags, and profile metadata automatically.
+                Provide your existing resume. The parser will extract job
+                experiences, education listings, skills tags, and profile
+                metadata automatically.
               </p>
             </div>
             <FileUploader onStartParsing={handleStartParsing} />
@@ -71,14 +80,20 @@ export default function ResumeImportPage() {
         )}
 
         {/* State: PROCESSING PIPELINE */}
-        {(processingState === "uploading" || processingState === "extracting" || processingState === "parsing") && (
+        {(processingState === "uploading" ||
+          processingState === "extracting" ||
+          processingState === "parsing") && (
           <div className="space-y-4 py-8">
             <div className="max-w-xl mx-auto text-center space-y-2 mb-4">
-              <Heading level="h3" className="text-sm font-black uppercase tracking-wider text-foreground">
+              <Heading
+                level="h3"
+                className="text-sm font-black uppercase tracking-wider text-foreground"
+              >
                 Analyzing Document Structure
               </Heading>
               <p className="text-[10px] text-foreground-secondary leading-relaxed animate-pulse">
-                Please wait. Extracting nodes, mapping entities, and calculating confidence indexes...
+                Please wait. Extracting nodes, mapping entities, and calculating
+                confidence indexes...
               </p>
             </div>
             <ParseProgress />
@@ -89,19 +104,22 @@ export default function ResumeImportPage() {
         {processingState === "completed" && (
           <div className="space-y-4">
             <div className="border-b-2 border-border/10 pb-3 mb-4">
-              <Heading level="h3" className="text-base font-black uppercase tracking-wider text-foreground">
+              <Heading
+                level="h3"
+                className="text-base font-black uppercase tracking-wider text-foreground"
+              >
                 Review Extracted Details
               </Heading>
               <p className="text-[10px] text-foreground-secondary leading-relaxed pt-0.5">
-                Verify each section before saving. Highlighted items indicate low confidence where OCR/AI parsing requires careful verification.
+                Verify each section before saving. Highlighted items indicate
+                low confidence where OCR/AI parsing requires careful
+                verification.
               </p>
             </div>
             <ReviewPanel />
           </div>
         )}
-
       </BrutalCard>
-
     </div>
   );
 }
