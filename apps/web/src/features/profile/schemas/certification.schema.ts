@@ -17,15 +17,25 @@ export const certificationSchema = z
     issueDate: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, "Issue date must be in YYYY-MM-DD format"),
-    expiryDate: z
-      .preprocess((val) => (val === "" ? null : val), z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Expiry date must be in YYYY-MM-DD format").nullable().optional()),
-    credentialId: z
-      .preprocess((val) => (val === "" ? null : val), z.string().max(100).nullable().optional()),
-    credentialUrl: z
-      .preprocess(
-        (val) => (val === "" ? null : val),
-        z.string().url("Invalid credential URL format").nullable().optional()
-      ),
+    expiryDate: z.preprocess(
+      (val) => (val === "" ? null : val),
+      z
+        .string()
+        .regex(
+          /^\d{4}-\d{2}-\d{2}$/,
+          "Expiry date must be in YYYY-MM-DD format",
+        )
+        .nullable()
+        .optional(),
+    ),
+    credentialId: z.preprocess(
+      (val) => (val === "" ? null : val),
+      z.string().max(100).nullable().optional(),
+    ),
+    credentialUrl: z.preprocess(
+      (val) => (val === "" ? null : val),
+      z.string().url("Invalid credential URL format").nullable().optional(),
+    ),
     neverExpires: z.boolean(),
   })
   .refine(
@@ -37,7 +47,7 @@ export const certificationSchema = z
     {
       message: "Expiry date must be after the issue date",
       path: ["expiryDate"],
-    }
+    },
   );
 
 export type CertificationFormValues = z.infer<typeof certificationSchema>;

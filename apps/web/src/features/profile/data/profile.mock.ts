@@ -59,7 +59,10 @@ export const MOCK_PROFILE: Profile = {
   updatedAt: "2026-06-28T14:22:00Z",
 };
 
-export const AVAILABILITY_LABELS: Record<string, { label: string; color: string }> = {
+export const AVAILABILITY_LABELS: Record<
+  string,
+  { label: string; color: string }
+> = {
   actively_looking: { label: "Actively Looking", color: "success" },
   open_to_offers: { label: "Open to Offers", color: "warning" },
   not_looking: { label: "Not Looking", color: "error" },

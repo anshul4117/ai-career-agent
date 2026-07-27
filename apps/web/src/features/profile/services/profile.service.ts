@@ -1,6 +1,11 @@
 /** Profile Module — Mock Service Layer */
 
-import type { Profile, PersonalInfo, ContactInfo, CareerInfo } from "../types/profile.types";
+import type {
+  Profile,
+  PersonalInfo,
+  ContactInfo,
+  CareerInfo,
+} from "../types/profile.types";
 import type { Skill } from "../types/skill.types";
 import type { Education } from "../types/education.types";
 import type { Experience } from "../types/experience.types";
@@ -22,17 +27,29 @@ export const profileService = {
 
   async updatePersonalInfo(data: PersonalInfo): Promise<Profile> {
     await delay(300);
-    return { ...MOCK_PROFILE, personal: data, updatedAt: new Date().toISOString() };
+    return {
+      ...MOCK_PROFILE,
+      personal: data,
+      updatedAt: new Date().toISOString(),
+    };
   },
 
   async updateContactInfo(data: ContactInfo): Promise<Profile> {
     await delay(300);
-    return { ...MOCK_PROFILE, contact: data, updatedAt: new Date().toISOString() };
+    return {
+      ...MOCK_PROFILE,
+      contact: data,
+      updatedAt: new Date().toISOString(),
+    };
   },
 
   async updateCareerInfo(data: CareerInfo): Promise<Profile> {
     await delay(300);
-    return { ...MOCK_PROFILE, career: data, updatedAt: new Date().toISOString() };
+    return {
+      ...MOCK_PROFILE,
+      career: data,
+      updatedAt: new Date().toISOString(),
+    };
   },
 
   async uploadAvatar(file: File): Promise<string> {
@@ -46,7 +63,9 @@ export const profileService = {
     return [...MOCK_SKILLS];
   },
 
-  async createSkill(skill: Omit<Skill, "id" | "createdAt" | "updatedAt">): Promise<Skill> {
+  async createSkill(
+    skill: Omit<Skill, "id" | "createdAt" | "updatedAt">,
+  ): Promise<Skill> {
     await delay(300);
     return {
       ...skill,
@@ -56,7 +75,10 @@ export const profileService = {
     };
   },
 
-  async updateSkill(id: string, skill: Partial<Omit<Skill, "id" | "createdAt" | "updatedAt">>): Promise<Skill> {
+  async updateSkill(
+    id: string,
+    skill: Partial<Omit<Skill, "id" | "createdAt" | "updatedAt">>,
+  ): Promise<Skill> {
     await delay(300);
     const original = MOCK_SKILLS.find((s) => s.id === id) || MOCK_SKILLS[0];
     return {
@@ -77,7 +99,9 @@ export const profileService = {
     return [...MOCK_EDUCATION];
   },
 
-  async createEducation(edu: Omit<Education, "id" | "createdAt" | "updatedAt">): Promise<Education> {
+  async createEducation(
+    edu: Omit<Education, "id" | "createdAt" | "updatedAt">,
+  ): Promise<Education> {
     await delay(300);
     return {
       ...edu,
@@ -87,9 +111,13 @@ export const profileService = {
     };
   },
 
-  async updateEducation(id: string, edu: Partial<Omit<Education, "id" | "createdAt" | "updatedAt">>): Promise<Education> {
+  async updateEducation(
+    id: string,
+    edu: Partial<Omit<Education, "id" | "createdAt" | "updatedAt">>,
+  ): Promise<Education> {
     await delay(300);
-    const original = MOCK_EDUCATION.find((e) => e.id === id) || MOCK_EDUCATION[0];
+    const original =
+      MOCK_EDUCATION.find((e) => e.id === id) || MOCK_EDUCATION[0];
     return {
       ...original,
       ...edu,
@@ -108,7 +136,9 @@ export const profileService = {
     return [...MOCK_EXPERIENCE];
   },
 
-  async createExperience(exp: Omit<Experience, "id" | "createdAt" | "updatedAt">): Promise<Experience> {
+  async createExperience(
+    exp: Omit<Experience, "id" | "createdAt" | "updatedAt">,
+  ): Promise<Experience> {
     await delay(300);
     return {
       ...exp,
@@ -118,9 +148,13 @@ export const profileService = {
     };
   },
 
-  async updateExperience(id: string, exp: Partial<Omit<Experience, "id" | "createdAt" | "updatedAt">>): Promise<Experience> {
+  async updateExperience(
+    id: string,
+    exp: Partial<Omit<Experience, "id" | "createdAt" | "updatedAt">>,
+  ): Promise<Experience> {
     await delay(300);
-    const original = MOCK_EXPERIENCE.find((e) => e.id === id) || MOCK_EXPERIENCE[0];
+    const original =
+      MOCK_EXPERIENCE.find((e) => e.id === id) || MOCK_EXPERIENCE[0];
     return {
       ...original,
       ...exp,
@@ -139,7 +173,9 @@ export const profileService = {
     return [...MOCK_PROJECTS];
   },
 
-  async createProject(project: Omit<Project, "id" | "createdAt" | "updatedAt">): Promise<Project> {
+  async createProject(
+    project: Omit<Project, "id" | "createdAt" | "updatedAt">,
+  ): Promise<Project> {
     await delay(300);
     return {
       ...project,
@@ -149,7 +185,10 @@ export const profileService = {
     };
   },
 
-  async updateProject(id: string, project: Partial<Omit<Project, "id" | "createdAt" | "updatedAt">>): Promise<Project> {
+  async updateProject(
+    id: string,
+    project: Partial<Omit<Project, "id" | "createdAt" | "updatedAt">>,
+  ): Promise<Project> {
     await delay(300);
     const original = MOCK_PROJECTS.find((p) => p.id === id) || MOCK_PROJECTS[0];
     return {

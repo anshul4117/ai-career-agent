@@ -8,9 +8,12 @@ export const careerPreferenceSchema = z.object({
     .min(1, "Preferred role is required")
     .max(100)
     .trim(),
-  employmentType: z.enum(["full-time", "part-time", "internship", "contract", "freelance"], {
-    errorMap: () => ({ message: "Please select a valid employment type" }),
-  }),
+  employmentType: z.enum(
+    ["full-time", "part-time", "internship", "contract", "freelance"],
+    {
+      errorMap: () => ({ message: "Please select a valid employment type" }),
+    },
+  ),
   preferredLocation: z
     .string()
     .min(1, "Preferred location is required")
@@ -24,16 +27,8 @@ export const careerPreferenceSchema = z.object({
     .min(1, "Expected salary is required")
     .max(50)
     .trim(),
-  currency: z
-    .string()
-    .min(1, "Currency is required")
-    .max(10)
-    .trim(),
-  noticePeriod: z
-    .string()
-    .min(1, "Notice period is required")
-    .max(50)
-    .trim(),
+  currency: z.string().min(1, "Currency is required").max(10).trim(),
+  noticePeriod: z.string().min(1, "Notice period is required").max(50).trim(),
   openToWork: z.boolean(),
   visaSponsorshipRequired: z.boolean(),
   relocationWillingness: z.boolean(),

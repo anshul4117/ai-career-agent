@@ -15,7 +15,14 @@ import { SocialLinkFormValues } from "@/features/profile/schemas/social-link.sch
 import { PageLoader } from "@/components/ui/brand-loader";
 
 export default function SocialLinksPage() {
-  const { socialLinks, isLoading, loadProfile, addSocialLink, updateSocialLink, deleteSocialLink } = useProfileStore();
+  const {
+    socialLinks,
+    isLoading,
+    loadProfile,
+    addSocialLink,
+    updateSocialLink,
+    deleteSocialLink,
+  } = useProfileStore();
   const { confirm, ConfirmationDialog } = useConfirm();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -38,9 +45,10 @@ export default function SocialLinksPage() {
   const handleDeleteClick = async (id: string) => {
     const isConfirmed = await confirm({
       title: "Delete Social Link",
-      description: "Are you sure you want to delete this social link? This action cannot be undone.",
+      description:
+        "Are you sure you want to delete this social link? This action cannot be undone.",
       isDestructive: true,
-      confirmLabel: "Delete"
+      confirmLabel: "Delete",
     });
     if (isConfirmed) {
       deleteSocialLink(id);
@@ -73,7 +81,10 @@ export default function SocialLinksPage() {
             <ArrowLeft className="h-4 w-4" />
             Back to Profile
           </Link>
-          <Heading level="h2" className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center gap-2">
+          <Heading
+            level="h2"
+            className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center gap-2"
+          >
             <Share2 className="h-6 w-6 text-primary shrink-0" />
             Manage Social Profiles
           </Heading>
@@ -94,11 +105,15 @@ export default function SocialLinksPage() {
             <Share2 className="h-6 w-6" aria-hidden="true" />
           </div>
           <div className="space-y-1.5 max-w-sm">
-            <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+            <Heading
+              level="h4"
+              className="text-base font-black uppercase tracking-tight"
+            >
               No Social Links Added Yet
             </Heading>
             <Text className="text-foreground-secondary text-xs leading-relaxed">
-              Connect profiles like LinkedIn, GitHub, or your personal website so recruiters can see your complete work.
+              Connect profiles like LinkedIn, GitHub, or your personal website
+              so recruiters can see your complete work.
             </Text>
           </div>
           <BrutalButton
@@ -136,7 +151,7 @@ export default function SocialLinksPage() {
           submitLabel={editingLink ? "Save Changes" : "Save Link"}
         />
       </ProfileDialog>
-      
+
       <ConfirmationDialog />
     </div>
   );

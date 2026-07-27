@@ -3,7 +3,10 @@
 import React, { useEffect } from "react";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { projectSchema, type ProjectFormValues } from "../schemas/project.schema";
+import {
+  projectSchema,
+  type ProjectFormValues,
+} from "../schemas/project.schema";
 import { BrutalInput } from "@/components/ui/brutal-input";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -29,7 +32,9 @@ export function ProjectForm({
     reset,
     formState: { errors, isSubmitting, isDirty },
   } = useForm<ProjectFormValues>({
-    resolver: zodResolver(projectSchema) as unknown as Resolver<ProjectFormValues>,
+    resolver: zodResolver(
+      projectSchema,
+    ) as unknown as Resolver<ProjectFormValues>,
     defaultValues: {
       title: "",
       description: "",

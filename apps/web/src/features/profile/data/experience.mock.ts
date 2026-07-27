@@ -13,8 +13,17 @@ export const MOCK_EXPERIENCE: Experience[] = [
     startDate: "2024-06-01",
     endDate: "2024-12-31",
     currentPosition: false,
-    description: "Collaborated with the core platform team to build scalable microservices. Reduced database response time by 15% through query optimization and index configurations. Maintained unit test coverage above 85%.",
+    description:
+      "Collaborated with the core platform team to build scalable microservices. Reduced database response time by 15% through query optimization and index configurations. Maintained unit test coverage above 85%.",
     technologiesUsed: ["Node.js", "Express", "PostgreSQL", "Jest", "Docker"],
+    responsibilities: [
+      "Collaborated with cross-functional product teams to design API routes",
+      "Wrote unit and integration tests to secure high coverage ratios",
+    ],
+    achievements: [
+      "Optimized query structures reducing latency metrics by 15%",
+      "Helped migrate legacy codebase structures cleanly",
+    ],
     createdAt: "2025-01-15T10:30:00Z",
     updatedAt: "2026-06-28T14:22:00Z",
   },
@@ -28,8 +37,23 @@ export const MOCK_EXPERIENCE: Experience[] = [
     startDate: "2023-09-01",
     endDate: "2024-05-15",
     currentPosition: false,
-    description: "Designed and developed highly responsive marketing portals and dashboard tools utilizing Next.js and Tailwind CSS. Implemented accessible (a11y) components according to WCAG AA guidelines.",
-    technologiesUsed: ["TypeScript", "Next.js", "Tailwind CSS", "Framer Motion", "Figma"],
+    description:
+      "Designed and developed highly responsive marketing portals and dashboard tools utilizing Next.js and Tailwind CSS. Implemented accessible (a11y) components according to WCAG AA guidelines.",
+    technologiesUsed: [
+      "TypeScript",
+      "Next.js",
+      "Tailwind CSS",
+      "Framer Motion",
+      "Figma",
+    ],
+    responsibilities: [
+      "Designed reusable UI layout libraries using Tailwind CSS",
+      "Conducted detailed accessibility contrast and spacing audits",
+    ],
+    achievements: [
+      "Completed visual redesign of two major client portals ahead of schedule",
+      "Achieved 100% lighthouse scoring targets on key landing pages",
+    ],
     createdAt: "2025-01-15T10:30:00Z",
     updatedAt: "2026-06-28T14:22:00Z",
   },

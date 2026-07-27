@@ -27,11 +27,15 @@ export function ExperienceTimeline({
           <Briefcase className="h-6 w-6" aria-hidden="true" />
         </div>
         <div className="space-y-1.5 max-w-sm">
-          <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+          <Heading
+            level="h4"
+            className="text-base font-black uppercase tracking-tight"
+          >
             No Experience Added Yet
           </Heading>
           <Text className="text-foreground-secondary text-xs leading-relaxed">
-            Add your professional work history, internships, and contract roles to complete your candidate profile.
+            Add your professional work history, internships, and contract roles
+            to complete your candidate profile.
           </Text>
         </div>
         <BrutalButton
@@ -45,10 +49,12 @@ export function ExperienceTimeline({
     );
   }
 
-  // Sort experience by start date descending
-  const sortedExp = [...experience].sort(
-    (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-  );
+  // Sort experience by current position first, then start date descending
+  const sortedExp = [...experience].sort((a, b) => {
+    if (a.currentPosition && !b.currentPosition) return -1;
+    if (!a.currentPosition && b.currentPosition) return 1;
+    return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+  });
 
   return (
     <div className="relative pl-6 border-l-[3px] border-border space-y-6 ml-3 py-2">
@@ -58,11 +64,7 @@ export function ExperienceTimeline({
           <div className="absolute -left-[37px] top-1.5 h-6 w-6 rounded-full border-2 border-border bg-surface flex items-center justify-center brutal-shadow-sm select-none">
             <Briefcase className="h-3 w-3 text-foreground" />
           </div>
-          <ExperienceItem
-            exp={exp}
-            onEdit={onEdit}
-            onDelete={onDelete}
-          />
+          <ExperienceItem exp={exp} onEdit={onEdit} onDelete={onDelete} />
         </div>
       ))}
     </div>

@@ -15,7 +15,15 @@ import { ProjectFormValues } from "@/features/profile/schemas/project.schema";
 import { PageLoader } from "@/components/ui/brand-loader";
 
 export default function ProjectsPage() {
-  const { projects, isLoading, loadProfile, addProject, updateProject, deleteProject, toggleFeaturedProject } = useProfileStore();
+  const {
+    projects,
+    isLoading,
+    loadProfile,
+    addProject,
+    updateProject,
+    deleteProject,
+    toggleFeaturedProject,
+  } = useProfileStore();
   const { confirm, ConfirmationDialog } = useConfirm();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -38,9 +46,10 @@ export default function ProjectsPage() {
   const handleDeleteClick = async (id: string) => {
     const isConfirmed = await confirm({
       title: "Delete Project",
-      description: "Are you sure you want to delete this project? This action cannot be undone.",
+      description:
+        "Are you sure you want to delete this project? This action cannot be undone.",
       isDestructive: true,
-      confirmLabel: "Delete"
+      confirmLabel: "Delete",
     });
     if (isConfirmed) {
       deleteProject(id);
@@ -79,7 +88,10 @@ export default function ProjectsPage() {
             <ArrowLeft className="h-4 w-4" />
             Back to Profile
           </Link>
-          <Heading level="h2" className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center gap-2">
+          <Heading
+            level="h2"
+            className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center gap-2"
+          >
             <FolderOpen className="h-6 w-6 text-primary shrink-0" />
             Projects & Portfolio
           </Heading>
@@ -116,7 +128,7 @@ export default function ProjectsPage() {
           submitLabel={editingProj ? "Save Changes" : "Save Project"}
         />
       </ProfileDialog>
-      
+
       <ConfirmationDialog />
     </div>
   );

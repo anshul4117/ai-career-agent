@@ -16,12 +16,15 @@ import { SkillFormValues } from "@/features/profile/schemas/skill.schema";
 import { PageLoader } from "@/components/ui/brand-loader";
 
 export default function SkillsPage() {
-  const { skills, isLoading, loadProfile, addSkill, updateSkill, deleteSkill } = useProfileStore();
+  const { skills, isLoading, loadProfile, addSkill, updateSkill, deleteSkill } =
+    useProfileStore();
   const { confirm, ConfirmationDialog } = useConfirm();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [sortBy, setSortBy] = useState<"alphabetical" | "experience">("alphabetical");
+  const [sortBy, setSortBy] = useState<"alphabetical" | "experience">(
+    "alphabetical",
+  );
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
@@ -69,9 +72,10 @@ export default function SkillsPage() {
   const handleDeleteClick = async (id: string) => {
     const isConfirmed = await confirm({
       title: "Delete Skill",
-      description: "Are you sure you want to delete this skill? This action cannot be undone.",
+      description:
+        "Are you sure you want to delete this skill? This action cannot be undone.",
       isDestructive: true,
-      confirmLabel: "Delete"
+      confirmLabel: "Delete",
     });
     if (isConfirmed) {
       deleteSkill(id);
@@ -103,7 +107,10 @@ export default function SkillsPage() {
             <ArrowLeft className="h-4 w-4" />
             Back to Profile
           </Link>
-          <Heading level="h2" className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center gap-2">
+          <Heading
+            level="h2"
+            className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center gap-2"
+          >
             <Code2 className="h-6 w-6 text-primary shrink-0" />
             Manage Skills
           </Heading>

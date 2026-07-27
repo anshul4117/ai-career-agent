@@ -23,7 +23,10 @@ export function LanguageItem({ lang, onEdit, onDelete }: LanguageItemProps) {
 
         <div className="space-y-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <Heading level="h4" className="text-sm font-black uppercase tracking-tight truncate">
+            <Heading
+              level="h4"
+              className="text-sm font-black uppercase tracking-tight truncate"
+            >
               {lang.language}
             </Heading>
             {lang.nativeLanguage && (
@@ -34,11 +37,20 @@ export function LanguageItem({ lang, onEdit, onDelete }: LanguageItemProps) {
             )}
           </div>
           <div className="flex flex-wrap items-center gap-2 text-[10px] text-foreground-secondary font-mono">
-            <span>Speak: {LANGUAGE_LEVEL_LABELS[lang.speakingLevel] || lang.speakingLevel}</span>
+            <span>
+              Speak:{" "}
+              {LANGUAGE_LEVEL_LABELS[lang.speakingLevel] || lang.speakingLevel}
+            </span>
             <span>•</span>
-            <span>Read: {LANGUAGE_LEVEL_LABELS[lang.readingLevel] || lang.readingLevel}</span>
+            <span>
+              Read:{" "}
+              {LANGUAGE_LEVEL_LABELS[lang.readingLevel] || lang.readingLevel}
+            </span>
             <span>•</span>
-            <span>Write: {LANGUAGE_LEVEL_LABELS[lang.writingLevel] || lang.writingLevel}</span>
+            <span>
+              Write:{" "}
+              {LANGUAGE_LEVEL_LABELS[lang.writingLevel] || lang.writingLevel}
+            </span>
           </div>
         </div>
       </div>

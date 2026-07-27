@@ -14,7 +14,12 @@ interface SkillsListProps {
   onAddClick: () => void;
 }
 
-export function SkillsList({ skills, onEdit, onDelete, onAddClick }: SkillsListProps) {
+export function SkillsList({
+  skills,
+  onEdit,
+  onDelete,
+  onAddClick,
+}: SkillsListProps) {
   if (skills.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-8 border-3 border-dashed border-border bg-surface text-center space-y-4 brutal-shadow rounded-md py-12">
@@ -22,11 +27,15 @@ export function SkillsList({ skills, onEdit, onDelete, onAddClick }: SkillsListP
           <Code2 className="h-6 w-6" aria-hidden="true" />
         </div>
         <div className="space-y-1.5 max-w-sm">
-          <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+          <Heading
+            level="h4"
+            className="text-base font-black uppercase tracking-tight"
+          >
             No Skills Added Yet
           </Heading>
           <Text className="text-foreground-secondary text-xs leading-relaxed">
-            Specify technical or professional skill tags to calculate matching scores and ATS diagnostics.
+            Specify technical or professional skill tags to calculate matching
+            scores and ATS diagnostics.
           </Text>
         </div>
         <BrutalButton

@@ -6,8 +6,16 @@ export const MOCK_PROJECTS: Project[] = [
   {
     id: "proj_1",
     title: "AI Career Agent",
-    description: "A premium AI-powered career operating system offering instant ATS resume reviews, automated cover letters, and a Kanban tracking board for applications.",
-    techStack: ["TypeScript", "Next.js", "Zustand", "Tailwind CSS", "Zod", "Lucide React"],
+    description:
+      "A premium AI-powered career operating system offering instant ATS resume reviews, automated cover letters, and a Kanban tracking board for applications.",
+    techStack: [
+      "TypeScript",
+      "Next.js",
+      "Zustand",
+      "Tailwind CSS",
+      "Zod",
+      "Lucide React",
+    ],
     githubUrl: "https://github.com/example/ai-career-agent",
     liveDemoUrl: "https://ai-career-agent.vercel.app",
     imageUrl: null,
@@ -22,7 +30,8 @@ export const MOCK_PROJECTS: Project[] = [
   {
     id: "proj_2",
     title: "Brutalist Task Manager",
-    description: "An offline-first task tracker featuring bold brutalist styling, keybinding shortcuts, CSV imports, and calendar timeline integrations.",
+    description:
+      "An offline-first task tracker featuring bold brutalist styling, keybinding shortcuts, CSV imports, and calendar timeline integrations.",
     techStack: ["JavaScript", "React", "Redux", "LocalStorage", "Vanilla CSS"],
     githubUrl: "https://github.com/example/brutalist-tasks",
     liveDemoUrl: "https://brutalist-tasks.net",

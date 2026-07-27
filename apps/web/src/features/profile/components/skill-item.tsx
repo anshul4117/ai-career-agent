@@ -22,7 +22,10 @@ export function SkillItem({ skill, onEdit, onDelete }: SkillItemProps) {
               {skill.name}
             </span>
             {skill.featured && (
-              <Star className="h-4 w-4 fill-warning text-warning shrink-0" aria-label="Featured skill" />
+              <Star
+                className="h-4 w-4 fill-warning text-warning shrink-0"
+                aria-label="Featured skill"
+              />
             )}
           </div>
           <div className="flex flex-wrap items-center gap-2 text-xs text-foreground-secondary">
@@ -39,7 +42,7 @@ export function SkillItem({ skill, onEdit, onDelete }: SkillItemProps) {
 
       <div className="flex items-center gap-1.5 ml-4 shrink-0">
         <SkillBadge level={skill.level} />
-        
+
         <Button
           variant="ghost"
           size="icon"

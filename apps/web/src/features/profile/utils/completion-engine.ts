@@ -35,14 +35,16 @@ export function calculateProfileCompletion(
   certifications: Certification[],
   languages: Language[],
   socialLinks: SocialLink[],
-  preferences: CareerPreference | null
+  preferences: CareerPreference | null,
 ): CompletionAudit {
   const checklist: CompletionChecklistItem[] = [
     {
       id: "personal",
       label: "Personal Information",
       weight: 15,
-      completed: !!(profile?.personal?.firstName && profile?.personal?.lastName),
+      completed: !!(
+        profile?.personal?.firstName && profile?.personal?.lastName
+      ),
       suggestion: "Add your first and last name to verify your identity.",
       actionUrl: "/profile/edit#personal",
     },
@@ -122,14 +124,19 @@ export function calculateProfileCompletion(
 
   let percentage = 0;
   const completedSections: { id: string; label: string }[] = [];
-  const missingSections: { id: string; label: string; suggestion: string }[] = [];
+  const missingSections: { id: string; label: string; suggestion: string }[] =
+    [];
 
   checklist.forEach((sec) => {
     if (sec.completed) {
       percentage += sec.weight;
       completedSections.push({ id: sec.id, label: sec.label });
     } else {
-      missingSections.push({ id: sec.id, label: sec.label, suggestion: sec.suggestion });
+      missingSections.push({
+        id: sec.id,
+        label: sec.label,
+        suggestion: sec.suggestion,
+      });
     }
   });
 

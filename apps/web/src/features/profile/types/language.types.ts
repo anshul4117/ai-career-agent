@@ -1,6 +1,7 @@
 /** Languages Module — Type Definitions */
 
-export type LanguageLevel = "beginner" | "intermediate" | "advanced" | "fluent" | "native";
+export type LanguageLevel =
+  "beginner" | "intermediate" | "advanced" | "fluent" | "native";
 
 export interface Language {
   id: string;

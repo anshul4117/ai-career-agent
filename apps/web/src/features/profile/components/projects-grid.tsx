@@ -29,11 +29,15 @@ export function ProjectsGrid({
           <FolderOpen className="h-6 w-6" aria-hidden="true" />
         </div>
         <div className="space-y-1.5 max-w-sm">
-          <Heading level="h4" className="text-base font-black uppercase tracking-tight">
+          <Heading
+            level="h4"
+            className="text-base font-black uppercase tracking-tight"
+          >
             No Projects Added Yet
           </Heading>
           <Text className="text-foreground-secondary text-xs leading-relaxed">
-            Showcase your best side projects, open-source work, and academic applications to potential matches.
+            Showcase your best side projects, open-source work, and academic
+            applications to potential matches.
           </Text>
         </div>
         <BrutalButton

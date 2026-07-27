@@ -25,7 +25,10 @@ export function ProjectsCard({ projects }: ProjectsCardProps) {
       <div className="space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between gap-4">
-          <Heading level="h4" className="text-base font-black uppercase tracking-tight flex items-center gap-2">
+          <Heading
+            level="h4"
+            className="text-base font-black uppercase tracking-tight flex items-center gap-2"
+          >
             <FolderOpen className="h-5 w-5 text-primary" aria-hidden="true" />
             Projects & Portfolio
           </Heading>
@@ -48,7 +51,10 @@ export function ProjectsCard({ projects }: ProjectsCardProps) {
                 <div className="space-y-0.5 min-w-0">
                   <div className="flex items-center gap-1.5 min-w-0">
                     {project.featured && (
-                      <Star className="h-3.5 w-3.5 fill-warning text-warning shrink-0" aria-hidden="true" />
+                      <Star
+                        className="h-3.5 w-3.5 fill-warning text-warning shrink-0"
+                        aria-hidden="true"
+                      />
                     )}
                     <p className="font-extrabold text-sm text-foreground truncate uppercase tracking-tight">
                       {project.title}

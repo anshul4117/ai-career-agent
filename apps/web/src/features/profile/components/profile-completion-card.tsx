@@ -12,7 +12,9 @@ interface ProfileCompletionCardProps {
   completion: ProfileCompletion;
 }
 
-export function ProfileCompletionCard({ completion }: ProfileCompletionCardProps) {
+export function ProfileCompletionCard({
+  completion,
+}: ProfileCompletionCardProps) {
   const completedCount = completion.sections.filter((s) => s.completed).length;
   const totalCount = completion.sections.length;
   const circumference = 2 * Math.PI * 40;
@@ -22,14 +24,32 @@ export function ProfileCompletionCard({ completion }: ProfileCompletionCardProps
     <BrutalCard className="bg-surface border-[3px] border-border p-5 brutal-shadow w-full min-w-0">
       <div className="flex flex-col items-center gap-4 text-center">
         {/* Header */}
-        <Heading level="h4" className="text-xs font-black uppercase tracking-wider text-foreground-muted self-start">
+        <Heading
+          level="h4"
+          className="text-xs font-black uppercase tracking-wider text-foreground-muted self-start"
+        >
           Profile Strength
         </Heading>
 
         {/* Circular Progress */}
-        <div className="relative flex items-center justify-center h-24 w-24 shrink-0" aria-label={`Profile ${completion.percentage}% complete`}>
-          <svg width="90" height="90" viewBox="0 0 100 100" className="transform -rotate-90">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="var(--color-surface-secondary)" strokeWidth="8" />
+        <div
+          className="relative flex items-center justify-center h-24 w-24 shrink-0"
+          aria-label={`Profile ${completion.percentage}% complete`}
+        >
+          <svg
+            width="90"
+            height="90"
+            viewBox="0 0 100 100"
+            className="transform -rotate-90"
+          >
+            <circle
+              cx="50"
+              cy="50"
+              r="40"
+              fill="none"
+              stroke="var(--color-surface-secondary)"
+              strokeWidth="8"
+            />
             <circle
               cx="50"
               cy="50"
@@ -43,7 +63,9 @@ export function ProfileCompletionCard({ completion }: ProfileCompletionCardProps
               className="transition-all duration-700"
             />
           </svg>
-          <span className="absolute text-lg font-black text-foreground">{completion.percentage}%</span>
+          <span className="absolute text-lg font-black text-foreground">
+            {completion.percentage}%
+          </span>
         </div>
 
         <div className="space-y-3 w-full">
@@ -76,7 +98,11 @@ export function ProfileCompletionCard({ completion }: ProfileCompletionCardProps
           </div>
 
           <div className="pt-2 border-t border-border/10 w-full">
-            <BrutalButton asChild variant="secondary" className="h-9 w-full uppercase font-bold text-[10px] tracking-wider">
+            <BrutalButton
+              asChild
+              variant="secondary"
+              className="h-9 w-full uppercase font-bold text-[10px] tracking-wider"
+            >
               <Link href="/profile/edit">
                 Complete Your Profile
                 <ArrowRight className="h-3.5 w-3.5 ml-1.5" />

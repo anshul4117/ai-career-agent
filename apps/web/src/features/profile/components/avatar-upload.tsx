@@ -57,8 +57,12 @@ export function AvatarUpload() {
   return (
     <div className="flex flex-col sm:flex-row items-center gap-5 p-4 border-2 border-border bg-surface-secondary brutal-shadow-sm rounded-sm">
       <div className="relative group shrink-0">
-        <ProfileAvatar url={profile.avatar.url} initials={profile.avatar.initials} size="lg" />
-        <div 
+        <ProfileAvatar
+          url={profile.avatar.url}
+          initials={profile.avatar.initials}
+          size="lg"
+        />
+        <div
           onClick={handleUploadClick}
           className="absolute inset-0 bg-foreground/60 flex items-center justify-center text-surface opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity duration-150 rounded-sm"
           role="button"
@@ -85,7 +89,7 @@ export function AvatarUpload() {
             className="hidden"
             aria-label="Upload profile image file"
           />
-          
+
           <Button
             variant="ghost"
             onClick={handleUploadClick}
@@ -118,7 +122,7 @@ export function AvatarUpload() {
             {error}
           </Text>
         )}
-        
+
         {/* Crop Support Placeholder */}
         <p className="text-[10px] text-foreground-muted font-bold uppercase tracking-widest pt-1">
           * Drag photo overlay to crop (Placeholder)

@@ -1,7 +1,16 @@
 "use client";
 
 import React from "react";
-import { FolderOpen, Github, ExternalLink, Pencil, Trash2, Users, User, Star } from "lucide-react";
+import {
+  FolderOpen,
+  Github,
+  ExternalLink,
+  Pencil,
+  Trash2,
+  Users,
+  User,
+  Star,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Heading, Text } from "@/components/ui/typography";
 import type { Project } from "../types/project.types";
@@ -23,7 +32,10 @@ export function ProjectCard({
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "Ongoing";
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
+    });
   };
 
   return (
@@ -35,7 +47,10 @@ export function ProjectCard({
             <div className="h-8 w-8 border-2 border-border bg-primary/10 text-primary flex items-center justify-center brutal-shadow-sm rounded-sm shrink-0">
               <FolderOpen className="h-4 w-4" />
             </div>
-            <Heading level="h4" className="text-base font-black uppercase tracking-tight truncate">
+            <Heading
+              level="h4"
+              className="text-base font-black uppercase tracking-tight truncate"
+            >
               {project.title}
             </Heading>
           </div>
@@ -45,12 +60,16 @@ export function ProjectCard({
               variant="ghost"
               size="icon"
               onClick={() => onToggleFeatured(project.id)}
-              aria-label={project.featured ? "Unfeature project" : "Feature project"}
+              aria-label={
+                project.featured ? "Unfeature project" : "Feature project"
+              }
               className="h-8 w-8 hover:bg-surface-secondary border-2 border-transparent hover:border-border rounded-sm"
             >
               <Star
                 className={`h-4 w-4 ${
-                  project.featured ? "fill-warning text-warning" : "text-foreground-muted"
+                  project.featured
+                    ? "fill-warning text-warning"
+                    : "text-foreground-muted"
                 }`}
               />
             </Button>

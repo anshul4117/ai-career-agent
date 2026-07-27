@@ -3,7 +3,10 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { socialLinkSchema, type SocialLinkFormValues } from "../schemas/social-link.schema";
+import {
+  socialLinkSchema,
+  type SocialLinkFormValues,
+} from "../schemas/social-link.schema";
 import { BrutalInput } from "@/components/ui/brutal-input";
 import { BrutalSelect } from "@/components/ui/brutal-select";
 import { BrutalButton } from "@/components/ui/brutal-button";
@@ -28,7 +31,10 @@ export function SocialLinkForm({
   // Filter platform options so the user doesn't add duplicates
   const platformOptions = React.useMemo(() => {
     return Object.entries(SOCIAL_PLATFORM_LABELS)
-      .filter(([key]) => !existingPlatforms.includes(key) || initialValues?.platform === key)
+      .filter(
+        ([key]) =>
+          !existingPlatforms.includes(key) || initialValues?.platform === key,
+      )
       .map(([key, label]) => ({
         value: key,
         label,
@@ -68,7 +74,11 @@ export function SocialLinkForm({
         <p className="text-sm font-bold text-foreground-secondary">
           All social platforms have already been added!
         </p>
-        <BrutalButton variant="secondary" onClick={onCancel} className="h-10 px-4 uppercase font-bold text-xs">
+        <BrutalButton
+          variant="secondary"
+          onClick={onCancel}
+          className="h-10 px-4 uppercase font-bold text-xs"
+        >
           Close
         </BrutalButton>
       </div>
