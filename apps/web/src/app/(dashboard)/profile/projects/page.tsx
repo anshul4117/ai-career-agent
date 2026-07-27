@@ -13,6 +13,7 @@ import { ProjectForm } from "@/features/profile/components/project-form";
 import type { Project } from "@/features/profile/types/project.types";
 import { ProjectFormValues } from "@/features/profile/schemas/project.schema";
 import { PageLoader } from "@/components/ui/brand-loader";
+import { toast } from "sonner";
 
 export default function ProjectsPage() {
   const {
@@ -56,20 +57,42 @@ export default function ProjectsPage() {
     }
   };
 
-  const handleFormSubmit = (values: ProjectFormValues) => {
-    const mappedValues = {
-      ...values,
-      imageUrl: null,
-      githubUrl: values.githubUrl ?? null,
-      liveDemoUrl: values.liveDemoUrl ?? null,
-      endDate: values.endDate ?? null,
-    };
-    if (editingProj) {
-      updateProject(editingProj.id, mappedValues);
-    } else {
-      addProject(mappedValues);
+  const handleFormSubmit = async (values: ProjectFormValues) => {
+    const isAdding = !editingProj;
+    const toastId = toast.loading(
+      isAdding ? "Adding portfolio project..." : "Saving project changes...",
+    );
+
+    try {
+      // Simulate network request delay (800ms) as requested
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      const mappedValues = {
+        ...values,
+        imageUrl: null,
+        githubUrl: values.githubUrl ?? null,
+        liveDemoUrl: values.liveDemoUrl ?? null,
+        endDate: values.endDate ?? null,
+      };
+
+      if (editingProj) {
+        updateProject(editingProj.id, mappedValues);
+      } else {
+        addProject(mappedValues);
+      }
+
+      setIsDialogOpen(false);
+      toast.success(
+        isAdding
+          ? "Project added successfully!"
+          : "Project details updated successfully!",
+        { id: toastId },
+      );
+    } catch {
+      toast.error("Failed to save project details. Please try again.", {
+        id: toastId,
+      });
     }
-    setIsDialogOpen(false);
   };
 
   if (isLoading) {
@@ -126,6 +149,7 @@ export default function ProjectsPage() {
           onSubmit={handleFormSubmit}
           onCancel={() => setIsDialogOpen(false)}
           submitLabel={editingProj ? "Save Changes" : "Save Project"}
+          existingProjects={projects}
         />
       </ProfileDialog>
 

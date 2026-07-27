@@ -198,6 +198,17 @@ export default function EditProfilePage() {
   const [activeProjEditor, setActiveProjEditor] = useState<
     "add" | string | null
   >(null);
+  const activeProj = useMemo(
+    () => projects.find((p) => p.id === activeProjEditor) || null,
+    [projects, activeProjEditor],
+  );
+  const sortedProjects = useMemo(() => {
+    return [...projects].sort((a, b) => {
+      if (a.featured && !b.featured) return -1;
+      if (!a.featured && b.featured) return 1;
+      return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+    });
+  }, [projects]);
   const [activeCertEditor, setActiveCertEditor] = useState<
     "add" | string | null
   >(null);
@@ -562,22 +573,43 @@ export default function EditProfilePage() {
     }
   };
 
-  const handleProjSubmit = (values: ProjectFormValues) => {
-    const mapped = {
-      ...values,
-      imageUrl: null,
-      githubUrl: values.githubUrl ?? null,
-      liveDemoUrl: values.liveDemoUrl ?? null,
-      endDate: values.endDate ?? null,
-    };
-    if (activeProjEditor === "add") {
-      addProject(mapped);
-    } else if (activeProjEditor) {
-      updateProject(activeProjEditor, mapped);
+  const handleProjSubmit = async (values: ProjectFormValues) => {
+    const isAdding = activeProjEditor === "add";
+    const toastId = toast.loading(
+      isAdding ? "Adding portfolio project..." : "Saving project changes...",
+    );
+
+    try {
+      // Simulate network request delay (800ms) as requested
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      const mapped = {
+        ...values,
+        imageUrl: null,
+        githubUrl: values.githubUrl ?? null,
+        liveDemoUrl: values.liveDemoUrl ?? null,
+        endDate: values.endDate ?? null,
+      };
+
+      if (isAdding) {
+        addProject(mapped);
+      } else if (activeProjEditor) {
+        updateProject(activeProjEditor, mapped);
+      }
+
+      setActiveProjEditor(null);
+      toast.success(
+        isAdding
+          ? "Project added successfully!"
+          : "Project details updated successfully!",
+        { id: toastId },
+      );
+      handlePostSaveRedirect();
+    } catch {
+      toast.error("Failed to save project details. Please try again.", {
+        id: toastId,
+      });
     }
-    setActiveProjEditor(null);
-    toast.success("Project updated!");
-    handlePostSaveRedirect();
   };
 
   const handleCertSubmit = (values: CertificationFormValues) => {
@@ -1266,69 +1298,78 @@ export default function EditProfilePage() {
                 >
                   Portfolio Projects
                 </Heading>
-                {!activeProjEditor && (
-                  <BrutalButton
-                    onClick={() => setActiveProjEditor("add")}
-                    className="h-8 px-3 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1"
-                  >
-                    <Plus className="h-3.5 w-3.5" /> Add Project
-                  </BrutalButton>
-                )}
+                <BrutalButton
+                  onClick={() => setActiveProjEditor("add")}
+                  className="h-8 px-3 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1"
+                >
+                  <Plus className="h-3.5 w-3.5" /> Add Project
+                </BrutalButton>
               </div>
 
-              {activeProjEditor ? (
-                <div className="border-2 border-border p-4 bg-surface-secondary space-y-4 rounded-sm brutal-shadow-sm">
-                  <Heading
-                    level="h5"
-                    className="text-xs font-black uppercase tracking-wider"
-                  >
-                    {activeProjEditor === "add"
-                      ? "Add Portfolio Project"
-                      : "Edit Project Record"}
-                  </Heading>
-                  <ProjectForm
-                    initialValues={
-                      activeProjEditor === "add"
-                        ? null
-                        : projects.find((p) => p.id === activeProjEditor)
-                    }
-                    onSubmit={handleProjSubmit}
-                    onCancel={() => setActiveProjEditor(null)}
-                    submitLabel={
-                      activeProjEditor === "add" ? "Add Project" : "Save Record"
-                    }
-                  />
-                </div>
-              ) : projects.length === 0 ? (
+              {/* Dialog for Add/Edit Project */}
+              <ProfileDialog
+                isOpen={activeProjEditor !== null}
+                onClose={() => setActiveProjEditor(null)}
+                title={
+                  activeProjEditor === "add"
+                    ? "Add Portfolio Project"
+                    : "Edit Project Record"
+                }
+              >
+                <ProjectForm
+                  initialValues={activeProj}
+                  onSubmit={handleProjSubmit}
+                  onCancel={() => setActiveProjEditor(null)}
+                  submitLabel={
+                    activeProjEditor === "add" ? "Add Project" : "Save Record"
+                  }
+                  existingProjects={projects}
+                />
+              </ProfileDialog>
+
+              {projects.length === 0 ? (
                 <div className="text-center py-6 border-2 border-dashed border-border/20 text-xs text-foreground-secondary">
                   No projects configured. Highlight your side-projects or open
                   source work.
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {projects.map((proj) => (
+                  {sortedProjects.map((proj) => (
                     <div
                       key={proj.id}
                       className="border-2 border-border p-4 rounded-sm flex justify-between gap-4 bg-surface-secondary/20"
                     >
                       <div className="space-y-1 text-xs">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <h5 className="font-extrabold uppercase text-foreground">
                             {proj.title}
                           </h5>
+                          {proj.category && (
+                            <span className="px-1.5 py-0.2 border border-border bg-surface text-[8px] font-bold uppercase">
+                              {proj.category}
+                            </span>
+                          )}
                           {proj.featured && (
-                            <span className="bg-primary/25 border border-primary text-[8px] px-1.5 py-0.2 uppercase font-black">
+                            <span className="bg-warning text-black border border-border text-[8px] px-1.5 py-0.2 uppercase font-black brutal-shadow-sm flex items-center gap-0.5">
+                              <Star className="h-2.5 w-2.5 fill-current" />
                               Featured
                             </span>
                           )}
                         </div>
                         <p className="text-foreground-secondary font-semibold">
-                          Role: {proj.role} • Team size: {proj.teamSize}
+                          Role: {proj.role}{" "}
+                          {proj.teamSize ? `• Team size: ${proj.teamSize}` : ""}
                         </p>
                         <p className="text-foreground-muted font-mono text-[10px]">
-                          {proj.startDate} – {proj.endDate || "Present"}
+                          {proj.startDate} –{" "}
+                          {proj.currentlyWorking ? "Present" : proj.endDate}
                         </p>
-                        <p className="text-foreground-secondary leading-relaxed pt-1">
+                        {proj.shortDescription && (
+                          <p className="font-bold text-foreground-secondary leading-relaxed pt-1">
+                            {proj.shortDescription}
+                          </p>
+                        )}
+                        <p className="text-foreground-secondary leading-relaxed pt-0.5">
                           {proj.description}
                         </p>
                         {proj.techStack.length > 0 && (

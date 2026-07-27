@@ -6,6 +6,7 @@ export const MOCK_PROJECTS: Project[] = [
   {
     id: "proj_1",
     title: "AI Career Agent",
+    shortDescription: "AI career agent for ATS review and job matching",
     description:
       "A premium AI-powered career operating system offering instant ATS resume reviews, automated cover letters, and a Kanban tracking board for applications.",
     techStack: [
@@ -23,13 +24,17 @@ export const MOCK_PROJECTS: Project[] = [
     role: "Lead Full Stack Engineer",
     startDate: "2026-01-01",
     endDate: null,
+    currentlyWorking: true,
     featured: true,
+    category: "AI",
     createdAt: "2025-01-15T10:30:00Z",
     updatedAt: "2026-06-28T14:22:00Z",
   },
   {
     id: "proj_2",
     title: "Brutalist Task Manager",
+    shortDescription:
+      "An offline-first task tracker featuring bold brutalist styling",
     description:
       "An offline-first task tracker featuring bold brutalist styling, keybinding shortcuts, CSV imports, and calendar timeline integrations.",
     techStack: ["JavaScript", "React", "Redux", "LocalStorage", "Vanilla CSS"],
@@ -40,7 +45,9 @@ export const MOCK_PROJECTS: Project[] = [
     role: "UI/UX Developer",
     startDate: "2025-06-15",
     endDate: "2025-08-30",
+    currentlyWorking: false,
     featured: true,
+    category: "Web",
     createdAt: "2025-01-15T10:30:00Z",
     updatedAt: "2026-06-28T14:22:00Z",
   },

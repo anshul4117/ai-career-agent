@@ -2,41 +2,40 @@
 
 import { z } from "zod";
 
-const optionalUrlSchema = z.preprocess(
-  (val) => (val === "" ? null : val),
-  z.string().url("Invalid URL format").nullable().optional(),
-);
+const optionalUrlSchema = z
+  .string()
+  .url("Invalid URL format")
+  .or(z.literal(""))
+  .nullable()
+  .optional();
 
 export const projectSchema = z
   .object({
     title: z
       .string()
-      .min(1, "Project title is required")
-      .max(100, "Project title must be under 100 characters")
+      .min(1, "Project name is required")
+      .max(100, "Project name must be under 100 characters")
+      .trim(),
+    shortDescription: z
+      .string()
+      .min(1, "Short description is required")
+      .max(150, "Short description must be under 150 characters")
       .trim(),
     description: z
       .string()
-      .min(1, "Description is required")
-      .max(500, "Description must be under 500 characters")
+      .min(1, "Detailed description is required")
+      .max(1000, "Detailed description must be under 1000 characters")
       .trim(),
-    techStack: z.preprocess(
-      (val) => {
-        if (typeof val === "string") {
-          return val
-            .split(",")
-            .map((t) => t.trim())
-            .filter(Boolean);
-        }
-        return val;
-      },
-      z.array(z.string()).min(1, "At least one technology is required"),
-    ),
+    techStack: z
+      .array(z.string())
+      .min(1, "At least one technology is required"),
     githubUrl: optionalUrlSchema,
     liveDemoUrl: optionalUrlSchema,
     teamSize: z
       .number({ invalid_type_error: "Team size must be a number" })
       .min(1, "Team size must be at least 1")
-      .max(100, "Team size cannot exceed 100"),
+      .max(100, "Team size cannot exceed 100")
+      .optional(),
     role: z
       .string()
       .min(1, "Your role is required")
@@ -45,19 +44,34 @@ export const projectSchema = z
     startDate: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, "Start date must be in YYYY-MM-DD format"),
-    endDate: z.preprocess(
-      (val) => (val === "" ? null : val),
-      z
-        .string()
-        .regex(/^\d{4}-\d{2}-\d{2}$/, "End date must be in YYYY-MM-DD format")
-        .nullable()
-        .optional(),
+    endDate: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "End date must be in YYYY-MM-DD format")
+      .or(z.literal(""))
+      .nullable()
+      .optional(),
+    currentlyWorking: z.boolean().default(false),
+    featured: z.boolean().default(false),
+    category: z.enum(
+      [
+        "Web",
+        "Mobile",
+        "AI",
+        "Backend",
+        "Full Stack",
+        "DevOps",
+        "Open Source",
+        "Other",
+      ],
+      {
+        errorMap: () => ({ message: "Please select a category" }),
+      },
     ),
-    featured: z.boolean(),
   })
   .refine(
     (data) => {
-      if (!data.endDate) return true;
+      if (data.currentlyWorking) return true;
+      if (!data.endDate || data.endDate === "") return false;
       return new Date(data.startDate) <= new Date(data.endDate);
     },
     {
