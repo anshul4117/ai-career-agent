@@ -53,6 +53,14 @@ interface ParserStoreState {
     fieldOrIndex: string | number,
     value: unknown,
   ) => void;
+  getParsingStatus: () => "waiting" | "parsing" | "completed" | "failed";
+  getParsingResults: () => ExtractedData | null;
+  approveResults: () => Promise<void>;
+  rejectField: (
+    section: keyof ReviewState,
+    fieldOrIndex: string | number,
+  ) => void;
+  mergeResults: () => Promise<void>;
 }
 
 const mapLanguageLevel = (lvl: string): LanguageLevel => {
@@ -542,5 +550,54 @@ export const useParserStore = create<ParserStoreState>((set, get) => ({
         };
       }
     });
+  },
+
+  getParsingStatus: () => get().processingState,
+
+  getParsingResults: () => get().parsedData,
+
+  approveResults: async () => {
+    await get().acceptParsing();
+  },
+
+  rejectField: (section, fieldOrIndex) => {
+    set((state) => {
+      if (!state.reviewState) return {};
+      const sectionState = state.reviewState[section];
+      if (Array.isArray(sectionState.value)) {
+        const updatedArray = [...sectionState.value];
+        const index =
+          typeof fieldOrIndex === "number"
+            ? fieldOrIndex
+            : parseInt(fieldOrIndex as string, 10);
+        if (!isNaN(index)) {
+          updatedArray.splice(index, 1);
+        }
+        return {
+          reviewState: {
+            ...state.reviewState,
+            [section]: {
+              ...sectionState,
+              action: "edit",
+              value: updatedArray,
+            },
+          },
+        };
+      } else {
+        return {
+          reviewState: {
+            ...state.reviewState,
+            [section]: {
+              ...sectionState,
+              action: "ignore",
+            },
+          },
+        };
+      }
+    });
+  },
+
+  mergeResults: async () => {
+    await get().acceptParsing();
   },
 }));

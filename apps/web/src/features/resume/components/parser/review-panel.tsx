@@ -7,7 +7,6 @@ import { BrutalCard } from "@/components/ui/brutal-card";
 import { Heading } from "@/components/ui/typography";
 import { BrutalButton } from "@/components/ui/brutal-button";
 import {
-  Check,
   ShieldAlert,
   AlertTriangle,
   User,
@@ -136,23 +135,39 @@ export function ReviewPanel() {
 
   // Confidence rating formatter
   const renderConfidenceBadge = (score: number) => {
-    const isLow = score < 85;
+    let rating: "High" | "Medium" | "Low" = "High";
+    if (score < 60) rating = "Low";
+    else if (score < 85) rating = "Medium";
+
     return (
-      <span
-        className={cn(
-          "inline-flex items-center gap-1 border px-2 py-0.5 text-[9px] font-black uppercase rounded-sm brutal-shadow-xs select-none",
-          isLow
-            ? "bg-amber-100 dark:bg-amber-500/20 border-amber-400 dark:border-amber-500/40 text-amber-600 dark:text-amber-400 animate-pulse"
-            : "bg-emerald-100 border-emerald-400 text-emerald-600",
-        )}
-      >
-        {isLow ? (
-          <AlertTriangle className="h-3 w-3" />
-        ) : (
-          <Check className="h-3 w-3" />
-        )}
-        Confidence: {score}% {isLow ? "(Verify)" : "(High)"}
-      </span>
+      <div className="flex flex-col gap-1 w-full max-w-[160px] md:max-w-[200px] shrink-0 text-left select-none">
+        <div className="flex justify-between items-center text-[8px] font-black uppercase">
+          <span>Confidence: {score}%</span>
+          <span
+            className={cn(
+              "px-1 py-0.2 border text-[7px] rounded-sm font-black uppercase",
+              rating === "High" &&
+                "bg-green-100 text-green-700 border-green-300",
+              rating === "Medium" &&
+                "bg-amber-100 text-amber-700 border-amber-300",
+              rating === "Low" && "bg-red-100 text-red-700 border-red-300",
+            )}
+          >
+            {rating}
+          </span>
+        </div>
+        <div className="h-1.5 w-full bg-slate-100 dark:bg-surface-hover border border-border/20 rounded-sm overflow-hidden relative">
+          <div
+            className={cn(
+              "h-full transition-all duration-300",
+              rating === "High" && "bg-green-500",
+              rating === "Medium" && "bg-amber-500",
+              rating === "Low" && "bg-red-500",
+            )}
+            style={{ width: `${score}%` }}
+          />
+        </div>
+      </div>
     );
   };
 
