@@ -8,35 +8,44 @@ import { cn } from "@/lib/utils";
 import { InlineLoader } from "@/components/ui/brand-loader";
 
 export function ParseProgress() {
-  const { uploadedFile, processingState, progress } = useParserStore();
+  const { uploadedFile, progress, currentStep } = useParserStore();
 
   const stages = [
     {
-      id: "uploading",
-      label: "File Uploading & Reader",
+      id: 0,
+      label: "Upload Resume",
       desc: "Checking file signature and reading raw document stream",
     },
     {
-      id: "extracting",
-      label: "Text Elements Extraction",
+      id: 1,
+      label: "Extract Text",
       desc: "Extracting content blocks and raw text patterns",
     },
     {
-      id: "parsing",
-      label: "AI Structuring & Confidence Engine",
+      id: 2,
+      label: "Analyze Sections",
       desc: "Modeling personal info, listings, and matching entities",
+    },
+    {
+      id: 3,
+      label: "Extract Skills",
+      desc: "Tagging skill categories and calculating confidence ratings",
+    },
+    {
+      id: 4,
+      label: "Extract Experience",
+      desc: "Identifying professional histories and timelines",
+    },
+    {
+      id: 5,
+      label: "Completed",
+      desc: "AI Parsing workflow finished successfully",
     },
   ];
 
-  // Helper to map visual status
-  const getStageStatus = (stageId: string) => {
-    const states = ["uploading", "extracting", "parsing", "completed"];
-    const currentIdx = states.indexOf(processingState);
-    const stageIdx = states.indexOf(stageId);
-
-    if (processingState === "error") return "error";
-    if (currentIdx > stageIdx) return "completed";
-    if (currentIdx === stageIdx) return "active";
+  const getStageStatus = (stageId: number) => {
+    if (currentStep > stageId) return "completed";
+    if (currentStep === stageId) return "active";
     return "pending";
   };
 

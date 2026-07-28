@@ -1,4 +1,3 @@
-import { mockParserAdapter } from "./parser-adapter";
 import { useParserStore } from "../store/resume-parser.store";
 import { useProfileStore } from "@/features/profile/store/profile.store";
 import { useResumeStore } from "../store/resume.store";
@@ -57,49 +56,7 @@ export const resumeParserService = {
     file: File,
     rolePreset: "engineer" | "frontend" | "backend" | "fullstack" | "analyst",
   ): Promise<void> {
-    const store = useParserStore.getState();
-    store.setError(null);
-    store.setProgress(0);
-
-    try {
-      // 1. Upload stage (0% to 25%)
-      store.setProcessingState("uploading");
-      for (let i = 0; i <= 25; i += 5) {
-        store.setProgress(i);
-        await new Promise((resolve) => setTimeout(resolve, 80));
-      }
-
-      // 2. Extraction stage (25% to 60%)
-      store.setProcessingState("extracting");
-      for (let i = 25; i <= 60; i += 7) {
-        store.setProgress(i);
-        await new Promise((resolve) => setTimeout(resolve, 100));
-      }
-
-      // 3. AI Parsing stage (60% to 90%)
-      store.setProcessingState("parsing");
-      for (let i = 60; i <= 90; i += 6) {
-        store.setProgress(i);
-        await new Promise((resolve) => setTimeout(resolve, 90));
-      }
-
-      // Execute mock parsing
-      const { data, confidence } = await mockParserAdapter.parseResume(
-        file.name,
-        rolePreset,
-      );
-
-      // 4. Completed stage (90% to 100%)
-      store.setProgress(100);
-      store.setProcessingState("completed");
-      useParserStore.setState({ confidenceScores: confidence });
-      store.initReviewState(data);
-    } catch (err) {
-      store.setError(
-        (err as Error).message ||
-          "An unexpected error occurred during parsing.",
-      );
-    }
+    await useParserStore.getState().startParsing(file, rolePreset);
   },
 
   /**
