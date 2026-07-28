@@ -124,6 +124,13 @@ export default function ResumeManagementPage() {
             Upload, update versions, and preview your ATS-optimized resumes.
           </Text>
         </div>
+        <div className="flex-shrink-0">
+          <Link href="/resume/optimize" passHref>
+            <BrutalButton className="h-10 px-4 text-xs font-black uppercase tracking-wider flex items-center gap-1.5 rounded-sm bg-primary text-white hover:bg-primary/95 brutal-shadow-xs hover:brutal-shadow">
+              <Sparkles className="h-4 w-4" /> AI Optimizer Studio
+            </BrutalButton>
+          </Link>
+        </div>
       </div>
 
       {/* Dashboard Stats Cards */}
