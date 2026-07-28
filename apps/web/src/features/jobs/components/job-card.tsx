@@ -5,7 +5,7 @@ import type { Job } from "../types/jobs.types";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Bookmark, Calendar, DollarSign } from "lucide-react";
+import { Bookmark, Calendar, DollarSign, ArrowRightLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useProfileStore } from "@/features/profile";
 import { matchEngineService } from "../services/match-engine.service";
@@ -15,12 +15,25 @@ interface JobCardProps {
   isSelected: boolean;
   onClick: () => void;
   onSave: (e: React.MouseEvent) => void;
+  isCompared?: boolean;
+  onCompareToggle?: (e: React.MouseEvent) => void;
 }
 
-export const JobCard = React.memo(function JobCard({ job, isSelected, onClick, onSave }: JobCardProps) {
+export const JobCard = React.memo(function JobCard({
+  job,
+  isSelected,
+  onClick,
+  onSave,
+  isCompared = false,
+  onCompareToggle,
+}: JobCardProps) {
   const profileState = useProfileStore();
 
-  const formatSalary = (min: number | null, max: number | null, curr: string) => {
+  const formatSalary = (
+    min: number | null,
+    max: number | null,
+    curr: string,
+  ) => {
     if (min === null && max === null) return "Salary Undisclosed";
     const minK = min ? `${Math.round(min / 1000)}k` : "0";
     const maxK = max ? `${Math.round(max / 1000)}k` : "Any";
@@ -36,22 +49,40 @@ export const JobCard = React.memo(function JobCard({ job, isSelected, onClick, o
   };
 
   const getQualityBadge = () => {
-    const score = Math.round((job.freshnessScore * 0.4) + (job.trustScore * 0.6));
+    const score = Math.round(job.freshnessScore * 0.4 + job.trustScore * 0.6);
     if (job.trustScore >= 85) {
-      return { label: "Verified", className: "bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border-green-300 dark:border-green-500/30 border" };
+      return {
+        label: "Verified",
+        className:
+          "bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border-green-300 dark:border-green-500/30 border",
+      };
     }
     if (job.freshnessScore >= 80) {
-      return { label: "Fresh", className: "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-300 dark:border-blue-500/30 border" };
+      return {
+        label: "Fresh",
+        className:
+          "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-300 dark:border-blue-500/30 border",
+      };
     }
     if (score >= 70) {
-      return { label: "Trusted", className: "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-500/30 border" };
+      return {
+        label: "Trusted",
+        className:
+          "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-500/30 border",
+      };
     }
-    return { label: "Good", className: "bg-gray-50 dark:bg-surface-secondary text-gray-700 dark:text-foreground-secondary border-gray-300 border" };
+    return {
+      label: "Good",
+      className:
+        "bg-gray-50 dark:bg-surface-secondary text-gray-700 dark:text-foreground-secondary border-gray-300 border",
+    };
   };
 
   const getMatchBadge = () => {
     if (!profileState.profile) return null;
-    const qualityScore = Math.round((job.freshnessScore * 0.4) + (job.trustScore * 0.6));
+    const qualityScore = Math.round(
+      job.freshnessScore * 0.4 + job.trustScore * 0.6,
+    );
     const yearsOfExp = profileState.profile.career?.yearsOfExperience || 0;
     const report = matchEngineService.calculateOverallMatch(
       profileState.skills,
@@ -59,69 +90,110 @@ export const JobCard = React.memo(function JobCard({ job, isSelected, onClick, o
       profileState.preferences,
       yearsOfExp,
       job,
-      qualityScore
+      qualityScore,
     );
 
     let colorClass = "bg-red-50 text-red-700 border-red-300 border";
-    if (report.overallScore >= 90) colorClass = "bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border-green-300 dark:border-green-500/30 border";
-    else if (report.overallScore >= 80) colorClass = "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-300 dark:border-blue-500/30 border";
-    else if (report.overallScore >= 70) colorClass = "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-500/30 border";
-    else if (report.overallScore >= 50) colorClass = "bg-gray-50 dark:bg-surface-secondary text-gray-700 dark:text-foreground-secondary border-gray-300 border";
+    if (report.overallScore >= 90)
+      colorClass =
+        "bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border-green-300 dark:border-green-500/30 border";
+    else if (report.overallScore >= 80)
+      colorClass =
+        "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-300 dark:border-blue-500/30 border";
+    else if (report.overallScore >= 70)
+      colorClass =
+        "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-500/30 border";
+    else if (report.overallScore >= 50)
+      colorClass =
+        "bg-gray-50 dark:bg-surface-secondary text-gray-700 dark:text-foreground-secondary border-gray-300 border";
 
     return {
       score: report.overallScore,
       label: report.overallLabel,
-      className: colorClass
+      className: colorClass,
     };
   };
- 
+
   const quality = getQualityBadge();
   const match = getMatchBadge();
- 
+
   return (
     <BrutalCard
       onClick={onClick}
       className={cn(
         "cursor-pointer border-[3px] border-border brutal-shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:brutal-shadow active:scale-[0.98] bg-surface rounded-sm p-3 relative flex flex-col justify-between gap-2.5 text-left",
-        isSelected && "bg-amber-50 dark:bg-amber-500/10/50 border-primary brutal-shadow"
+        isSelected &&
+          "bg-amber-50 dark:bg-amber-500/10/50 border-primary brutal-shadow",
       )}
     >
       <div>
-        {/* Header (Title & Save Trigger) */}
+        {/* Header (Title & Save Trigger & Compare) */}
         <div className="flex justify-between items-start gap-2">
-          <div className="space-y-0.5">
-            <h3 className="text-xs font-black uppercase text-foreground leading-tight tracking-tight">
+          <div className="space-y-0.5 min-w-0 flex-1">
+            <h3 className="text-xs font-black uppercase text-foreground leading-tight tracking-tight truncate">
               {job.title}
             </h3>
-            <p className="text-[9px] font-bold text-primary uppercase tracking-wider">
+            <p className="text-[9px] font-bold text-primary uppercase tracking-wider truncate">
               {job.companyInfo.name}
             </p>
           </div>
-          
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onSave}
-            className="h-7 w-7 border-2 border-border brutal-shadow-xs hover:bg-surface-secondary shrink-0 rounded-sm"
-            aria-label={job.isSaved ? "Unsave job" : "Save job"}
-          >
-            <Bookmark
-              className={cn(
-                "h-3.5 w-3.5 stroke-[2.5px]",
-                job.isSaved ? "fill-primary text-primary" : "text-foreground"
-              )}
-            />
-          </Button>
+
+          <div className="flex items-center gap-1 shrink-0">
+            {onCompareToggle && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onCompareToggle}
+                className={cn(
+                  "h-7 w-7 border-2 border-border brutal-shadow-xs hover:bg-surface-secondary rounded-sm",
+                  isCompared
+                    ? "bg-primary text-white brutal-shadow"
+                    : "bg-surface text-foreground",
+                )}
+                aria-label="Compare job"
+                title={
+                  isCompared ? "Remove from Comparison" : "Add to Comparison"
+                }
+              >
+                <ArrowRightLeft className="h-3.5 w-3.5 stroke-[2.5px]" />
+              </Button>
+            )}
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onSave}
+              className="h-7 w-7 border-2 border-border brutal-shadow-xs hover:bg-surface-secondary shrink-0 rounded-sm"
+              aria-label={job.isSaved ? "Unsave job" : "Save job"}
+            >
+              <Bookmark
+                className={cn(
+                  "h-3.5 w-3.5 stroke-[2.5px]",
+                  job.isSaved ? "fill-primary text-primary" : "text-foreground",
+                )}
+              />
+            </Button>
+          </div>
         </div>
- 
+
         {/* Badges row */}
         <div className="flex flex-wrap gap-1 mt-1.5">
           {match && (
-            <Badge className={cn("text-[7.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-sm shadow-none font-extrabold", match.className)}>
+            <Badge
+              className={cn(
+                "text-[7.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-sm shadow-none font-extrabold",
+                match.className,
+              )}
+            >
               {match.score}% {match.label}
             </Badge>
           )}
-          <Badge className={cn("text-[7.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-sm shadow-none font-extrabold", quality.className)}>
+          <Badge
+            className={cn(
+              "text-[7.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-sm shadow-none font-extrabold",
+              quality.className,
+            )}
+          >
             {quality.label}
           </Badge>
           <Badge className="text-[7.5px] font-black uppercase tracking-wider bg-surface border-2 border-border text-foreground px-1 py-0.5">
@@ -134,12 +206,12 @@ export const JobCard = React.memo(function JobCard({ job, isSelected, onClick, o
             {job.employmentType.replace("-", " ")}
           </Badge>
         </div>
- 
+
         {/* Description Snippet */}
         <p className="text-[9px] font-semibold text-foreground-muted line-clamp-2 mt-2 leading-relaxed">
           {job.description}
         </p>
- 
+
         {/* Technical tags */}
         <div className="flex flex-wrap gap-1 mt-2">
           {job.skillsRequired.slice(0, 4).map((skill) => (
@@ -157,12 +229,14 @@ export const JobCard = React.memo(function JobCard({ job, isSelected, onClick, o
           )}
         </div>
       </div>
- 
+
       {/* Footer Info */}
       <div className="border-t border-border/10 pt-2 mt-1.5 flex items-center justify-between text-[7.5px] font-black uppercase tracking-wider text-foreground-muted">
         <div className="flex items-center gap-1">
           <DollarSign className="h-3 w-3 text-foreground stroke-[2.5px]" />
-          <span>{formatSalary(job.salaryMin, job.salaryMax, job.currency)}</span>
+          <span>
+            {formatSalary(job.salaryMin, job.salaryMax, job.currency)}
+          </span>
         </div>
         <div className="flex items-center gap-1">
           <Calendar className="h-3 w-3 text-foreground stroke-[2.5px]" />

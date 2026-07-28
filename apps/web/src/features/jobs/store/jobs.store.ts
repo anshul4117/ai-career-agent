@@ -1,10 +1,11 @@
 "use client";
- 
+
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { Job, JobFilters } from "../types/jobs.types";
 import { jobService } from "../services/job.service";
- 
+import { useCompanyStore } from "./company.store";
+
 interface JobsState {
   jobs: Job[];
   totalCount: number;
@@ -19,7 +20,8 @@ interface JobsState {
   recentSearches: string[];
   savedSearches: { id: string; name: string; filters: JobFilters }[];
   popularSearches: string[];
- 
+  comparedJobIds: string[];
+
   // Actions
   fetchJobs: () => Promise<void>;
   selectJob: (id: string) => Promise<void>;
@@ -32,8 +34,17 @@ interface JobsState {
   saveSearch: (name: string) => void;
   removeSavedSearch: (id: string) => void;
   loadSearches: () => void;
+
+  // Phase 5 New Actions
+  loadJobs: () => Promise<void>;
+  searchJobs: (query: string) => Promise<void>;
+  filterJobs: (updates: Partial<JobFilters>) => Promise<void>;
+  saveJob: (id: string) => Promise<void>;
+  unsaveJob: (id: string) => Promise<void>;
+  compareJobs: (ids: string[]) => void;
+  loadCompany: (id: string) => Promise<void>;
 }
- 
+
 const DEFAULT_FILTERS: JobFilters = {
   keyword: "",
   company: "",
@@ -47,9 +58,9 @@ const DEFAULT_FILTERS: JobFilters = {
   datePosted: "any",
   easyApply: false,
   matchScoreMin: null,
-  matchFilter: "all"
+  matchFilter: "all",
 };
- 
+
 export const useJobsStore = create<JobsState>()(
   persist(
     (set, get) => ({
@@ -66,7 +77,8 @@ export const useJobsStore = create<JobsState>()(
       recentSearches: [],
       savedSearches: [],
       popularSearches: ["React", "Go", "Kubernetes", "Fintech", "DevOps"],
- 
+      comparedJobIds: [],
+
       fetchJobs: async () => {
         set({ loading: true, error: null });
         try {
@@ -75,28 +87,30 @@ export const useJobsStore = create<JobsState>()(
             filters,
             sorting,
             page,
-            limit
+            limit,
           });
           set({ jobs, totalCount: total, loading: false });
         } catch (err) {
-          set({ error: (err as Error).message || "Failed to fetch jobs", loading: false });
+          set({
+            error: (err as Error).message || "Failed to fetch jobs",
+            loading: false,
+          });
         }
       },
- 
+
       selectJob: async (id) => {
         set({ loading: true });
         try {
           const job = await jobService.getJobById(id);
           if (job) {
-            // Update recently viewed list, keeping up to 10 unique elements
             const currentRecent = get().recentlyViewed;
             const filteredRecent = currentRecent.filter((j) => j.id !== id);
             const updatedRecent = [job, ...filteredRecent].slice(0, 10);
- 
-            set({ 
-              selectedJob: job, 
-              recentlyViewed: updatedRecent, 
-              loading: false 
+
+            set({
+              selectedJob: job,
+              recentlyViewed: updatedRecent,
+              loading: false,
             });
           } else {
             set({ selectedJob: null, loading: false });
@@ -105,48 +119,47 @@ export const useJobsStore = create<JobsState>()(
           set({ selectedJob: null, loading: false });
         }
       },
- 
+
       updateFilters: (updates) => {
         set((state) => ({
           filters: { ...state.filters, ...updates },
-          page: 1 // reset to first page on filters change
+          page: 1,
         }));
         get().fetchJobs();
       },
- 
+
       resetFilters: () => {
         set({ filters: DEFAULT_FILTERS, page: 1 });
         get().fetchJobs();
       },
- 
+
       setSorting: (sort) => {
         set({ sorting: sort, page: 1 });
         get().fetchJobs();
       },
- 
+
       setPage: (p) => {
         set({ page: p });
         get().fetchJobs();
       },
- 
+
       toggleSaveJob: (id) => {
-        // 1. Toggle in search results list
         const updatedJobs = get().jobs.map((j) => {
           if (j.id === id) {
             return { ...j, isSaved: !j.isSaved };
           }
           return j;
         });
- 
-        // 2. Toggle in active details selection
+
         const selected = get().selectedJob;
-        const updatedSelected = selected && selected.id === id 
-          ? { ...selected, isSaved: !selected.isSaved } 
-          : selected;
- 
+        const updatedSelected =
+          selected && selected.id === id
+            ? { ...selected, isSaved: !selected.isSaved }
+            : selected;
+
         set({ jobs: updatedJobs, selectedJob: updatedSelected });
       },
- 
+
       addRecentSearch: (query) => {
         if (!query.trim()) return;
         const current = get().recentSearches;
@@ -154,29 +167,114 @@ export const useJobsStore = create<JobsState>()(
         const updated = [query, ...filtered].slice(0, 5);
         set({ recentSearches: updated });
       },
- 
+
       saveSearch: (name) => {
         const filters = get().filters;
         const current = get().savedSearches;
         const newSaved = {
           id: `search_${Date.now()}`,
           name,
-          filters: { ...filters }
+          filters: { ...filters },
         };
         set({ savedSearches: [newSaved, ...current] });
       },
- 
+
       removeSavedSearch: (id) => {
         const current = get().savedSearches;
         set({ savedSearches: current.filter((s) => s.id !== id) });
       },
- 
+
       loadSearches: () => {
         // Handled automatically by Zustand persist storage
-      }
+      },
+
+      // Phase 5 Actions
+      loadJobs: async () => {
+        await get().fetchJobs();
+      },
+
+      searchJobs: async (query) => {
+        get().addRecentSearch(query);
+        set((state) => ({
+          filters: { ...state.filters, keyword: query },
+          page: 1,
+        }));
+        await get().fetchJobs();
+      },
+
+      filterJobs: async (updates) => {
+        set((state) => ({
+          filters: { ...state.filters, ...updates },
+          page: 1,
+        }));
+        await get().fetchJobs();
+      },
+
+      saveJob: async (id) => {
+        set({ loading: true });
+        await new Promise((resolve) => setTimeout(resolve, 800)); // 800ms simulated delay
+        const targetJob =
+          get().jobs.find((j) => j.id === id) || get().selectedJob;
+        if (targetJob) {
+          const updated = {
+            ...targetJob,
+            isSaved: true,
+            savedAt: new Date().toISOString(),
+          };
+
+          // Toggle save status locally
+          set((state) => {
+            const list = state.jobs.map((j) => (j.id === id ? updated : j));
+            return {
+              jobs: list,
+              selectedJob:
+                state.selectedJob?.id === id ? updated : state.selectedJob,
+              loading: false,
+            };
+          });
+        } else {
+          set({ loading: false });
+        }
+      },
+
+      unsaveJob: async (id) => {
+        set({ loading: true });
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        const targetJob =
+          get().jobs.find((j) => j.id === id) || get().selectedJob;
+        if (targetJob) {
+          const updated = { ...targetJob, isSaved: false, savedAt: undefined };
+
+          set((state) => {
+            const list = state.jobs.map((j) => (j.id === id ? updated : j));
+            return {
+              jobs: list,
+              selectedJob:
+                state.selectedJob?.id === id ? updated : state.selectedJob,
+              loading: false,
+            };
+          });
+        } else {
+          set({ loading: false });
+        }
+      },
+
+      compareJobs: (ids) => {
+        set({ comparedJobIds: ids.slice(0, 3) });
+      },
+
+      loadCompany: async (id) => {
+        set({ loading: true });
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        const companyStore = useCompanyStore.getState();
+        if (companyStore) {
+          await companyStore.selectCompany(id);
+        }
+        set({ loading: false });
+      },
     }),
     {
-      name: "ai-career-agent-jobs-search-state-v2",
+      name: "ai-career-agent-jobs-search-state-v3",
       storage: createJSONStorage(() => sessionStorage),
       partialize: (state) => ({
         page: state.page,
@@ -184,7 +282,8 @@ export const useJobsStore = create<JobsState>()(
         filters: state.filters,
         recentSearches: state.recentSearches,
         savedSearches: state.savedSearches,
+        comparedJobIds: state.comparedJobIds,
       }),
-    }
-  )
+    },
+  ),
 );

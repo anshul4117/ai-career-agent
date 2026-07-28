@@ -1,4 +1,10 @@
-import type { Job, Company, ExperienceLevel, RemoteType, EmploymentType } from "../types/jobs.types";
+import type {
+  Job,
+  Company,
+  ExperienceLevel,
+  RemoteType,
+  EmploymentType,
+} from "../types/jobs.types";
 
 export const mockCompanies: Company[] = [
   {
@@ -11,13 +17,22 @@ export const mockCompanies: Company[] = [
     companySize: "11-50",
     headquarters: "San Francisco, CA",
     techStack: ["Next.js", "React", "TypeScript", "Node.js", "PostgreSQL"],
-    cultureDescription: "Craft-oriented, high autonomy, quality-first design principles.",
-    benefitsList: ["Full Medical", "Remote Budget", "Learning Allowance", "Equity"],
+    cultureDescription:
+      "Craft-oriented, high autonomy, quality-first design principles.",
+    benefitsList: [
+      "Full Medical",
+      "Remote Budget",
+      "Learning Allowance",
+      "Equity",
+    ],
     isActivelyHiring: true,
-    socialLinks: { github: "https://github.com/linear", linkedin: "https://linkedin.com/company/linear" },
+    socialLinks: {
+      github: "https://github.com/linear",
+      linkedin: "https://linkedin.com/company/linear",
+    },
     openPositionsCount: 12,
     createdAt: "2023-01-10T00:00:00Z",
-    updatedAt: "2026-01-10T00:00:00Z"
+    updatedAt: "2026-01-10T00:00:00Z",
   },
   {
     id: "co_cloudscale",
@@ -29,13 +44,22 @@ export const mockCompanies: Company[] = [
     companySize: "500+",
     headquarters: "Austin, TX",
     techStack: ["Go", "Kubernetes", "AWS", "Rust", "Terraform"],
-    cultureDescription: "Scale-driven, telemetry-obsessed, highly collaborative infrastructure experts.",
-    benefitsList: ["401k Matching", "Unlimited PTO", "On-site Gym", "Conference Budgets"],
+    cultureDescription:
+      "Scale-driven, telemetry-obsessed, highly collaborative infrastructure experts.",
+    benefitsList: [
+      "401k Matching",
+      "Unlimited PTO",
+      "On-site Gym",
+      "Conference Budgets",
+    ],
     isActivelyHiring: true,
-    socialLinks: { github: "https://github.com/cloudscale", linkedin: "https://linkedin.com/company/cloudscale" },
+    socialLinks: {
+      github: "https://github.com/cloudscale",
+      linkedin: "https://linkedin.com/company/cloudscale",
+    },
     openPositionsCount: 25,
     createdAt: "2015-05-14T00:00:00Z",
-    updatedAt: "2026-05-14T00:00:00Z"
+    updatedAt: "2026-05-14T00:00:00Z",
   },
   {
     id: "co_pixelperfect",
@@ -47,13 +71,22 @@ export const mockCompanies: Company[] = [
     companySize: "201-500",
     headquarters: "New York, NY",
     techStack: ["React", "TypeScript", "TailwindCSS", "WebAssembly", "Rust"],
-    cultureDescription: "Design-first, detail-focused, interactive canvas creators.",
-    benefitsList: ["Workspace Stipend", "Health & Wellness Allowance", "Stock Options", "Remote Friendly"],
+    cultureDescription:
+      "Design-first, detail-focused, interactive canvas creators.",
+    benefitsList: [
+      "Workspace Stipend",
+      "Health & Wellness Allowance",
+      "Stock Options",
+      "Remote Friendly",
+    ],
     isActivelyHiring: true,
-    socialLinks: { github: "https://github.com/pixelperfect", linkedin: "https://linkedin.com/company/pixelperfect" },
+    socialLinks: {
+      github: "https://github.com/pixelperfect",
+      linkedin: "https://linkedin.com/company/pixelperfect",
+    },
     openPositionsCount: 15,
     createdAt: "2019-08-20T00:00:00Z",
-    updatedAt: "2026-08-20T00:00:00Z"
+    updatedAt: "2026-08-20T00:00:00Z",
   },
   {
     id: "co_byteflow",
@@ -65,13 +98,22 @@ export const mockCompanies: Company[] = [
     companySize: "51-200",
     headquarters: "Bengaluru, India",
     techStack: ["Python", "Django", "React", "PostgreSQL", "Redis", "Kafka"],
-    cultureDescription: "Fast-moving, metrics-driven, secure banking infrastructure developers.",
-    benefitsList: ["Health Insurance", "Performance Bonuses", "Flexible Hours", "Gym Memberships"],
+    cultureDescription:
+      "Fast-moving, metrics-driven, secure banking infrastructure developers.",
+    benefitsList: [
+      "Health Insurance",
+      "Performance Bonuses",
+      "Flexible Hours",
+      "Gym Memberships",
+    ],
     isActivelyHiring: true,
-    socialLinks: { github: "https://github.com/byteflow", linkedin: "https://linkedin.com/company/byteflow" },
+    socialLinks: {
+      github: "https://github.com/byteflow",
+      linkedin: "https://linkedin.com/company/byteflow",
+    },
     openPositionsCount: 8,
     createdAt: "2021-03-12T00:00:00Z",
-    updatedAt: "2026-03-12T00:00:00Z"
+    updatedAt: "2026-03-12T00:00:00Z",
   },
   {
     id: "co_roboai",
@@ -83,13 +125,22 @@ export const mockCompanies: Company[] = [
     companySize: "11-50",
     headquarters: "Boston, MA",
     techStack: ["C++", "Python", "ROS", "PyTorch", "Docker"],
-    cultureDescription: "R&D heavy, academic precision, pioneering robot logic control.",
-    benefitsList: ["Relocation Package", "Premium Healthcare", "Stock Grants", "Patent Bonuses"],
+    cultureDescription:
+      "R&D heavy, academic precision, pioneering robot logic control.",
+    benefitsList: [
+      "Relocation Package",
+      "Premium Healthcare",
+      "Stock Grants",
+      "Patent Bonuses",
+    ],
     isActivelyHiring: true,
-    socialLinks: { github: "https://github.com/roboai", linkedin: "https://linkedin.com/company/roboai" },
+    socialLinks: {
+      github: "https://github.com/roboai",
+      linkedin: "https://linkedin.com/company/roboai",
+    },
     openPositionsCount: 10,
     createdAt: "2022-09-05T00:00:00Z",
-    updatedAt: "2026-09-05T00:00:00Z"
+    updatedAt: "2026-09-05T00:00:00Z",
   },
   {
     id: "co_healthgrid",
@@ -101,13 +152,19 @@ export const mockCompanies: Company[] = [
     companySize: "500+",
     headquarters: "Chicago, IL",
     techStack: ["Java", "Spring Boot", "Angular", "Oracle", "Azure"],
-    cultureDescription: "Compliance-centered, mission-driven, patient healthcare privacy.",
-    benefitsList: ["Dental & Vision", "HSA Matching", "Tuition Reimbursement", "Pension Plans"],
+    cultureDescription:
+      "Compliance-centered, mission-driven, patient healthcare privacy.",
+    benefitsList: [
+      "Dental & Vision",
+      "HSA Matching",
+      "Tuition Reimbursement",
+      "Pension Plans",
+    ],
     isActivelyHiring: false,
     socialLinks: { linkedin: "https://linkedin.com/company/healthgrid" },
     openPositionsCount: 0,
     createdAt: "2010-11-18T00:00:00Z",
-    updatedAt: "2026-11-18T00:00:00Z"
+    updatedAt: "2026-11-18T00:00:00Z",
   },
   {
     id: "co_stripe_start",
@@ -119,13 +176,18 @@ export const mockCompanies: Company[] = [
     companySize: "1-10",
     headquarters: "London, UK",
     techStack: ["Node.js", "TypeScript", "React", "MongoDB"],
-    cultureDescription: "Super scrappy, shipping multiple times a day, highly autonomous builders.",
-    benefitsList: ["Flexible Remote", "Laptop Budget", "Co-working Space Passes"],
+    cultureDescription:
+      "Super scrappy, shipping multiple times a day, highly autonomous builders.",
+    benefitsList: [
+      "Flexible Remote",
+      "Laptop Budget",
+      "Co-working Space Passes",
+    ],
     isActivelyHiring: true,
     socialLinks: { github: "https://github.com/stripestart" },
     openPositionsCount: 3,
     createdAt: "2024-04-01T00:00:00Z",
-    updatedAt: "2026-04-01T00:00:00Z"
+    updatedAt: "2026-04-01T00:00:00Z",
   },
   {
     id: "co_logitech",
@@ -137,13 +199,19 @@ export const mockCompanies: Company[] = [
     companySize: "500+",
     headquarters: "Seattle, WA",
     techStack: ["C#", ".NET Core", "React", "SQL Server", "Azure"],
-    cultureDescription: "Process-driven, supply chain scaling, dependable logistics solutions.",
-    benefitsList: ["Commuter Benefits", "Onsite Cafeteria", "Health Savings Account", "Annual Bonus"],
+    cultureDescription:
+      "Process-driven, supply chain scaling, dependable logistics solutions.",
+    benefitsList: [
+      "Commuter Benefits",
+      "Onsite Cafeteria",
+      "Health Savings Account",
+      "Annual Bonus",
+    ],
     isActivelyHiring: true,
     socialLinks: { linkedin: "https://linkedin.com/company/logitech" },
     openPositionsCount: 18,
     createdAt: "2008-04-20T00:00:00Z",
-    updatedAt: "2026-04-20T00:00:00Z"
+    updatedAt: "2026-04-20T00:00:00Z",
   },
   {
     id: "co_devopsmatrix",
@@ -155,13 +223,22 @@ export const mockCompanies: Company[] = [
     companySize: "201-500",
     headquarters: "Seattle, WA",
     techStack: ["Go", "Rust", "Docker", "AWS", "Bash"],
-    cultureDescription: "Kubernetes configuration compliance, continuous delivery automation experts.",
-    benefitsList: ["Unlimited PTO", "Home Office Fund", "Stock Options", "Top Tier Healthcare"],
+    cultureDescription:
+      "Kubernetes configuration compliance, continuous delivery automation experts.",
+    benefitsList: [
+      "Unlimited PTO",
+      "Home Office Fund",
+      "Stock Options",
+      "Top Tier Healthcare",
+    ],
     isActivelyHiring: true,
-    socialLinks: { github: "https://github.com/devopsmatrix", linkedin: "https://linkedin.com/company/devopsmatrix" },
+    socialLinks: {
+      github: "https://github.com/devopsmatrix",
+      linkedin: "https://linkedin.com/company/devopsmatrix",
+    },
     openPositionsCount: 14,
     createdAt: "2018-02-15T00:00:00Z",
-    updatedAt: "2026-02-15T00:00:00Z"
+    updatedAt: "2026-02-15T00:00:00Z",
   },
   {
     id: "co_datapulse",
@@ -173,14 +250,320 @@ export const mockCompanies: Company[] = [
     companySize: "11-50",
     headquarters: "Toronto, Canada",
     techStack: ["Python", "Spark", "PostgreSQL", "Tableau", "AWS"],
-    cultureDescription: "Data-informed decisions, statistics-oriented, scientific rigor.",
-    benefitsList: ["Wellness Allowance", "Stock Options", "Flexible Hours", "Parental Leave"],
+    cultureDescription:
+      "Data-informed decisions, statistics-oriented, scientific rigor.",
+    benefitsList: [
+      "Wellness Allowance",
+      "Stock Options",
+      "Flexible Hours",
+      "Parental Leave",
+    ],
     isActivelyHiring: true,
-    socialLinks: { github: "https://github.com/datapulse", linkedin: "https://linkedin.com/company/datapulse" },
+    socialLinks: {
+      github: "https://github.com/datapulse",
+      linkedin: "https://linkedin.com/company/datapulse",
+    },
     openPositionsCount: 7,
     createdAt: "2023-05-18T00:00:00Z",
-    updatedAt: "2026-05-18T00:00:00Z"
-  }
+    updatedAt: "2026-05-18T00:00:00Z",
+  },
+  {
+    id: "co_vercel",
+    name: "Vercel",
+    logoUrl: null,
+    website: "https://vercel.com",
+    industry: "Cloud & Frontend Hosting",
+    fundingStage: "series-c",
+    companySize: "201-500",
+    headquarters: "San Francisco, CA",
+    techStack: ["Next.js", "React", "TypeScript", "Rust", "AWS"],
+    cultureDescription:
+      "Speed-obsessed, user-experience first, developer-centric creators.",
+    benefitsList: [
+      "Remote Work Allowance",
+      "Full Medical Coverage",
+      "Equity Options",
+      "Unlimited PTO",
+    ],
+    isActivelyHiring: true,
+    socialLinks: {
+      github: "https://github.com/vercel",
+      linkedin: "https://linkedin.com/company/vercel",
+    },
+    openPositionsCount: 15,
+    createdAt: "2019-10-12T00:00:00Z",
+    updatedAt: "2026-10-12T00:00:00Z",
+  },
+  {
+    id: "co_supabase",
+    name: "Supabase",
+    logoUrl: null,
+    website: "https://supabase.com",
+    industry: "Database & Backend Service",
+    fundingStage: "series-b",
+    companySize: "51-200",
+    headquarters: "Singapore",
+    techStack: ["PostgreSQL", "Go", "TypeScript", "Elixir", "Docker"],
+    cultureDescription:
+      "Open-source builders, developer-first tooling advocates.",
+    benefitsList: [
+      "Workspace Budget",
+      "Conference Budgets",
+      "Equity Grants",
+      "Flexible PTO",
+    ],
+    isActivelyHiring: true,
+    socialLinks: {
+      github: "https://github.com/supabase",
+      linkedin: "https://linkedin.com/company/supabase",
+    },
+    openPositionsCount: 8,
+    createdAt: "2020-01-20T00:00:00Z",
+    updatedAt: "2026-01-20T00:00:00Z",
+  },
+  {
+    id: "co_hashicorp",
+    name: "HashiCorp",
+    logoUrl: null,
+    website: "https://hashicorp.com",
+    industry: "Cloud Infrastructure",
+    fundingStage: "ipo",
+    companySize: "500+",
+    headquarters: "San Francisco, CA",
+    techStack: ["Go", "Terraform", "Vault", "Consul", "AWS"],
+    cultureDescription: "Principles-first, pragmatic infrastructure designers.",
+    benefitsList: [
+      "401(k) Match",
+      "Remote Friendly",
+      "Wellness Reimbursement",
+      "Mental Health Days",
+    ],
+    isActivelyHiring: true,
+    socialLinks: {
+      github: "https://github.com/hashicorp",
+      linkedin: "https://linkedin.com/company/hashicorp",
+    },
+    openPositionsCount: 22,
+    createdAt: "2012-06-15T00:00:00Z",
+    updatedAt: "2026-06-15T00:00:00Z",
+  },
+  {
+    id: "co_clerk",
+    name: "Clerk Auth",
+    logoUrl: null,
+    website: "https://clerk.com",
+    industry: "Authentication & Identity",
+    fundingStage: "series-a",
+    companySize: "11-50",
+    headquarters: "Boston, MA",
+    techStack: [
+      "React",
+      "TypeScript",
+      "Node.js",
+      "Redis",
+      "Cloudflare Workers",
+    ],
+    cultureDescription: "Security-minded, seamless user flow builders.",
+    benefitsList: [
+      "Home Office Allowance",
+      "Learning Budget",
+      "Premium Healthcare",
+      "Stock Options",
+    ],
+    isActivelyHiring: true,
+    socialLinks: {
+      github: "https://github.com/clerk",
+      linkedin: "https://linkedin.com/company/clerk",
+    },
+    openPositionsCount: 5,
+    createdAt: "2020-04-12T00:00:00Z",
+    updatedAt: "2026-04-12T00:00:00Z",
+  },
+  {
+    id: "co_prisma",
+    name: "Prisma",
+    logoUrl: null,
+    website: "https://prisma.io",
+    industry: "Database Tooling & ORM",
+    fundingStage: "series-b",
+    companySize: "11-50",
+    headquarters: "Berlin, Germany",
+    techStack: ["Rust", "TypeScript", "PostgreSQL", "MongoDB", "Node.js"],
+    cultureDescription: "Data access made easy, developer experience focus.",
+    benefitsList: [
+      "Health Insurance",
+      "Stock Grants",
+      "Paid Parental Leave",
+      "Remote Setup Stipend",
+    ],
+    isActivelyHiring: true,
+    socialLinks: {
+      github: "https://github.com/prisma",
+      linkedin: "https://linkedin.com/company/prisma",
+    },
+    openPositionsCount: 4,
+    createdAt: "2016-09-01T00:00:00Z",
+    updatedAt: "2026-09-01T00:00:00Z",
+  },
+  {
+    id: "co_stripe",
+    name: "Stripe",
+    logoUrl: null,
+    website: "https://stripe.com",
+    industry: "Payments Infrastructure",
+    fundingStage: "ipo",
+    companySize: "500+",
+    headquarters: "San Francisco, CA",
+    techStack: ["Ruby", "Go", "TypeScript", "React", "Scala"],
+    cultureDescription:
+      "Increase the GDP of the internet, craft-centric payments design.",
+    benefitsList: [
+      "Generous Retirement Contribution",
+      "Fertility Benefits",
+      "Volunteer Time Off",
+      "Health Savings Account",
+    ],
+    isActivelyHiring: true,
+    socialLinks: {
+      github: "https://github.com/stripe",
+      linkedin: "https://linkedin.com/company/stripe",
+    },
+    openPositionsCount: 40,
+    createdAt: "2010-09-01T00:00:00Z",
+    updatedAt: "2026-09-01T00:00:00Z",
+  },
+  {
+    id: "co_google",
+    name: "Google LLC",
+    logoUrl: null,
+    website: "https://google.com",
+    industry: "AI & Search Engine",
+    fundingStage: "ipo",
+    companySize: "500+",
+    headquarters: "Mountain View, CA",
+    techStack: ["C++", "Python", "Go", "Java", "TensorFlow"],
+    cultureDescription:
+      "Organize the world's information, scale-driven algorithms, massive impact.",
+    benefitsList: [
+      "Free Onsite Meals",
+      "Premium Healthcare Plans",
+      "Parental Leave Programs",
+      "Retirement Matching Plans",
+    ],
+    isActivelyHiring: true,
+    socialLinks: {
+      github: "https://github.com/google",
+      linkedin: "https://linkedin.com/company/google",
+    },
+    openPositionsCount: 150,
+    createdAt: "1998-09-04T00:00:00Z",
+    updatedAt: "2026-09-04T00:00:00Z",
+  },
+  {
+    id: "co_microsoft",
+    name: "Microsoft Corp",
+    logoUrl: null,
+    website: "https://microsoft.com",
+    industry: "Software & Cloud Services",
+    fundingStage: "ipo",
+    companySize: "500+",
+    headquarters: "Redmond, WA",
+    techStack: ["C#", "TypeScript", "React", "Azure", "C++"],
+    cultureDescription:
+      "Empower every person and organization on the planet to achieve more.",
+    benefitsList: [
+      "Stock Awards Program",
+      "Onsite Clinics",
+      "Educational Assistance",
+      "Health Club Memberships",
+    ],
+    isActivelyHiring: true,
+    socialLinks: {
+      github: "https://github.com/microsoft",
+      linkedin: "https://linkedin.com/company/microsoft",
+    },
+    openPositionsCount: 120,
+    createdAt: "1975-04-04T00:00:00Z",
+    updatedAt: "2026-04-04T00:00:00Z",
+  },
+  {
+    id: "co_netflix",
+    name: "Netflix",
+    logoUrl: null,
+    website: "https://netflix.com",
+    industry: "Entertainment & Streaming",
+    fundingStage: "ipo",
+    companySize: "500+",
+    headquarters: "Los Gatos, CA",
+    techStack: ["Java", "Node.js", "React", "AWS", "Cassandra"],
+    cultureDescription:
+      "Freedom and responsibility, top-tier compensation, high-density talent pool.",
+    benefitsList: [
+      "Open Vacation Policy",
+      "Full Family Medical Plan",
+      "Mobile & Internet Reimbursements",
+      "Stock Purchase Option",
+    ],
+    isActivelyHiring: true,
+    socialLinks: {
+      github: "https://github.com/netflix",
+      linkedin: "https://linkedin.com/company/netflix",
+    },
+    openPositionsCount: 30,
+    createdAt: "1997-08-29T00:00:00Z",
+    updatedAt: "2026-08-29T00:00:00Z",
+  },
+  {
+    id: "co_apple",
+    name: "Apple Inc",
+    logoUrl: null,
+    website: "https://apple.com",
+    industry: "Consumer Electronics",
+    fundingStage: "ipo",
+    companySize: "500+",
+    headquarters: "Cupertino, CA",
+    techStack: ["Swift", "Objective-C", "C++", "Python", "React"],
+    cultureDescription:
+      "Think different, secrecy, design precision, hardware-software integration.",
+    benefitsList: [
+      "Product Discounts",
+      "Health Care Options",
+      "Retirement Savings Plan",
+      "Commuter Benefits Plan",
+    ],
+    isActivelyHiring: true,
+    socialLinks: { linkedin: "https://linkedin.com/company/apple" },
+    openPositionsCount: 85,
+    createdAt: "1976-04-01T00:00:00Z",
+    updatedAt: "2026-04-01T00:00:00Z",
+  },
+  {
+    id: "co_meta",
+    name: "Meta Platforms",
+    logoUrl: null,
+    website: "https://meta.com",
+    industry: "Social Media & VR",
+    fundingStage: "ipo",
+    companySize: "500+",
+    headquarters: "Menlo Park, CA",
+    techStack: ["React", "Hack", "Python", "C++", "PyTorch"],
+    cultureDescription:
+      "Move fast, focus on impact, build awesome things together.",
+    benefitsList: [
+      "Wellness Reimbursement",
+      "Meals & Transportation Allowance",
+      "Premium Healthcare",
+      "Family Leave Benefits",
+    ],
+    isActivelyHiring: true,
+    socialLinks: {
+      github: "https://github.com/meta",
+      linkedin: "https://linkedin.com/company/meta",
+    },
+    openPositionsCount: 95,
+    createdAt: "2004-02-04T00:00:00Z",
+    updatedAt: "2026-02-04T00:00:00Z",
+  },
 ];
 
 // Helper variables to dynamically seed 100 jobs
@@ -193,11 +576,16 @@ const titles = [
   "AI Engineer",
   "Data Scientist",
   "Product Manager",
-  "UI/UX Designer"
+  "UI/UX Designer",
 ];
 
 const remoteTypes: RemoteType[] = ["remote", "hybrid", "onsite"];
-const employmentTypes: EmploymentType[] = ["full-time", "part-time", "contract", "internship"];
+const employmentTypes: EmploymentType[] = [
+  "full-time",
+  "part-time",
+  "contract",
+  "internship",
+];
 const experienceLevels: ExperienceLevel[] = ["entry", "mid", "senior", "lead"];
 
 const companySkills: Record<string, string[]> = {
@@ -210,7 +598,18 @@ const companySkills: Record<string, string[]> = {
   co_stripe_start: ["Node.js", "React", "TypeScript", "MongoDB", "Stripe API"],
   co_logitech: ["C#", ".NET Core", "React", "SQL Server", "Azure"],
   co_devopsmatrix: ["Go", "Docker", "Kubernetes", "AWS", "Bash"],
-  co_datapulse: ["Python", "Spark", "PostgreSQL", "Tableau", "SQL"]
+  co_datapulse: ["Python", "Spark", "PostgreSQL", "Tableau", "SQL"],
+  co_vercel: ["Next.js", "React", "TypeScript", "TailwindCSS", "Node.js"],
+  co_supabase: ["PostgreSQL", "Go", "TypeScript", "React", "Docker"],
+  co_hashicorp: ["Go", "Terraform", "Vault", "Consul", "AWS"],
+  co_clerk: ["React", "TypeScript", "Node.js", "Redis", "Next.js"],
+  co_prisma: ["Prisma", "TypeScript", "PostgreSQL", "Node.js", "GraphQL"],
+  co_stripe: ["Ruby", "Go", "TypeScript", "React", "Scala"],
+  co_google: ["Python", "C++", "Go", "TensorFlow", "Kubernetes"],
+  co_microsoft: ["C#", ".NET Core", "TypeScript", "React", "Azure"],
+  co_netflix: ["Java", "Node.js", "React", "AWS", "Cassandra"],
+  co_apple: ["Swift", "Objective-C", "C++", "React", "Python"],
+  co_meta: ["React", "Python", "C++", "PyTorch", "Rust"],
 };
 
 // Seeding 100+ Jobs (Exactly 100 listings)
@@ -223,12 +622,12 @@ for (let i = 1; i <= 100; i++) {
   const employmentType = employmentTypes[i % employmentTypes.length];
   const experienceLevel = experienceLevels[i % experienceLevels.length];
   const skills = companySkills[company.id] || ["React", "TypeScript"];
-  
+
   // Stagger salaries
   const baseSalary = 60000 + ((i * 137) % 12) * 12000;
   const minSalary = baseSalary;
   const maxSalary = baseSalary + 20000 + ((i * 47) % 5) * 8000;
-  
+
   mockJobs.push({
     id: `job_seed_${i.toString().padStart(3, "0")}`,
     title,
@@ -237,9 +636,12 @@ for (let i = 1; i <= 100; i++) {
       name: company.name,
       logoUrl: company.logoUrl,
       industry: company.industry,
-      website: company.website
+      website: company.website,
     },
-    location: remoteType === "remote" ? "Remote" : `${company.headquarters.split(",")[0]}, USA`,
+    location:
+      remoteType === "remote"
+        ? "Remote"
+        : `${company.headquarters.split(",")[0]}, USA`,
     remoteType,
     employmentType,
     salaryMin: minSalary,
@@ -252,24 +654,32 @@ for (let i = 1; i <= 100; i++) {
     responsibilities: [
       `Design, implement, and support scalable components for our ${company.industry} core product.`,
       "Partner with other engineers to execute best practice code architecture conventions.",
-      "Conduct code audits and participate in agile sprints."
+      "Conduct code audits and participate in agile sprints.",
     ],
     requirements: [
       `Minimum 2+ years of software design experience in building distributed systems.`,
       `Strong proficiency with: ${skills.slice(0, 2).join(", ")}.`,
-      "Excellent communication skills and ability to work autonomously."
+      "Excellent communication skills and ability to work autonomously.",
     ],
-    postedDate: new Date(Date.now() - (i % 14) * 24 * 60 * 60 * 1000).toISOString(),
+    postedDate: new Date(
+      Date.now() - (i % 14) * 24 * 60 * 60 * 1000,
+    ).toISOString(),
     expiryDate: null,
-    source: i % 3 === 0 ? "wellfound" : i % 3 === 1 ? "greenhouse" : "ycombinator",
+    source:
+      i % 3 === 0 ? "wellfound" : i % 3 === 1 ? "greenhouse" : "ycombinator",
     sourceJobId: `ext_src_${i * 289}`,
     externalApplyUrl: `https://example.com/apply/job-${i}`,
     trustScore: 85 + (i % 15),
     freshnessScore: 90 - (i % 10),
     isSaved: i % 11 === 0,
-    savedAt: i % 11 === 0 ? new Date(Date.now() - (i % 5 + 1) * 24 * 60 * 60 * 1000).toISOString() : undefined,
+    savedAt:
+      i % 11 === 0
+        ? new Date(
+            Date.now() - ((i % 5) + 1) * 24 * 60 * 60 * 1000,
+          ).toISOString()
+        : undefined,
     isApplied: false,
     viewedAt: null,
-    easyApply: i % 2 === 0
+    easyApply: i % 2 === 0,
   });
 }

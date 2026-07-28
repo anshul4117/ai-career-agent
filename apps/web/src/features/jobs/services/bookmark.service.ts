@@ -31,5 +31,34 @@ export const bookmarkService = {
       return true;
     }
     return false;
-  }
+  },
+
+  /**
+   * Archives or restores a job by ID
+   */
+  async toggleArchiveJob(id: string): Promise<boolean> {
+    const job = mockJobs.find((j) => j.id === id);
+    if (job) {
+      job.isArchived = !job.isArchived;
+      return true;
+    }
+    return false;
+  },
+
+  /**
+   * Updates notes and labels for a saved job
+   */
+  async updateNotesAndLabels(
+    id: string,
+    notes: string,
+    labels: string[],
+  ): Promise<boolean> {
+    const job = mockJobs.find((j) => j.id === id);
+    if (job) {
+      job.notes = notes;
+      job.labels = labels;
+      return true;
+    }
+    return false;
+  },
 };
