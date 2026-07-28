@@ -30,6 +30,7 @@ import {
   Sparkles,
   ArrowRightLeft,
   Briefcase,
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { mockJobs } from "@/features/jobs/mock/jobs-data";
@@ -432,6 +433,16 @@ export default function JobsPage() {
             </span>
 
             <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                onClick={() => router.push("/jobs/quality")}
+                className="h-8.5 px-2.5 text-[9px] font-black uppercase border-2 border-border rounded-sm brutal-shadow-xs flex items-center gap-1 shrink-0 bg-surface hover:bg-surface-secondary"
+                title="View Job Quality Audit Insights"
+              >
+                <ShieldCheck className="h-3.5 w-3.5 text-primary" /> Quality
+                Audit
+              </Button>
+
               <Button
                 variant="ghost"
                 onClick={() => {
