@@ -1,18 +1,30 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParserStore } from "@/features/resume/store/resume-parser.store";
-import { resumeParserService } from "@/features/resume/services/resume-parser.service";
 import { FileUploader } from "@/features/resume/components/parser/file-uploader";
 import { ParseProgress } from "@/features/resume/components/parser/parse-progress";
 import { ReviewPanel } from "@/features/resume/components/parser/review-panel";
+import { ParserErrorView } from "@/features/resume/components/parser/parser-states";
 import { Heading } from "@/components/ui/typography";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import { BrutalCard } from "@/components/ui/brutal-card";
+import { toast } from "sonner";
 
 export default function ResumeImportPage() {
-  const { processingState, uploadedFile, resetParserStore } = useParserStore();
+  const {
+    processingState,
+    uploadedFile,
+    resetParserStore,
+    startParsing,
+    retryParsing,
+    error,
+  } = useParserStore();
+
+  const [activePreset, setActivePreset] = useState<
+    "engineer" | "frontend" | "backend" | "fullstack" | "analyst"
+  >("engineer");
 
   // Reset store on mount / unmount to avoid stale file states
   useEffect(() => {
@@ -25,8 +37,44 @@ export default function ResumeImportPage() {
   const handleStartParsing = async (
     rolePreset: "engineer" | "frontend" | "backend" | "fullstack" | "analyst",
   ) => {
-    if (!uploadedFile) return;
-    await resumeParserService.parseResumeWorkflow(uploadedFile, rolePreset);
+    if (!uploadedFile) {
+      toast.error("Please select a resume file first.");
+      return;
+    }
+    setActivePreset(rolePreset);
+    const toastId = toast.loading("Analyzing structure...");
+    try {
+      await startParsing(uploadedFile, rolePreset);
+      toast.success("AI Resume Structuring complete!", { id: toastId });
+    } catch {
+      toast.error("Failed to parse resume.", { id: toastId });
+    }
+  };
+
+  const handleRetry = async () => {
+    const toastId = toast.loading("Re-initiating parsing...");
+    try {
+      await retryParsing(activePreset);
+      toast.success("AI Resume Structuring complete!", { id: toastId });
+    } catch {
+      toast.error("Failed to parse resume.", { id: toastId });
+    }
+  };
+
+  const handleCancel = () => {
+    resetParserStore();
+  };
+
+  const getErrorType = (msg: string | null) => {
+    if (!msg) return "generic";
+    const lower = msg.toLowerCase();
+    if (lower.includes("timeout") || lower.includes("long")) return "timeout";
+    if (lower.includes("format") || lower.includes("unsupported"))
+      return "unsupported";
+    if (lower.includes("corrupt") || lower.includes("read")) return "corrupted";
+    if (lower.includes("network") || lower.includes("connection"))
+      return "network";
+    return "generic";
   };
 
   return (
@@ -59,8 +107,8 @@ export default function ResumeImportPage() {
 
       {/* Main Workflow Switcher Card */}
       <BrutalCard className="p-6 bg-surface border-[3px] border-border brutal-shadow">
-        {/* State: IDLE or ERROR */}
-        {(processingState === "idle" || processingState === "error") && (
+        {/* State: WAITING (Uploader & Config Panel) */}
+        {processingState === "waiting" && (
           <div className="space-y-4">
             <div className="max-w-xl mx-auto text-center space-y-2 mb-4">
               <Heading
@@ -79,10 +127,8 @@ export default function ResumeImportPage() {
           </div>
         )}
 
-        {/* State: PROCESSING PIPELINE */}
-        {(processingState === "uploading" ||
-          processingState === "extracting" ||
-          processingState === "parsing") && (
+        {/* State: PARSING (Pipeline Stepper animation) */}
+        {processingState === "parsing" && (
           <div className="space-y-4 py-8">
             <div className="max-w-xl mx-auto text-center space-y-2 mb-4">
               <Heading
@@ -100,7 +146,17 @@ export default function ResumeImportPage() {
           </div>
         )}
 
-        {/* State: REVIEW PANEL */}
+        {/* State: FAILED (Interactive Error component) */}
+        {processingState === "failed" && (
+          <ParserErrorView
+            errorType={getErrorType(error)}
+            message={error || undefined}
+            onRetry={handleRetry}
+            onCancel={handleCancel}
+          />
+        )}
+
+        {/* State: COMPLETED (Review & Syncer panel) */}
         {processingState === "completed" && (
           <div className="space-y-4">
             <div className="border-b-2 border-border/10 pb-3 mb-4">
