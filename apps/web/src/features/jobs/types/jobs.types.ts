@@ -1,5 +1,6 @@
 export type RemoteType = "remote" | "hybrid" | "onsite";
-export type EmploymentType = "full-time" | "part-time" | "contract" | "internship";
+export type EmploymentType =
+  "full-time" | "part-time" | "contract" | "internship";
 export type ExperienceLevel = "entry" | "mid" | "senior" | "lead";
 
 export interface JobCompanyInfo {
@@ -39,9 +40,13 @@ export interface Job {
   isApplied: boolean;
   viewedAt: string | null;
   easyApply?: boolean;
+  isArchived?: boolean;
+  notes?: string;
+  labels?: string[];
 }
 
-export type FundingStage = "seed" | "series-a" | "series-b" | "series-c" | "ipo" | "bootstrapped";
+export type FundingStage =
+  "seed" | "series-a" | "series-b" | "series-c" | "ipo" | "bootstrapped";
 
 export interface CompanySocials {
   linkedin?: string;
@@ -81,7 +86,15 @@ export interface JobFilters {
   datePosted: "any" | "24h" | "week" | "month";
   easyApply: boolean;
   matchScoreMin: number | null;
-  matchFilter?: "all" | "90" | "80" | "70" | "high_match" | "missing_skills" | "high_quality_match" | null;
+  matchFilter?:
+    | "all"
+    | "90"
+    | "80"
+    | "70"
+    | "high_match"
+    | "missing_skills"
+    | "high_quality_match"
+    | null;
 }
 
 export interface CompanyFilters {

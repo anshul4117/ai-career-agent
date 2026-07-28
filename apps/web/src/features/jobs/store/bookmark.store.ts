@@ -15,6 +15,12 @@ interface BookmarkState {
   toggleSaveJob: (job: Job) => Promise<void>;
   addRecentlyViewed: (job: Job) => void;
   loadRecentlyViewed: () => void;
+  toggleArchiveJob: (id: string) => Promise<void>;
+  updateNotesAndLabels: (
+    id: string,
+    notes: string,
+    labels: string[],
+  ) => Promise<void>;
 }
 
 export const useBookmarkStore = create<BookmarkState>((set, get) => ({
@@ -42,7 +48,11 @@ export const useBookmarkStore = create<BookmarkState>((set, get) => ({
       await bookmarkService.saveJob(job.id);
     }
 
-    const updatedJob = { ...job, isSaved: !wasSaved, savedAt: !wasSaved ? new Date().toISOString() : undefined };
+    const updatedJob = {
+      ...job,
+      isSaved: !wasSaved,
+      savedAt: !wasSaved ? new Date().toISOString() : undefined,
+    };
 
     set((state) => {
       const isNowSaved = !wasSaved;
@@ -69,10 +79,13 @@ export const useBookmarkStore = create<BookmarkState>((set, get) => ({
     const updated = [job, ...filtered].slice(0, 10);
 
     set({ recentlyViewed: updated });
-    
+
     // Persist to localStorage
     if (typeof window !== "undefined") {
-      localStorage.setItem("ai_career_agent_recent_jobs", JSON.stringify(updated));
+      localStorage.setItem(
+        "ai_career_agent_recent_jobs",
+        JSON.stringify(updated),
+      );
     }
   },
 
@@ -88,5 +101,30 @@ export const useBookmarkStore = create<BookmarkState>((set, get) => ({
         }
       }
     }
-  }
+  },
+
+  toggleArchiveJob: async (id) => {
+    set({ loading: true });
+    await bookmarkService.toggleArchiveJob(id);
+    // Refresh local list
+    const updated = get().savedJobs.map((j) => {
+      if (j.id === id) {
+        return { ...j, isArchived: !j.isArchived };
+      }
+      return j;
+    });
+    set({ savedJobs: updated, loading: false });
+  },
+
+  updateNotesAndLabels: async (id, notes, labels) => {
+    set({ loading: true });
+    await bookmarkService.updateNotesAndLabels(id, notes, labels);
+    const updated = get().savedJobs.map((j) => {
+      if (j.id === id) {
+        return { ...j, notes, labels };
+      }
+      return j;
+    });
+    set({ savedJobs: updated, loading: false });
+  },
 }));
