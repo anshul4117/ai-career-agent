@@ -435,6 +435,16 @@ export default function JobsPage() {
             <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
+                onClick={() => router.push("/jobs/match")}
+                className="h-8.5 px-2.5 text-[9px] font-black uppercase border-2 border-border rounded-sm brutal-shadow-xs flex items-center gap-1 shrink-0 bg-surface hover:bg-surface-secondary"
+                title="AI Job Match Analyzer Workspace"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-primary animate-pulse" />{" "}
+                Match Center
+              </Button>
+
+              <Button
+                variant="ghost"
                 onClick={() => router.push("/jobs/quality")}
                 className="h-8.5 px-2.5 text-[9px] font-black uppercase border-2 border-border rounded-sm brutal-shadow-xs flex items-center gap-1 shrink-0 bg-surface hover:bg-surface-secondary"
                 title="View Job Quality Audit Insights"
