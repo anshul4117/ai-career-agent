@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { Job, Company } from "../types/jobs.types";
 import { useJobsStore } from "../store/jobs.store";
 import { useBookmarkStore } from "../store/bookmark.store";
@@ -47,6 +48,7 @@ interface JobDetailsPaneProps {
 }
 
 export function JobDetailsPane({ job }: JobDetailsPaneProps) {
+  const router = useRouter();
   const { selectJob } = useJobsStore();
   const { toggleSaveJob, addRecentlyViewed, recentlyViewed } =
     useBookmarkStore();
@@ -651,6 +653,16 @@ export function JobDetailsPane({ job }: JobDetailsPaneProps) {
                       </div>
                     </BrutalCard>
                   )}
+
+                  <div className="flex justify-end pt-3">
+                    <Button
+                      onClick={() => router.push("/jobs/match")}
+                      className="h-9 px-4 text-[9px] font-black uppercase border-2 border-border brutal-shadow-xs bg-primary text-white hover:bg-primary/90 flex items-center gap-1.5 rounded-sm"
+                    >
+                      <Sparkles className="h-4 w-4 text-white" /> Advanced AI
+                      Match Workspace
+                    </Button>
+                  </div>
                 </div>
               );
             })()
