@@ -1,0 +1,13 @@
+node_modules
+# Keep environment variables out of version control
+.env
+
+/generated/prisma
+
+# AI / IDE metadata
+.claude/
+.agents/
+.windsurf/
+
+# Local temporary files
+skills-lock.json
