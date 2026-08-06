@@ -2,5 +2,9 @@
   "name": "@ai-career-agent/api",
   "version": "0.1.0",
   "private": true,
-  "description": "AI Career Agent — NestJS backend API"
+  "description": "AI Career Agent — NestJS backend API",
+  "dependencies": {
+    "@prisma/client": "^7.9.1",
+    "prisma": "^7.9.1"
+  }
 }
