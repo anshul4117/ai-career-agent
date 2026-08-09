@@ -12,7 +12,7 @@ export class UsersService {
       data: {
         email: data.email,
         fullName: data.fullName,
-        passwordHash: data.password,
+        passwordHash: data.passwordHash,
       },
     });
   }
