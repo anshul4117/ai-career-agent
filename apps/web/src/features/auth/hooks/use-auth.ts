@@ -4,28 +4,33 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../store/auth.store";
 import { authService } from "../services/auth.service";
+import { useOnboardingStore } from "@/features/onboarding/store/onboarding.store";
 
 export function useAuth() {
   const router = useRouter();
-  const { user, isAuthenticated, isLoading, setUser, setIsLoading, reset } = useAuthStore();
+  const { user, isAuthenticated, isLoading, setUser, setIsLoading, reset } =
+    useAuthStore();
 
-  const login = useCallback(async (email: string, password: string) => {
-    setIsLoading(true);
-    try {
-      const authUser = await authService.login(email, password);
-      setUser(authUser);
-      if (authUser.profileCompleted) {
-        router.replace("/dashboard");
-      } else {
-        router.replace("/complete-profile");
+  const login = useCallback(
+    async (email: string, password: string) => {
+      setIsLoading(true);
+      try {
+        const authUser = await authService.login(email, password);
+        setUser(authUser);
+        if (authUser.profileCompleted) {
+          router.replace("/dashboard");
+        } else {
+          router.replace("/complete-profile");
+        }
+      } catch (err) {
+        setIsLoading(false);
+        throw err;
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      setIsLoading(false);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [router, setUser, setIsLoading]);
+    },
+    [router, setUser, setIsLoading],
+  );
 
   const loginWithGoogle = useCallback(async () => {
     setIsLoading(true);
@@ -45,18 +50,22 @@ export function useAuth() {
     }
   }, [router, setUser, setIsLoading]);
 
-  const register = useCallback(async (email: string, password: string) => {
-    setIsLoading(true);
-    try {
-      await authService.register(email, password);
-      router.replace("/verify-email");
-    } catch (err) {
-      setIsLoading(false);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [router, setIsLoading]);
+  const register = useCallback(
+    async (email: string, password: string) => {
+      setIsLoading(true);
+      try {
+        await authService.register(email, password);
+        useOnboardingStore.getState().resetOnboarding();
+        router.replace("/verify-email");
+      } catch (err) {
+        setIsLoading(false);
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [router, setIsLoading],
+  );
 
   const registerWithGoogle = useCallback(async () => {
     setIsLoading(true);
@@ -81,6 +90,7 @@ export function useAuth() {
     try {
       await authService.logout();
       reset();
+      useOnboardingStore.getState().resetOnboarding();
       router.replace("/login");
     } catch (err) {
       setIsLoading(false);
@@ -90,67 +100,79 @@ export function useAuth() {
     }
   }, [router, reset, setIsLoading]);
 
-  const verifyEmail = useCallback(async (code: string) => {
-    setIsLoading(true);
-    try {
-      const authUser = await authService.verifyEmail(code);
-      setUser(authUser);
-      // Wait 1.5 seconds to let the UI show the success state
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      router.replace("/complete-profile");
-    } catch (err) {
-      setIsLoading(false);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [router, setUser, setIsLoading]);
+  const verifyEmail = useCallback(
+    async (code: string) => {
+      setIsLoading(true);
+      try {
+        const authUser = await authService.verifyEmail(code);
+        // Wait 1.5 seconds to let the UI show the success state
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        setUser(authUser);
+        router.replace("/complete-profile");
+      } catch (err) {
+        setIsLoading(false);
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [router, setUser, setIsLoading],
+  );
 
-  const completeProfile = useCallback(async (data: {
-    firstName: string;
-    lastName: string;
-    headline: string;
-    preferredRole: string;
-    preferredLocation: string;
-  }) => {
-    setIsLoading(true);
-    try {
-      const updatedUser = await authService.completeProfile(data);
-      setUser(updatedUser);
-      router.replace("/dashboard");
-    } catch (err) {
-      setIsLoading(false);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [router, setUser, setIsLoading]);
+  const completeProfile = useCallback(
+    async (data: {
+      firstName: string;
+      lastName: string;
+      headline: string;
+      preferredRole: string;
+      preferredLocation: string;
+    }) => {
+      setIsLoading(true);
+      try {
+        const updatedUser = await authService.completeProfile(data);
+        setUser(updatedUser);
+        router.replace("/dashboard");
+      } catch (err) {
+        setIsLoading(false);
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [router, setUser, setIsLoading],
+  );
 
-  const forgotPassword = useCallback(async (email: string) => {
-    setIsLoading(true);
-    try {
-      await authService.forgotPassword(email);
-      router.replace("/reset-password");
-    } catch (err) {
-      setIsLoading(false);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [router, setIsLoading]);
+  const forgotPassword = useCallback(
+    async (email: string) => {
+      setIsLoading(true);
+      try {
+        await authService.forgotPassword(email);
+        router.replace("/reset-password");
+      } catch (err) {
+        setIsLoading(false);
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [router, setIsLoading],
+  );
 
-  const resetPassword = useCallback(async (password: string, token: string) => {
-    setIsLoading(true);
-    try {
-      await authService.resetPassword(password, token);
-      router.replace("/login");
-    } catch (err) {
-      setIsLoading(false);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [router, setIsLoading]);
+  const resetPassword = useCallback(
+    async (password: string, token: string) => {
+      setIsLoading(true);
+      try {
+        await authService.resetPassword(password, token);
+        router.replace("/login");
+      } catch (err) {
+        setIsLoading(false);
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [router, setIsLoading],
+  );
 
   const restoreSession = useCallback(() => {
     try {
@@ -158,13 +180,15 @@ export function useAuth() {
       setUser(currentUser);
       if (!currentUser) {
         if (typeof document !== "undefined") {
-          document.cookie = "aca-session=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT;max-age=0;SameSite=Lax";
+          document.cookie =
+            "aca-session=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT;max-age=0;SameSite=Lax";
         }
       }
     } catch {
       setUser(null);
       if (typeof document !== "undefined") {
-        document.cookie = "aca-session=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT;max-age=0;SameSite=Lax";
+        document.cookie =
+          "aca-session=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT;max-age=0;SameSite=Lax";
       }
     } finally {
       setIsLoading(false);

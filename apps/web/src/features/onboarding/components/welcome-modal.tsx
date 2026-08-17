@@ -9,7 +9,13 @@ import { BrutalButton } from "@/components/ui/brutal-button";
 import { Sparkles, Briefcase, FileText, X } from "lucide-react";
 
 export function WelcomeModal() {
-  const { isWelcomeOpen, setIsWelcomeOpen, setIsTourActive, setHasCompletedOnboarding } = useOnboardingStore();
+  const {
+    isWelcomeOpen,
+    setIsWelcomeOpen,
+    setIsTourActive,
+    setHasCompletedOnboarding,
+    setHasCompletedTour,
+  } = useOnboardingStore();
 
   const handleStartTour = () => {
     setIsWelcomeOpen(false);
@@ -18,10 +24,12 @@ export function WelcomeModal() {
 
   const handleSkip = () => {
     setIsWelcomeOpen(false);
+    setHasCompletedTour(true);
   };
 
   const handleDontShow = () => {
     setIsWelcomeOpen(false);
+    setHasCompletedTour(true);
     setHasCompletedOnboarding(true);
   };
 
@@ -68,7 +76,9 @@ export function WelcomeModal() {
                         Welcome to AI Career Agent
                       </h2>
                       <p className="text-[10px] text-foreground-muted leading-relaxed font-semibold max-w-sm mx-auto">
-                        Your professional career copilot. Let us help you organize your application pipeline, optimize your resumes, and land your next role.
+                        Your professional career copilot. Let us help you
+                        organize your application pipeline, optimize your
+                        resumes, and land your next role.
                       </p>
                     </div>
                   </div>
@@ -78,15 +88,20 @@ export function WelcomeModal() {
                     <h4 className="text-[9px] font-black uppercase tracking-widest text-foreground-secondary">
                       Core Platform Highlights
                     </h4>
-                    
+
                     <div className="space-y-3">
                       <div className="flex items-start gap-3">
                         <div className="p-1.5 bg-surface border-2 border-black dark:border-border text-foreground-secondary rounded-sm shrink-0">
                           <Briefcase className="h-4 w-4" />
                         </div>
                         <div className="space-y-0.5">
-                          <p className="font-black uppercase text-[10px] text-foreground">Job Search Engine</p>
-                          <p className="text-[9.5px] text-foreground-muted leading-normal">Discover highly tailored job matches based on your skills, experience, and relocation preferences.</p>
+                          <p className="font-black uppercase text-[10px] text-foreground">
+                            Job Search Engine
+                          </p>
+                          <p className="text-[9.5px] text-foreground-muted leading-normal">
+                            Discover highly tailored job matches based on your
+                            skills, experience, and relocation preferences.
+                          </p>
                         </div>
                       </div>
 
@@ -95,8 +110,13 @@ export function WelcomeModal() {
                           <Sparkles className="h-4 w-4" />
                         </div>
                         <div className="space-y-0.5">
-                          <p className="font-black uppercase text-[10px] text-foreground">AI Resume Optimization</p>
-                          <p className="text-[9.5px] text-foreground-muted leading-normal">Optimize resume variants against job descriptions to optimize ATS parsing compliance scores.</p>
+                          <p className="font-black uppercase text-[10px] text-foreground">
+                            AI Resume Optimization
+                          </p>
+                          <p className="text-[9.5px] text-foreground-muted leading-normal">
+                            Optimize resume variants against job descriptions to
+                            optimize ATS parsing compliance scores.
+                          </p>
                         </div>
                       </div>
 
@@ -105,8 +125,13 @@ export function WelcomeModal() {
                           <FileText className="h-4 w-4" />
                         </div>
                         <div className="space-y-0.5">
-                          <p className="font-black uppercase text-[10px] text-foreground">Application Pipelines</p>
-                          <p className="text-[9.5px] text-foreground-muted leading-normal">Track interviews, notes, and metrics on our brutalist Kanban dashboard.</p>
+                          <p className="font-black uppercase text-[10px] text-foreground">
+                            Application Pipelines
+                          </p>
+                          <p className="text-[9.5px] text-foreground-muted leading-normal">
+                            Track interviews, notes, and metrics on our
+                            brutalist Kanban dashboard.
+                          </p>
                         </div>
                       </div>
                     </div>

@@ -19,57 +19,71 @@ const TOUR_STEPS: TourStep[] = [
   {
     target: "#nav-dashboard",
     title: "Your Dashboard",
-    content: "Welcome to your AI Career Dashboard. Track your profile completion, latest applications, and job match analytics in one central location.",
-    placement: "right"
+    content:
+      "Welcome to your AI Career Dashboard. Track your profile completion, latest applications, and job match analytics in one central location.",
+    placement: "right",
   },
   {
     target: "#nav-jobs",
     title: "Job Discovery",
-    content: "Search and explore thousands of validated, fresh job listings matched to your experience and skills.",
-    placement: "right" as const
+    content:
+      "Search and explore thousands of validated, fresh job listings matched to your experience and skills.",
+    placement: "right" as const,
   },
   {
     target: "#nav-resume",
     title: "Resume Builder",
-    content: "Build and manage multiple versions of your resume, or parse existing ones automatically using AI.",
-    placement: "right" as const
+    content:
+      "Build and manage multiple versions of your resume, or parse existing ones automatically using AI.",
+    placement: "right" as const,
   },
   {
     target: "#nav-resume",
     title: "Resume Optimizer",
-    content: "Within the builder, utilize the AI Optimizer Studio to improve ATS match scores against target job descriptions.",
-    placement: "right" as const
+    content:
+      "Within the builder, utilize the AI Optimizer Studio to improve ATS match scores against target job descriptions.",
+    placement: "right" as const,
   },
   {
     target: "#nav-cover-letters",
     title: "Cover Letter Wizard",
-    content: "Generate highly customized, professionally written cover letters tailored to your target roles.",
-    placement: "right" as const
+    content:
+      "Generate highly customized, professionally written cover letters tailored to your target roles.",
+    placement: "right" as const,
   },
   {
     target: "#nav-applications",
     title: "Applications Tracker",
-    content: "Manage your application pipeline with our drag-and-drop Kanban board, conversion funnel analytics, and interview schedules.",
-    placement: "right" as const
+    content:
+      "Manage your application pipeline with our drag-and-drop Kanban board, conversion funnel analytics, and interview schedules.",
+    placement: "right" as const,
   },
   {
     target: "#nav-settings",
     title: "System Settings",
-    content: "Configure your job preferences, notification rules, AI writing tone, compact layout views, or toggle Dark Mode.",
-    placement: "right" as const
+    content:
+      "Configure your job preferences, notification rules, AI writing tone, compact layout views, or toggle Dark Mode.",
+    placement: "right" as const,
   },
   {
     target: "#header-search-bar",
     title: "Global Command Palette",
-    content: "Press ⌘+K (Ctrl+K on Windows) or click the search bar to instantly query jobs from anywhere in the app.",
-    placement: "bottom" as const
-  }
+    content:
+      "Press ⌘+K (Ctrl+K on Windows) or click the search bar to instantly query jobs from anywhere in the app.",
+    placement: "bottom" as const,
+  },
 ];
 
 export function TourOverlay() {
-  const { isTourActive, setIsTourActive, currentStep, setCurrentStep } = useOnboardingStore();
+  const {
+    isTourActive,
+    setIsTourActive,
+    currentStep,
+    setCurrentStep,
+    setHasCompletedTour,
+  } = useOnboardingStore();
   const { sidebarOpen, setSidebarOpen } = useUiStore();
-  
+
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
   const [mounted, setMounted] = useState(false);
@@ -86,7 +100,11 @@ export function TourOverlay() {
     if (!isTourActive || !activeStep) return;
 
     // Dynamically open sidebar if target is nav-related and screen is mobile
-    if (activeStep.target.startsWith("#nav-") && typeof window !== "undefined" && window.innerWidth < 1024) {
+    if (
+      activeStep.target.startsWith("#nav-") &&
+      typeof window !== "undefined" &&
+      window.innerWidth < 1024
+    ) {
       if (!sidebarOpen) {
         setSidebarOpen(true);
         // Wait minor animation time
@@ -127,7 +145,7 @@ export function TourOverlay() {
         // Clamp inside window boundaries
         const winWidth = window.innerWidth;
         const winHeight = window.innerHeight;
-        
+
         left = Math.max(10, Math.min(left, winWidth - tWidth - 10));
         top = Math.max(10, Math.min(top, winHeight - tHeight - 10));
       }
@@ -139,7 +157,7 @@ export function TourOverlay() {
       if (typeof window !== "undefined") {
         setTooltipPos({
           top: window.innerHeight / 2 - 100,
-          left: window.innerWidth / 2 - 160
+          left: window.innerWidth / 2 - 160,
         });
       }
     }
@@ -161,6 +179,7 @@ export function TourOverlay() {
       setCurrentStep(currentStep + 1);
     } else {
       setIsTourActive(false);
+      setHasCompletedTour(true);
     }
   };
 
@@ -172,6 +191,7 @@ export function TourOverlay() {
 
   const handleSkip = () => {
     setIsTourActive(false);
+    setHasCompletedTour(true);
   };
 
   if (!mounted || !isTourActive) return null;
@@ -273,7 +293,7 @@ export function TourOverlay() {
         </BrutalCard>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }
 export default TourOverlay;

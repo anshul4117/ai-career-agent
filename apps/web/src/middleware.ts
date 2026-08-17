@@ -23,21 +23,28 @@ const guestRoutes = [
 ];
 
 function isProtectedRoute(pathname: string) {
-  return protectedRoutes.some((route) => pathname === route || pathname.startsWith(route + "/"));
+  return protectedRoutes.some(
+    (route) => pathname === route || pathname.startsWith(route + "/"),
+  );
 }
 
 function isGuestRoute(pathname: string) {
-  return guestRoutes.some((route) => pathname === route || pathname.startsWith(route + "/"));
+  return guestRoutes.some(
+    (route) => pathname === route || pathname.startsWith(route + "/"),
+  );
 }
 
 export function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
   const sessionCookie = req.cookies.get("aca-session");
   const isAuthenticated = !!sessionCookie;
+  const profileCompletedCookie = req.cookies.get("aca-profile-completed");
+  const isProfileCompleted = profileCompletedCookie?.value === "true";
 
-  // If an authenticated user accesses a guest route, redirect to dashboard
+  // If an authenticated user accesses a guest route, redirect to dashboard or complete-profile
   if (isGuestRoute(pathname) && isAuthenticated) {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
+    const dest = isProfileCompleted ? "/dashboard" : "/complete-profile";
+    return NextResponse.redirect(new URL(dest, req.url));
   }
 
   // If an unauthenticated user accesses a protected route, redirect to login

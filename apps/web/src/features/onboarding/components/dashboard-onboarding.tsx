@@ -7,29 +7,47 @@ import dynamic from "next/dynamic";
 
 const WelcomeModal = dynamic(
   () => import("./welcome-modal").then((m) => m.WelcomeModal),
-  { ssr: false }
+  { ssr: false },
 );
 
 const TourOverlay = dynamic(
   () => import("./tour-overlay").then((m) => m.TourOverlay),
-  { ssr: false }
+  { ssr: false },
 );
 
 export function DashboardOnboarding() {
-  const { isAuthenticated } = useAuth();
-  const { isTourActive, hasCompletedOnboarding, setIsWelcomeOpen } = useOnboardingStore();
+  const { isAuthenticated, user } = useAuth();
+  const {
+    isTourActive,
+    hasCompletedTour,
+    setIsWelcomeOpen,
+    setHasCompletedTour,
+  } = useOnboardingStore();
 
   useEffect(() => {
-    if (isAuthenticated && !hasCompletedOnboarding) {
+    if (isAuthenticated && user?.profileCompleted) {
+      if (!hasCompletedTour) {
+        setHasCompletedTour(true);
+      }
+      return;
+    }
+
+    if (isAuthenticated && !hasCompletedTour) {
       setIsWelcomeOpen(true);
     }
-  }, [isAuthenticated, hasCompletedOnboarding, setIsWelcomeOpen]);
+  }, [
+    isAuthenticated,
+    user,
+    hasCompletedTour,
+    setIsWelcomeOpen,
+    setHasCompletedTour,
+  ]);
 
   if (!isAuthenticated) return null;
 
   return (
     <>
-      {!hasCompletedOnboarding && <WelcomeModal />}
+      {!hasCompletedTour && <WelcomeModal />}
       {isTourActive && <TourOverlay />}
     </>
   );
