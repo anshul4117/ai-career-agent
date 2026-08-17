@@ -10,14 +10,18 @@ interface GuestGuardProps {
 }
 
 export function GuestGuard({ children }: GuestGuardProps) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      router.replace("/dashboard");
+      if (user && !user.profileCompleted) {
+        router.replace("/complete-profile");
+      } else {
+        router.replace("/dashboard");
+      }
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isLoading, user, router]);
 
   if (isLoading || isAuthenticated) {
     return <LoadingScreen label="Verifying access session..." />;
