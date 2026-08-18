@@ -314,5 +314,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Anshul**
 - **GitHub**: [@anshul4117](https://github.com/anshul4117)
+- **Twitter**: [@anshul4117](https://x.com/anshul4117)
 - **LinkedIn**: [Anshul's Profile](https://www.linkedin.com/in/anshul-ab7135245/)
 - **Portfolio**: [Anshul's Portfolio](https://anshul4117-portfolio.vercel.app/)
