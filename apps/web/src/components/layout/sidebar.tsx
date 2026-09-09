@@ -52,7 +52,10 @@ export function Sidebar({ className }: SidebarProps) {
           onClose={() => setSidebarOpen(false)}
         />
 
-        <SidebarNav collapsed={sidebarCollapsed} onNavigate={() => setSidebarOpen(false)} />
+        <SidebarNav
+          collapsed={sidebarCollapsed}
+          onNavigate={() => setSidebarOpen(false)}
+        />
 
         <SidebarCollapseToggle
           collapsed={sidebarCollapsed}
@@ -73,20 +76,22 @@ function SidebarHeader({
   return (
     <div
       className={cn(
-        "flex h-[var(--spacing-header)] shrink-0 items-center border-b-[3px] border-border",
-        collapsed ? "justify-center px-2" : "justify-between px-4",
+        "flex h-[var(--spacing-header)] shrink-0 items-center border-b-[3px] border-border bg-surface transition-all",
+        collapsed ? "justify-center px-2" : "justify-between px-4 sm:px-5",
       )}
     >
       {!collapsed ? (
-        <Logo />
+        <div className="flex items-center gap-3 min-w-0">
+          <Logo href="/dashboard" className="py-1" />
+        </div>
       ) : (
-        <Logo iconOnly />
+        <Logo href="/dashboard" iconOnly className="py-1" />
       )}
 
       <Button
         variant="ghost"
         size="icon"
-        className="lg:hidden"
+        className="lg:hidden shrink-0 border border-transparent hover:border-border/30 hover:bg-surface-secondary transition-colors"
         onClick={onClose}
         aria-label="Close sidebar"
       >
