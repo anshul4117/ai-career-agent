@@ -18,6 +18,7 @@ export function Logo({
 }: LogoProps) {
   // Select asset path based on variant and iconOnly mode
   let src = "/logo.svg";
+  let darkSrc = "/logo-white.svg";
   let width = 144;
   let height = 40;
 
@@ -26,23 +27,35 @@ export function Logo({
     height = 36;
     if (variant === "monochrome-dark") {
       src = "/icon-black.svg";
+      darkSrc = "/icon-black.svg";
     } else if (variant === "monochrome-light") {
       src = "/icon-white.svg";
+      darkSrc = "/icon-white.svg";
     } else {
       src = "/favicon.svg";
+      darkSrc = "/icon-white.svg";
     }
   } else {
     if (variant === "monochrome-dark") {
       src = "/logo-black.svg";
+      darkSrc = "/logo-black.svg";
     } else if (variant === "monochrome-light") {
       src = "/logo-white.svg";
+      darkSrc = "/logo-white.svg";
     } else {
       src = "/logo.svg";
+      darkSrc = "/logo-white.svg";
     }
   }
 
   return (
-    <Link href={href} className={cn("inline-flex items-center select-none", className)}>
+    <Link
+      href={href}
+      className={cn(
+        "inline-flex items-center select-none shrink-0 transition-opacity hover:opacity-95",
+        className,
+      )}
+    >
       <Image
         src={src}
         alt="AI Career Agent Logo"
@@ -50,9 +63,23 @@ export function Logo({
         height={height}
         priority
         className={cn(
-          iconOnly ? "h-9 w-auto shrink-0" : "h-10 w-auto shrink-0"
+          iconOnly ? "h-9 w-auto shrink-0" : "h-10 w-auto shrink-0",
+          variant === "default" && "dark:hidden",
         )}
       />
+      {variant === "default" && (
+        <Image
+          src={darkSrc}
+          alt="AI Career Agent Logo"
+          width={width}
+          height={height}
+          priority
+          className={cn(
+            iconOnly ? "h-9 w-auto shrink-0" : "h-10 w-auto shrink-0",
+            "hidden dark:block",
+          )}
+        />
+      )}
     </Link>
   );
 }
