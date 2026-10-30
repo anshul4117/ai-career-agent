@@ -1,4 +1,4 @@
-/** Profile Module — Zustand Store */
+/** Profile Module — Zustand Store (Connected to NestJS API) */
 
 import { create } from "zustand";
 import type { Profile } from "../types/profile.types";
@@ -10,17 +10,7 @@ import type { Certification } from "../types/certification.types";
 import type { Language } from "../types/language.types";
 import type { SocialLink } from "../types/social-link.types";
 import type { CareerPreference } from "../types/career-preference.types";
-
-import { MOCK_PROFILE } from "../data/profile.mock";
-import { MOCK_SKILLS } from "../data/skills.mock";
-import { MOCK_EDUCATION } from "../data/education.mock";
-import { MOCK_EXPERIENCE } from "../data/experience.mock";
-import { MOCK_PROJECTS } from "../data/projects.mock";
-import { MOCK_CERTIFICATIONS } from "../data/certifications.mock";
-import { MOCK_LANGUAGES } from "../data/languages.mock";
-import { MOCK_SOCIAL_LINKS } from "../data/social-links.mock";
-import { MOCK_CAREER_PREFERENCES } from "../data/career-preferences.mock";
-
+import { profileService } from "../services/profile.service";
 import { calculateProfileCompletion } from "../utils/completion-engine";
 
 interface ProfileState {
@@ -49,7 +39,8 @@ interface ProfileState {
   setProfile: (profile: Profile | null) => void;
   setIsLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
-  loadProfile: () => void;
+  loadProfile: () => Promise<void>;
+  saveProfileToServer: () => Promise<void>;
   reset: () => void;
 
   // Dynamic sync helper
@@ -200,35 +191,52 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
     autosaveTimestamp: null,
     setAutosaveTimestamp: (autosaveTimestamp) => set({ autosaveTimestamp }),
 
-    setProfile: (profile) => set({ profile, error: null }),
+    setProfile: (profile) => {
+      set({ profile, error: null });
+      if (profile) {
+        profileService.saveProfile(profile).catch((err) => {
+          console.error("Failed to auto-persist profile updates:", err);
+        });
+      }
+    },
+
     setIsLoading: (isLoading) => set({ isLoading }),
     setError: (error) => set({ error, isLoading: false }),
 
-    loadProfile: () => {
+    loadProfile: async () => {
       set({ isLoading: true, error: null });
-      // Simulate async load with mock data
-      setTimeout(() => {
-        const state = get();
-        if (state.profile) {
-          set({ isLoading: false });
-          return;
-        }
-
+      try {
+        const data = await profileService.getProfile();
         set({
-          profile: MOCK_PROFILE,
-          skills: [...MOCK_SKILLS],
-          education: [...MOCK_EDUCATION],
-          experience: [...MOCK_EXPERIENCE],
-          projects: [...MOCK_PROJECTS],
-          certifications: [...MOCK_CERTIFICATIONS],
-          languages: [...MOCK_LANGUAGES],
-          socialLinks: [...MOCK_SOCIAL_LINKS],
-          preferences: MOCK_CAREER_PREFERENCES,
+          profile: data.profile,
+          skills: data.skills || [],
+          education: data.education || [],
+          experience: data.experience || [],
+          projects: data.projects || [],
+          certifications: data.certifications || [],
+          languages: data.languages || [],
+          socialLinks: data.socialLinks || [],
+          preferences: data.preferences,
           isLoading: false,
+          error: null,
         });
-
         get().syncCompletion();
-      }, 200);
+      } catch (err: unknown) {
+        const message =
+          err instanceof Error
+            ? err.message
+            : "Failed to load profile. Please try again.";
+        set({
+          isLoading: false,
+          error: message,
+        });
+      }
+    },
+
+    saveProfileToServer: async () => {
+      const currentProfile = get().profile;
+      if (!currentProfile) return;
+      await profileService.saveProfile(currentProfile);
     },
 
     reset: () =>
@@ -288,14 +296,15 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
 
     // Skills Actions
     addSkill: (newSkill) => {
-      const skill: Skill = {
+      const tempId = `sk_${Date.now()}`;
+      const optimisticSkill: Skill = {
         ...newSkill,
-        id: `sk_${Date.now()}`,
+        id: tempId,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
       set((state) => {
-        const updatedSkills = [...state.skills, skill];
+        const updatedSkills = [...state.skills, optimisticSkill];
         const updatedProfile = state.profile
           ? {
               ...state.profile,
@@ -308,6 +317,18 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         return { skills: updatedSkills, profile: updatedProfile };
       });
       get().syncCompletion();
+
+      profileService
+        .createSkill(newSkill)
+        .then((saved) => {
+          set((state) => ({
+            skills: state.skills.map((s) => (s.id === tempId ? saved : s)),
+          }));
+          get().syncCompletion();
+        })
+        .catch((err) => {
+          console.error("Failed to add skill:", err);
+        });
     },
 
     updateSkill: (id, updatedFields) => {
@@ -320,6 +341,10 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         return { skills: updatedSkills };
       });
       get().syncCompletion();
+
+      profileService.updateSkill(id, updatedFields).catch((err) => {
+        console.error("Failed to update skill:", err);
+      });
     },
 
     deleteSkill: (id) => {
@@ -337,10 +362,15 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         return { skills: updatedSkills, profile: updatedProfile };
       });
       get().syncCompletion();
+
+      profileService.deleteSkill(id).catch((err) => {
+        console.error("Failed to delete skill:", err);
+      });
     },
 
     // Education Actions
     addEducation: (newEdu) => {
+      const tempId = `edu_${Date.now()}`;
       set((state) => {
         let updatedEdu = [...state.education];
         if (newEdu.highestEducation) {
@@ -351,7 +381,7 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         }
         const edu: Education = {
           ...newEdu,
-          id: `edu_${Date.now()}`,
+          id: tempId,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
@@ -368,6 +398,20 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         return { education: updatedEdu, profile: updatedProfile };
       });
       get().syncCompletion();
+
+      profileService
+        .createEducation(newEdu)
+        .then((saved) => {
+          set((state) => ({
+            education: state.education.map((e) =>
+              e.id === tempId ? saved : e,
+            ),
+          }));
+          get().syncCompletion();
+        })
+        .catch((err) => {
+          console.error("Failed to add education:", err);
+        });
     },
 
     updateEducation: (id, updatedFields) => {
@@ -385,6 +429,10 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         return { education: updatedEdu };
       });
       get().syncCompletion();
+
+      profileService.updateEducation(id, updatedFields).catch((err) => {
+        console.error("Failed to update education:", err);
+      });
     },
 
     deleteEducation: (id) => {
@@ -402,13 +450,18 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         return { education: updatedEdu, profile: updatedProfile };
       });
       get().syncCompletion();
+
+      profileService.deleteEducation(id).catch((err) => {
+        console.error("Failed to delete education:", err);
+      });
     },
 
     // Experience Actions
     addExperience: (newExp) => {
+      const tempId = `exp_${Date.now()}`;
       const exp: Experience = {
         ...newExp,
-        id: `exp_${Date.now()}`,
+        id: tempId,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -426,6 +479,20 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         return { experience: updatedExp, profile: updatedProfile };
       });
       get().syncCompletion();
+
+      profileService
+        .createExperience(newExp)
+        .then((saved) => {
+          set((state) => ({
+            experience: state.experience.map((e) =>
+              e.id === tempId ? saved : e,
+            ),
+          }));
+          get().syncCompletion();
+        })
+        .catch((err) => {
+          console.error("Failed to add experience:", err);
+        });
     },
 
     updateExperience: (id, updatedFields) => {
@@ -438,6 +505,10 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         return { experience: updatedExp };
       });
       get().syncCompletion();
+
+      profileService.updateExperience(id, updatedFields).catch((err) => {
+        console.error("Failed to update experience:", err);
+      });
     },
 
     deleteExperience: (id) => {
@@ -455,13 +526,18 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         return { experience: updatedExp, profile: updatedProfile };
       });
       get().syncCompletion();
+
+      profileService.deleteExperience(id).catch((err) => {
+        console.error("Failed to delete experience:", err);
+      });
     },
 
     // Projects Actions
     addProject: (newProject) => {
+      const tempId = `proj_${Date.now()}`;
       const project: Project = {
         ...newProject,
-        id: `proj_${Date.now()}`,
+        id: tempId,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -479,6 +555,18 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         return { projects: updatedProjects, profile: updatedProfile };
       });
       get().syncCompletion();
+
+      profileService
+        .createProject(newProject)
+        .then((saved) => {
+          set((state) => ({
+            projects: state.projects.map((p) => (p.id === tempId ? saved : p)),
+          }));
+          get().syncCompletion();
+        })
+        .catch((err) => {
+          console.error("Failed to add project:", err);
+        });
     },
 
     updateProject: (id, updatedFields) => {
@@ -491,6 +579,10 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         return { projects: updatedProjects };
       });
       get().syncCompletion();
+
+      profileService.updateProject(id, updatedFields).catch((err) => {
+        console.error("Failed to update project:", err);
+      });
     },
 
     deleteProject: (id) => {
@@ -508,28 +600,42 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         return { projects: updatedProjects, profile: updatedProfile };
       });
       get().syncCompletion();
+
+      profileService.deleteProject(id).catch((err) => {
+        console.error("Failed to delete project:", err);
+      });
     },
 
     toggleFeaturedProject: (id) => {
+      const current = get().projects.find((p) => p.id === id);
+      const newFeatured = !current?.featured;
+
       set((state) => {
         const updatedProjects = state.projects.map((p) =>
           p.id === id
             ? {
                 ...p,
-                featured: !p.featured,
+                featured: newFeatured,
                 updatedAt: new Date().toISOString(),
               }
             : p,
         );
         return { projects: updatedProjects };
       });
+
+      profileService
+        .updateProject(id, { featured: newFeatured })
+        .catch((err) => {
+          console.error("Failed to toggle featured project:", err);
+        });
     },
 
     // Certifications Actions
     addCertification: (newCert) => {
+      const tempId = `cert_${Date.now()}`;
       const cert: Certification = {
         ...newCert,
-        id: `cert_${Date.now()}`,
+        id: tempId,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -547,6 +653,20 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         return { certifications: updatedCerts, profile: updatedProfile };
       });
       get().syncCompletion();
+
+      profileService
+        .createCertification(newCert)
+        .then((saved) => {
+          set((state) => ({
+            certifications: state.certifications.map((c) =>
+              c.id === tempId ? saved : c,
+            ),
+          }));
+          get().syncCompletion();
+        })
+        .catch((err) => {
+          console.error("Failed to add certification:", err);
+        });
     },
 
     updateCertification: (id, updatedFields) => {
@@ -559,6 +679,10 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         return { certifications: updatedCerts };
       });
       get().syncCompletion();
+
+      profileService.updateCertification(id, updatedFields).catch((err) => {
+        console.error("Failed to update certification:", err);
+      });
     },
 
     deleteCertification: (id) => {
@@ -567,18 +691,37 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         return { certifications: updatedCerts };
       });
       get().syncCompletion();
+
+      profileService.deleteCertification(id).catch((err) => {
+        console.error("Failed to delete certification:", err);
+      });
     },
 
     // Languages Actions
     addLanguage: (newLang) => {
+      const tempId = `lang_${Date.now()}`;
       const lang: Language = {
         ...newLang,
-        id: `lang_${Date.now()}`,
+        id: tempId,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
       set((state) => ({ languages: [...state.languages, lang] }));
       get().syncCompletion();
+
+      profileService
+        .createLanguage(newLang)
+        .then((saved) => {
+          set((state) => ({
+            languages: state.languages.map((l) =>
+              l.id === tempId ? saved : l,
+            ),
+          }));
+          get().syncCompletion();
+        })
+        .catch((err) => {
+          console.error("Failed to add language:", err);
+        });
     },
 
     updateLanguage: (id, updatedFields) => {
@@ -591,6 +734,10 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         return { languages: updatedLangs };
       });
       get().syncCompletion();
+
+      profileService.updateLanguage(id, updatedFields).catch((err) => {
+        console.error("Failed to update language:", err);
+      });
     },
 
     deleteLanguage: (id) => {
@@ -598,21 +745,39 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         languages: state.languages.filter((l) => l.id !== id),
       }));
       get().syncCompletion();
+
+      profileService.deleteLanguage(id).catch((err) => {
+        console.error("Failed to delete language:", err);
+      });
     },
 
     // Social Links Actions
     addSocialLink: (newLink) => {
+      const tempId = `soc_${Date.now()}`;
       const link: SocialLink = {
         ...newLink,
-        id: `soc_${Date.now()}`,
+        id: tempId,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-      set((state) => {
-        const updatedLinks = [...state.socialLinks, link];
-        return { socialLinks: updatedLinks };
-      });
+      set((state) => ({
+        socialLinks: [...state.socialLinks, link],
+      }));
       get().syncCompletion();
+
+      profileService
+        .createSocialLink(newLink)
+        .then((saved) => {
+          set((state) => ({
+            socialLinks: state.socialLinks.map((sl) =>
+              sl.id === tempId ? saved : sl,
+            ),
+          }));
+          get().syncCompletion();
+        })
+        .catch((err) => {
+          console.error("Failed to add social link:", err);
+        });
     },
 
     updateSocialLink: (id, updatedFields) => {
@@ -625,6 +790,10 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         return { socialLinks: updatedLinks };
       });
       get().syncCompletion();
+
+      profileService.updateSocialLink(id, updatedFields).catch((err) => {
+        console.error("Failed to update social link:", err);
+      });
     },
 
     deleteSocialLink: (id) => {
@@ -632,6 +801,10 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         socialLinks: state.socialLinks.filter((l) => l.id !== id),
       }));
       get().syncCompletion();
+
+      profileService.deleteSocialLink(id).catch((err) => {
+        console.error("Failed to delete social link:", err);
+      });
     },
 
     // Preferences Actions
@@ -665,6 +838,10 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         return { preferences: updatedPref };
       });
       get().syncCompletion();
+
+      profileService.updatePreferences(updatedFields).catch((err) => {
+        console.error("Failed to update career preferences:", err);
+      });
     },
 
     // Avatar Actions
@@ -682,6 +859,12 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         };
       });
       get().syncCompletion();
+
+      if (url !== undefined) {
+        profileService.patchProfile({ avatarUrl: url }).catch((err) => {
+          console.error("Failed to update avatar:", err);
+        });
+      }
     },
 
     removeAvatar: () => {
@@ -698,6 +881,10 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
         };
       });
       get().syncCompletion();
+
+      profileService.patchProfile({ avatarUrl: null }).catch((err) => {
+        console.error("Failed to remove avatar:", err);
+      });
     },
   };
 });
