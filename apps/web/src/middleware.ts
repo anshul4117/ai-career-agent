@@ -37,7 +37,9 @@ function isGuestRoute(pathname: string) {
 export function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
   const sessionCookie = req.cookies.get("aca-session");
-  const isAuthenticated = !!sessionCookie;
+  const refreshCookie = req.cookies.get("aca-refresh-token");
+  // User is considered authenticated if session cookie or valid refresh-token cookie is present
+  const isAuthenticated = !!sessionCookie || !!refreshCookie;
   const profileCompletedCookie = req.cookies.get("aca-profile-completed");
   const isProfileCompleted = profileCompletedCookie?.value === "true";
 
