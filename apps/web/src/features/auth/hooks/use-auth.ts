@@ -51,10 +51,10 @@ export function useAuth() {
   }, [router, setUser, setIsLoading]);
 
   const register = useCallback(
-    async (email: string, password: string) => {
+    async (email: string, password: string, fullName?: string) => {
       setIsLoading(true);
       try {
-        await authService.register(email, password);
+        await authService.register(email, password, fullName);
         useOnboardingStore.getState().resetOnboarding();
         router.replace("/verify-email");
       } catch (err) {
@@ -105,7 +105,7 @@ export function useAuth() {
       setIsLoading(true);
       try {
         const authUser = await authService.verifyEmail(code);
-        // Wait 1.5 seconds to let the UI show the success state
+        // Brief pause so the UI shows the success state
         await new Promise((resolve) => setTimeout(resolve, 1500));
         setUser(authUser);
         router.replace("/complete-profile");
@@ -174,21 +174,23 @@ export function useAuth() {
     [router, setIsLoading],
   );
 
-  const restoreSession = useCallback(() => {
+  /**
+   * Restore session by calling GET /auth/me.
+   * The HttpOnly access token cookie is sent automatically by the browser.
+   */
+  const restoreSession = useCallback(async () => {
     try {
-      const currentUser = authService.getCurrentUser();
+      const currentUser = await authService.getMe();
       setUser(currentUser);
       if (!currentUser) {
         if (typeof document !== "undefined") {
-          document.cookie =
-            "aca-session=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT;max-age=0;SameSite=Lax";
+          document.cookie = "aca-session=;path=/;max-age=0;SameSite=Lax";
         }
       }
     } catch {
       setUser(null);
       if (typeof document !== "undefined") {
-        document.cookie =
-          "aca-session=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT;max-age=0;SameSite=Lax";
+        document.cookie = "aca-session=;path=/;max-age=0;SameSite=Lax";
       }
     } finally {
       setIsLoading(false);

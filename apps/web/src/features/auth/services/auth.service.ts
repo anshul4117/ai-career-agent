@@ -1,249 +1,109 @@
+/**
+ * Live authentication service — replaces the previous localStorage mock.
+ *
+ * All token management is handled by the NestJS backend via HttpOnly cookies.
+ * The frontend never reads or stores raw JWTs.
+ */
+
+import { apiClient, ApiError } from "@/lib/api-client";
 import type { AuthUser } from "../types/auth.types";
 
-interface DatabaseUser extends AuthUser {
-  password?: string;
+interface AuthResponse {
+  user: AuthUser;
 }
 
-const USERS_KEY = "aca-users";
-const SESSION_KEY = "aca-current-user";
-const COOKIE_NAME = "aca-session";
+// ── Cookie helpers (public cookies only — HttpOnly ones are invisible to JS) ──
 
-// Helper to simulate network latency
-const delay = (ms = 800) => new Promise((resolve) => setTimeout(resolve, ms));
-
-// Helper to set cookie for middleware route guarding
-function setSessionCookie(profileCompleted = false) {
+function setPublicSessionCookies(profileCompleted = false) {
   if (typeof document === "undefined") return;
-  // Expires in 7 days
-  const expires = new Date();
-  expires.setTime(expires.getTime() + 7 * 24 * 60 * 60 * 1000);
-  document.cookie = `${COOKIE_NAME}=active;path=/;expires=${expires.toUTCString()};SameSite=Lax`;
-  document.cookie = `aca-profile-completed=${profileCompleted ? "true" : "false"};path=/;expires=${expires.toUTCString()};SameSite=Lax`;
+  const maxAge = 7 * 24 * 60 * 60; // 7 days, mirrors refresh-token session lifetime
+  document.cookie = `aca-session=active;path=/;max-age=${maxAge};SameSite=Lax`;
+  document.cookie = `aca-profile-completed=${profileCompleted ? "true" : "false"};path=/;max-age=${maxAge};SameSite=Lax`;
 }
 
-// Helper to clear cookie
-function clearSessionCookie() {
+function clearPublicSessionCookies() {
   if (typeof document === "undefined") return;
-  document.cookie = `${COOKIE_NAME}=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT;max-age=0;SameSite=Lax`;
-  document.cookie = `aca-profile-completed=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT;max-age=0;SameSite=Lax`;
+  document.cookie = "aca-session=;path=/;max-age=0;SameSite=Lax";
+  document.cookie = "aca-profile-completed=;path=/;max-age=0;SameSite=Lax";
 }
 
-// Seed mock database if not already initialized
-function initializeMockDatabase(): DatabaseUser[] {
-  if (typeof window === "undefined") return [];
-
-  const stored = localStorage.getItem(USERS_KEY);
-  if (stored) {
-    try {
-      return JSON.parse(stored);
-    } catch {
-      // fallback if corrupted
-    }
-  }
-
-  const defaultUsers = [
-    {
-      id: "usr_1",
-      email: "user@example.com",
-      password: "password123",
-      firstName: "John",
-      lastName: "Doe",
-      name: "John Doe",
-      profileImage: "https://api.dicebear.com/7.x/bottts/svg?seed=John",
-      createdAt: new Date().toISOString(),
-      profileCompleted: true,
-      verified: true,
-    },
-    {
-      id: "usr_2",
-      email: "newuser@example.com",
-      password: "password123",
-      firstName: "Jane",
-      lastName: "Smith",
-      name: "Jane Smith",
-      profileImage: "https://api.dicebear.com/7.x/bottts/svg?seed=Jane",
-      createdAt: new Date().toISOString(),
-      profileCompleted: false,
-      verified: false,
-    },
-  ];
-
-  localStorage.setItem(USERS_KEY, JSON.stringify(defaultUsers));
-  return defaultUsers;
-}
+// ── Auth service ──────────────────────────────────────────────────────────────
 
 export const authService = {
-  /** Log in user */
+  /** Log in with email + password */
   async login(email: string, password: string): Promise<AuthUser> {
-    await delay();
-    const users = initializeMockDatabase();
-    const userMatch = users.find(
-      (u: DatabaseUser) => u.email.toLowerCase() === email.toLowerCase(),
-    );
-
-    if (!userMatch || userMatch.password !== password) {
-      throw new Error("Invalid email or password.");
-    }
-
-    // Exclude password from current session user object
-    const authUser: DatabaseUser = { ...userMatch };
-    delete authUser.password;
-    localStorage.setItem(SESSION_KEY, JSON.stringify(authUser));
-    setSessionCookie(!!userMatch.profileCompleted);
-    return authUser;
-  },
-
-  /** Log in via Google Simulation */
-  async loginWithGoogle(): Promise<AuthUser> {
-    await delay();
-    const users = initializeMockDatabase();
-    // Default to the first user or create one
-    let googleUser = users.find(
-      (u: DatabaseUser) => u.email === "googleuser@example.com",
-    );
-    if (!googleUser) {
-      googleUser = {
-        id: `usr_${Date.now()}`,
-        email: "googleuser@example.com",
-        firstName: "Google",
-        lastName: "User",
-        name: "Google User",
-        profileImage: "https://api.dicebear.com/7.x/bottts/svg?seed=Google",
-        createdAt: new Date().toISOString(),
-        profileCompleted: true,
-        verified: true,
-      };
-      users.push(googleUser);
-      localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    }
-
-    const authUser: DatabaseUser = { ...googleUser };
-    delete authUser.password;
-    localStorage.setItem(SESSION_KEY, JSON.stringify(authUser));
-    setSessionCookie(!!googleUser.profileCompleted);
-    return authUser;
-  },
-
-  /** Register user */
-  async register(email: string, password: string): Promise<AuthUser> {
-    await delay();
-    const users = initializeMockDatabase();
-    const exists = users.some(
-      (u: DatabaseUser) => u.email.toLowerCase() === email.toLowerCase(),
-    );
-
-    if (exists) {
-      throw new Error("User with this email already exists.");
-    }
-
-    const newUser = {
-      id: `usr_${Date.now()}`,
+    const data = await apiClient.post<AuthResponse>("/auth/login", {
       email,
       password,
-      firstName: "",
-      lastName: "",
-      name: "",
-      profileImage: `https://api.dicebear.com/7.x/bottts/svg?seed=${email}`,
-      createdAt: new Date().toISOString(),
-      profileCompleted: false,
-      verified: false,
-    };
-
-    users.push(newUser);
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-
-    const authUser: DatabaseUser = { ...newUser };
-    delete authUser.password;
-    // Do not set session yet, user must verify email first
-    return authUser;
+    });
+    setPublicSessionCookies(!!data.user.profileCompleted);
+    return data.user;
   },
 
-  /** Register via Google Simulation */
+  /** Google OAuth — not yet wired to a real provider; kept as stub */
+  async loginWithGoogle(): Promise<AuthUser> {
+    throw new ApiError(501, "Google login is not yet available.");
+  },
+
+  /** Register with email + password */
+  async register(
+    email: string,
+    password: string,
+    fullName?: string,
+  ): Promise<AuthUser> {
+    const data = await apiClient.post<AuthResponse>("/auth/register", {
+      email,
+      password,
+      fullName: fullName ?? "",
+    });
+    // After register we land on verify-email; don't set session cookie yet
+    return data.user;
+  },
+
+  /** Google OAuth registration — stub */
   async registerWithGoogle(): Promise<AuthUser> {
-    return this.loginWithGoogle();
+    throw new ApiError(501, "Google registration is not yet available.");
   },
 
-  /** Log out current user */
+  /** Log out — backend clears HttpOnly cookies */
   async logout(): Promise<void> {
-    await delay(300);
-    localStorage.removeItem(SESSION_KEY);
-    clearSessionCookie();
-  },
-
-  /** Verify email mock */
-  async verifyEmail(code: string): Promise<AuthUser> {
-    await delay();
-    if (!code || code.length < 4) {
-      throw new Error("Invalid verification code. Please enter a valid code.");
-    }
-
-    // In mock mode, find the last registered unverified user and verify them
-    const users = initializeMockDatabase();
-    const unverifiedUser = [...users]
-      .reverse()
-      .find((u: DatabaseUser) => !u.verified);
-
-    if (!unverifiedUser) {
-      // Fallback: if no unverified users, use Jane Smith or make user
-      throw new Error("No pending verification found. Try logging in.");
-    }
-
-    unverifiedUser.verified = true;
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-
-    const authUser: DatabaseUser = { ...unverifiedUser };
-    delete authUser.password;
-    localStorage.setItem(SESSION_KEY, JSON.stringify(authUser));
-    setSessionCookie(!!unverifiedUser.profileCompleted);
-    return authUser;
-  },
-
-  /** Simulate forgot password request */
-  async forgotPassword(email: string): Promise<void> {
-    await delay();
-    const users = initializeMockDatabase();
-    const exists = users.some(
-      (u: DatabaseUser) => u.email.toLowerCase() === email.toLowerCase(),
-    );
-
-    if (!exists) {
-      throw new Error("No user found with that email address.");
-    }
-  },
-
-  /** Simulate password reset */
-  async resetPassword(password: string, token: string): Promise<void> {
-    await delay();
-    if (!token) {
-      throw new Error("Invalid or expired password reset token.");
-    }
-
-    const users = initializeMockDatabase();
-    // For simplicity, reset the first user or default user
-    if (users.length > 0) {
-      users[0].password = password;
-      localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    }
-  },
-
-  /** Get current active session user */
-  getCurrentUser(): AuthUser | null {
-    if (typeof window === "undefined") return null;
-    const session = localStorage.getItem(SESSION_KEY);
-    if (!session) return null;
     try {
-      return JSON.parse(session);
+      await apiClient.post("/auth/logout");
     } catch {
-      return null;
+      // best-effort
     }
+    clearPublicSessionCookies();
   },
 
-  /** Check if currently authenticated */
-  isAuthenticated(): boolean {
-    return !!this.getCurrentUser();
+  /**
+   * Verify email — the backend doesn't have a verification endpoint yet,
+   * so we keep the mock behaviour and log the intent.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async verifyEmail(_code: string): Promise<AuthUser> {
+    // TODO: wire to POST /auth/verify-email when the endpoint is implemented
+    // For now simulate and mark the current session as verified
+    const current = await this.getMe();
+    if (!current) throw new Error("No active session found.");
+    setPublicSessionCookies(!!current.profileCompleted);
+    return current;
   },
 
-  /** Update profile data and mark completed */
+  /** Forgot password — stub until backend endpoint exists */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async forgotPassword(_email: string): Promise<void> {
+    // TODO: POST /auth/forgot-password
+    await new Promise((r) => setTimeout(r, 800));
+  },
+
+  /** Reset password — stub until backend endpoint exists */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async resetPassword(_password: string, _token: string): Promise<void> {
+    // TODO: POST /auth/reset-password
+    await new Promise((r) => setTimeout(r, 800));
+  },
+
+  /** Update profile data on the server */
   async completeProfile(data: {
     firstName: string;
     lastName: string;
@@ -251,35 +111,40 @@ export const authService = {
     preferredRole: string;
     preferredLocation: string;
   }): Promise<AuthUser> {
-    await delay();
-    const currentUser = this.getCurrentUser();
-    if (!currentUser) {
-      throw new Error("No active session found.");
-    }
-
-    const users = initializeMockDatabase();
-    const userIndex = users.findIndex(
-      (u: DatabaseUser) => u.id === currentUser.id,
-    );
-
-    const updatedUser = {
-      ...currentUser,
+    // TODO: PATCH /api/v1/users/me when the endpoint is ready
+    // For now update local session optimistically
+    const current = await this.getMe();
+    if (!current) throw new Error("No active session found.");
+    const updated: AuthUser = {
+      ...current,
       ...data,
       name: `${data.firstName} ${data.lastName}`.trim(),
       profileCompleted: true,
     };
+    setPublicSessionCookies(true);
+    return updated;
+  },
 
-    if (userIndex !== -1) {
-      users[userIndex] = {
-        ...users[userIndex],
-        ...updatedUser,
-      };
-      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  /** Fetch the currently authenticated user from the server */
+  async getMe(): Promise<AuthUser | null> {
+    try {
+      const data = await apiClient.get<AuthResponse>("/auth/me");
+      setPublicSessionCookies(!!data.user.profileCompleted);
+      return data.user;
+    } catch {
+      return null;
     }
+  },
 
-    localStorage.setItem(SESSION_KEY, JSON.stringify(updatedUser));
-    setSessionCookie(true);
-    return updatedUser;
+  /** Restore session by hitting /auth/me (replaces localStorage read) */
+  getCurrentUser(): null {
+    // Intentionally returns null — callers must use getMe() for server-side truth.
+    return null;
+  },
+
+  /** @deprecated use getMe() */
+  isAuthenticated(): boolean {
+    return false;
   },
 };
 

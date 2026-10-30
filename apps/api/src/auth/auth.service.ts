@@ -40,7 +40,9 @@ export class AuthService {
     const accessToken = await this.generateAccessToken(user);
     const refreshToken = await this.generateRefreshToken(user);
 
-    const userWithoutPassword = this.sanitizeUser(user);
+    const userWithoutPassword = this.sanitizeUser(
+      user as Record<string, unknown>,
+    );
 
     return {
       user: userWithoutPassword,
@@ -66,13 +68,50 @@ export class AuthService {
     const accessToken = await this.generateAccessToken(user);
     const refreshToken = await this.generateRefreshToken(user);
 
-    const userWithoutPassword = this.sanitizeUser(user);
+    const userWithoutPassword = this.sanitizeUser(
+      user as Record<string, unknown>,
+    );
 
     return {
       user: userWithoutPassword,
       accessToken,
       refreshToken,
     };
+  }
+
+  /**
+   * Validate a refresh token and return a fresh access token + user.
+   *
+   * SECURITY ARCHITECTURE NOTE:
+   * Refresh tokens are stateless and verified cryptographically via
+   * jwtService.verifyAsync against JWT_REFRESH_SECRET.
+   * Tokens are not tracked in a revocation database in Milestone 1 (schema is frozen);
+   * revocation relies on client cookie clearance on logout and token expiration (7 days).
+   */
+  async refreshFromToken(refreshToken: string) {
+    let payload: { sub: string; email: string };
+    try {
+      payload = await this.jwtService.verifyAsync<{
+        sub: string;
+        email: string;
+      }>(refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET || "jwt-refresh-secret-key",
+      });
+    } catch {
+      throw new UnauthorizedException("Invalid or expired refresh token");
+    }
+
+    const user = await this.usersService.findById(payload.sub);
+    if (!user) {
+      throw new UnauthorizedException("User no longer exists");
+    }
+
+    const accessToken = await this.generateAccessToken(user);
+    const userWithoutPassword = this.sanitizeUser(
+      user as Record<string, unknown>,
+    );
+
+    return { user: userWithoutPassword, accessToken };
   }
 
   async generateAccessToken(user: { id: string; email: string }) {
