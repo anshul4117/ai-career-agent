@@ -1,5 +1,9 @@
-/** Profile Module — Mock Service Layer */
+/**
+ * Profile Module — API Service Layer
+ * Connects to NestJS Backend via apiClient (/api/v1/profile)
+ */
 
+import { apiClient } from "@/lib/api-client";
 import type {
   Profile,
   PersonalInfo,
@@ -10,196 +14,267 @@ import type { Skill } from "../types/skill.types";
 import type { Education } from "../types/education.types";
 import type { Experience } from "../types/experience.types";
 import type { Project } from "../types/project.types";
-import { MOCK_PROFILE } from "../data/profile.mock";
-import { MOCK_SKILLS } from "../data/skills.mock";
-import { MOCK_EDUCATION } from "../data/education.mock";
-import { MOCK_EXPERIENCE } from "../data/experience.mock";
-import { MOCK_PROJECTS } from "../data/projects.mock";
+import type { Certification } from "../types/certification.types";
+import type { Language } from "../types/language.types";
+import type { SocialLink } from "../types/social-link.types";
+import type { CareerPreference } from "../types/career-preference.types";
 
-// Simulated delay for mock API calls
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+export interface FullProfileResponse {
+  profile: Profile;
+  skills: Skill[];
+  education: Education[];
+  experience: Experience[];
+  projects: Project[];
+  certifications: Certification[];
+  languages: Language[];
+  socialLinks: SocialLink[];
+  preferences: CareerPreference | null;
+}
 
 export const profileService = {
-  async getProfile(): Promise<Profile> {
-    await delay(200);
-    return { ...MOCK_PROFILE };
+  /**
+   * Fetch complete profile and all related sub-sections
+   */
+  async getProfile(): Promise<FullProfileResponse> {
+    return apiClient.get<FullProfileResponse>("/profile/me");
   },
 
-  async updatePersonalInfo(data: PersonalInfo): Promise<Profile> {
-    await delay(300);
-    return {
-      ...MOCK_PROFILE,
+  /**
+   * Update full profile with all sub-sections
+   */
+  async updateProfile(
+    payload: Record<string, unknown>,
+  ): Promise<FullProfileResponse> {
+    return apiClient.put<FullProfileResponse>("/profile/me", payload);
+  },
+
+  /**
+   * Partial profile update
+   */
+  async patchProfile(
+    payload: Record<string, unknown>,
+  ): Promise<FullProfileResponse> {
+    return apiClient.patch<FullProfileResponse>("/profile/me", payload);
+  },
+
+  /**
+   * Persist current store Profile object
+   */
+  async saveProfile(profile: Profile): Promise<FullProfileResponse> {
+    return apiClient.put<FullProfileResponse>("/profile/me", {
+      personal: profile.personal,
+      contact: profile.contact,
+      career: profile.career,
+      avatarUrl: profile.avatar.url,
+      availability: profile.availability,
+    });
+  },
+
+  async updatePersonalInfo(data: PersonalInfo): Promise<FullProfileResponse> {
+    return apiClient.patch<FullProfileResponse>("/profile/me", {
       personal: data,
-      updatedAt: new Date().toISOString(),
-    };
+    });
   },
 
-  async updateContactInfo(data: ContactInfo): Promise<Profile> {
-    await delay(300);
-    return {
-      ...MOCK_PROFILE,
+  async updateContactInfo(data: ContactInfo): Promise<FullProfileResponse> {
+    return apiClient.patch<FullProfileResponse>("/profile/me", {
       contact: data,
-      updatedAt: new Date().toISOString(),
-    };
+    });
   },
 
-  async updateCareerInfo(data: CareerInfo): Promise<Profile> {
-    await delay(300);
-    return {
-      ...MOCK_PROFILE,
+  async updateCareerInfo(data: CareerInfo): Promise<FullProfileResponse> {
+    return apiClient.patch<FullProfileResponse>("/profile/me", {
       career: data,
-      updatedAt: new Date().toISOString(),
-    };
+    });
   },
 
   async uploadAvatar(file: File): Promise<string> {
-    await delay(500);
-    return file ? "/placeholder-avatar.png" : "/placeholder-avatar.png";
+    // For file uploads, convert to base64 Data URL or pass through
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const url = reader.result as string;
+        try {
+          await apiClient.patch("/profile/me", { avatarUrl: url });
+          resolve(url);
+        } catch (err) {
+          reject(err);
+        }
+      };
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
   },
 
-  // Skills Mock APIs
+  // ── Skills APIs ───────────────────────────────────────────────
   async getSkills(): Promise<Skill[]> {
-    await delay(200);
-    return [...MOCK_SKILLS];
+    return apiClient.get<Skill[]>("/profile/skills");
   },
 
   async createSkill(
     skill: Omit<Skill, "id" | "createdAt" | "updatedAt">,
   ): Promise<Skill> {
-    await delay(300);
-    return {
-      ...skill,
-      id: `sk_${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    return apiClient.post<Skill>("/profile/skills", skill);
   },
 
   async updateSkill(
     id: string,
     skill: Partial<Omit<Skill, "id" | "createdAt" | "updatedAt">>,
   ): Promise<Skill> {
-    await delay(300);
-    const original = MOCK_SKILLS.find((s) => s.id === id) || MOCK_SKILLS[0];
-    return {
-      ...original,
-      ...skill,
-      updatedAt: new Date().toISOString(),
-    };
+    return apiClient.put<Skill>(`/profile/skills/${id}`, skill);
   },
 
   async deleteSkill(id: string): Promise<boolean> {
-    await delay(200);
-    return !!id;
+    await apiClient.delete(`/profile/skills/${id}`);
+    return true;
   },
 
-  // Education Mock APIs
+  // ── Education APIs ────────────────────────────────────────────
   async getEducation(): Promise<Education[]> {
-    await delay(200);
-    return [...MOCK_EDUCATION];
+    return apiClient.get<Education[]>("/profile/education");
   },
 
   async createEducation(
     edu: Omit<Education, "id" | "createdAt" | "updatedAt">,
   ): Promise<Education> {
-    await delay(300);
-    return {
-      ...edu,
-      id: `edu_${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    return apiClient.post<Education>("/profile/education", edu);
   },
 
   async updateEducation(
     id: string,
     edu: Partial<Omit<Education, "id" | "createdAt" | "updatedAt">>,
   ): Promise<Education> {
-    await delay(300);
-    const original =
-      MOCK_EDUCATION.find((e) => e.id === id) || MOCK_EDUCATION[0];
-    return {
-      ...original,
-      ...edu,
-      updatedAt: new Date().toISOString(),
-    };
+    return apiClient.put<Education>(`/profile/education/${id}`, edu);
   },
 
   async deleteEducation(id: string): Promise<boolean> {
-    await delay(200);
-    return !!id;
+    await apiClient.delete(`/profile/education/${id}`);
+    return true;
   },
 
-  // Experience Mock APIs
+  // ── Experience APIs ───────────────────────────────────────────
   async getExperience(): Promise<Experience[]> {
-    await delay(200);
-    return [...MOCK_EXPERIENCE];
+    return apiClient.get<Experience[]>("/profile/experience");
   },
 
   async createExperience(
     exp: Omit<Experience, "id" | "createdAt" | "updatedAt">,
   ): Promise<Experience> {
-    await delay(300);
-    return {
-      ...exp,
-      id: `exp_${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    return apiClient.post<Experience>("/profile/experience", exp);
   },
 
   async updateExperience(
     id: string,
     exp: Partial<Omit<Experience, "id" | "createdAt" | "updatedAt">>,
   ): Promise<Experience> {
-    await delay(300);
-    const original =
-      MOCK_EXPERIENCE.find((e) => e.id === id) || MOCK_EXPERIENCE[0];
-    return {
-      ...original,
-      ...exp,
-      updatedAt: new Date().toISOString(),
-    };
+    return apiClient.put<Experience>(`/profile/experience/${id}`, exp);
   },
 
   async deleteExperience(id: string): Promise<boolean> {
-    await delay(200);
-    return !!id;
+    await apiClient.delete(`/profile/experience/${id}`);
+    return true;
   },
 
-  // Projects Mock APIs
+  // ── Projects APIs ─────────────────────────────────────────────
   async getProjects(): Promise<Project[]> {
-    await delay(200);
-    return [...MOCK_PROJECTS];
+    return apiClient.get<Project[]>("/profile/projects");
   },
 
   async createProject(
     project: Omit<Project, "id" | "createdAt" | "updatedAt">,
   ): Promise<Project> {
-    await delay(300);
-    return {
-      ...project,
-      id: `proj_${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    return apiClient.post<Project>("/profile/projects", project);
   },
 
   async updateProject(
     id: string,
     project: Partial<Omit<Project, "id" | "createdAt" | "updatedAt">>,
   ): Promise<Project> {
-    await delay(300);
-    const original = MOCK_PROJECTS.find((p) => p.id === id) || MOCK_PROJECTS[0];
-    return {
-      ...original,
-      ...project,
-      updatedAt: new Date().toISOString(),
-    };
+    return apiClient.put<Project>(`/profile/projects/${id}`, project);
   },
 
   async deleteProject(id: string): Promise<boolean> {
-    await delay(200);
-    return !!id;
+    await apiClient.delete(`/profile/projects/${id}`);
+    return true;
+  },
+
+  // ── Certifications APIs ───────────────────────────────────────
+  async getCertifications(): Promise<Certification[]> {
+    return apiClient.get<Certification[]>("/profile/certifications");
+  },
+
+  async createCertification(
+    cert: Omit<Certification, "id" | "createdAt" | "updatedAt">,
+  ): Promise<Certification> {
+    return apiClient.post<Certification>("/profile/certifications", cert);
+  },
+
+  async updateCertification(
+    id: string,
+    cert: Partial<Omit<Certification, "id" | "createdAt" | "updatedAt">>,
+  ): Promise<Certification> {
+    return apiClient.put<Certification>(`/profile/certifications/${id}`, cert);
+  },
+
+  async deleteCertification(id: string): Promise<boolean> {
+    await apiClient.delete(`/profile/certifications/${id}`);
+    return true;
+  },
+
+  // ── Languages APIs ────────────────────────────────────────────
+  async getLanguages(): Promise<Language[]> {
+    return apiClient.get<Language[]>("/profile/languages");
+  },
+
+  async createLanguage(
+    lang: Omit<Language, "id" | "createdAt" | "updatedAt">,
+  ): Promise<Language> {
+    return apiClient.post<Language>("/profile/languages", lang);
+  },
+
+  async updateLanguage(
+    id: string,
+    lang: Partial<Omit<Language, "id" | "createdAt" | "updatedAt">>,
+  ): Promise<Language> {
+    return apiClient.put<Language>(`/profile/languages/${id}`, lang);
+  },
+
+  async deleteLanguage(id: string): Promise<boolean> {
+    await apiClient.delete(`/profile/languages/${id}`);
+    return true;
+  },
+
+  // ── Social Links APIs ─────────────────────────────────────────
+  async getSocialLinks(): Promise<SocialLink[]> {
+    return apiClient.get<SocialLink[]>("/profile/social-links");
+  },
+
+  async createSocialLink(
+    link: Omit<SocialLink, "id" | "createdAt" | "updatedAt">,
+  ): Promise<SocialLink> {
+    return apiClient.post<SocialLink>("/profile/social-links", link);
+  },
+
+  async updateSocialLink(
+    id: string,
+    link: Partial<Omit<SocialLink, "id" | "createdAt" | "updatedAt">>,
+  ): Promise<SocialLink> {
+    return apiClient.put<SocialLink>(`/profile/social-links/${id}`, link);
+  },
+
+  async deleteSocialLink(id: string): Promise<boolean> {
+    await apiClient.delete(`/profile/social-links/${id}`);
+    return true;
+  },
+
+  // ── Preferences APIs ──────────────────────────────────────────
+  async getPreferences(): Promise<CareerPreference | null> {
+    return apiClient.get<CareerPreference | null>("/profile/preferences");
+  },
+
+  async updatePreferences(
+    pref: Omit<CareerPreference, "id" | "createdAt" | "updatedAt">,
+  ): Promise<CareerPreference> {
+    return apiClient.put<CareerPreference>("/profile/preferences", pref);
   },
 };
