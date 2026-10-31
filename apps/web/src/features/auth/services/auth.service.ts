@@ -54,7 +54,7 @@ export const authService = {
     const data = await apiClient.post<AuthResponse>("/auth/register", {
       email,
       password,
-      fullName: fullName ?? "",
+      fullName: fullName?.trim() || email.split("@")[0],
     });
     // After register we land on verify-email; don't set session cookie yet
     return data.user;
