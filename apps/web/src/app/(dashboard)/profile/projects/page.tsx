@@ -53,7 +53,16 @@ export default function ProjectsPage() {
       confirmLabel: "Delete",
     });
     if (isConfirmed) {
-      deleteProject(id);
+      try {
+        await deleteProject(id);
+        toast.success("Project deleted successfully");
+      } catch (err: unknown) {
+        const msg =
+          err instanceof Error
+            ? err.message
+            : "Failed to delete project. Please try again.";
+        toast.error(msg);
+      }
     }
   };
 
@@ -64,9 +73,6 @@ export default function ProjectsPage() {
     );
 
     try {
-      // Simulate network request delay (800ms) as requested
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
       const mappedValues = {
         ...values,
         imageUrl: null,
@@ -76,9 +82,9 @@ export default function ProjectsPage() {
       };
 
       if (editingProj) {
-        updateProject(editingProj.id, mappedValues);
+        await updateProject(editingProj.id, mappedValues);
       } else {
-        addProject(mappedValues);
+        await addProject(mappedValues);
       }
 
       setIsDialogOpen(false);
@@ -88,8 +94,12 @@ export default function ProjectsPage() {
           : "Project details updated successfully!",
         { id: toastId },
       );
-    } catch {
-      toast.error("Failed to save project details. Please try again.", {
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to save project details. Please try again.";
+      toast.error(msg, {
         id: toastId,
       });
     }

@@ -13,6 +13,7 @@ import { SocialLinkForm } from "@/features/profile/components/social-link-form";
 import type { SocialLink } from "@/features/profile/types/social-link.types";
 import { SocialLinkFormValues } from "@/features/profile/schemas/social-link.schema";
 import { PageLoader } from "@/components/ui/brand-loader";
+import { toast } from "sonner";
 
 export default function SocialLinksPage() {
   const {
@@ -51,17 +52,47 @@ export default function SocialLinksPage() {
       confirmLabel: "Delete",
     });
     if (isConfirmed) {
-      deleteSocialLink(id);
+      try {
+        await deleteSocialLink(id);
+        toast.success("Social link deleted successfully");
+      } catch (err: unknown) {
+        const msg =
+          err instanceof Error
+            ? err.message
+            : "Failed to delete social link. Please try again.";
+        toast.error(msg);
+      }
     }
   };
 
-  const handleFormSubmit = (values: SocialLinkFormValues) => {
-    if (editingLink) {
-      updateSocialLink(editingLink.id, values);
-    } else {
-      addSocialLink(values);
+  const handleFormSubmit = async (values: SocialLinkFormValues) => {
+    const isAdding = !editingLink;
+    const toastId = toast.loading(
+      isAdding
+        ? "Adding social profile..."
+        : "Saving social profile changes...",
+    );
+
+    try {
+      if (editingLink) {
+        await updateSocialLink(editingLink.id, values);
+      } else {
+        await addSocialLink(values);
+      }
+      setIsDialogOpen(false);
+      toast.success(
+        isAdding
+          ? "Social link added successfully!"
+          : "Social link updated successfully!",
+        { id: toastId },
+      );
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to save social link. Please try again.";
+      toast.error(msg, { id: toastId });
     }
-    setIsDialogOpen(false);
   };
 
   if (isLoading) {

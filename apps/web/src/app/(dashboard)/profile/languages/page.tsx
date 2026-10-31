@@ -13,6 +13,7 @@ import { LanguageForm } from "@/features/profile/components/language-form";
 import type { Language } from "@/features/profile/types/language.types";
 import { LanguageFormValues } from "@/features/profile/schemas/language.schema";
 import { PageLoader } from "@/components/ui/brand-loader";
+import { toast } from "sonner";
 
 export default function LanguagesPage() {
   const {
@@ -51,17 +52,45 @@ export default function LanguagesPage() {
       confirmLabel: "Delete",
     });
     if (isConfirmed) {
-      deleteLanguage(id);
+      try {
+        await deleteLanguage(id);
+        toast.success("Language deleted successfully");
+      } catch (err: unknown) {
+        const msg =
+          err instanceof Error
+            ? err.message
+            : "Failed to delete language. Please try again.";
+        toast.error(msg);
+      }
     }
   };
 
-  const handleFormSubmit = (values: LanguageFormValues) => {
-    if (editingLang) {
-      updateLanguage(editingLang.id, values);
-    } else {
-      addLanguage(values);
+  const handleFormSubmit = async (values: LanguageFormValues) => {
+    const isAdding = !editingLang;
+    const toastId = toast.loading(
+      isAdding ? "Adding language..." : "Saving language changes...",
+    );
+
+    try {
+      if (editingLang) {
+        await updateLanguage(editingLang.id, values);
+      } else {
+        await addLanguage(values);
+      }
+      setIsDialogOpen(false);
+      toast.success(
+        isAdding
+          ? "Language added successfully!"
+          : "Language updated successfully!",
+        { id: toastId },
+      );
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to save language details. Please try again.";
+      toast.error(msg, { id: toastId });
     }
-    setIsDialogOpen(false);
   };
 
   if (isLoading) {
