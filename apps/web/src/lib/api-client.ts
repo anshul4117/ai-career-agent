@@ -3,8 +3,69 @@
  * Automatically attaches cookies on every request (credentials: "include").
  */
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
+/**
+ * Resolves the deployment base URL for server-side fetches.
+ * Uses Vercel system variables (VERCEL_PROJECT_PRODUCTION_URL, VERCEL_URL)
+ * or explicit INTERNAL_API_URL / NEXT_PUBLIC_APP_URL.
+ * Never uses localhost in production.
+ */
+function getServerDeploymentBase(): string {
+  // 1. Prefer internal Vercel service binding for server-to-server API calls if configured
+  if (process.env.INTERNAL_API_URL) {
+    return process.env.INTERNAL_API_URL.replace(/\/+$/, "");
+  }
+
+  // 2. In Vercel Preview deployments:
+  // Must check VERCEL_URL before VERCEL_PROJECT_PRODUCTION_URL so Preview SSR calls
+  // hit the Preview deployment's API and never accidentally call Production.
+  if (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+
+  // 3. In Vercel Production deployments:
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  }
+
+  // 4. Any other Vercel deployment (fallback to deployment URL):
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+
+  // 5. Explicit non-localhost NEXT_PUBLIC_APP_URL:
+  if (
+    process.env.NEXT_PUBLIC_APP_URL &&
+    !process.env.NEXT_PUBLIC_APP_URL.includes("localhost")
+  ) {
+    return process.env.NEXT_PUBLIC_APP_URL.replace(/\/+$/, "");
+  }
+
+  // 6. Local development fallback:
+  if (process.env.NODE_ENV !== "production") {
+    return "http://localhost:4000";
+  }
+
+  // 7. Production safety fallback (never localhost in production):
+  return "https://ai-career-agent-web.vercel.app";
+}
+
+/**
+ * Resolves the API base URL:
+ * - In the browser: ALWAYS returns "/api/v1" (relative path, ensuring same-origin cookies and routing).
+ * - On the server: returns deployment-aware absolute URL (e.g. https://.../api/v1).
+ * - In local dev server: returns http://localhost:4000/api/v1.
+ * - Never returns localhost in production.
+ */
+export function getApiBaseUrl(): string {
+  // 1. Browser context: always use relative path for same-origin requests
+  if (typeof window !== "undefined") {
+    return "/api/v1";
+  }
+
+  // 2. Server-side context: deployment-aware resolution
+  const serverBase = getServerDeploymentBase();
+  return `${serverBase}/api/v1`;
+}
 
 export class ApiError extends Error {
   constructor(
@@ -22,7 +83,8 @@ async function request<T>(
   init: RequestInit = {},
   isRetry = false,
 ): Promise<T> {
-  const url = `${API_BASE}${path}`;
+  const apiBase = getApiBaseUrl();
+  const url = `${apiBase}${path}`;
 
   const res = await fetch(url, {
     ...init,
@@ -45,7 +107,7 @@ async function request<T>(
       !path.startsWith("/auth/logout")
     ) {
       try {
-        const refreshRes = await fetch(`${API_BASE}/auth/refresh`, {
+        const refreshRes = await fetch(`${apiBase}/auth/refresh`, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -68,10 +130,10 @@ async function request<T>(
     } catch {
       data = null;
     }
-    const message =
-      (data as { message?: string })?.message ??
-      res.statusText ??
-      "Request failed";
+    const rawMessage = (data as { message?: string | string[] })?.message;
+    const message = Array.isArray(rawMessage)
+      ? rawMessage.join(", ")
+      : (rawMessage ?? res.statusText ?? "Request failed");
     throw new ApiError(res.status, message, data);
   }
 
