@@ -53,7 +53,7 @@ export default function EducationPage() {
       confirmLabel: "Delete",
     });
     if (isConfirmed) {
-      deleteEducation(id);
+      await deleteEducation(id);
     }
   };
 
@@ -64,9 +64,6 @@ export default function EducationPage() {
     );
 
     try {
-      // Simulate network request delay (800ms) as requested by Sprint 1.4
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
       const mappedValues = {
         ...values,
         description: values.description ?? null,
@@ -74,9 +71,9 @@ export default function EducationPage() {
       };
 
       if (editingEdu) {
-        updateEducation(editingEdu.id, mappedValues);
+        await updateEducation(editingEdu.id, mappedValues);
       } else {
-        addEducation(mappedValues);
+        await addEducation(mappedValues);
       }
 
       setIsDialogOpen(false);
@@ -86,8 +83,12 @@ export default function EducationPage() {
           : "Education details updated successfully!",
         { id: toastId },
       );
-    } catch {
-      toast.error("Failed to save education details. Please try again.", {
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to save education details. Please try again.";
+      toast.error(msg, {
         id: toastId,
       });
     }

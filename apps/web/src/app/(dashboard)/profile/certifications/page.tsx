@@ -13,6 +13,7 @@ import { CertificationForm } from "@/features/profile/components/certification-f
 import type { Certification } from "@/features/profile/types/certification.types";
 import { CertificationFormValues } from "@/features/profile/schemas/certification.schema";
 import { PageLoader } from "@/components/ui/brand-loader";
+import { toast } from "sonner";
 
 export default function CertificationsPage() {
   const {
@@ -51,23 +52,51 @@ export default function CertificationsPage() {
       confirmLabel: "Delete",
     });
     if (isConfirmed) {
-      deleteCertification(id);
+      try {
+        await deleteCertification(id);
+        toast.success("Certification deleted successfully");
+      } catch (err: unknown) {
+        const msg =
+          err instanceof Error
+            ? err.message
+            : "Failed to delete certification. Please try again.";
+        toast.error(msg);
+      }
     }
   };
 
-  const handleFormSubmit = (values: CertificationFormValues) => {
-    const mappedValues = {
-      ...values,
-      expiryDate: values.expiryDate ?? null,
-      credentialId: values.credentialId ?? null,
-      credentialUrl: values.credentialUrl ?? null,
-    };
-    if (editingCert) {
-      updateCertification(editingCert.id, mappedValues);
-    } else {
-      addCertification(mappedValues);
+  const handleFormSubmit = async (values: CertificationFormValues) => {
+    const isAdding = !editingCert;
+    const toastId = toast.loading(
+      isAdding ? "Adding certification..." : "Saving certification changes...",
+    );
+
+    try {
+      const mappedValues = {
+        ...values,
+        expiryDate: values.expiryDate ?? null,
+        credentialId: values.credentialId ?? null,
+        credentialUrl: values.credentialUrl ?? null,
+      };
+      if (editingCert) {
+        await updateCertification(editingCert.id, mappedValues);
+      } else {
+        await addCertification(mappedValues);
+      }
+      setIsDialogOpen(false);
+      toast.success(
+        isAdding
+          ? "Certification added successfully!"
+          : "Certification updated successfully!",
+        { id: toastId },
+      );
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to save certification details. Please try again.";
+      toast.error(msg, { id: toastId });
     }
-    setIsDialogOpen(false);
   };
 
   if (isLoading) {

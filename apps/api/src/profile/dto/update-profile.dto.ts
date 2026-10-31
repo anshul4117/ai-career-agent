@@ -34,6 +34,10 @@ export class PersonalInfoDto {
 export class ContactInfoDto {
   @IsOptional()
   @IsString()
+  email?: string;
+
+  @IsOptional()
+  @IsString()
   phone?: string;
 
   @IsOptional()

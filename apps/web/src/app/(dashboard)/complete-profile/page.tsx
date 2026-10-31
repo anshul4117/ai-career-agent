@@ -23,6 +23,7 @@ export default function CompleteProfileChecklist() {
     socialLinks,
     preferences,
     isLoading,
+    error,
     loadProfile,
   } = useProfileStore();
 
@@ -32,8 +33,79 @@ export default function CompleteProfileChecklist() {
     loadProfile();
   }, [loadProfile]);
 
-  if (isLoading || !profile) {
+  if (isLoading && !profile) {
     return <PageLoader label="Loading profile checklist..." />;
+  }
+
+  if (error && !profile) {
+    return (
+      <div className="space-y-6 w-full max-w-xl mx-auto py-12 px-4 text-center">
+        <BrutalCard className="bg-surface border-[3px] border-border p-8 brutal-shadow">
+          <div className="space-y-4">
+            <Heading
+              level="h3"
+              className="text-xl font-black uppercase tracking-tight text-error"
+            >
+              Unable to Load Checklist
+            </Heading>
+            <Text className="text-sm text-foreground-secondary font-medium">
+              {error}
+            </Text>
+            <div className="pt-2 flex justify-center gap-3">
+              <BrutalButton
+                onClick={() => loadProfile()}
+                className="h-10 px-6 uppercase font-bold text-xs"
+              >
+                Retry
+              </BrutalButton>
+              <BrutalButton
+                variant="secondary"
+                onClick={() => router.push("/login")}
+                className="h-10 px-6 uppercase font-bold text-xs"
+              >
+                Sign In
+              </BrutalButton>
+            </div>
+          </div>
+        </BrutalCard>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="space-y-6 w-full max-w-xl mx-auto py-12 px-4 text-center">
+        <BrutalCard className="bg-surface border-[3px] border-border p-8 brutal-shadow">
+          <div className="space-y-4">
+            <Heading
+              level="h3"
+              className="text-xl font-black uppercase tracking-tight"
+            >
+              No Profile Found
+            </Heading>
+            <Text className="text-sm text-foreground-secondary font-medium">
+              We couldn&apos;t retrieve your profile data. Please try refreshing
+              or signing in.
+            </Text>
+            <div className="pt-2 flex justify-center gap-3">
+              <BrutalButton
+                onClick={() => loadProfile()}
+                className="h-10 px-6 uppercase font-bold text-xs"
+              >
+                Retry
+              </BrutalButton>
+              <BrutalButton
+                variant="secondary"
+                onClick={() => router.push("/login")}
+                className="h-10 px-6 uppercase font-bold text-xs"
+              >
+                Sign In
+              </BrutalButton>
+            </div>
+          </div>
+        </BrutalCard>
+      </div>
+    );
   }
 
   const audit = calculateProfileCompletion(
@@ -45,7 +117,7 @@ export default function CompleteProfileChecklist() {
     certifications,
     languages,
     socialLinks,
-    preferences
+    preferences,
   );
 
   const isComplete = audit.percentage === 100;
@@ -64,19 +136,39 @@ export default function CompleteProfileChecklist() {
           <ArrowLeft className="h-4 w-4" />
           Back to Profile Overview
         </Link>
-        <Heading level="h2" className="text-2xl md:text-3xl font-black uppercase tracking-tight">
+        <Heading
+          level="h2"
+          className="text-2xl md:text-3xl font-black uppercase tracking-tight"
+        >
           Profile Onboarding Checklist
         </Heading>
         <Text className="text-foreground-secondary text-xs">
-          Complete all sections to achieve a 100% profile strength. Fully completed profiles are 5x more likely to match recruiters search queries.
+          Complete all sections to achieve a 100% profile strength. Fully
+          completed profiles are 5x more likely to match recruiters search
+          queries.
         </Text>
       </div>
 
       {/* Profile Completion Indicator */}
       <BrutalCard className="bg-surface border-[3px] border-border p-6 brutal-shadow flex flex-col md:flex-row gap-6 items-center">
-        <div className="relative shrink-0 flex items-center justify-center animate-pulse-subtle" aria-label={`Profile ${audit.percentage}% complete`}>
-          <svg width="120" height="120" viewBox="0 0 100 100" className="transform -rotate-90">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="var(--color-surface-secondary)" strokeWidth="8" />
+        <div
+          className="relative shrink-0 flex items-center justify-center animate-pulse-subtle"
+          aria-label={`Profile ${audit.percentage}% complete`}
+        >
+          <svg
+            width="120"
+            height="120"
+            viewBox="0 0 100 100"
+            className="transform -rotate-90"
+          >
+            <circle
+              cx="50"
+              cy="50"
+              r="40"
+              fill="none"
+              stroke="var(--color-surface-secondary)"
+              strokeWidth="8"
+            />
             <circle
               cx="50"
               cy="50"
@@ -85,12 +177,16 @@ export default function CompleteProfileChecklist() {
               stroke="var(--color-success)"
               strokeWidth="8"
               strokeDasharray={2 * Math.PI * 40}
-              strokeDashoffset={2 * Math.PI * 40 - (audit.percentage / 100) * 2 * Math.PI * 40}
+              strokeDashoffset={
+                2 * Math.PI * 40 - (audit.percentage / 100) * 2 * Math.PI * 40
+              }
               strokeLinecap="square"
               className="transition-all duration-700"
             />
           </svg>
-          <span className="absolute text-2xl font-black text-foreground">{audit.percentage}%</span>
+          <span className="absolute text-2xl font-black text-foreground">
+            {audit.percentage}%
+          </span>
         </div>
 
         <div className="flex-1 space-y-2 text-center md:text-left">
@@ -98,9 +194,13 @@ export default function CompleteProfileChecklist() {
             <Heading level="h3" className="text-lg font-black uppercase">
               Onboarding Progress
             </Heading>
-            <span className={`px-2 py-0.5 border-2 border-border text-[9px] font-black uppercase rounded-sm brutal-shadow-sm ${
-              isComplete ? "bg-success text-white" : "bg-warning text-foreground"
-            }`}>
+            <span
+              className={`px-2 py-0.5 border-2 border-border text-[9px] font-black uppercase rounded-sm brutal-shadow-sm ${
+                isComplete
+                  ? "bg-success text-white"
+                  : "bg-warning text-foreground"
+              }`}
+            >
               {isComplete ? "Profile Completed" : "In Progress"}
             </span>
           </div>
@@ -119,11 +219,16 @@ export default function CompleteProfileChecklist() {
             <Check className="h-8 w-8 stroke-[3]" />
           </div>
           <div className="space-y-1">
-            <Heading level="h3" className="text-xl font-black uppercase text-foreground">
+            <Heading
+              level="h3"
+              className="text-xl font-black uppercase text-foreground"
+            >
               Profile Complete!
             </Heading>
             <Text className="text-foreground-secondary text-sm max-w-md mx-auto">
-              {"Your credentials, work history, and settings have been locked in. You're ready to get matched by the AI Career Copilot."}
+              {
+                "Your credentials, work history, and settings have been locked in. You're ready to get matched by the AI Career Copilot."
+              }
             </Text>
           </div>
           <div className="pt-2">
@@ -139,7 +244,10 @@ export default function CompleteProfileChecklist() {
       ) : (
         <BrutalCard className="bg-surface border-[3px] border-border p-6 brutal-shadow w-full min-w-0">
           <div className="space-y-4">
-            <Heading level="h4" className="text-base font-black uppercase tracking-tight pb-2 border-b-2 border-border/10">
+            <Heading
+              level="h4"
+              className="text-base font-black uppercase tracking-tight pb-2 border-b-2 border-border/10"
+            >
               Profile Checklist
             </Heading>
 
@@ -152,15 +260,27 @@ export default function CompleteProfileChecklist() {
                     className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 first:pt-0 last:pb-0"
                   >
                     <div className="flex gap-3 items-start">
-                      <div className={`mt-0.5 shrink-0 flex items-center justify-center h-5 w-5 border-2 border-border rounded-sm brutal-shadow-sm ${
-                        completed ? "bg-success text-white" : "bg-error text-white"
-                      }`}>
-                        {completed ? <Check className="h-3 w-3 stroke-[3]" /> : <X className="h-3 w-3 stroke-[3]" />}
+                      <div
+                        className={`mt-0.5 shrink-0 flex items-center justify-center h-5 w-5 border-2 border-border rounded-sm brutal-shadow-sm ${
+                          completed
+                            ? "bg-success text-white"
+                            : "bg-error text-white"
+                        }`}
+                      >
+                        {completed ? (
+                          <Check className="h-3 w-3 stroke-[3]" />
+                        ) : (
+                          <X className="h-3 w-3 stroke-[3]" />
+                        )}
                       </div>
                       <div className="space-y-0.5">
-                        <span className={`text-xs font-black uppercase tracking-wider ${
-                          completed ? "text-success line-through" : "text-foreground"
-                        }`}>
+                        <span
+                          className={`text-xs font-black uppercase tracking-wider ${
+                            completed
+                              ? "text-success line-through"
+                              : "text-foreground"
+                          }`}
+                        >
                           {item.label}
                         </span>
                         <Text className="text-foreground-secondary text-[11px] leading-snug">
@@ -176,7 +296,11 @@ export default function CompleteProfileChecklist() {
                         </span>
                       ) : (
                         <BrutalButton
-                          onClick={() => router.push(`/profile/edit?from=onboarding#${item.id}`)}
+                          onClick={() =>
+                            router.push(
+                              `/profile/edit?from=onboarding#${item.id}`,
+                            )
+                          }
                           className="h-8 px-4 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1"
                         >
                           Complete Now

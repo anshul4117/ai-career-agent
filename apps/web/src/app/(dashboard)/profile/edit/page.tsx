@@ -384,32 +384,79 @@ export default function EditProfilePage() {
 
   // Handle CRUD Form submits
   const handlePersonalSubmit = async (values: PersonalInfoFormValues) => {
-    // Simulate API loading, success, and error feedback as requested by Sprint 1.2
     const toastId = toast.loading("Saving personal details...");
 
     try {
-      // Simulate network request delay
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
       const [city = "", country = ""] = values.location
         .split(",")
         .map((s) => s.trim());
 
-      setProfile({
-        ...profile,
+      await setProfile({
+        ...(profile || {
+          id: "",
+          userId: "",
+          avatar: { url: null, initials: "U" },
+          personal: {
+            firstName: "",
+            lastName: "",
+            dateOfBirth: null,
+            gender: null,
+            nationality: null,
+          },
+          contact: {
+            email: values.email,
+            phone: "",
+            city: "",
+            state: "",
+            country: "",
+          },
+          career: {
+            currentRole: "",
+            yearsOfExperience: 0,
+            preferredRole: "",
+            preferredLocation: "",
+            workPreference: "remote",
+            headline: "",
+            summary: "",
+          },
+          stats: {
+            skillsCount: 0,
+            experienceCount: 0,
+            projectsCount: 0,
+            educationCount: 0,
+          },
+          completion: { percentage: 0, sections: [] },
+          availability: "actively_looking",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }),
         personal: {
           firstName: values.firstName,
           lastName: values.lastName,
-          dateOfBirth: profile.personal.dateOfBirth,
-          gender: profile.personal.gender,
-          nationality: profile.personal.nationality,
+          dateOfBirth: profile?.personal?.dateOfBirth ?? null,
+          gender: profile?.personal?.gender ?? null,
+          nationality: profile?.personal?.nationality ?? null,
         },
         career: {
-          ...profile.career,
+          ...(profile?.career || {
+            currentRole: "",
+            yearsOfExperience: 0,
+            preferredRole: "",
+            preferredLocation: "",
+            workPreference: "remote",
+            headline: "",
+            summary: "",
+          }),
           headline: values.headline,
         },
         contact: {
-          ...profile.contact,
+          ...(profile?.contact || {
+            email: values.email,
+            phone: "",
+            city: "",
+            state: "",
+            country: "",
+          }),
           email: values.email,
           phone: values.phone,
           city,
@@ -418,6 +465,7 @@ export default function EditProfilePage() {
       });
 
       // Synchronize socialLinks
+      const socialLinkOps: Promise<unknown>[] = [];
       const upsertSocialLink = (
         platform: "github" | "linkedin" | "portfolio",
         url: string,
@@ -425,12 +473,12 @@ export default function EditProfilePage() {
         const existing = socialLinks.find((link) => link.platform === platform);
         if (existing) {
           if (url) {
-            updateSocialLink(existing.id, { url });
+            socialLinkOps.push(updateSocialLink(existing.id, { url }));
           } else {
-            deleteSocialLink(existing.id);
+            socialLinkOps.push(deleteSocialLink(existing.id));
           }
         } else if (url) {
-          addSocialLink({ platform, url });
+          socialLinkOps.push(addSocialLink({ platform, url }));
         }
       };
 
@@ -438,51 +486,73 @@ export default function EditProfilePage() {
       upsertSocialLink("linkedin", values.linkedinUrl || "");
       upsertSocialLink("portfolio", values.portfolioUrl || "");
 
+      if (socialLinkOps.length > 0) {
+        await Promise.all(socialLinkOps);
+      }
+
       setEditPersonal(false);
       toast.success("Personal details updated!", { id: toastId });
       handlePostSaveRedirect();
-    } catch {
-      toast.error("Failed to save personal details. Please try again.", {
-        id: toastId,
-      });
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to save personal details. Please try again.";
+      toast.error(msg, { id: toastId });
     }
   };
 
-  const handleContactSubmit = (values: ContactInfoFormValues) => {
-    setProfile({
-      ...profile,
-      contact: {
-        ...values,
-        state: values.state ?? "",
-      },
-    });
-    setEditContact(false);
-    toast.success("Contact details updated!");
-    handlePostSaveRedirect();
+  const handleContactSubmit = async (values: ContactInfoFormValues) => {
+    const toastId = toast.loading("Saving contact details...");
+    try {
+      if (profile) {
+        await setProfile({
+          ...profile,
+          contact: {
+            ...values,
+            state: values.state ?? "",
+          },
+        });
+      }
+      setEditContact(false);
+      toast.success("Contact details updated!", { id: toastId });
+      handlePostSaveRedirect();
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message : "Failed to save contact details.";
+      toast.error(msg, { id: toastId });
+    }
   };
 
-  const handlePreferencesSubmit = (values: CareerPreferenceFormValues) => {
-    updatePreferences(values);
-    setEditPreferences(false);
-    toast.success("Preferences updated!");
-    handlePostSaveRedirect();
+  const handlePreferencesSubmit = async (
+    values: CareerPreferenceFormValues,
+  ) => {
+    const toastId = toast.loading("Saving career preferences...");
+    try {
+      await updatePreferences(values);
+      setEditPreferences(false);
+      toast.success("Preferences updated!", { id: toastId });
+      handlePostSaveRedirect();
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to save career preferences.";
+      toast.error(msg, { id: toastId });
+    }
   };
 
   const handleSkillSubmit = async (values: SkillFormValues) => {
-    // Simulate API loading, success, and error feedback as requested by Sprint 1.3
     const isAdding = activeSkillEditor === "add";
     const toastId = toast.loading(
       isAdding ? "Adding skill tag..." : "Saving skill changes...",
     );
 
     try {
-      // Simulate network request delay
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
       if (isAdding) {
-        addSkill(values);
+        await addSkill(values);
       } else if (activeSkillEditor) {
-        updateSkill(activeSkillEditor, values);
+        await updateSkill(activeSkillEditor, values);
       }
 
       setActiveSkillEditor(null);
@@ -493,10 +563,12 @@ export default function EditProfilePage() {
         { id: toastId },
       );
       handlePostSaveRedirect();
-    } catch {
-      toast.error("Failed to save skill details. Please try again.", {
-        id: toastId,
-      });
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to save skill details. Please try again.";
+      toast.error(msg, { id: toastId });
     }
   };
 
@@ -507,18 +579,15 @@ export default function EditProfilePage() {
     );
 
     try {
-      // Simulate network request delay (800ms) as requested
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
       const mapped = {
         ...values,
         endDate: values.endDate ?? null,
       };
 
       if (isAdding) {
-        addExperience(mapped);
+        await addExperience(mapped);
       } else if (activeExpEditor) {
-        updateExperience(activeExpEditor, mapped);
+        await updateExperience(activeExpEditor, mapped);
       }
 
       setActiveExpEditor(null);
@@ -529,10 +598,12 @@ export default function EditProfilePage() {
         { id: toastId },
       );
       handlePostSaveRedirect();
-    } catch {
-      toast.error("Failed to save experience details. Please try again.", {
-        id: toastId,
-      });
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to save experience details. Please try again.";
+      toast.error(msg, { id: toastId });
     }
   };
 
@@ -543,9 +614,6 @@ export default function EditProfilePage() {
     );
 
     try {
-      // Simulate network request delay (800ms) as requested by Sprint 1.4
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
       const mapped = {
         ...values,
         description: values.description ?? null,
@@ -553,9 +621,9 @@ export default function EditProfilePage() {
       };
 
       if (isAdding) {
-        addEducation(mapped);
+        await addEducation(mapped);
       } else if (activeEduEditor) {
-        updateEducation(activeEduEditor, mapped);
+        await updateEducation(activeEduEditor, mapped);
       }
 
       setActiveEduEditor(null);
@@ -566,10 +634,12 @@ export default function EditProfilePage() {
         { id: toastId },
       );
       handlePostSaveRedirect();
-    } catch {
-      toast.error("Failed to save education details. Please try again.", {
-        id: toastId,
-      });
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to save education details. Please try again.";
+      toast.error(msg, { id: toastId });
     }
   };
 
@@ -580,9 +650,6 @@ export default function EditProfilePage() {
     );
 
     try {
-      // Simulate network request delay (800ms) as requested
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
       const mapped = {
         ...values,
         imageUrl: null,
@@ -592,9 +659,9 @@ export default function EditProfilePage() {
       };
 
       if (isAdding) {
-        addProject(mapped);
+        await addProject(mapped);
       } else if (activeProjEditor) {
-        updateProject(activeProjEditor, mapped);
+        await updateProject(activeProjEditor, mapped);
       }
 
       setActiveProjEditor(null);
@@ -605,50 +672,97 @@ export default function EditProfilePage() {
         { id: toastId },
       );
       handlePostSaveRedirect();
-    } catch {
-      toast.error("Failed to save project details. Please try again.", {
-        id: toastId,
-      });
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to save project details. Please try again.";
+      toast.error(msg, { id: toastId });
     }
   };
 
-  const handleCertSubmit = (values: CertificationFormValues) => {
-    const mapped = {
-      ...values,
-      expiryDate: values.expiryDate ?? null,
-      credentialId: values.credentialId ?? null,
-      credentialUrl: values.credentialUrl ?? null,
-    };
-    if (activeCertEditor === "add") {
-      addCertification(mapped);
-    } else if (activeCertEditor) {
-      updateCertification(activeCertEditor, mapped);
+  const handleCertSubmit = async (values: CertificationFormValues) => {
+    const isAdding = activeCertEditor === "add";
+    const toastId = toast.loading(
+      isAdding ? "Adding certification..." : "Saving certification changes...",
+    );
+    try {
+      const mapped = {
+        ...values,
+        expiryDate: values.expiryDate ?? null,
+        credentialId: values.credentialId ?? null,
+        credentialUrl: values.credentialUrl ?? null,
+      };
+      if (isAdding) {
+        await addCertification(mapped);
+      } else if (activeCertEditor) {
+        await updateCertification(activeCertEditor, mapped);
+      }
+      setActiveCertEditor(null);
+      toast.success(
+        isAdding
+          ? "Certification added successfully!"
+          : "Certification updated!",
+        { id: toastId },
+      );
+      handlePostSaveRedirect();
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to save certification details.";
+      toast.error(msg, { id: toastId });
     }
-    setActiveCertEditor(null);
-    toast.success("Certification updated!");
-    handlePostSaveRedirect();
   };
 
-  const handleLangSubmit = (values: LanguageFormValues) => {
-    if (activeLangEditor === "add") {
-      addLanguage(values);
-    } else if (activeLangEditor) {
-      updateLanguage(activeLangEditor, values);
+  const handleLangSubmit = async (values: LanguageFormValues) => {
+    const isAdding = activeLangEditor === "add";
+    const toastId = toast.loading(
+      isAdding ? "Adding language..." : "Saving language changes...",
+    );
+    try {
+      if (isAdding) {
+        await addLanguage(values);
+      } else if (activeLangEditor) {
+        await updateLanguage(activeLangEditor, values);
+      }
+      setActiveLangEditor(null);
+      toast.success(
+        isAdding ? "Language added successfully!" : "Language updated!",
+        { id: toastId },
+      );
+      handlePostSaveRedirect();
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message : "Failed to save language details.";
+      toast.error(msg, { id: toastId });
     }
-    setActiveLangEditor(null);
-    toast.success("Language updated!");
-    handlePostSaveRedirect();
   };
 
-  const handleSocSubmit = (values: SocialLinkFormValues) => {
-    if (activeSocEditor === "add") {
-      addSocialLink(values);
-    } else if (activeSocEditor) {
-      addSocialLink(values);
+  const handleSocSubmit = async (values: SocialLinkFormValues) => {
+    const isAdding = activeSocEditor === "add";
+    const toastId = toast.loading(
+      isAdding
+        ? "Adding social profile..."
+        : "Saving social profile changes...",
+    );
+    try {
+      if (isAdding) {
+        await addSocialLink(values);
+      } else if (activeSocEditor) {
+        await updateSocialLink(activeSocEditor, values);
+      }
+      setActiveSocEditor(null);
+      toast.success(
+        isAdding ? "Social profile added!" : "Social profile updated!",
+        { id: toastId },
+      );
+      handlePostSaveRedirect();
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message : "Failed to save social profile.";
+      toast.error(msg, { id: toastId });
     }
-    setActiveSocEditor(null);
-    toast.success("Social profile updated!");
-    handlePostSaveRedirect();
   };
 
   return (

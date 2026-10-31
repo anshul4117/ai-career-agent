@@ -19,9 +19,13 @@ export default function PreferencesPage() {
     loadProfile();
   }, [loadProfile]);
 
-  const handleFormSubmit = (values: CareerPreferenceFormValues) => {
-    updatePreferences(values);
-    router.push("/profile");
+  const handleFormSubmit = async (values: CareerPreferenceFormValues) => {
+    try {
+      await updatePreferences(values);
+      router.push("/profile");
+    } catch (err) {
+      console.error("Failed to update preferences:", err);
+    }
   };
 
   if (isLoading) {

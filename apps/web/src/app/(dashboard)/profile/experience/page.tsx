@@ -52,7 +52,7 @@ export default function ExperiencePage() {
       confirmLabel: "Delete",
     });
     if (isConfirmed) {
-      deleteExperience(id);
+      await deleteExperience(id);
     }
   };
 
@@ -63,18 +63,15 @@ export default function ExperiencePage() {
     );
 
     try {
-      // Simulate network request delay (800ms) as requested
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
       const mappedValues = {
         ...values,
         endDate: values.endDate ?? null,
       };
 
       if (editingExp) {
-        updateExperience(editingExp.id, mappedValues);
+        await updateExperience(editingExp.id, mappedValues);
       } else {
-        addExperience(mappedValues);
+        await addExperience(mappedValues);
       }
 
       setIsDialogOpen(false);
@@ -84,8 +81,12 @@ export default function ExperiencePage() {
           : "Work experience updated successfully!",
         { id: toastId },
       );
-    } catch {
-      toast.error("Failed to save experience details. Please try again.", {
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to save experience details. Please try again.";
+      toast.error(msg, {
         id: toastId,
       });
     }

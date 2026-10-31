@@ -46,7 +46,14 @@ export default function SkillsPage() {
 
     // Category filter
     if (selectedCategory !== "all") {
-      result = result.filter((s) => s.category === selectedCategory);
+      result = result.filter(
+        (s) =>
+          s.category.toLowerCase() === selectedCategory.toLowerCase() ||
+          (selectedCategory === "Frontend" && s.category === "Framework") ||
+          (selectedCategory === "Backend" && s.category === "Framework") ||
+          (selectedCategory === "Mobile" && s.category === "Framework") ||
+          (selectedCategory === "Testing" && s.category === "Tool"),
+      );
     }
 
     // Sort
@@ -78,17 +85,21 @@ export default function SkillsPage() {
       confirmLabel: "Delete",
     });
     if (isConfirmed) {
-      deleteSkill(id);
+      await deleteSkill(id);
     }
   };
 
-  const handleFormSubmit = (values: SkillFormValues) => {
-    if (editingSkill) {
-      updateSkill(editingSkill.id, values);
-    } else {
-      addSkill(values);
+  const handleFormSubmit = async (values: SkillFormValues) => {
+    try {
+      if (editingSkill) {
+        await updateSkill(editingSkill.id, values);
+      } else {
+        await addSkill(values);
+      }
+      setIsDialogOpen(false);
+    } catch (err) {
+      console.error("Failed to save skill:", err);
     }
-    setIsDialogOpen(false);
   };
 
   if (isLoading) {

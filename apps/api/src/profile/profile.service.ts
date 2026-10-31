@@ -64,13 +64,18 @@ function mapProficiencyLevel(level?: string): ProficiencyLevel {
 }
 
 function mapSkillCategory(category?: string): SkillCategory {
-  switch (category?.toUpperCase()) {
+  const normalized = (category || "").toUpperCase().replace(/[\s-]+/g, "_");
+  switch (normalized) {
     case "PROGRAMMING_LANGUAGE":
     case "LANGUAGE":
     case "LANGUAGES":
       return SkillCategory.PROGRAMMING_LANGUAGE;
     case "FRAMEWORK":
     case "FRAMEWORKS":
+    case "FRONTEND":
+    case "BACKEND":
+    case "MOBILE":
+    case "FULL_STACK":
       return SkillCategory.FRAMEWORK;
     case "DATABASE":
     case "DATABASES":
@@ -81,13 +86,35 @@ function mapSkillCategory(category?: string): SkillCategory {
       return SkillCategory.DEVOPS;
     case "TOOL":
     case "TOOLS":
+    case "TESTING":
       return SkillCategory.TOOL;
     case "AI_ML":
     case "AI":
-    case "MACHINE LEARNING":
+    case "MACHINE_LEARNING":
       return SkillCategory.AI_ML;
     default:
       return SkillCategory.OTHER;
+  }
+}
+
+function formatSkillCategory(category: SkillCategory): string {
+  switch (category) {
+    case SkillCategory.PROGRAMMING_LANGUAGE:
+      return "Programming Language";
+    case SkillCategory.FRAMEWORK:
+      return "Framework";
+    case SkillCategory.DATABASE:
+      return "Database";
+    case SkillCategory.CLOUD:
+      return "Cloud";
+    case SkillCategory.DEVOPS:
+      return "DevOps";
+    case SkillCategory.TOOL:
+      return "Tool";
+    case SkillCategory.AI_ML:
+      return "AI";
+    default:
+      return "Other";
   }
 }
 
@@ -191,7 +218,7 @@ export class ProfileService {
     const skills = (user.userSkills || []).map((us) => ({
       id: us.id,
       name: us.skill.name,
-      category: us.skill.category.toLowerCase(),
+      category: formatSkillCategory(us.skill.category),
       level: us.proficiencyLevel.toLowerCase(),
       yearsOfExperience: us.yearsOfExperience ?? 1,
       featured: us.featured,
@@ -248,7 +275,7 @@ export class ProfileService {
       category: proj.category || "Web",
       startDate: proj.startDate
         ? proj.startDate.toISOString().split("T")[0]
-        : new Date().toISOString().split("T")[0],
+        : "",
       endDate: proj.endDate ? proj.endDate.toISOString().split("T")[0] : null,
       currentlyWorking: proj.isOngoing,
       featured: proj.featured,
@@ -313,60 +340,60 @@ export class ProfileService {
         }
       : null;
 
-    // Calculate completion score
+    // Calculate completion score matching Onboarding Checklist (10 sections, total = 100%)
     let score = 0;
     const sections = [
-      { id: "personal", label: "Personal Info", completed: false },
-      { id: "contact", label: "Contact Details", completed: false },
-      { id: "headline", label: "Professional Headline", completed: false },
-      { id: "summary", label: "Career Summary", completed: false },
-      { id: "skills", label: "Skills (3+)", completed: false },
+      { id: "personal", label: "Personal Information", completed: false },
+      { id: "contact", label: "Contact Information", completed: false },
+      { id: "skills", label: "Skills & Expertise", completed: false },
+      { id: "education", label: "Education History", completed: false },
       { id: "experience", label: "Work Experience", completed: false },
-      { id: "education", label: "Education", completed: false },
-      { id: "projects", label: "Projects", completed: false },
+      { id: "projects", label: "Projects & Portfolio", completed: false },
+      { id: "certifications", label: "Certifications", completed: false },
+      { id: "languages", label: "Languages", completed: false },
       { id: "social", label: "Social Links", completed: false },
       { id: "preferences", label: "Career Preferences", completed: false },
     ];
 
-    if (user.fullName) {
+    if (actualFirst && actualLast) {
       sections[0].completed = true;
-      score += 10;
+      score += 15;
     }
     if (user.email && profile?.phone) {
       sections[1].completed = true;
       score += 10;
     }
-    if (profile?.headline) {
+    if (skills.length > 0) {
       sections[2].completed = true;
-      score += 10;
-    }
-    if (profile?.summary) {
-      sections[3].completed = true;
-      score += 10;
-    }
-    if (skills.length >= 3) {
-      sections[4].completed = true;
-      score += 15;
-    }
-    if (experience.length > 0) {
-      sections[5].completed = true;
       score += 15;
     }
     if (education.length > 0) {
-      sections[6].completed = true;
+      sections[3].completed = true;
       score += 10;
     }
+    if (experience.length > 0) {
+      sections[4].completed = true;
+      score += 15;
+    }
     if (projects.length > 0) {
-      sections[7].completed = true;
+      sections[5].completed = true;
       score += 10;
+    }
+    if (certifications.length > 0) {
+      sections[6].completed = true;
+      score += 5;
+    }
+    if (languages.length > 0) {
+      sections[7].completed = true;
+      score += 5;
     }
     if (socialLinks.length > 0) {
       sections[8].completed = true;
       score += 5;
     }
-    if (preferences) {
+    if (preferences?.preferredRole) {
       sections[9].completed = true;
-      score += 5;
+      score += 10;
     }
 
     const formattedProfile = {
@@ -574,7 +601,7 @@ export class ProfileService {
     return {
       id: userSkill.id,
       name: userSkill.skill.name,
-      category: userSkill.skill.category.toLowerCase(),
+      category: formatSkillCategory(userSkill.skill.category),
       level: userSkill.proficiencyLevel.toLowerCase(),
       yearsOfExperience: userSkill.yearsOfExperience ?? 1,
       featured: userSkill.featured,
@@ -601,6 +628,27 @@ export class ProfileService {
     }
 
     const updates: Prisma.UserSkillUncheckedUpdateInput = {};
+    if (dto.name !== undefined && dto.name.trim() !== "") {
+      const slug = slugify(dto.name);
+      const category = mapSkillCategory(dto.category);
+      const skill = await this.prisma.skill.upsert({
+        where: { name: dto.name.trim() },
+        create: {
+          name: dto.name.trim(),
+          skillSlug: slug || `skill-${Date.now()}`,
+          category,
+        },
+        update: dto.category ? { category } : {},
+      });
+      updates.skillId = skill.id;
+    } else if (dto.category !== undefined && existing.skillId) {
+      const category = mapSkillCategory(dto.category);
+      await this.prisma.skill.update({
+        where: { id: existing.skillId },
+        data: { category },
+      });
+    }
+
     if (dto.level !== undefined)
       updates.proficiencyLevel = mapProficiencyLevel(dto.level);
     if (dto.yearsOfExperience !== undefined)
@@ -616,7 +664,7 @@ export class ProfileService {
     return {
       id: updated.id,
       name: updated.skill.name,
-      category: updated.skill.category.toLowerCase(),
+      category: formatSkillCategory(updated.skill.category),
       level: updated.proficiencyLevel.toLowerCase(),
       yearsOfExperience: updated.yearsOfExperience ?? 1,
       featured: updated.featured,
