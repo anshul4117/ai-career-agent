@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "jobs" ADD COLUMN IF NOT EXISTS "applyLinkStatus" TEXT DEFAULT 'direct_ats',
+ADD COLUMN IF NOT EXISTS "hiddenAt" TIMESTAMP(3),
+ADD COLUMN IF NOT EXISTS "hiddenReason" TEXT;
