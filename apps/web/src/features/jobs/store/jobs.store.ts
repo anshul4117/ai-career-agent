@@ -5,6 +5,8 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import type { Job, JobFilters } from "../types/jobs.types";
 import { jobService } from "../services/job.service";
 import { useCompanyStore } from "./company.store";
+import { useBookmarkStore } from "./bookmark.store";
+import { useApplicationStore } from "@/features/applications/store/application.store";
 
 interface JobsState {
   jobs: Job[];
@@ -30,6 +32,8 @@ interface JobsState {
   setSorting: (sort: "recent" | "match" | "salary_desc" | "salary_asc") => void;
   setPage: (p: number) => void;
   toggleSaveJob: (id: string) => void;
+  setJobSaved: (id: string, isSaved: boolean) => void;
+  setJobApplied: (id: string, isApplied: boolean) => void;
   addRecentSearch: (query: string) => void;
   saveSearch: (name: string) => void;
   removeSavedSearch: (id: string) => void;
@@ -89,7 +93,26 @@ export const useJobsStore = create<JobsState>()(
             page,
             limit,
           });
-          set({ jobs, totalCount: total, loading: false });
+
+          // Sync saved & applied status with bookmark and application stores
+          const savedIds = new Set(
+            useBookmarkStore.getState().savedJobs.map((s) => s.id),
+          );
+          const appliedIds = new Set(
+            useApplicationStore
+              .getState()
+              .applications.filter((a) => a.status === "APPLIED")
+              .map((a) => a.jobId)
+              .filter(Boolean),
+          );
+
+          const syncedJobs = jobs.map((j) => ({
+            ...j,
+            isSaved: savedIds.has(j.id) || j.isSaved,
+            isApplied: appliedIds.has(j.id) || j.isApplied,
+          }));
+
+          set({ jobs: syncedJobs, totalCount: total, loading: false });
         } catch (err) {
           set({
             error: (err as Error).message || "Failed to fetch jobs",
@@ -103,12 +126,26 @@ export const useJobsStore = create<JobsState>()(
         try {
           const job = await jobService.getJobById(id);
           if (job) {
+            const isSaved = useBookmarkStore
+              .getState()
+              .savedJobs.some((s) => s.id === id);
+            const isApplied = useApplicationStore
+              .getState()
+              .applications.some(
+                (a) => a.jobId === id && a.status === "APPLIED",
+              );
+            const enrichedJob: Job = {
+              ...job,
+              isSaved: isSaved || job.isSaved,
+              isApplied: isApplied || job.isApplied,
+            };
+
             const currentRecent = get().recentlyViewed;
             const filteredRecent = currentRecent.filter((j) => j.id !== id);
-            const updatedRecent = [job, ...filteredRecent].slice(0, 10);
+            const updatedRecent = [enrichedJob, ...filteredRecent].slice(0, 10);
 
             set({
-              selectedJob: job,
+              selectedJob: enrichedJob,
               recentlyViewed: updatedRecent,
               loading: false,
             });
@@ -144,20 +181,43 @@ export const useJobsStore = create<JobsState>()(
       },
 
       toggleSaveJob: (id) => {
-        const updatedJobs = get().jobs.map((j) => {
-          if (j.id === id) {
-            return { ...j, isSaved: !j.isSaved };
-          }
-          return j;
-        });
+        const targetJob =
+          get().jobs.find((j) => j.id === id) ||
+          (get().selectedJob?.id === id ? get().selectedJob : null);
 
-        const selected = get().selectedJob;
-        const updatedSelected =
-          selected && selected.id === id
-            ? { ...selected, isSaved: !selected.isSaved }
-            : selected;
+        if (targetJob) {
+          useBookmarkStore.getState().toggleSaveJob(targetJob);
+        } else {
+          set((state) => ({
+            jobs: state.jobs.map((j) =>
+              j.id === id ? { ...j, isSaved: !j.isSaved } : j,
+            ),
+            selectedJob:
+              state.selectedJob?.id === id
+                ? { ...state.selectedJob, isSaved: !state.selectedJob.isSaved }
+                : state.selectedJob,
+          }));
+        }
+      },
 
-        set({ jobs: updatedJobs, selectedJob: updatedSelected });
+      setJobSaved: (id, isSaved) => {
+        set((state) => ({
+          jobs: state.jobs.map((j) => (j.id === id ? { ...j, isSaved } : j)),
+          selectedJob:
+            state.selectedJob?.id === id
+              ? { ...state.selectedJob, isSaved }
+              : state.selectedJob,
+        }));
+      },
+
+      setJobApplied: (id, isApplied) => {
+        set((state) => ({
+          jobs: state.jobs.map((j) => (j.id === id ? { ...j, isApplied } : j)),
+          selectedJob:
+            state.selectedJob?.id === id
+              ? { ...state.selectedJob, isApplied }
+              : state.selectedJob,
+        }));
       },
 
       addRecentSearch: (query) => {

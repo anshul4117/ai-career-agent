@@ -2,9 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import * as Dialog from "@radix-ui/react-dialog";
 import type { Job, Company } from "../types/jobs.types";
 import { useJobsStore } from "../store/jobs.store";
 import { useBookmarkStore } from "../store/bookmark.store";
+import { useApplicationStore } from "@/features/applications/store/application.store";
+import { apiClient } from "@/lib/api-client";
 import { jobService } from "../services/job.service";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { BrutalButton } from "@/components/ui/brutal-button";
@@ -16,7 +19,6 @@ import { toast } from "sonner";
 import { useProfileStore } from "@/features/profile";
 import {
   Bookmark,
-  ExternalLink,
   Share2,
   MapPin,
   Clock,
@@ -26,9 +28,13 @@ import {
   HelpCircle,
   RefreshCw,
   Sparkles,
+  Check,
+  Send,
+  X,
+  ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const container = {
   hidden: { opacity: 0 },
@@ -54,6 +60,8 @@ export function JobDetailsPane({ job }: JobDetailsPaneProps) {
     useBookmarkStore();
   const [similarJobs, setSimilarJobs] = useState<Job[]>([]);
   const [companyDetails, setCompanyDetails] = useState<Company | null>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
 
   const {
     reports,
@@ -167,11 +175,72 @@ export function JobDetailsPane({ job }: JobDetailsPaneProps) {
     }
   };
 
-  const handleApply = () => {
-    toast.info(`Redirecting to ${job.companyInfo.name} application site...`);
-    setTimeout(() => {
-      window.open(job.externalApplyUrl, "_blank");
-    }, 1000);
+  const handleApply = async () => {
+    if (job.isApplied || isApplying) return;
+    setIsApplying(true);
+
+    try {
+      // 1. Sync applied state to stores
+      useJobsStore.getState().setJobApplied(job.id, true);
+      useBookmarkStore.getState().setJobApplied(job.id, true);
+
+      // 2. Add or update application in applications pipeline
+      const appStore = useApplicationStore.getState();
+      const existing = appStore.applications.find(
+        (a) =>
+          a.jobId === job.id ||
+          (a.jobTitle === job.title && a.company === job.companyInfo.name),
+      );
+
+      if (existing) {
+        await appStore.updateStatus(existing.id, "APPLIED");
+      } else {
+        await appStore.addApplication({
+          jobId: job.id,
+          jobTitle: job.title,
+          company: job.companyInfo.name,
+          matchScore: job.trustScore,
+          jobQuality: job.freshnessScore,
+          status: "APPLIED",
+          appliedAt: new Date().toISOString(),
+          source: job.source ? job.source.toUpperCase() : "Direct Portal",
+          recruiterName: "Hiring Team",
+          recruiterEmail: "",
+          phone: "",
+          salaryNotes: formatSalary(job.salaryMin, job.salaryMax, job.currency),
+          salaryDiscussion: "",
+          interviewNotes: "",
+          followUpNotes: "",
+          personalNotes: "Applied via Career Agent feed.",
+          interviewDate: "",
+          interviewTime: "",
+          interviewType: "N/A",
+          interviewRound: "Initial Review",
+          interviewStatus: "Pending",
+          interviewerName: "",
+          meetingLink: "",
+          offerDeadline: "",
+          isRemote: job.remoteType === "remote",
+          location: job.location,
+          salaryRange: job.salaryMin ? `${job.salaryMin}` : "",
+        });
+      }
+
+      // 3. Track in backend API (best effort)
+      try {
+        await apiClient.post(`/jobs/${job.id}/apply`, {});
+      } catch (err) {
+        console.warn("Backend apply sync failed:", err);
+      }
+
+      // 4. Pop up success modal & toast notification (NO REDIRECT!)
+      toast.success(
+        `Applied to ${job.companyInfo.name}! Added to your Applications tab.`,
+      );
+      setShowSuccessModal(true);
+    } finally {
+      setIsApplying(false);
+    }
   };
 
   return (
@@ -234,9 +303,26 @@ export function JobDetailsPane({ job }: JobDetailsPaneProps) {
 
           <BrutalButton
             onClick={handleApply}
-            className="flex-[2] md:flex-none h-10 px-6 text-xs font-black uppercase tracking-wide brutal-shadow-xs flex items-center justify-center gap-1.5"
+            disabled={job.isApplied || isApplying}
+            variant={job.isApplied ? "secondary" : "default"}
+            className={cn(
+              "flex-[2] md:flex-none h-10 px-6 text-xs font-black uppercase tracking-wide brutal-shadow-xs flex items-center justify-center gap-1.5 transition-all",
+              job.isApplied
+                ? "bg-green-600 dark:bg-green-600 text-white border-green-700 hover:bg-green-600 cursor-default opacity-100 shadow-none"
+                : "",
+            )}
           >
-            Apply Now <ExternalLink className="h-4 w-4 stroke-[2.5px]" />
+            {job.isApplied ? (
+              <>
+                <Check className="h-4 w-4 stroke-[3px]" /> Applied
+              </>
+            ) : isApplying ? (
+              <>Submitting...</>
+            ) : (
+              <>
+                <Send className="h-4 w-4 stroke-[2.5px]" /> Apply Now
+              </>
+            )}
           </BrutalButton>
         </div>
       </BrutalCard>
@@ -1183,11 +1269,135 @@ export function JobDetailsPane({ job }: JobDetailsPaneProps) {
 
         <Button
           onClick={handleApply}
-          className="flex-1 h-11 text-xs font-black uppercase tracking-wide border-[3px] border-border brutal-shadow-xs bg-primary text-primary-foreground hover:bg-primary/95 flex items-center justify-center gap-1.5 rounded-sm"
+          disabled={job.isApplied || isApplying}
+          className={cn(
+            "flex-1 h-11 text-xs font-black uppercase tracking-wide border-[3px] border-border brutal-shadow-xs flex items-center justify-center gap-1.5 rounded-sm transition-all",
+            job.isApplied
+              ? "bg-green-600 dark:bg-green-600 text-white border-green-700 hover:bg-green-600 cursor-default opacity-100"
+              : "bg-primary text-primary-foreground hover:bg-primary/95",
+          )}
         >
-          Apply Now <ExternalLink className="h-4 w-4 stroke-[2.5px]" />
+          {job.isApplied ? (
+            <>
+              <Check className="h-4 w-4 stroke-[3px]" /> Applied
+            </>
+          ) : isApplying ? (
+            <>Submitting...</>
+          ) : (
+            <>
+              <Send className="h-4 w-4 stroke-[2.5px]" /> Apply Now
+            </>
+          )}
         </Button>
       </div>
+
+      {/* Application Success Modal */}
+      <Dialog.Root open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+        <AnimatePresence>
+          {showSuccessModal && (
+            <Dialog.Portal forceMount>
+              <Dialog.Overlay asChild>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
+                />
+              </Dialog.Overlay>
+              <Dialog.Content asChild>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 15 }}
+                  transition={{ type: "spring", bounce: 0.25, duration: 0.35 }}
+                  className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 p-4 sm:p-0 focus:outline-none"
+                >
+                  <div className="bg-surface border-4 border-border brutal-shadow-lg p-6 sm:p-7 space-y-5 text-center relative rounded-sm">
+                    {/* Close button */}
+                    <Dialog.Close asChild>
+                      <button
+                        className="absolute right-3.5 top-3.5 p-1.5 hover:bg-surface-secondary border border-transparent hover:border-border rounded-sm transition-colors text-foreground"
+                        aria-label="Close"
+                      >
+                        <X className="h-4 w-4 stroke-[2.5px]" />
+                      </button>
+                    </Dialog.Close>
+
+                    {/* Celebration Icon */}
+                    <div className="mx-auto w-14 h-14 bg-green-500 text-white border-2 border-border brutal-shadow-sm flex items-center justify-center rounded-sm">
+                      <Check className="h-8 w-8 stroke-[3.5px]" />
+                    </div>
+
+                    {/* Title & Info */}
+                    <div className="space-y-1.5">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-green-600 bg-green-50 dark:bg-green-500/10 px-2.5 py-0.5 rounded-sm border border-green-300 dark:border-green-500/30">
+                        Success • Applied
+                      </span>
+                      <Dialog.Title className="text-xl font-black uppercase text-foreground tracking-tight pt-1">
+                        Application Submitted!
+                      </Dialog.Title>
+                      <Dialog.Description className="text-xs font-semibold text-foreground-secondary leading-relaxed max-w-xs mx-auto">
+                        Your application for{" "}
+                        <span className="font-black text-foreground">
+                          {job.title}
+                        </span>{" "}
+                        at{" "}
+                        <span className="font-black text-primary">
+                          {job.companyInfo.name}
+                        </span>{" "}
+                        has been recorded in your pipeline.
+                      </Dialog.Description>
+                    </div>
+
+                    {/* Summary Card */}
+                    <div className="bg-surface-secondary/60 border-2 border-border p-3.5 rounded-sm text-left space-y-2 text-xs">
+                      <div className="flex justify-between items-center text-[10px] font-bold text-foreground-muted uppercase">
+                        <span>Pipeline Status</span>
+                        <span className="font-black text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-sm border border-green-400">
+                          Applied
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] font-bold text-foreground-muted uppercase">
+                        <span>Location</span>
+                        <span className="font-extrabold text-foreground">
+                          {job.location} ({job.remoteType})
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] font-bold text-foreground-muted uppercase">
+                        <span>Match Rating</span>
+                        <span className="font-black text-primary">
+                          {job.trustScore}% Match
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
+                      <Button
+                        variant="ghost"
+                        onClick={() => setShowSuccessModal(false)}
+                        className="flex-1 h-10 border-2 border-border brutal-shadow-xs hover:bg-surface-secondary font-black uppercase text-xs rounded-sm"
+                      >
+                        Keep Browsing
+                      </Button>
+                      <BrutalButton
+                        onClick={() => {
+                          setShowSuccessModal(false);
+                          router.push("/applications");
+                        }}
+                        className="flex-1 h-10 font-black uppercase text-xs brutal-shadow-xs flex items-center justify-center gap-1.5"
+                      >
+                        Applications Tab <ChevronRight className="h-4 w-4" />
+                      </BrutalButton>
+                    </div>
+                  </div>
+                </motion.div>
+              </Dialog.Content>
+            </Dialog.Portal>
+          )}
+        </AnimatePresence>
+      </Dialog.Root>
     </div>
   );
 }

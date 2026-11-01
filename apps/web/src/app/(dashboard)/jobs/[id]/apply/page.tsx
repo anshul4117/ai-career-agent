@@ -9,6 +9,9 @@ import { BrutalButton } from "@/components/ui/brutal-button";
 import { Heading, Text } from "@/components/ui/typography";
 import { ErrorMessage } from "@/features/auth/components/error-message";
 import { jobService } from "@/features/jobs/services/job.service";
+import { useJobsStore } from "@/features/jobs/store/jobs.store";
+import { useBookmarkStore } from "@/features/jobs/store/bookmark.store";
+import { useApplicationStore } from "@/features/applications/store/application.store";
 import type { Job } from "@/features/jobs/types/jobs.types";
 import { mockResumes } from "@/features/resume/mock/resumes";
 import { FileText, Briefcase, Sparkles, Check } from "lucide-react";
@@ -27,7 +30,9 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
 
   // States
   const [selectedResumeId, setSelectedResumeId] = useState<string>("");
-  const [coverLetterOption, setCoverLetterOption] = useState<"ai-generated" | "none">("ai-generated");
+  const [coverLetterOption, setCoverLetterOption] = useState<
+    "ai-generated" | "none"
+  >("ai-generated");
   const [coverLetterText, setCoverLetterText] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -54,7 +59,7 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
     const resume = mockResumes.find((r) => r.id === resumeId);
     if (resume && job) {
       setCoverLetterText(
-        `Dear Hiring Team at ${job.companyInfo.name},\n\nI am writing to express my strong interest in the ${job.title} position at your company. With my background in technology and experience working with files like ${resume.fileName}, I am confident in my ability to contribute effectively from day one.\n\nYour job description highlights requirements in ${job.skillsRequired.join(", ")}, which align perfectly with my technical toolkit. I look forward to discussing how my experience can support your goals.\n\nSincerely,\nCandidate User`
+        `Dear Hiring Team at ${job.companyInfo.name},\n\nI am writing to express my strong interest in the ${job.title} position at your company. With my background in technology and experience working with files like ${resume.fileName}, I am confident in my ability to contribute effectively from day one.\n\nYour job description highlights requirements in ${job.skillsRequired.join(", ")}, which align perfectly with my technical toolkit. I look forward to discussing how my experience can support your goals.\n\nSincerely,\nCandidate User`,
       );
     }
   };
@@ -74,8 +79,51 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
     }
 
     setIsSubmitting(true);
-    // Simulate submission delay
-    setTimeout(() => {
+    // Simulate submission delay and sync with stores
+    setTimeout(async () => {
+      if (job) {
+        useJobsStore.getState().setJobApplied(job.id, true);
+        useBookmarkStore.getState().setJobApplied(job.id, true);
+        const appStore = useApplicationStore.getState();
+        const existing = appStore.applications.find(
+          (a) =>
+            a.jobId === job.id ||
+            (a.jobTitle === job.title && a.company === job.companyInfo.name),
+        );
+        if (existing) {
+          await appStore.updateStatus(existing.id, "APPLIED");
+        } else {
+          await appStore.addApplication({
+            jobId: job.id,
+            jobTitle: job.title,
+            company: job.companyInfo.name,
+            matchScore: job.trustScore,
+            jobQuality: job.freshnessScore,
+            status: "APPLIED",
+            appliedAt: new Date().toISOString(),
+            source: job.source ? job.source.toUpperCase() : "Direct Portal",
+            recruiterName: "Hiring Team",
+            recruiterEmail: "",
+            phone: "",
+            salaryNotes: "",
+            salaryDiscussion: "",
+            interviewNotes: "",
+            followUpNotes: "",
+            personalNotes: notes || "Direct application submitted.",
+            interviewDate: "",
+            interviewTime: "",
+            interviewType: "N/A",
+            interviewRound: "Initial Review",
+            interviewStatus: "Pending",
+            interviewerName: "",
+            meetingLink: "",
+            offerDeadline: "",
+            isRemote: job.remoteType === "remote",
+            location: job.location,
+            salaryRange: job.salaryMin ? `${job.salaryMin}` : "",
+          });
+        }
+      }
       setIsSubmitting(false);
       setShowSuccessModal(true);
     }, 1200);
@@ -88,8 +136,13 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
   if (!job) {
     return (
       <div className="p-6 text-center max-w-lg mx-auto space-y-4">
-        <Heading level="h2" className="text-3xl font-bold uppercase">Job Not Found</Heading>
-        <Text className="text-foreground-secondary">The job listing you are trying to apply for does not exist or has expired.</Text>
+        <Heading level="h2" className="text-3xl font-bold uppercase">
+          Job Not Found
+        </Heading>
+        <Text className="text-foreground-secondary">
+          The job listing you are trying to apply for does not exist or has
+          expired.
+        </Text>
         <BrutalButton asChild variant="secondary" className="w-full">
           <Link href="/jobs">Back to Jobs Feed</Link>
         </BrutalButton>
@@ -109,11 +162,14 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
         <div className="md:col-span-2 space-y-6">
           <form onSubmit={handleApply} className="space-y-6" noValidate>
             <BrutalCard className="bg-surface border-[3px] border-border p-6 space-y-4 brutal-shadow">
-              <Heading level="h3" className="text-xl font-bold uppercase tracking-tight flex items-center gap-2">
+              <Heading
+                level="h3"
+                className="text-xl font-bold uppercase tracking-tight flex items-center gap-2"
+              >
                 <FileText className="h-5 w-5 text-primary" />
                 1. Select Resume
               </Heading>
-              
+
               <ErrorMessage message={error} onClose={() => setError(null)} />
 
               <div className="grid gap-3">
@@ -124,14 +180,21 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
                     onClick={() => handleResumeSelect(resume.id)}
                     className={cn(
                       "p-4 border-[3px] border-border text-left brutal-shadow-sm flex items-center justify-between transition-all active:translate-x-0 active:translate-y-0 active:shadow-none hover:bg-surface-secondary",
-                      selectedResumeId === resume.id 
-                        ? "bg-foreground text-surface border-foreground" 
-                        : "bg-surface text-foreground"
+                      selectedResumeId === resume.id
+                        ? "bg-foreground text-surface border-foreground"
+                        : "bg-surface text-foreground",
                     )}
                   >
                     <div>
                       <p className="font-bold text-sm">{resume.fileName}</p>
-                      <p className={cn("text-xs mt-0.5", selectedResumeId === resume.id ? "text-surface-secondary" : "text-foreground-muted")}>
+                      <p
+                        className={cn(
+                          "text-xs mt-0.5",
+                          selectedResumeId === resume.id
+                            ? "text-surface-secondary"
+                            : "text-foreground-muted",
+                        )}
+                      >
                         Uploaded: {resume.uploadedAt} • {resume.fileSize}
                       </p>
                     </div>
@@ -144,7 +207,10 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
             </BrutalCard>
 
             <BrutalCard className="bg-surface border-[3px] border-border p-6 space-y-4 brutal-shadow">
-              <Heading level="h3" className="text-xl font-bold uppercase tracking-tight flex items-center gap-2">
+              <Heading
+                level="h3"
+                className="text-xl font-bold uppercase tracking-tight flex items-center gap-2"
+              >
                 <Sparkles className="h-5 w-5 text-primary" />
                 2. AI Cover Letter
               </Heading>
@@ -174,7 +240,10 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
 
               {coverLetterOption === "ai-generated" && (
                 <div className="space-y-2">
-                  <label htmlFor="cover-letter-text" className="font-bold text-xs uppercase text-foreground-secondary">
+                  <label
+                    htmlFor="cover-letter-text"
+                    className="font-bold text-xs uppercase text-foreground-secondary"
+                  >
                     Letter Text (Editable)
                   </label>
                   <textarea
@@ -182,7 +251,11 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
                     value={coverLetterText}
                     onChange={(e) => setCoverLetterText(e.target.value)}
                     disabled={!selectedResumeId}
-                    placeholder={selectedResumeId ? "Write your cover letter..." : "Please select a resume first to auto-generate the cover letter."}
+                    placeholder={
+                      selectedResumeId
+                        ? "Write your cover letter..."
+                        : "Please select a resume first to auto-generate the cover letter."
+                    }
                     rows={8}
                     className="w-full border-[3px] border-border bg-surface p-3 text-sm brutal-shadow-sm focus:outline-primary disabled:bg-surface-secondary"
                   />
@@ -191,11 +264,17 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
             </BrutalCard>
 
             <BrutalCard className="bg-surface border-[3px] border-border p-6 space-y-4 brutal-shadow">
-              <Heading level="h3" className="text-xl font-bold uppercase tracking-tight">
+              <Heading
+                level="h3"
+                className="text-xl font-bold uppercase tracking-tight"
+              >
                 3. Application Notes
               </Heading>
               <div className="space-y-2">
-                <label htmlFor="app-notes" className="font-bold text-xs uppercase text-foreground-secondary">
+                <label
+                  htmlFor="app-notes"
+                  className="font-bold text-xs uppercase text-foreground-secondary"
+                >
                   Private Notes (For your tracker)
                 </label>
                 <textarea
@@ -218,7 +297,7 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
                 {isSubmitting && <InlineLoader />}
                 Submit Application
               </BrutalButton>
-              
+
               <BrutalButton
                 type="button"
                 onClick={() => router.back()}
@@ -234,33 +313,48 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
         {/* Right 1 Column: Job Info Sidebar */}
         <div className="space-y-6">
           <BrutalCard className="bg-surface-secondary border-[3px] border-border p-6 space-y-4 brutal-shadow">
-            <Heading level="h4" className="text-lg font-black uppercase tracking-tight flex items-center gap-2">
+            <Heading
+              level="h4"
+              className="text-lg font-black uppercase tracking-tight flex items-center gap-2"
+            >
               <Briefcase className="h-5 w-5 text-primary" />
               Role Summary
             </Heading>
-            
+
             <div className="border-t-2 border-border/10 pt-3 space-y-3">
               <div>
-                <p className="text-xs text-foreground-muted uppercase font-bold">Position</p>
+                <p className="text-xs text-foreground-muted uppercase font-bold">
+                  Position
+                </p>
                 <p className="font-bold text-base">{job.title}</p>
               </div>
               <div>
-                <p className="text-xs text-foreground-muted uppercase font-bold">Company</p>
+                <p className="text-xs text-foreground-muted uppercase font-bold">
+                  Company
+                </p>
                 <p className="font-bold">{job.companyInfo.name}</p>
               </div>
               <div>
-                <p className="text-xs text-foreground-muted uppercase font-bold">Location</p>
+                <p className="text-xs text-foreground-muted uppercase font-bold">
+                  Location
+                </p>
                 <p className="font-bold">{job.location}</p>
               </div>
               <div>
-                <p className="text-xs text-foreground-muted uppercase font-bold">Type</p>
+                <p className="text-xs text-foreground-muted uppercase font-bold">
+                  Type
+                </p>
                 <p className="font-bold text-[10px] uppercase bg-surface border-2 border-border px-2 py-0.5 inline-block brutal-shadow-sm">
                   {job.employmentType.replace("-", " ")}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-foreground-muted uppercase font-bold">Match Score</p>
-                <span className="text-xl font-black text-success">{job.trustScore}% Match</span>
+                <p className="text-xs text-foreground-muted uppercase font-bold">
+                  Match Score
+                </p>
+                <span className="text-xl font-black text-success">
+                  {job.trustScore}% Match
+                </span>
               </div>
             </div>
           </BrutalCard>
@@ -274,20 +368,32 @@ export default function ApplyJobPage({ params }: ApplyJobPageProps) {
             <div className="mx-auto h-12 w-12 rounded-full border-[3px] border-border bg-success flex items-center justify-center brutal-shadow-sm">
               <Check className="h-6 w-6 text-white stroke-[3px]" />
             </div>
-            
-            <Heading level="h2" className="text-2xl font-black uppercase tracking-tight">
+
+            <Heading
+              level="h2"
+              className="text-2xl font-black uppercase tracking-tight"
+            >
               Applied Successfully!
             </Heading>
-            
+
             <Text className="text-foreground-secondary leading-relaxed text-sm">
-              Your application packet has been registered. The opportunity was automatically added to your <strong>Applications Tracker</strong> under the <strong>Applied</strong> column.
+              Your application packet has been registered. The opportunity was
+              automatically added to your <strong>Applications Tracker</strong>{" "}
+              under the <strong>Applied</strong> column.
             </Text>
 
             <div className="flex flex-col gap-2 pt-2">
-              <BrutalButton asChild className="w-full h-11 uppercase font-bold text-xs tracking-wider">
+              <BrutalButton
+                asChild
+                className="w-full h-11 uppercase font-bold text-xs tracking-wider"
+              >
                 <Link href="/applications">View Application Tracker</Link>
               </BrutalButton>
-              <BrutalButton asChild variant="secondary" className="w-full h-11 uppercase font-bold text-xs tracking-wider">
+              <BrutalButton
+                asChild
+                variant="secondary"
+                className="w-full h-11 uppercase font-bold text-xs tracking-wider"
+              >
                 <Link href="/jobs">Back to Jobs Feed</Link>
               </BrutalButton>
             </div>

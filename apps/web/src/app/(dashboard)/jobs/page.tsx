@@ -706,11 +706,12 @@ export default function JobsPage() {
                       onClick={() => handleJobClick(job.id)}
                       onSave={(e) => {
                         e.stopPropagation();
+                        const willBeSaved = !job.isSaved;
                         toggleSaveJob(job.id);
                         toast.success(
-                          job.isSaved
-                            ? "Job removed from saved list"
-                            : "Job added to saved list!",
+                          willBeSaved
+                            ? "Job saved to Saved Jobs section!"
+                            : "Job removed from Saved Jobs",
                         );
                       }}
                       isCompared={comparedJobIds.includes(job.id)}
