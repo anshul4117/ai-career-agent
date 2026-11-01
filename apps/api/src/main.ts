@@ -22,17 +22,49 @@ async function bootstrap() {
   // Apply documented /api/v1 prefix
   app.setGlobalPrefix("api/v1");
 
-  // Configure CORS for frontend development origin
-  const allowedOrigins = (
+  // Configure CORS with dynamic origin matching for Vercel, localhost, and custom domains
+  const configuredOrigins = (
     process.env.CORS_ORIGIN ||
     process.env.FRONTEND_URL ||
     "http://localhost:3000"
   )
     .split(",")
-    .map((origin) => origin.trim());
+    .map((origin) => origin.trim().replace(/\/+$/, ""))
+    .filter(Boolean);
 
   app.enableCors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // 1. Allow non-browser requests (no origin header, e.g. curl, health checks, SSR)
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      const normalizedOrigin = origin.replace(/\/+$/, "");
+
+      // 2. Allow configured origins or wildcard
+      if (
+        configuredOrigins.includes(normalizedOrigin) ||
+        configuredOrigins.includes("*")
+      ) {
+        return callback(null, true);
+      }
+
+      // 3. Automatically allow all Vercel deployment origins (*.vercel.app)
+      if (/^https:\/\/[a-zA-Z0-9_-]+\.vercel\.app$/.test(normalizedOrigin)) {
+        return callback(null, true);
+      }
+
+      // 4. Automatically allow local development origins (localhost & 127.0.0.1 on any port)
+      if (
+        /^http:\/\/localhost(:\d+)?$/.test(normalizedOrigin) ||
+        /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(normalizedOrigin)
+      ) {
+        return callback(null, true);
+      }
+
+      // Origin not permitted
+      callback(null, false);
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Accept"],
