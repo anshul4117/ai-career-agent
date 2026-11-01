@@ -3,29 +3,32 @@ import { PrismaService } from "../prisma/prisma.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 
-export function splitFullName(fullName: string): [string, string] {
+export function splitFullName(fullName?: string | null): [string, string] {
   const parts = (fullName || "").trim().split(/\s+/);
   if (parts.length === 0 || !parts[0]) return ["", ""];
   if (parts.length === 1) return [parts[0], ""];
   return [parts[0], parts.slice(1).join(" ")];
 }
 
+export interface CandidateProfileSubset {
+  headline?: string | null;
+  preferredRole?: string | null;
+  currentRole?: string | null;
+  preferredLocation?: unknown;
+}
+
 export interface UserWithProfilePayload {
-  [key: string]: unknown;
+  id?: string;
+  email?: string;
   fullName?: string | null;
   passwordHash?: string | null;
   profilePhotoUrl?: string | null;
   emailVerified?: boolean | null;
-  profile?: {
-    headline?: string | null;
-    preferredRole?: string | null;
-    currentRole?: string | null;
-    [key: string]: unknown;
-  } | null;
+  profile?: CandidateProfileSubset | null;
 }
 
-export function formatUserResponse(
-  user: UserWithProfilePayload | null | undefined,
+export function formatUserResponse<T extends UserWithProfilePayload>(
+  user: T | null | undefined,
 ) {
   if (!user) return user;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

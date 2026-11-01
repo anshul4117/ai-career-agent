@@ -10,11 +10,13 @@
   "scripts": {
     "dev": "npm run dev --workspace=@ai-career-agent/web",
     "dev:api": "npm run start:dev --workspace=@ai-career-agent/api",
+    "prisma:generate": "npm run prisma:generate --workspace=@ai-career-agent/api",
+    "postinstall": "npm run prisma:generate",
     "build": "npm run build --workspace=@ai-career-agent/api && npm run build --workspace=@ai-career-agent/web",
     "build:api": "npm run build --workspace=@ai-career-agent/api",
     "build:web": "npm run build --workspace=@ai-career-agent/web",
     "lint": "npm run lint --workspace=@ai-career-agent/web",
-    "type-check": "npm run type-check --workspace=@ai-career-agent/web",
+    "type-check": "npm run type-check --workspace=@ai-career-agent/api && npm run type-check --workspace=@ai-career-agent/web",
     "test": "npm run test --workspace=@ai-career-agent/api && npm run test --workspace=@ai-career-agent/web",
     "prepare": "node -e \"if (process.env.NODE_ENV !== 'production') { try { require('child_process').execSync('husky', { stdio: 'inherit' }) } catch (e) {} }\""
   },
