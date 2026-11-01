@@ -11,7 +11,6 @@
     "dev": "npm run dev --workspace=@ai-career-agent/web",
     "dev:api": "npm run start:dev --workspace=@ai-career-agent/api",
     "prisma:generate": "npm run prisma:generate --workspace=@ai-career-agent/api",
-    "postinstall": "npm run prisma:generate",
     "build": "npm run build --workspace=@ai-career-agent/api && npm run build --workspace=@ai-career-agent/web",
     "build:api": "npm run build --workspace=@ai-career-agent/api",
     "build:web": "npm run build --workspace=@ai-career-agent/web",
