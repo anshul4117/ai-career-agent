@@ -4,7 +4,10 @@
   "private": true,
   "description": "AI Career Agent — NestJS backend API",
   "scripts": {
+    "prisma:generate": "prisma generate",
+    "prebuild": "prisma generate",
     "build": "nest build",
+    "type-check": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",

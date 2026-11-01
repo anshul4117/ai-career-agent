@@ -119,7 +119,7 @@ describe("AuthService", () => {
         passwordHash: "hashedPassword123",
       });
       expect(result.user).not.toHaveProperty("passwordHash");
-      expect(result.user.email).toBe("test@example.com");
+      expect(result.user?.email).toBe("test@example.com");
       expect(result.accessToken).toBe("mock-jwt-token");
       expect(typeof result.refreshToken).toBe("string");
       expect(result.refreshToken.length).toBe(64);
@@ -221,7 +221,7 @@ describe("AuthService", () => {
       expect(result.accessToken).toBe("mock-jwt-token");
       expect(typeof result.refreshToken).toBe("string");
       expect(result.refreshToken.length).toBe(64);
-      expect(result.user.email).toBe("test@example.com");
+      expect(result.user?.email).toBe("test@example.com");
     });
 
     it("should commit family revocation and throw UnauthorizedException when replay is detected", async () => {
