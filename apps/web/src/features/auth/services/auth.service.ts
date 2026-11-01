@@ -187,12 +187,22 @@ export const authService = {
 
   /** Fetch the currently authenticated user from the server */
   async getMe(): Promise<AuthUser | null> {
+    // If running in browser and no public session cookie exists, user is a guest;
+    // avoid sending a request that is guaranteed to return 401.
+    if (
+      typeof document !== "undefined" &&
+      !document.cookie.includes("aca-session=")
+    ) {
+      return null;
+    }
+
     try {
       const data = await apiClient.get<AuthResponse>("/auth/me");
       const user = normalizeAuthUser(data.user);
       setPublicSessionCookies(!!user.profileCompleted);
       return user;
     } catch {
+      clearPublicSessionCookies();
       return null;
     }
   },

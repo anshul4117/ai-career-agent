@@ -146,4 +146,39 @@ describe("Auth Service & Normalization Tests", () => {
       expect(document.cookie).toContain("aca-profile-completed=true");
     });
   });
+
+  describe("authService.getMe", () => {
+    it("returns null immediately without calling apiClient.get when no session cookie exists", async () => {
+      const result = await authService.getMe();
+      expect(result).toBeNull();
+      expect(apiClient.get).not.toHaveBeenCalled();
+    });
+
+    it("calls apiClient.get('/auth/me') and normalizes user when session cookie is present", async () => {
+      document.cookie = "aca-session=active";
+      (apiClient.get as jest.Mock).mockResolvedValue({
+        user: {
+          id: "u-active",
+          email: "user@example.com",
+          fullName: "John Doe",
+          profileCompleted: false,
+        },
+      });
+
+      const user = await authService.getMe();
+      expect(apiClient.get).toHaveBeenCalledWith("/auth/me");
+      expect(user).toBeDefined();
+      expect(user?.firstName).toBe("John");
+      expect(user?.lastName).toBe("Doe");
+    });
+
+    it("clears session cookies and returns null when apiClient.get('/auth/me') fails", async () => {
+      document.cookie = "aca-session=active";
+      (apiClient.get as jest.Mock).mockRejectedValue(new Error("Unauthorized"));
+
+      const result = await authService.getMe();
+      expect(result).toBeNull();
+      expect(document.cookie).not.toContain("aca-session=active");
+    });
+  });
 });

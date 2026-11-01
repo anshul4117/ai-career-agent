@@ -17,11 +17,21 @@ import { LoginDto } from "./dto/login.dto";
 import { RefreshTokenDto } from "./dto/refresh-token.dto";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 
+const isProd = process.env.NODE_ENV === "production";
+const sameSiteMode: "none" | "lax" = isProd ? "none" : "lax";
 const COOKIE_OPTS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax" as const,
+  secure: isProd,
+  sameSite: sameSiteMode,
   path: "/",
+};
+
+const PUBLIC_COOKIE_OPTS = {
+  httpOnly: false,
+  secure: isProd,
+  sameSite: sameSiteMode,
+  path: "/",
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
 
 @Controller("auth")
@@ -53,25 +63,13 @@ export class AuthController {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
       // Keep the public session cookie so the Next.js middleware can see it
-      .cookie("aca-session", "active", {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax" as const,
-        path: "/",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days, matches refresh-token session lifetime
-      })
+      .cookie("aca-session", "active", PUBLIC_COOKIE_OPTS)
       .cookie(
         "aca-profile-completed",
         (data.user as { profileCompleted?: boolean }).profileCompleted
           ? "true"
           : "false",
-        {
-          httpOnly: false,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax" as const,
-          path: "/",
-          maxAge: 7 * 24 * 60 * 60 * 1000,
-        },
+        PUBLIC_COOKIE_OPTS,
       )
       .json({ user: data.user });
   }
@@ -101,25 +99,13 @@ export class AuthController {
         ...COOKIE_OPTS,
         maxAge: 7 * 24 * 60 * 60 * 1000,
       })
-      .cookie("aca-session", "active", {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax" as const,
-        path: "/",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days, matches refresh-token session lifetime
-      })
+      .cookie("aca-session", "active", PUBLIC_COOKIE_OPTS)
       .cookie(
         "aca-profile-completed",
         (data.user as { profileCompleted?: boolean }).profileCompleted
           ? "true"
           : "false",
-        {
-          httpOnly: false,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax" as const,
-          path: "/",
-          maxAge: 7 * 24 * 60 * 60 * 1000,
-        },
+        PUBLIC_COOKIE_OPTS,
       )
       .json({ user: data.user });
   }
@@ -163,25 +149,13 @@ export class AuthController {
         ...COOKIE_OPTS,
         maxAge: 15 * 60 * 1000,
       })
-      .cookie("aca-session", "active", {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax" as const,
-        path: "/",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      })
+      .cookie("aca-session", "active", PUBLIC_COOKIE_OPTS)
       .cookie(
         "aca-profile-completed",
         (data.user as { profileCompleted?: boolean }).profileCompleted
           ? "true"
           : "false",
-        {
-          httpOnly: false,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax" as const,
-          path: "/",
-          maxAge: 7 * 24 * 60 * 60 * 1000,
-        },
+        PUBLIC_COOKIE_OPTS,
       );
 
     // If a new refresh token was minted or rotated, update the HttpOnly refresh cookie
@@ -208,23 +182,12 @@ export class AuthController {
     }
 
     const clearOpts = { ...COOKIE_OPTS, maxAge: 0 };
+    const clearPublicOpts = { ...PUBLIC_COOKIE_OPTS, maxAge: 0 };
     res
       .clearCookie("aca-access-token", clearOpts)
       .clearCookie("aca-refresh-token", clearOpts)
-      .cookie("aca-session", "", {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax" as const,
-        path: "/",
-        maxAge: 0,
-      })
-      .cookie("aca-profile-completed", "", {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax" as const,
-        path: "/",
-        maxAge: 0,
-      })
+      .cookie("aca-session", "", clearPublicOpts)
+      .cookie("aca-profile-completed", "", clearPublicOpts)
       .json({ message: "Logged out successfully" });
   }
 }

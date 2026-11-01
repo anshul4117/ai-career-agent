@@ -20,6 +20,14 @@ export class ApiError extends Error {
 let activeRefreshPromise: Promise<boolean> | null = null;
 
 async function executeSilentRefresh(): Promise<boolean> {
+  // If running in browser and no session indicator cookie exists, avoid sending 401 refresh request
+  if (
+    typeof document !== "undefined" &&
+    !document.cookie.includes("aca-session=")
+  ) {
+    return false;
+  }
+
   if (activeRefreshPromise) {
     return activeRefreshPromise;
   }
@@ -85,8 +93,9 @@ async function request<T>(
     } catch {
       data = null;
     }
+    const rawMessage = (data as { message?: string | string[] })?.message;
     const message =
-      (data as { message?: string })?.message ??
+      (Array.isArray(rawMessage) ? rawMessage.join(", ") : rawMessage) ??
       res.statusText ??
       "Request failed";
     throw new ApiError(res.status, message, data);
