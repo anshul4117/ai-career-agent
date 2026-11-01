@@ -617,16 +617,29 @@ export const mockJobs: Job[] = [];
 
 for (let i = 1; i <= 100; i++) {
   const company = mockCompanies[(i - 1) % mockCompanies.length];
-  const title = titles[(i - 1) % titles.length];
-  const remoteType = remoteTypes[i % remoteTypes.length];
   const employmentType = employmentTypes[i % employmentTypes.length];
-  const experienceLevel = experienceLevels[i % experienceLevels.length];
+  const rawTitle = titles[(i - 1) % titles.length];
+  const title =
+    employmentType === "internship"
+      ? `${rawTitle.replace(" Engineer", "").replace(" Developer", "")} Intern`
+      : rawTitle;
+  const remoteType = remoteTypes[i % remoteTypes.length];
+  const experienceLevel =
+    employmentType === "internship"
+      ? "entry"
+      : experienceLevels[i % experienceLevels.length];
   const skills = companySkills[company.id] || ["React", "TypeScript"];
 
   // Stagger salaries
-  const baseSalary = 60000 + ((i * 137) % 12) * 12000;
+  const baseSalary =
+    employmentType === "internship"
+      ? 45000 + (i % 5) * 10000
+      : 60000 + ((i * 137) % 12) * 12000;
   const minSalary = baseSalary;
-  const maxSalary = baseSalary + 20000 + ((i * 47) % 5) * 8000;
+  const maxSalary =
+    employmentType === "internship"
+      ? baseSalary + 15000
+      : baseSalary + 20000 + ((i * 47) % 5) * 8000;
 
   mockJobs.push({
     id: `job_seed_${i.toString().padStart(3, "0")}`,
@@ -640,13 +653,13 @@ for (let i = 1; i <= 100; i++) {
     },
     location:
       remoteType === "remote"
-        ? "Remote"
-        : `${company.headquarters.split(",")[0]}, USA`,
+        ? "Remote, India"
+        : `${company.headquarters.split(",")[0]}, India`,
     remoteType,
     employmentType,
     salaryMin: minSalary,
     salaryMax: maxSalary,
-    currency: "USD",
+    currency: "INR",
     experienceLevel,
     skillsRequired: skills.slice(0, 3 + (i % 3)),
     benefits: company.benefitsList.slice(0, 2 + (i % 3)),
@@ -668,7 +681,9 @@ for (let i = 1; i <= 100; i++) {
     source:
       i % 3 === 0 ? "wellfound" : i % 3 === 1 ? "greenhouse" : "ycombinator",
     sourceJobId: `ext_src_${i * 289}`,
-    externalApplyUrl: `https://example.com/apply/job-${i}`,
+    externalApplyUrl: company.website
+      ? `${company.website}/careers`
+      : "https://careers.google.com",
     trustScore: 85 + (i % 15),
     freshnessScore: 90 - (i % 10),
     isSaved: i % 11 === 0,
