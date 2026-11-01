@@ -105,6 +105,26 @@ enum CompanySize {
   SIZE_5000_PLUS
 }
 
+enum CompanyType {
+  MNC
+  INDIAN_LARGE
+  STARTUP
+  SME
+  AGENCY
+  GOVT
+  UNKNOWN_REVIEW
+}
+
+enum AtsType {
+  NONE
+  GREENHOUSE
+  LEVER
+  ASHBY
+  SMARTRECRUITERS
+  WORKABLE
+  RECRUITEE
+}
+
 enum SalaryPeriod {
   YEARLY
   MONTHLY
@@ -132,6 +152,36 @@ enum ApplicationStatusSource {
   SYSTEM
 }
 
+enum UrlValidationState {
+  VERIFIED
+  REDIRECTED
+  UNVERIFIED
+  TEMPORARILY_UNAVAILABLE
+  EXPIRED
+  INVALID
+}
+
+enum VerificationConfidence {
+  COMPANY_PORTAL_MATCHED
+  APPLICATION_LINK_VERIFIED
+  SOURCE_CONFIRMED
+  FRESHNESS_CONFIRMED
+  UNVERIFIED
+}
+
+enum LocationSource {
+  SOURCE
+  PARSED_TEXT
+  QUERY_HINT
+  UNKNOWN
+}
+
+enum LocationConfidence {
+  HIGH
+  MEDIUM
+  LOW
+}
+
 // ============================================================================
 // CORE USER & AUTHENTICATION MODELS
 // ============================================================================
@@ -151,6 +201,7 @@ model User {
   refreshTokens        RefreshToken[]
   resumes              Resume[]
   jobApplications      JobApplication[]
+  savedJobs            SavedJob[]
   reviewedParseResults ResumeParseResult[] @relation("ReviewedParseResults")
 
   profile          Profile?
@@ -549,22 +600,35 @@ model Project {
 // ============================================================================
 
 model Company {
-  id            String      @id @default(uuid())
-  name          String      @unique
-  companySlug   String      @unique
+  id            String       @id @default(uuid())
+  name          String       @unique
+  companySlug   String       @unique
+  domain        String?
   websiteUrl    String?
   careerPageUrl String?
+  careerUrl     String?
   logoUrl       String?
   industry      String?
   headquarters  String?
+  city          String?
+  state         String?
   companySize   CompanySize?
-  isHiring      Boolean     @default(true)
+  sizeBand      String?
+  companyType   CompanyType  @default(UNKNOWN_REVIEW)
+  atsType       AtsType      @default(NONE)
+  atsSlug       String?
+  verified      Boolean      @default(false)
+  isHiring      Boolean      @default(true)
   lastJobSeenAt DateTime?
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  lastCheckedAt DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 
   jobs          Job[]
 
+  @@index([companyType])
+  @@index([atsType])
+  @@index([domain])
   @@map("companies")
 }
 
@@ -583,7 +647,44 @@ model Job {
   currency           String?
   salaryPeriod       SalaryPeriod?
   description        String          @db.Text
+  applyUrl           String?
+  skillsRequired     String[]        @default([])
+  responsibilities   String[]        @default([])
+  requirements       String[]        @default([])
+  benefits           String[]        @default([])
+
+  // Pipeline Metrics
+  qualityScore       Int             @default(0)
+  qualityBreakdown   Json?           // { descriptionCompleteness, companyCredibility, applyLinkValidity, salaryTransparency, skillsClarity, freshness }
+  spamScore          Float           @default(0.0)
+  isSpam             Boolean         @default(false)
+  isAnomaly          Boolean         @default(false)
+  anomalyReasons     Json?           // string[] reasons e.g. ["SALARY_OUTLIER_TOO_HIGH"]
+  fingerprint        String?         // sha256 of normalized title + company + location
+  duplicateOfJobId   String?
+
+  // Verification & Trust Signals
+  validationState        UrlValidationState?      @default(UNVERIFIED)
+  verificationConfidence VerificationConfidence? @default(UNVERIFIED)
+  validatedApplyUrl      String?
+  urlLastCheckedAt       DateTime?
+  isIndiaJob             Boolean                  @default(false)
+  isIndiaEligible        Boolean                  @default(false)
+  indiaEligibilityReason String?
+  hiddenReason           String?
+  hiddenAt               DateTime?
+  applyLinkStatus        String?                  @default("direct_ats") // direct_ats | redirect_aggregator | company_portal | unverified
+
+  // Location Integrity & Confidence Signals
+  rawLocation        String?
+  city               String?
+  state              String?
+  queriedCity        String?
+  locationSource     LocationSource     @default(UNKNOWN)
+  locationConfidence LocationConfidence @default(LOW)
+
   isActive           Boolean         @default(true)
+  lastSeenAt         DateTime?       @default(now())
   postedAt           DateTime?
   expiresAt          DateTime?
   createdAt          DateTime        @default(now())
@@ -592,10 +693,57 @@ model Job {
   company            Company         @relation(fields: [companyId], references: [id], onDelete: Restrict)
   jobSources         JobSource[]
   jobApplications    JobApplication[]
+  savedJobs          SavedJob[]
   resumeAnalyses     ResumeAnalysis[]
 
   @@index([companyId])
+  @@index([qualityScore])
+  @@index([isSpam])
+  @@index([fingerprint])
+  @@index([isIndiaJob])
+  @@index([validationState])
+  @@index([lastSeenAt])
+  @@index([city])
+  @@index([locationConfidence])
+  @@index([locationSource])
   @@map("jobs")
+}
+
+model CollectionLog {
+  id             String   @id @default(uuid())
+  source         String
+  totalIngested  Int      @default(0)
+  approvedCount  Int      @default(0)
+  duplicateCount Int      @default(0)
+  spamCount      Int      @default(0)
+  anomalyCount   Int      @default(0)
+  durationMs     Int?     @default(0)
+  newCount       Int?     @default(0)
+  updatedCount   Int?     @default(0)
+  rejectedCount  Int?     @default(0)
+  status         String   @default("SUCCESS")
+  errorMessage   String?  @db.Text
+  createdAt      DateTime @default(now())
+
+  @@index([source])
+  @@index([createdAt])
+  @@map("collection_logs")
+}
+
+model SavedJob {
+  id        String   @id @default(uuid())
+  userId    String
+  jobId     String
+  notes     String?  @db.Text
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, jobId])
+  @@index([userId])
+  @@index([jobId])
+  @@map("saved_jobs")
 }
 
 model JobSource {
