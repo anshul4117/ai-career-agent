@@ -1,8 +1,8 @@
 # AI Career Agent — Project Progress Tracker
 
-**Current Working Branch**: `feat/phase1-database-foundation`  
-**Current Milestone**: Phase 1 Database & Security Hardening (Completed & Remediated)  
-**Next Milestone**: Phase 2 / Phase 3 Resume Management & ATS Optimization
+**Current Working Branch**: `feat/auth-profile-hardening`  
+**Current Milestone**: Auth, Profile & Session Hardening (Completed & Remediated)  
+**Next Milestone**: Phase 3 Resume Management & Versioning
 
 ---
 
@@ -12,7 +12,7 @@
 | ----------- | ----------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Phase 0** | Workspace & Monorepo Foundation     | **DONE**   | Turborepo, NestJS backend, Next.js 15 frontend, Prisma ORM, shared tooling                                                                                               |
 | **Phase 1** | Auth, Profile & Security Foundation | **DONE**   | Refresh token rotation, replay detection, stateless JWT migration, `Profile` persistence, `DELETE /users/me` account anonymization, PostgreSQL resume ownership triggers |
-| **Phase 2** | Candidate Profile System            | **DONE**   | Complete candidate profile CRUD, master skill upserts, multi-section persistence                                                                                         |
+| **Phase 2** | Candidate Profile System            | **DONE**   | Registration fullName validation, atomic profile creation, complete candidate profile CRUD, master skill upserts, multi-section persistence, dynamic completion sync     |
 | **Phase 3** | Resume Management & Versioning      | **QUEUED** | Resume upload, atomic Version 1 creation, immutable content snapshots, version comparison                                                                                |
 | **Phase 4** | AI Resume Parsing & ATS Scoring     | **QUEUED** | Gemini vision/PDF parsing pipeline, section confidence scoring, keyword matching                                                                                         |
 | **Phase 5** | Job Discovery Engine                | **QUEUED** | Job scraping, normalization, deduplication, search index                                                                                                                 |
