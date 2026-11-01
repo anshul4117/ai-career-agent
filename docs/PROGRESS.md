@@ -408,3 +408,40 @@ Under Careerjet's publisher terms:
    - Adzuna / JSearch require card-backed API credentials.
 
 **Per instructions, Phase 4 will NOT begin until this gate is addressed.**
+
+---
+
+## 14. Incident & Restoration: Database Jobs Zero & Frontend Display Fix
+
+### 1. Root Cause Analysis
+
+1. **Frontend / Backend DTO Validation Mismatch (Direct cause of frontend 0 jobs)**:
+   - `apps/web/src/features/jobs/services/job.service.ts` in `getAllJobs()` executed `GET /api/v1/jobs?limit=100`.
+   - In `apps/api/src/jobs/dto/query-jobs.dto.ts`, `limit` was restricted with `@Max(50)`.
+   - The NestJS validation pipe strictly rejected requests with `HTTP 400 Bad Request`: `{"message":["limit must not be greater than 50"]}`.
+   - `job.service.ts` silently caught the error and returned `[]`, resulting in the frontend displaying 0 jobs despite jobs existing in the database.
+2. **Database Inventory Gap**:
+   - Following Phase 2 recreation on the dev Neon branch and previous test script runs, the `jobs` table was at 0 rows.
+   - `prisma migrate status` showed drift because retroactive baseline migrations (`20261101180000_phase1_job_pipeline_baseline`, `20261101200000_phase2_company_registry_baseline`) were created after schema sync.
+3. **Suspended Frontend Process**:
+   - The Next.js dev server process on port 3000 was in a stopped/suspended state (`STAT=T`), failing to respond to requests until restarted cleanly.
+
+### 2. Fixes Implemented
+
+1. **Relaxed Limit Validation (`query-jobs.dto.ts`)**:
+   - Updated `@Max(50)` to `@Max(100)` in `QueryJobsDto` so standard batch requests up to 100 jobs succeed.
+2. **Frontend Robustness (`job.service.ts`)**:
+   - Added explicit error logging in `getAllJobs()` so API validation errors are visible.
+   - Implemented an automatic fallback to `limit=50` if a higher limit request ever fails.
+3. **Prisma Migration Resolution**:
+   - Marked baseline migrations as applied via `prisma migrate resolve --applied 20261101180000_phase1_job_pipeline_baseline` and `20261101200000_phase2_company_registry_baseline`.
+   - `prisma migrate status` verified completely clean with 10/10 migrations applied.
+4. **End-to-End Pipeline Ingestion**:
+   - Re-ingested active feeds across enabled sources (`GREENHOUSE`, `LEVER`, `ASHBY`, `REMOTIVE`, `REMOTEOK`, `JOOBLE`).
+   - Restored database inventory to **234 total jobs** and **153 active jobs**.
+   - Preserved all capping, deduplication, and India location integrity rules.
+5. **Startup Inventory Logging**:
+   - Added startup inventory log line to `JobPipelineService.onModuleInit()`:
+     `[JobPipelineService] JobPipelineService initialized with Pluggable Source Layer. Database inventory: 153 active jobs (234 total).`
+6. **End-to-End Database Save Test**:
+   - Created `apps/api/src/jobs/pipeline/job-pipeline-save.spec.ts` testing `JobPipelineService` saving a valid job end-to-end to PostgreSQL without mocking the DB write step.
