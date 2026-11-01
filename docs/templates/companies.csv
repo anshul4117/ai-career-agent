@@ -1,0 +1,5 @@
+name,website,careerUrl,city,state,companyType,sizeBand,notes
+EXAMPLE_ALPHA_TECH,
+https://alphaexample.in,https://jobs.lever.co/examplealpha,Bengaluru,Karnataka,STARTUP,51-200,Example Indian tech startup on Lever
+EXAMPLE_BETA_SYSTEMS,https://betaexample.com,https://boards.greenhouse.io/examplebeta,Pune,Maharashtra,INDIAN_LARGE,1001-5000,Example Indian enterprise on Greenhouse
+EXAMPLE_GAMMA_LABS,https://gammaexample.io,https://jobs.ashbyhq.com/examplegamma,Indore,Madhya Pradesh,STARTUP,11-50,Example Tier-2 Indian engineering team on Ashby
