@@ -5,7 +5,13 @@ import type { Job } from "../types/jobs.types";
 import { BrutalCard } from "@/components/ui/brutal-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Bookmark, Calendar, DollarSign, ArrowRightLeft } from "lucide-react";
+import {
+  Bookmark,
+  Calendar,
+  DollarSign,
+  ArrowRightLeft,
+  Check,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useProfileStore } from "@/features/profile";
 import { matchEngineService } from "../services/match-engine.service";
@@ -178,6 +184,11 @@ export const JobCard = React.memo(function JobCard({
 
         {/* Badges row */}
         <div className="flex flex-wrap gap-1 mt-1.5">
+          {job.isApplied && (
+            <Badge className="text-[7.5px] font-black uppercase tracking-wider bg-green-600 dark:bg-green-600 text-white border border-green-700 px-1.5 py-0.5 flex items-center gap-0.5 shadow-none">
+              <Check className="h-2.5 w-2.5 stroke-[3px]" /> Applied
+            </Badge>
+          )}
           {match && (
             <Badge
               className={cn(

@@ -14,9 +14,9 @@ export const bookmarkService = {
         return response.map(mapBackendJobToFrontendJob);
       }
     } catch {
-      // Fallback to local mocks
+      // Backend not available or unauthenticated - store will preserve local saved jobs
     }
-    return mockJobs.filter((j) => j.isSaved);
+    return [];
   },
 
   /**
@@ -27,11 +27,6 @@ export const bookmarkService = {
       await apiClient.post(`/jobs/${id}/save`, {});
       return true;
     } catch {
-      const job = mockJobs.find((j) => j.id === id);
-      if (job) {
-        job.isSaved = true;
-        return true;
-      }
       return false;
     }
   },
@@ -44,11 +39,6 @@ export const bookmarkService = {
       await apiClient.delete(`/jobs/${id}/save`);
       return true;
     } catch {
-      const job = mockJobs.find((j) => j.id === id);
-      if (job) {
-        job.isSaved = false;
-        return true;
-      }
       return false;
     }
   },
