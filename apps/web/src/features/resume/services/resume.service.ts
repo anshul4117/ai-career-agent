@@ -1,4 +1,9 @@
-import type { Resume, ResumeTemplate } from "../types/resume.types";
+import { apiClient } from "@/lib/api-client";
+import type {
+  Resume,
+  ResumeTemplate,
+  UploadedResume,
+} from "../types/resume.types";
 
 export const MOCK_TEMPLATES: ResumeTemplate[] = [
   {
@@ -51,52 +56,78 @@ export const MOCK_TEMPLATES: ResumeTemplate[] = [
   },
 ];
 
-const STORAGE_KEY = "aca-resumes";
-
-const INITIAL_RESUMES: Resume[] = [
-  {
-    id: "res_001",
-    title: "Senior Full Stack Resume",
-    description:
-      "Optimized for software engineer, technical lead, and developer manager applications.",
-    templateId: "developer",
-    status: "active",
-    isDefault: true,
-    atsScore: 92,
-    createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: "res_002",
-    title: "Agile Project Manager Draft",
-    description:
-      "Highlighting agile methodologies, team delivery, and product lifecycle support.",
-    templateId: "modern",
-    status: "active",
-    isDefault: false,
-    atsScore: 78,
-    createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
-    updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-];
-
-function getStoredResumes(): Resume[] {
-  if (typeof window === "undefined") return INITIAL_RESUMES;
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_RESUMES));
-    return INITIAL_RESUMES;
-  }
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return INITIAL_RESUMES;
-  }
+export interface BackendResume {
+  id: string;
+  userId: string;
+  title: string;
+  fileUrl: string;
+  fileType: "PDF" | "DOCX";
+  fileSize?: number | null;
+  originalFileName?: string | null;
+  isDefault: boolean;
+  status: "ACTIVE" | "ARCHIVED";
+  currentVersion: number;
+  templateId?: string | null;
+  themeConfig?: Record<string, unknown> | null;
+  customSections?: Record<string, unknown> | null;
+  createdAt: string;
+  updatedAt: string;
+  versions?: Array<{
+    id: string;
+    versionNumber: number;
+    title: string;
+    fileUrl?: string | null;
+    createdAt: string;
+  }>;
+  analyses?: Array<{
+    overallAtsScore: number;
+  }>;
 }
 
-function setStoredResumes(resumes: Resume[]) {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(resumes));
+function formatBytes(bytes?: number | null): string {
+  if (!bytes || bytes === 0) return "0 Bytes";
+  const k = 1024;
+  const dm = 1;
+  const sizes = ["Bytes", "KB", "MB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+}
+
+export function toUploadedResume(raw: BackendResume): UploadedResume {
+  const latestScore = raw.analyses?.[0]?.overallAtsScore ?? 80;
+  return {
+    id: raw.id,
+    fileName: raw.originalFileName || raw.title || "resume.pdf",
+    fileSize: formatBytes(raw.fileSize),
+    fileUrl: raw.fileUrl,
+    uploadedAt: raw.createdAt,
+    status: "Completed",
+    atsScore: Math.round(latestScore),
+    isDefault: raw.isDefault,
+    version: raw.currentVersion,
+    versionHistory: (raw.versions || []).map((v) => ({
+      version: v.versionNumber,
+      fileName: v.title || raw.originalFileName || "resume.pdf",
+      uploadedAt: v.createdAt,
+      fileSize: formatBytes(raw.fileSize),
+      fileUrl: v.fileUrl || raw.fileUrl,
+    })),
+  };
+}
+
+export function toResume(raw: BackendResume): Resume {
+  const latestScore = raw.analyses?.[0]?.overallAtsScore ?? 80;
+  return {
+    id: raw.id,
+    title: raw.title,
+    description: `Version ${raw.currentVersion} • ${raw.fileType}`,
+    templateId: raw.templateId || "default",
+    status: raw.status === "ARCHIVED" ? "archived" : "active",
+    isDefault: raw.isDefault,
+    atsScore: Math.round(latestScore),
+    createdAt: raw.createdAt,
+    updatedAt: raw.updatedAt,
+  };
 }
 
 export const resumeService = {
@@ -105,131 +136,156 @@ export const resumeService = {
   },
 
   getAll: async (): Promise<Resume[]> => {
-    return getStoredResumes();
+    try {
+      const data = await apiClient.get<BackendResume[]>("/resumes");
+      return data.map(toResume);
+    } catch {
+      return [];
+    }
+  },
+
+  getUploadedResumes: async (): Promise<UploadedResume[]> => {
+    try {
+      const data = await apiClient.get<BackendResume[]>("/resumes");
+      return data.map(toUploadedResume);
+    } catch {
+      return [];
+    }
   },
 
   getOne: async (id: string): Promise<Resume | undefined> => {
-    const list = getStoredResumes();
-    return list.find((r) => r.id === id);
+    try {
+      const raw = await apiClient.get<BackendResume>(`/resumes/${id}`);
+      return toResume(raw);
+    } catch {
+      return undefined;
+    }
+  },
+
+  upload: async (
+    file: File,
+    options?: { title?: string; isDefault?: boolean },
+  ): Promise<UploadedResume> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    if (options?.title) formData.append("title", options.title);
+    if (options?.isDefault !== undefined) {
+      formData.append("isDefault", String(options.isDefault));
+    }
+
+    const raw = await apiClient.upload<BackendResume>(
+      "/resumes/upload",
+      formData,
+    );
+    return toUploadedResume(raw);
   },
 
   create: async (
     data: Omit<Resume, "id" | "atsScore" | "createdAt" | "updatedAt">,
   ): Promise<Resume> => {
-    const list = getStoredResumes();
-
-    // If setting default, unset other defaults
-    if (data.isDefault) {
-      list.forEach((r) => {
-        r.isDefault = false;
+    try {
+      const raw = await apiClient.post<BackendResume>("/resumes", {
+        title: data.title,
+        templateId: data.templateId,
+        isDefault: data.isDefault,
+        status: data.status === "archived" ? "ARCHIVED" : "ACTIVE",
+        themeConfig: data.theme,
+        customSections: data.content,
       });
+      return toResume(raw);
+    } catch {
+      return {
+        ...data,
+        id: `res_${Date.now()}`,
+        atsScore: 80,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
     }
-
-    const newResume: Resume = {
-      ...data,
-      id: `res_${Date.now()}`,
-      atsScore: Math.floor(Math.random() * 30) + 65, // Mock ATS score between 65 and 95
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    list.push(newResume);
-    setStoredResumes(list);
-    return newResume;
   },
 
   update: async (
     id: string,
     updates: Partial<Omit<Resume, "id" | "createdAt" | "updatedAt">>,
   ): Promise<Resume> => {
-    const list = getStoredResumes();
-    const index = list.findIndex((r) => r.id === id);
-    if (index === -1) throw new Error("Resume not found");
+    try {
+      const payload: Record<string, unknown> = {};
+      if (updates.title !== undefined) payload.title = updates.title;
+      if (updates.templateId !== undefined)
+        payload.templateId = updates.templateId;
+      if (updates.isDefault !== undefined)
+        payload.isDefault = updates.isDefault;
+      if (updates.status !== undefined) {
+        payload.status = updates.status === "archived" ? "ARCHIVED" : "ACTIVE";
+      }
+      if (updates.theme !== undefined) payload.themeConfig = updates.theme;
+      if (updates.content !== undefined)
+        payload.customSections = updates.content;
 
-    // If default is updated to true, clear other defaults
-    if (updates.isDefault) {
-      list.forEach((r) => {
-        if (r.id !== id) r.isDefault = false;
-      });
+      const raw = await apiClient.patch<BackendResume>(
+        `/resumes/${id}`,
+        payload,
+      );
+      return toResume(raw);
+    } catch {
+      return {
+        id,
+        title: updates.title || "Resume",
+        description: updates.description || "",
+        templateId: updates.templateId || "default",
+        status: updates.status || "active",
+        isDefault: updates.isDefault ?? false,
+        atsScore: 80,
+        content: updates.content,
+        theme: updates.theme,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
     }
-
-    const updated = {
-      ...list[index],
-      ...updates,
-      updatedAt: new Date().toISOString(),
-    };
-
-    list[index] = updated;
-    setStoredResumes(list);
-    return updated;
-  },
-
-  delete: async (id: string): Promise<void> => {
-    const list = getStoredResumes();
-    const filtered = list.filter((r) => r.id !== id);
-
-    // Ensure at least one active resume stays default if we deleted the default one
-    if (list.find((r) => r.id === id)?.isDefault && filtered.length > 0) {
-      const firstActive = filtered.find((r) => r.status === "active");
-      if (firstActive) firstActive.isDefault = true;
-    }
-
-    setStoredResumes(filtered);
   },
 
   duplicate: async (id: string): Promise<Resume> => {
-    const list = getStoredResumes();
-    const original = list.find((r) => r.id === id);
+    const original = await resumeService.getOne(id);
     if (!original) throw new Error("Resume not found");
 
-    const copy: Resume = {
+    return resumeService.create({
       ...original,
-      id: `res_${Date.now()}`,
       title: `${original.title} (Copy)`,
       isDefault: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    });
+  },
 
-    list.push(copy);
-    setStoredResumes(list);
-    return copy;
+  delete: async (id: string): Promise<void> => {
+    await apiClient.delete(`/resumes/${id}`);
+  },
+
+  createVersion: async (
+    id: string,
+    file?: File,
+    changeSummary?: string,
+  ): Promise<void> => {
+    const formData = new FormData();
+    if (file) formData.append("file", file);
+    if (changeSummary) formData.append("changeSummary", changeSummary);
+
+    await apiClient.upload(`/resumes/${id}/versions`, formData);
+  },
+
+  setDefault: async (id: string): Promise<void> => {
+    await apiClient.patch(`/resumes/${id}`, { isDefault: true });
   },
 
   archive: async (id: string): Promise<Resume> => {
-    const list = getStoredResumes();
-    const target = list.find((r) => r.id === id);
-    if (!target) throw new Error("Resume not found");
-
-    target.status = "archived";
-    target.isDefault = false; // Archived resumes cannot be default
-
-    // If it was default, find another active to be default
-    const activeResumes = list.filter(
-      (r) => r.status === "active" && r.id !== id,
-    );
-    if (activeResumes.length > 0 && !activeResumes.some((r) => r.isDefault)) {
-      activeResumes[0].isDefault = true;
-    }
-
-    setStoredResumes(list);
-    return target;
+    const raw = await apiClient.patch<BackendResume>(`/resumes/${id}`, {
+      status: "ARCHIVED",
+    });
+    return toResume(raw);
   },
 
   restore: async (id: string): Promise<Resume> => {
-    const list = getStoredResumes();
-    const target = list.find((r) => r.id === id);
-    if (!target) throw new Error("Resume not found");
-
-    target.status = "active";
-
-    // If it's the only active one, set default
-    const activeCount = list.filter((r) => r.status === "active").length;
-    if (activeCount === 1) {
-      target.isDefault = true;
-    }
-
-    setStoredResumes(list);
-    return target;
+    const raw = await apiClient.patch<BackendResume>(`/resumes/${id}`, {
+      status: "ACTIVE",
+    });
+    return toResume(raw);
   },
 };

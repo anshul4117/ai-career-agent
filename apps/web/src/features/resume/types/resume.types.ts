@@ -167,12 +167,14 @@ export interface UploadedResumeVersion {
   fileName: string;
   uploadedAt: string;
   fileSize: string;
+  fileUrl?: string;
 }
 
 export interface UploadedResume {
   id: string;
   fileName: string;
   fileSize: string;
+  fileUrl?: string;
   uploadedAt: string;
   status: "Completed" | "Pending" | "Failed";
   atsScore: number;

@@ -134,4 +134,39 @@ export const apiClient = {
 
   delete: <T>(path: string, init?: RequestInit) =>
     request<T>(path, { ...init, method: "DELETE" }),
+
+  upload: async <T>(
+    path: string,
+    formData: FormData,
+    init?: RequestInit,
+  ): Promise<T> => {
+    const url = `${API_BASE}${path}`;
+    const res = await fetch(url, {
+      ...init,
+      method: "POST",
+      credentials: "include",
+      body: formData,
+      headers: {
+        Accept: "application/json",
+        ...(init?.headers ?? {}),
+      },
+    });
+
+    if (!res.ok) {
+      let data: unknown;
+      try {
+        data = await res.json();
+      } catch {
+        data = null;
+      }
+      const rawMessage = (data as { message?: string | string[] })?.message;
+      const message =
+        (Array.isArray(rawMessage) ? rawMessage.join(", ") : rawMessage) ??
+        res.statusText ??
+        "Upload failed";
+      throw new ApiError(res.status, message, data);
+    }
+
+    return res.json() as Promise<T>;
+  },
 };
