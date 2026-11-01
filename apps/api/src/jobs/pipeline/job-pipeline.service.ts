@@ -74,7 +74,7 @@ export class JobPipelineService implements OnModuleInit {
     private readonly careerjetAdapter: CareerjetSourceAdapter,
   ) {}
 
-  onModuleInit() {
+  async onModuleInit() {
     // Register all pluggable adapters into the registry
     this.sourceRegistry.register(this.greenhouseAdapter);
     this.sourceRegistry.register(this.leverAdapter);
@@ -88,9 +88,19 @@ export class JobPipelineService implements OnModuleInit {
     this.sourceRegistry.register(this.joobleAdapter);
     this.sourceRegistry.register(this.careerjetAdapter);
 
-    this.logger.log(
-      "JobPipelineService initialized with Pluggable Source Layer.",
-    );
+    try {
+      const activeCount = await this.prisma.job.count({
+        where: { isActive: true },
+      });
+      const totalCount = await this.prisma.job.count();
+      this.logger.log(
+        `JobPipelineService initialized with Pluggable Source Layer. Database inventory: ${activeCount} active jobs (${totalCount} total).`,
+      );
+    } catch (err: unknown) {
+      this.logger.warn(
+        `JobPipelineService initialized. Unable to query active job count: ${(err as Error).message}`,
+      );
+    }
   }
 
   async runPipeline(params?: {

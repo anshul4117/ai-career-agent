@@ -200,8 +200,21 @@ export const jobService = {
       if (response?.items && response.items.length > 0) {
         return response.items.map(mapBackendJobToFrontendJob);
       }
-    } catch {
-      // API call failed
+    } catch (err) {
+      console.error("[jobService] Error fetching /jobs?limit=100:", err);
+      try {
+        const fallback = await apiClient.get<{ items: RawBackendJob[] }>(
+          "/jobs?limit=50",
+        );
+        if (fallback?.items && fallback.items.length > 0) {
+          return fallback.items.map(mapBackendJobToFrontendJob);
+        }
+      } catch (fallbackErr) {
+        console.error(
+          "[jobService] Error fetching /jobs?limit=50:",
+          fallbackErr,
+        );
+      }
     }
 
     const allowMock =
