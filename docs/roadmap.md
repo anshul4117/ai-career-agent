@@ -132,39 +132,55 @@ Users can:
 
 ## Phase 3 — Resume Management
 
-**Goal:** Allow users to upload and manage resumes.
+**Goal:** Allow users to upload and manage resumes with immutable versioning and strict integrity invariants.
 
 **Priority:** Critical
 
+**Key Architectural Invariants & Requirements:**
+
+- **Atomic Version 1 Creation:** Initial resume upload must atomically create both the parent `Resume` (`currentVersion: 1`) and the initial `ResumeVersion` (`versionNumber: 1`, `contentSnapshot: initialData`) inside a single `prisma.$transaction`. A `Resume` record must never exist without an accompanying version 1 snapshot.
+- **ResumeVersion Ownership Validation:** Every service write path accepting `resumeVersionId` must explicitly validate that `resumeVersion.resumeId === targetResume.id` and `targetResume.userId === requestingUserId`. (Enforced at the database layer via PostgreSQL `check_resume_version_ownership` trigger).
+- **Resume Parsing & ATS Analysis Ownership Validation:** All `ResumeParseResult` and `ResumeAnalysis` write paths must validate that `targetResume.userId === requestingUserId` and, when referencing `resumeVersionId`, that the version belongs to `resumeId`.
+- **Resume File Lifecycle & Deletion:**
+  - Object storage asset lifecycle management (MIME type verification, size limits, antivirus scanning).
+  - Reliable post-commit physical storage cleanup: files in S3/Cloud storage must only be purged _after_ the database deletion transaction safely commits (using an outbox/background cleanup strategy).
+  - Version-locked immutable storage keys (`immutableFileKey`) preserved for active job applications.
+
 **Backend:**
 
-- Resume Module
-- File Upload
-- Resume Storage
+- Resume Module (`resumes.service.ts`, `resumes.controller.ts`)
+- File Upload & Multipart Processing (PDF / DOCX, max 5MB)
+- Resume Object Storage Service (S3 / Cloudflare R2 adapter)
+- Immutable Snapshot Archiving
+- Post-commit Storage Cleanup Dispatcher
 
 **Frontend:**
 
-- Resume Upload
-- Resume Management
+- Resume Upload Zone (Drag-and-drop with client-side validation)
+- Resume Management Dashboard & Version History Viewer
+- PDF Previewer Component
 
 **Infrastructure:**
 
-- AWS S3
+- Object Storage (AWS S3 / Cloudflare R2)
 
 **Database:**
 
-- Resumes
-- Resume Versions
+- `resumes`
+- `resume_versions`
+- `resume_parse_results`
+- `resume_analyses`
 
 **Deliverables:**
 
 Users can:
 
-- Upload Resume
-- View Resume
-- Download Resume
+- Upload Resume with automatic Version 1 creation
+- View & Compare Resume Versions
+- Download Stored Resumes
+- Track ATS Analysis and Parsing History safely
 
-**Success Criteria:** Resume storage fully functional.
+**Success Criteria:** Resume storage and versioning fully functional adhering to strict ownership invariants.
 
 ---
 

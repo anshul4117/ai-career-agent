@@ -30,8 +30,19 @@ export class AuthController {
 
   // ── Register ──────────────────────────────────────────────────
   @Post("register")
-  async register(@Body() registerDto: RegisterDto, @Res() res: Response) {
-    const data = await this.authService.register(registerDto);
+  async register(
+    @Body() registerDto: RegisterDto,
+    @Res() res: Response,
+    @Req() req?: Request,
+  ) {
+    const userAgent = req?.headers?.["user-agent"];
+    const ipAddress = req?.ip;
+    const metadata =
+      userAgent || ipAddress ? { userAgent, ipAddress } : undefined;
+
+    const data = metadata
+      ? await this.authService.register(registerDto, metadata)
+      : await this.authService.register(registerDto);
     res
       .cookie("aca-access-token", data.accessToken, {
         ...COOKIE_OPTS,
@@ -68,8 +79,19 @@ export class AuthController {
   // ── Login ─────────────────────────────────────────────────────
   @HttpCode(HttpStatus.OK)
   @Post("login")
-  async login(@Body() loginDto: LoginDto, @Res() res: Response) {
-    const data = await this.authService.login(loginDto);
+  async login(
+    @Body() loginDto: LoginDto,
+    @Res() res: Response,
+    @Req() req?: Request,
+  ) {
+    const userAgent = req?.headers?.["user-agent"];
+    const ipAddress = req?.ip;
+    const metadata =
+      userAgent || ipAddress ? { userAgent, ipAddress } : undefined;
+
+    const data = metadata
+      ? await this.authService.login(loginDto, metadata)
+      : await this.authService.login(loginDto);
     res
       .cookie("aca-access-token", data.accessToken, {
         ...COOKIE_OPTS,
@@ -111,15 +133,6 @@ export class AuthController {
   }
 
   // ── Refresh ───────────────────────────────────────────────────
-  /**
-   * Refreshes the short-lived access token using a valid refresh token.
-   *
-   * SECURITY ARCHITECTURE NOTE:
-   * Refresh tokens are stateless signed JWTs with a 7-day expiration.
-   * Because the database schema is frozen in Milestone 1 without a token
-   * revocation table or token family tracking, refresh tokens cannot be revoked
-   * server-side prior to their expiration date.
-   */
   @HttpCode(HttpStatus.OK)
   @Post("refresh")
   async refresh(
@@ -129,14 +142,21 @@ export class AuthController {
   ) {
     // Prefer refresh token from HttpOnly cookie, fall back to body
     const token =
-      (req.cookies as Record<string, string>)?.["aca-refresh-token"] ||
+      (req?.cookies as Record<string, string>)?.["aca-refresh-token"] ||
       _body?.refreshToken;
 
     if (!token) {
       throw new UnauthorizedException("Refresh token missing");
     }
 
-    const data = await this.authService.refreshFromToken(token);
+    const userAgent = req?.headers?.["user-agent"];
+    const ipAddress = req?.ip;
+    const metadata =
+      userAgent || ipAddress ? { userAgent, ipAddress } : undefined;
+
+    const data = metadata
+      ? await this.authService.refreshFromToken(token, metadata)
+      : await this.authService.refreshFromToken(token);
 
     res
       .cookie("aca-access-token", data.accessToken, {
@@ -149,26 +169,31 @@ export class AuthController {
         sameSite: "lax" as const,
         path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      })
-      .json({ user: data.user });
+      });
+
+    // If a new refresh token was minted or rotated, update the HttpOnly refresh cookie
+    if (data.refreshToken) {
+      res.cookie("aca-refresh-token", data.refreshToken, {
+        ...COOKIE_OPTS,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+    }
+
+    res.json({ user: data.user });
   }
 
   // ── Logout ────────────────────────────────────────────────────
-  /**
-   * Logout endpoint.
-   * Instructs the client browser to delete all authentication and session cookies.
-   *
-   * SECURITY ARCHITECTURE LIMITATION:
-   * Refresh tokens in Milestone 1 are stateless JWTs. There is NO server-side token
-   * blacklist or database revocation table. Consequently, logout terminates the session
-   * by instructing the client to clear cookies (Max-Age=0). If a refresh token was
-   * intercepted or copied before logout, it remains cryptographically valid until its
-   * 7-day expiration. Server-side revocation and token family rotation are planned
-   * for a future milestone when schema modifications are permitted.
-   */
   @HttpCode(HttpStatus.OK)
   @Post("logout")
-  async logout(@Res() res: Response) {
+  async logout(@Res() res: Response, @Req() req?: Request) {
+    const token =
+      (req?.cookies as Record<string, string>)?.["aca-refresh-token"] ||
+      (req?.body as Record<string, string>)?.refreshToken;
+
+    if (token) {
+      await this.authService.revokeToken(token);
+    }
+
     const clearOpts = { ...COOKIE_OPTS, maxAge: 0 };
     res
       .clearCookie("aca-access-token", clearOpts)

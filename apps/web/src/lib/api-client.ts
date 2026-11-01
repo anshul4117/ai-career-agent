@@ -17,6 +17,35 @@ export class ApiError extends Error {
   }
 }
 
+let activeRefreshPromise: Promise<boolean> | null = null;
+
+async function executeSilentRefresh(): Promise<boolean> {
+  if (activeRefreshPromise) {
+    return activeRefreshPromise;
+  }
+
+  activeRefreshPromise = (async () => {
+    try {
+      const refreshRes = await fetch(`${API_BASE}/auth/refresh`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({}),
+      });
+      return refreshRes.ok;
+    } catch {
+      return false;
+    } finally {
+      activeRefreshPromise = null;
+    }
+  })();
+
+  return activeRefreshPromise;
+}
+
 async function request<T>(
   path: string,
   init: RequestInit = {},
@@ -44,21 +73,9 @@ async function request<T>(
       !path.startsWith("/auth/refresh") &&
       !path.startsWith("/auth/logout")
     ) {
-      try {
-        const refreshRes = await fetch(`${API_BASE}/auth/refresh`, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({}),
-        });
-        if (refreshRes.ok) {
-          return request<T>(path, init, true);
-        }
-      } catch {
-        // Fall through to standard error handling
+      const refreshed = await executeSilentRefresh();
+      if (refreshed) {
+        return request<T>(path, init, true);
       }
     }
 
