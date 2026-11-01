@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { AuthLayout } from "@/features/auth/components/auth-layout";
-import { AuthGuard, GuestGuard } from "@/features/auth";
+import { GuestGuard } from "@/features/auth";
 
 export default function AuthGroupLayout({
   children,
@@ -10,15 +10,15 @@ export default function AuthGroupLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isOnboarding = pathname === "/complete-profile";
+  const isGuestOnly =
+    pathname === "/login" ||
+    pathname === "/register" ||
+    pathname === "/forgot-password" ||
+    pathname === "/reset-password";
 
   return (
     <AuthLayout>
-      {isOnboarding ? (
-        <AuthGuard>{children}</AuthGuard>
-      ) : (
-        <GuestGuard>{children}</GuestGuard>
-      )}
+      {isGuestOnly ? <GuestGuard>{children}</GuestGuard> : children}
     </AuthLayout>
   );
 }

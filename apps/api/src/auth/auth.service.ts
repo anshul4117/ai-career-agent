@@ -8,7 +8,7 @@ import { Prisma } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 import * as crypto from "crypto";
 import { PrismaService } from "../prisma/prisma.service";
-import { UsersService } from "../users/users.service";
+import { UsersService, formatUserResponse } from "../users/users.service";
 import { RegisterDto } from "./dto/register.dto";
 import { LoginDto } from "./dto/login.dto";
 
@@ -21,9 +21,7 @@ export class AuthService {
   ) {}
 
   private sanitizeUser<T extends Record<string, unknown>>(user: T) {
-    const sanitized = { ...user };
-    delete sanitized.passwordHash;
-    return sanitized;
+    return formatUserResponse(user);
   }
 
   private hashToken(token: string): string {

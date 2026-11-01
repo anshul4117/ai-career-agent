@@ -169,7 +169,20 @@ export class AuthController {
         sameSite: "lax" as const,
         path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      });
+      })
+      .cookie(
+        "aca-profile-completed",
+        (data.user as { profileCompleted?: boolean }).profileCompleted
+          ? "true"
+          : "false",
+        {
+          httpOnly: false,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax" as const,
+          path: "/",
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+        },
+      );
 
     // If a new refresh token was minted or rotated, update the HttpOnly refresh cookie
     if (data.refreshToken) {

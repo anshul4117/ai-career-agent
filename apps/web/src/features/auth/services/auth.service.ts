@@ -12,6 +12,50 @@ interface AuthResponse {
   user: AuthUser;
 }
 
+export function normalizeAuthUser(
+  raw:
+    | AuthUser
+    | (Record<string, unknown> & { id: string; email: string })
+    | null
+    | undefined,
+): AuthUser {
+  if (!raw) return raw as unknown as AuthUser;
+  const fullName = (raw.fullName as string) || (raw.name as string) || "";
+  const parts = fullName.trim().split(/\s+/);
+  const firstName = (raw.firstName as string) || parts[0] || "";
+  const lastName =
+    (raw.lastName as string) ||
+    (parts.length > 1 ? parts.slice(1).join(" ") : "");
+  const name =
+    (raw.name as string) ||
+    fullName ||
+    `${firstName} ${lastName}`.trim() ||
+    raw.email ||
+    "Candidate";
+  const profileImage =
+    (raw.profileImage as string) ||
+    ((raw as Record<string, unknown>).profilePhotoUrl as string) ||
+    null;
+  const verified = Boolean(
+    raw.verified ??
+    ((raw as Record<string, unknown>).emailVerified as boolean) ??
+    false,
+  );
+
+  return {
+    ...raw,
+    id: raw.id,
+    email: raw.email,
+    fullName: fullName || name,
+    name,
+    firstName,
+    lastName,
+    profileImage,
+    verified,
+    profileCompleted: Boolean(raw.profileCompleted),
+  };
+}
+
 // ── Cookie helpers (public cookies only — HttpOnly ones are invisible to JS) ──
 
 function setPublicSessionCookies(profileCompleted = false) {
@@ -36,8 +80,9 @@ export const authService = {
       email,
       password,
     });
-    setPublicSessionCookies(!!data.user.profileCompleted);
-    return data.user;
+    const user = normalizeAuthUser(data.user);
+    setPublicSessionCookies(!!user.profileCompleted);
+    return user;
   },
 
   /** Google OAuth — not yet wired to a real provider; kept as stub */
@@ -56,8 +101,9 @@ export const authService = {
       password,
       fullName: fullName?.trim() || email.split("@")[0],
     });
-    // After register we land on verify-email; don't set session cookie yet
-    return data.user;
+    const user = normalizeAuthUser(data.user);
+    setPublicSessionCookies(!!user.profileCompleted);
+    return user;
   },
 
   /** Google OAuth registration — stub */
@@ -111,26 +157,41 @@ export const authService = {
     preferredRole: string;
     preferredLocation: string;
   }): Promise<AuthUser> {
-    // TODO: PATCH /api/v1/users/me when the endpoint is ready
-    // For now update local session optimistically
-    const current = await this.getMe();
-    if (!current) throw new Error("No active session found.");
-    const updated: AuthUser = {
-      ...current,
-      ...data,
-      name: `${data.firstName} ${data.lastName}`.trim(),
-      profileCompleted: true,
-    };
+    try {
+      await apiClient.put("/profile/me", {
+        personal: {
+          firstName: data.firstName,
+          lastName: data.lastName,
+        },
+        career: {
+          headline: data.headline,
+          preferredRole: data.preferredRole,
+          preferredLocation: data.preferredLocation,
+        },
+        preferences: {
+          preferredRole: data.preferredRole,
+          preferredLocation: data.preferredLocation,
+        },
+      });
+    } catch (err) {
+      console.warn("Failed to persist completeProfile to /profile/me:", err);
+    }
+
     setPublicSessionCookies(true);
-    return updated;
+    const refreshed = await this.getMe();
+    if (!refreshed) {
+      throw new Error("No active session found.");
+    }
+    return refreshed;
   },
 
   /** Fetch the currently authenticated user from the server */
   async getMe(): Promise<AuthUser | null> {
     try {
       const data = await apiClient.get<AuthResponse>("/auth/me");
-      setPublicSessionCookies(!!data.user.profileCompleted);
-      return data.user;
+      const user = normalizeAuthUser(data.user);
+      setPublicSessionCookies(!!user.profileCompleted);
+      return user;
     } catch {
       return null;
     }

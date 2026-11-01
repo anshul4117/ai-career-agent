@@ -19,7 +19,6 @@ const guestRoutes = [
   "/register",
   "/forgot-password",
   "/reset-password",
-  "/verify-email",
 ];
 
 function isProtectedRoute(pathname: string) {

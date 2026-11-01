@@ -146,7 +146,11 @@ describe("Frontend Registration Form & Schema Tests", () => {
         fullName: "Jane Doe",
       });
 
-      expect(result).toEqual(mockUser);
+      expect(result).toMatchObject(mockUser);
+      expect(result.firstName).toBe("Jane");
+      expect(result.lastName).toBe("Doe");
+      expect(result.name).toBe("Jane Doe");
+      expect(result.profileCompleted).toBe(false);
     });
 
     it("trims whitespace from fullName before sending", async () => {

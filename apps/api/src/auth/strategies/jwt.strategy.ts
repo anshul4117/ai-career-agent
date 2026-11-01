@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import type { Request } from "express";
-import { UsersService } from "../../users/users.service";
+import { UsersService, formatUserResponse } from "../../users/users.service";
 
 export interface JwtPayload {
   sub: string;
@@ -40,8 +40,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
       );
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { passwordHash: _pw, ...sanitizedUser } = user;
-    return sanitizedUser;
+    return formatUserResponse(user);
   }
 }

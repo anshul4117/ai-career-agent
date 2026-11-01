@@ -15,6 +15,7 @@ import {
   type FullProfileResponse,
 } from "../services/profile.service";
 import { calculateProfileCompletion } from "../utils/completion-engine";
+import { useAuthStore } from "@/features/auth/store/auth.store";
 
 interface ProfileState {
   profile: Profile | null;
@@ -319,6 +320,27 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
             return { ...sec, completed: isCompleted };
           },
         );
+
+        const isComplete =
+          audit.percentage === 100 ||
+          !!(
+            state.profile?.career?.headline &&
+            state.profile?.career?.preferredRole
+          );
+
+        if (isComplete) {
+          if (typeof document !== "undefined") {
+            const maxAge = 7 * 24 * 60 * 60;
+            document.cookie = `aca-profile-completed=true;path=/;max-age=${maxAge};SameSite=Lax`;
+          }
+          const authUser = useAuthStore.getState().user;
+          if (authUser && !authUser.profileCompleted) {
+            useAuthStore.getState().setUser({
+              ...authUser,
+              profileCompleted: true,
+            });
+          }
+        }
 
         return {
           profile: {
