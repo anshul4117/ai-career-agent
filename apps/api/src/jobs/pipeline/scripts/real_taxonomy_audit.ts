@@ -102,13 +102,11 @@ async function main() {
   console.log("\nTop 20 Active Companies:");
   const sorted = Object.entries(companyCounts).sort((a, b) => b[1] - a[1]);
   console.table(
-    sorted
-      .slice(0, 20)
-      .map(([company, jobs]) => ({
-        company,
-        jobs,
-        pct: `${((jobs / totalActive) * 100).toFixed(1)}%`,
-      })),
+    sorted.slice(0, 20).map(([company, jobs]) => ({
+      company,
+      jobs,
+      pct: `${((jobs / totalActive) * 100).toFixed(1)}%`,
+    })),
   );
 
   await prisma.$disconnect();
