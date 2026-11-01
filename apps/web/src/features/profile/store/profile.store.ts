@@ -806,7 +806,54 @@ export const useProfileStore = create<ProfileState>((originalSet, get) => {
           await profileService.patchProfile({ avatarUrl: url });
         }
         set((state) => {
-          if (!state.profile) return {};
+          if (!state.profile) {
+            return {
+              profile: {
+                id: "profile_local",
+                userId: "user_local",
+                avatar: {
+                  url,
+                  initials: "U",
+                },
+                personal: {
+                  firstName: "",
+                  lastName: "",
+                  dateOfBirth: null,
+                  gender: null,
+                  nationality: null,
+                },
+                contact: {
+                  email: "",
+                  phone: "",
+                  city: "",
+                  state: "",
+                  country: "",
+                },
+                career: {
+                  currentRole: "",
+                  yearsOfExperience: 0,
+                  preferredRole: "",
+                  preferredLocation: "",
+                  workPreference: "remote",
+                  headline: "",
+                  summary: "",
+                },
+                stats: {
+                  skillsCount: 0,
+                  experienceCount: 0,
+                  projectsCount: 0,
+                  educationCount: 0,
+                },
+                completion: {
+                  percentage: 20,
+                  sections: [],
+                },
+                availability: "actively_looking",
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              },
+            };
+          }
           return {
             profile: {
               ...state.profile,

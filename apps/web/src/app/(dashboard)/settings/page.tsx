@@ -1,23 +1,30 @@
 "use client";
- 
+
 import React, { useEffect } from "react";
 import { PageHeader } from "@/components/shared/page-header";
-import { useSettingsStore, type SettingsTab } from "@/features/settings/store/settings.store";
+import {
+  useSettingsStore,
+  type SettingsTab,
+} from "@/features/settings/store/settings.store";
 import { useResumeStore } from "@/features/resume/store/resume.store";
+import { useProfileStore } from "@/features/profile";
 import { SettingsSidebar } from "@/features/settings/components/settings-sidebar";
 import { SettingsPanels } from "@/features/settings/components/settings-panels";
 import { SettingsSkeleton } from "@/components/ui/skeleton-loaders";
 import { cn } from "@/lib/utils";
- 
+
 export default function SettingsPage() {
-  const { loadSettings, activeTab, setActiveTab, loading, settings } = useSettingsStore();
+  const { loadSettings, activeTab, setActiveTab, loading, settings } =
+    useSettingsStore();
   const { loadResumes } = useResumeStore();
- 
+  const { loadProfile } = useProfileStore();
+
   useEffect(() => {
     loadSettings();
     loadResumes();
-  }, [loadSettings, loadResumes]);
- 
+    loadProfile().catch(() => {});
+  }, [loadSettings, loadResumes, loadProfile]);
+
   // Mobile horizontal scroll tabs definitions
   const mobileTabs = [
     { id: "profile" as SettingsTab, label: "Profile" },
@@ -27,16 +34,16 @@ export default function SettingsPage() {
     { id: "ai" as SettingsTab, label: "AI & Resumes" },
     { id: "appearance" as SettingsTab, label: "Appearance" },
     { id: "connections" as SettingsTab, label: "Linked" },
-    { id: "privacy" as SettingsTab, label: "Privacy" }
+    { id: "privacy" as SettingsTab, label: "Privacy" },
   ];
- 
+
   return (
     <div className="space-y-6 pb-12 select-none relative max-w-[1200px] mx-auto w-full">
-      <PageHeader 
-        title="Settings & Preferences" 
-        description="Manage your profile metadata, AI assistants settings, notifications frequency, and credentials." 
+      <PageHeader
+        title="Settings & Preferences"
+        description="Manage your profile metadata, AI assistants settings, notifications frequency, and credentials."
       />
- 
+
       {loading || !settings ? (
         <SettingsSkeleton />
       ) : (
@@ -50,9 +57,9 @@ export default function SettingsPage() {
                   onClick={() => setActiveTab(tab.id)}
                   className={cn(
                     "py-1.5 px-3 text-[9px] font-black uppercase tracking-wider border border-border rounded-xs transition-colors",
-                    activeTab === tab.id 
-                      ? "bg-primary text-white border-primary" 
-                      : "bg-surface text-foreground-secondary hover:bg-surface-secondary"
+                    activeTab === tab.id
+                      ? "bg-primary text-white border-primary"
+                      : "bg-surface text-foreground-secondary hover:bg-surface-secondary",
                   )}
                 >
                   {tab.label}
@@ -60,20 +67,18 @@ export default function SettingsPage() {
               ))}
             </div>
           </div>
- 
+
           {/* Desktop side-by-side grid */}
           <div className="grid gap-6 lg:grid-cols-4 items-start">
-            
             {/* Left Column: Sidebar on Desktop, hidden on mobile */}
             <div className="hidden lg:block lg:col-span-1">
               <SettingsSidebar />
             </div>
- 
+
             {/* Right Column: Active Configuration Forms Panels */}
             <div className="lg:col-span-3">
               <SettingsPanels />
             </div>
- 
           </div>
         </>
       )}
