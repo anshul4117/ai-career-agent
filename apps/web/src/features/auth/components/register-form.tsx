@@ -14,6 +14,7 @@ import { SocialLoginButton } from "./social-login-button";
 import { AuthDivider } from "./auth-divider";
 import { LoadingButton } from "./loading-button";
 import { ErrorMessage } from "./error-message";
+import { ApiError } from "@/lib/api-client";
 import { z } from "zod";
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
@@ -30,6 +31,7 @@ export function RegisterForm() {
     register,
     handleSubmit,
     watch,
+    setError: setFieldError,
     formState: { errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -44,16 +46,27 @@ export function RegisterForm() {
   const passwordValue = watch("password", "");
 
   const onSubmit = async (data: RegisterFormValues) => {
+    if (isSigningUp) return;
     setError(null);
     setIsSigningUp(true);
     try {
       await signup(data.email, data.password, data.fullName);
     } catch (err) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Failed to create account. Please try again.";
-      setError(message);
+      if (err instanceof ApiError && err.status === 409) {
+        setFieldError("email", {
+          type: "manual",
+          message: "An account with this email already exists.",
+        });
+        setError(
+          "An account with this email already exists. Please log in instead.",
+        );
+      } else {
+        const message =
+          err instanceof Error
+            ? err.message
+            : "Failed to create account. Please try again.";
+        setError(message);
+      }
       setIsSigningUp(false);
     }
   };

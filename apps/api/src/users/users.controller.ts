@@ -69,13 +69,28 @@ export class UsersController {
     // 3. Execute anonymization and deletion
     await this.usersService.anonymizeAndDeleteAccount(req.user.id);
 
-    // 4. Invalidate session cookie
-    res.clearCookie("aca-refresh-token", {
+    // 4. Invalidate all session cookies
+    const isProd = process.env.NODE_ENV === "production";
+    const sameSiteMode: "none" | "lax" = isProd ? "none" : "lax";
+    const clearOpts = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: isProd,
+      sameSite: sameSiteMode,
       path: "/",
-    });
+      maxAge: 0,
+    };
+    const clearPublicOpts = {
+      httpOnly: false,
+      secure: isProd,
+      sameSite: sameSiteMode,
+      path: "/",
+      maxAge: 0,
+    };
+
+    res.clearCookie?.("aca-access-token", clearOpts);
+    res.clearCookie?.("aca-refresh-token", clearOpts);
+    res.cookie?.("aca-session", "", clearPublicOpts);
+    res.cookie?.("aca-profile-completed", "", clearPublicOpts);
 
     return {
       success: true,
