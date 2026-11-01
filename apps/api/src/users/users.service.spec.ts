@@ -110,4 +110,71 @@ describe("UsersService", () => {
       );
     });
   });
+
+  describe("createUser", () => {
+    it("should create user and attach an initial profile record", async () => {
+      const createDto = {
+        email: "new@example.com",
+        fullName: "New Candidate",
+        passwordHash: "hash-xyz",
+      };
+
+      const mockCreated = {
+        id: "new-user-id",
+        ...createDto,
+        profile: { id: "new-prof-id", userId: "new-user-id" },
+      };
+
+      mockPrisma.user.create.mockResolvedValue(mockCreated);
+
+      const result = await service.createUser(createDto);
+
+      expect(mockPrisma.user.create).toHaveBeenCalledWith({
+        data: {
+          email: createDto.email,
+          fullName: createDto.fullName,
+          passwordHash: createDto.passwordHash,
+          profile: {
+            create: {},
+          },
+        },
+        include: {
+          profile: true,
+        },
+      });
+      expect(result).toEqual(mockCreated);
+    });
+  });
+
+  describe("findByEmail and findById", () => {
+    it("should query user by email including profile relation", async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: "u-1",
+        email: "test@example.com",
+      });
+
+      const result = await service.findByEmail("test@example.com");
+
+      expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({
+        where: { email: "test@example.com" },
+        include: { profile: true },
+      });
+      expect(result?.id).toBe("u-1");
+    });
+
+    it("should query user by id including profile relation", async () => {
+      mockPrisma.user.findUnique.mockResolvedValue({
+        id: "u-2",
+        email: "id@example.com",
+      });
+
+      const result = await service.findById("u-2");
+
+      expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({
+        where: { id: "u-2" },
+        include: { profile: true },
+      });
+      expect(result?.id).toBe("u-2");
+    });
+  });
 });

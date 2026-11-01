@@ -3,6 +3,54 @@ import { PrismaService } from "../prisma/prisma.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 
+export function splitFullName(fullName: string): [string, string] {
+  const parts = (fullName || "").trim().split(/\s+/);
+  if (parts.length === 0 || !parts[0]) return ["", ""];
+  if (parts.length === 1) return [parts[0], ""];
+  return [parts[0], parts.slice(1).join(" ")];
+}
+
+export interface UserWithProfilePayload {
+  [key: string]: unknown;
+  fullName?: string | null;
+  passwordHash?: string | null;
+  profilePhotoUrl?: string | null;
+  emailVerified?: boolean | null;
+  profile?: {
+    headline?: string | null;
+    preferredRole?: string | null;
+    currentRole?: string | null;
+    [key: string]: unknown;
+  } | null;
+}
+
+export function formatUserResponse(
+  user: UserWithProfilePayload | null | undefined,
+) {
+  if (!user) return user;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { passwordHash: _pw, ...rest } = user;
+  const [firstName, lastName] = splitFullName(user.fullName);
+  const profile = user.profile;
+  const isCompleted = !!(
+    profile &&
+    (profile.headline || profile.preferredRole || profile.currentRole)
+  );
+
+  return {
+    ...rest,
+    name: user.fullName || `${firstName} ${lastName}`.trim(),
+    firstName,
+    lastName,
+    profileImage: user.profilePhotoUrl || null,
+    verified: user.emailVerified ?? false,
+    profileCompleted: isCompleted,
+    headline: profile?.headline || null,
+    preferredRole: profile?.preferredRole || null,
+    preferredLocation: profile?.preferredLocation || null,
+  };
+}
+
 @Injectable()
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
@@ -15,6 +63,12 @@ export class UsersService {
         email: data.email,
         fullName: data.fullName,
         passwordHash: data.passwordHash,
+        profile: {
+          create: {},
+        },
+      },
+      include: {
+        profile: true,
       },
     });
   }
@@ -22,12 +76,18 @@ export class UsersService {
   async findByEmail(email: string) {
     return this.prisma.user.findUnique({
       where: { email },
+      include: {
+        profile: true,
+      },
     });
   }
 
   async findById(id: string) {
     return this.prisma.user.findUnique({
       where: { id },
+      include: {
+        profile: true,
+      },
     });
   }
 

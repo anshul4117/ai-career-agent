@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "../schemas/auth.schema";
 import { useAuth } from "../hooks/use-auth";
+import { BrutalInput } from "@/components/ui/brutal-input";
 import { EmailInput } from "./email-input";
 import { PasswordInput } from "./password-input";
 import { ConfirmPasswordInput } from "./confirm-password-input";
@@ -32,7 +33,12 @@ export function RegisterForm() {
     formState: { errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { email: "", password: "", confirmPassword: "" },
+    defaultValues: {
+      fullName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 
   const passwordValue = watch("password", "");
@@ -41,9 +47,12 @@ export function RegisterForm() {
     setError(null);
     setIsSigningUp(true);
     try {
-      await signup(data.email, data.password);
+      await signup(data.email, data.password, data.fullName);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to create account. Please try again.";
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Failed to create account. Please try again.";
       setError(message);
       setIsSigningUp(false);
     }
@@ -55,7 +64,8 @@ export function RegisterForm() {
     try {
       await registerWithGoogle();
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Google sign up failed.";
+      const message =
+        err instanceof Error ? err.message : "Google sign up failed.";
       setError(message);
     } finally {
       setIsGoogleLoading(false);
@@ -71,12 +81,23 @@ export function RegisterForm() {
         onClick={handleGoogleSignup}
         isLoading={isGoogleLoading}
       />
-      
+
       <AuthDivider />
 
       <ErrorMessage message={error} onClose={() => setError(null)} />
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+        <BrutalInput
+          id="register-name"
+          label="Full Name"
+          placeholder="Jane Doe"
+          error={errors.fullName?.message}
+          disabled={isAnyLoading}
+          autoComplete="name"
+          required
+          {...register("fullName")}
+        />
+
         <EmailInput
           id="register-email"
           error={errors.email?.message}

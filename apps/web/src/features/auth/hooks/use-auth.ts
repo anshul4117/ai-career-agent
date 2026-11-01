@@ -54,9 +54,14 @@ export function useAuth() {
     async (email: string, password: string, fullName?: string) => {
       setIsLoading(true);
       try {
-        await authService.register(email, password, fullName);
+        const authUser = await authService.register(email, password, fullName);
+        setUser(authUser);
         useOnboardingStore.getState().resetOnboarding();
-        router.replace("/verify-email");
+        if (authUser.profileCompleted) {
+          router.replace("/dashboard");
+        } else {
+          router.replace("/complete-profile");
+        }
       } catch (err) {
         setIsLoading(false);
         throw err;
@@ -64,7 +69,7 @@ export function useAuth() {
         setIsLoading(false);
       }
     },
-    [router, setIsLoading],
+    [router, setUser, setIsLoading],
   );
 
   const registerWithGoogle = useCallback(async () => {

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConflictException, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { Prisma, SubscriptionPlan, User } from "@prisma/client";
+import { Prisma, SubscriptionPlan } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 import { AuthService } from "./auth.service";
 import { UsersService } from "../users/users.service";
@@ -33,7 +33,7 @@ describe("AuthService", () => {
   let prismaMock: MockPrisma;
   let jwtMock: MockJwt;
 
-  const mockUser: User = {
+  const mockUser = {
     id: "user-uuid-1",
     email: "test@example.com",
     fullName: "Test User",
@@ -41,6 +41,7 @@ describe("AuthService", () => {
     profilePhotoUrl: null,
     subscriptionPlan: SubscriptionPlan.FREE,
     emailVerified: false,
+    profile: null,
     createdAt: new Date(),
     updatedAt: new Date(),
   };

@@ -1,10 +1,11 @@
 export interface AuthUser {
   id: string;
   email: string;
+  fullName?: string;
   firstName?: string;
   lastName?: string;
   name?: string;
-  profileImage?: string;
+  profileImage?: string | null;
   createdAt?: string;
   profileCompleted?: boolean;
   verified?: boolean;
@@ -19,4 +20,5 @@ export interface AuthSessionState {
   isLoading: boolean;
 }
 
-export type AuthStatus = "idle" | "loading" | "authenticated" | "unauthenticated";
+export type AuthStatus =
+  "idle" | "loading" | "authenticated" | "unauthenticated";

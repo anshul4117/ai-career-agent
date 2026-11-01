@@ -129,13 +129,22 @@ export default function CompleteProfileChecklist() {
     <div className="space-y-6 w-full max-w-3xl min-w-0 pb-12">
       {/* Header */}
       <div className="space-y-1">
-        <Link
-          href="/profile"
-          className="text-xs font-bold uppercase tracking-wider text-foreground-secondary hover:text-primary flex items-center gap-1 mb-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Profile Overview
-        </Link>
+        <div className="flex items-center justify-between mb-2">
+          <Link
+            href="/profile"
+            className="text-xs font-bold uppercase tracking-wider text-foreground-secondary hover:text-primary flex items-center gap-1"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Profile Overview
+          </Link>
+          <Link
+            href="/dashboard"
+            className="text-xs font-bold uppercase tracking-wider text-foreground-secondary hover:text-primary flex items-center gap-1"
+          >
+            Dashboard
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
         <Heading
           level="h2"
           className="text-2xl md:text-3xl font-black uppercase tracking-tight"
@@ -311,6 +320,20 @@ export default function CompleteProfileChecklist() {
                   </div>
                 );
               })}
+            </div>
+
+            <div className="pt-4 border-t-2 border-border/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <Text className="text-xs text-foreground-secondary">
+                You can complete remaining sections at any time.
+              </Text>
+              <BrutalButton
+                variant="secondary"
+                onClick={() => router.push("/dashboard")}
+                className="h-9 px-5 uppercase font-bold text-xs tracking-wider flex items-center gap-1.5"
+              >
+                Go to Dashboard
+                <ArrowRight className="h-3.5 w-3.5" />
+              </BrutalButton>
             </div>
           </div>
         </BrutalCard>
