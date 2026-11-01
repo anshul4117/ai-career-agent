@@ -3,12 +3,13 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Bell, PanelLeft, Search, HelpCircle, X } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Logo } from "@/components/shared/logo";
 import { mockUser } from "@/features/auth/mock/user";
 import { useAuth } from "@/features/auth";
+import { useProfileStore } from "@/features/profile";
 import { useUiStore } from "@/store";
 import { useSearchStore } from "@/features/search/store/search.store";
 import {
@@ -42,6 +43,21 @@ export function Header() {
         }
       : mockUser;
   const userName = activeUser.name || activeUser.email || "User";
+
+  const profile = useProfileStore((state) => state.profile);
+  const loadProfile = useProfileStore((state) => state.loadProfile);
+
+  React.useEffect(() => {
+    if (!useProfileStore.getState().profile) {
+      loadProfile().catch(() => {});
+    }
+  }, [loadProfile]);
+
+  const avatarUrl =
+    profile?.avatar?.url ||
+    user?.profileImage ||
+    (user as { avatarUrl?: string })?.avatarUrl ||
+    null;
 
   const initials = userName
     .split(" ")
@@ -170,6 +186,13 @@ export function Header() {
           aria-label="Go to settings"
         >
           <Avatar className="h-9 w-9 border-2 border-border brutal-shadow-sm shrink-0">
+            {avatarUrl && (
+              <AvatarImage
+                src={avatarUrl}
+                alt={userName}
+                className="object-cover"
+              />
+            )}
             <AvatarFallback className="text-xs font-bold bg-primary/10 text-primary">
               {initials}
             </AvatarFallback>

@@ -1,9 +1,10 @@
 "use client";
 
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { LogOut, Settings, User } from "lucide-react";
 import { NavLink } from "@/components/layout/nav-link";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +17,7 @@ import { mainNavigation } from "@/config/navigation";
 import { mockUser } from "@/features/auth/mock/user";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/features/auth";
+import { useProfileStore } from "@/features/profile";
 
 interface SidebarNavProps {
   collapsed?: boolean;
@@ -25,10 +27,17 @@ interface SidebarNavProps {
 export function SidebarNav({ collapsed = false, onNavigate }: SidebarNavProps) {
   const { user, isAuthenticated, logout } = useAuth();
 
-  const activeUser = isAuthenticated && user ? {
-    name: user.name || `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.email || "",
-    email: user.email,
-  } : mockUser;
+  const activeUser =
+    isAuthenticated && user
+      ? {
+          name:
+            user.name ||
+            `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+            user.email ||
+            "",
+          email: user.email,
+        }
+      : mockUser;
 
   const userName = activeUser.name || activeUser.email || "User";
 
@@ -39,9 +48,27 @@ export function SidebarNav({ collapsed = false, onNavigate }: SidebarNavProps) {
     .slice(0, 2)
     .toUpperCase();
 
+  const profile = useProfileStore((state) => state.profile);
+  const loadProfile = useProfileStore((state) => state.loadProfile);
+
+  useEffect(() => {
+    if (!useProfileStore.getState().profile) {
+      loadProfile().catch(() => {});
+    }
+  }, [loadProfile]);
+
+  const avatarUrl =
+    profile?.avatar?.url ||
+    user?.profileImage ||
+    (user as { avatarUrl?: string })?.avatarUrl ||
+    null;
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <nav className="flex-1 space-y-1 overflow-y-auto p-3" aria-label="Dashboard">
+      <nav
+        className="flex-1 space-y-1 overflow-y-auto p-3"
+        aria-label="Dashboard"
+      >
         {mainNavigation.map((item) => (
           <NavLink
             key={item.href}
@@ -58,6 +85,7 @@ export function SidebarNav({ collapsed = false, onNavigate }: SidebarNavProps) {
           name={userName}
           email={activeUser.email}
           initials={initials}
+          avatarUrl={avatarUrl}
           signOut={logout}
         />
       </div>
@@ -70,12 +98,14 @@ function UserProfile({
   name,
   email,
   initials,
+  avatarUrl,
   signOut,
 }: {
   collapsed: boolean;
   name: string;
   email: string;
   initials: string;
+  avatarUrl?: string | null;
   signOut: () => void;
 }) {
   return (
@@ -89,8 +119,17 @@ function UserProfile({
           )}
           aria-label="User menu"
         >
-          <Avatar className="h-9 w-9">
-            <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+          <Avatar className="h-9 w-9 border-2 border-border brutal-shadow-xs shrink-0">
+            {avatarUrl && (
+              <AvatarImage
+                src={avatarUrl}
+                alt={name}
+                className="object-cover"
+              />
+            )}
+            <AvatarFallback className="text-xs font-bold bg-primary/10 text-primary">
+              {initials}
+            </AvatarFallback>
           </Avatar>
           {!collapsed && (
             <div className="min-w-0 flex-1">
@@ -100,7 +139,11 @@ function UserProfile({
           )}
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align={collapsed ? "center" : "end"} side="top" className="w-56">
+      <DropdownMenuContent
+        align={collapsed ? "center" : "end"}
+        side="top"
+        className="w-56"
+      >
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
