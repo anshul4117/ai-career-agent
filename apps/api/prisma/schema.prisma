@@ -1,8 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,6 +9,10 @@ datasource db {
   provider = "postgresql"
 }
 
+// ============================================================================
+// ENUMS
+// ============================================================================
+
 enum SubscriptionPlan {
   FREE
   PREMIUM
@@ -18,11 +20,36 @@ enum SubscriptionPlan {
 
 enum OAuthProvider {
   GOOGLE
+  GITHUB
+  LINKEDIN
 }
 
 enum ResumeFileType {
   PDF
   DOCX
+}
+
+enum ResumeStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum ParsingStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum ApplicationStatus {
+  APPLIED
+  SCREENING
+  ASSESSMENT
+  INTERVIEW
+  OFFER
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
 }
 
 enum SkillCategory {
@@ -92,6 +119,8 @@ enum JobSourcePlatform {
   INTERNSHALA
   NAUKRI
   LINKEDIN
+  DIRECT
+  OTHER
 }
 
 enum ApplicationStatusSource {
@@ -100,17 +129,12 @@ enum ApplicationStatusSource {
   WELLFOUND
   COMPANY
   MANUAL
+  SYSTEM
 }
 
-
-
-
-
-
-
-
-
-
+// ============================================================================
+// CORE USER & AUTHENTICATION MODELS
+// ============================================================================
 
 model User {
   id               String           @id @default(uuid())
@@ -123,23 +147,200 @@ model User {
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
 
-  oauthAccounts OAuthAccount[]
-  resumes       Resume[]
+  oauthAccounts        OAuthAccount[]
+  refreshTokens        RefreshToken[]
+  resumes              Resume[]
+  jobApplications      JobApplication[]
+  reviewedParseResults ResumeParseResult[] @relation("ReviewedParseResults")
 
   profile          Profile?
   socialLinks      SocialLink[]
   certifications   Certification[]
   languages        Language[]
   careerPreference CareerPreference?
-
-  userSkills UserSkill[]
-  education  Education[]
-  experience Experience[]
-  projects   Project[]
-  jobApplications JobApplication[]
+  userSkills       UserSkill[]
+  education        Education[]
+  experience       Experience[]
+  projects         Project[]
 
   @@map("users")
 }
+
+model OAuthAccount {
+  id             String        @id @default(uuid())
+  userId         String
+  provider       OAuthProvider
+  providerUserId String
+  createdAt      DateTime      @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId])
+  @@index([userId])
+  @@map("oauth_accounts")
+}
+
+model RefreshToken {
+  id                  String    @id @default(uuid())
+  userId              String
+  tokenHash           String    @unique // SHA-256 hash of high-entropy random token
+  familyId            String    // UUID identifying rotation lineage (for replay attack detection)
+  isRevoked           Boolean   @default(false)
+  replacedByTokenHash String?   // Pointer to successor token hash upon rotation
+  userAgent           String?
+  ipAddress           String?
+  expiresAt           DateTime
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([familyId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+// ============================================================================
+// RESUME ARCHITECTURE (FOUR-TIER)
+// ============================================================================
+
+model Resume {
+  id               String         @id @default(uuid())
+  userId           String
+  title            String
+  fileUrl          String
+  fileType         ResumeFileType
+  fileSize         Int?
+  originalFileName String?
+  isDefault        Boolean        @default(false)
+  status           ResumeStatus   @default(ACTIVE)
+  currentVersion   Int            @default(1)
+
+  // Builder template & styling customization
+  templateId       String?        @default("default")
+  themeConfig      Json?
+  customSections   Json?
+
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  versions         ResumeVersion[]
+  parseResults     ResumeParseResult[]
+  analyses         ResumeAnalysis[]
+  jobApplications  JobApplication[]
+
+  @@index([userId])
+  @@index([status])
+  @@map("resumes")
+}
+
+model ResumeVersion {
+  id              String         @id @default(uuid())
+  resumeId        String
+  versionNumber   Int
+  title           String
+  fileUrl         String?
+  contentSnapshot Json           // Immutable structured snapshot (ExtractedData) of this version
+  themeSnapshot   Json?          // Styling snapshot at time of version creation
+  changeSummary   String?
+  createdAt       DateTime       @default(now())
+
+  resume          Resume         @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  parseResults    ResumeParseResult[]
+  analyses        ResumeAnalysis[]
+  jobApplications JobApplication[]
+
+  @@unique([resumeId, versionNumber])
+  @@index([resumeId])
+  @@map("resume_versions")
+}
+
+model ResumeParseResult {
+  id                   String        @id @default(uuid())
+  resumeId             String
+  resumeVersionId      String?
+  status               ParsingStatus @default(PENDING)
+  retryCount           Int           @default(0)
+  maxRetries           Int           @default(3)
+  errorMessage         String?
+  errorCode            String?       // "FILE_CORRUPTED", "OCR_FAILED", "TIMEOUT", "RATE_LIMIT"
+
+  // Raw & Structured Parsing Data (Immutable parser artifact)
+  rawText              String?       @db.Text
+  extractedData        Json?         // Structured parser output (ExtractedData)
+  confidenceScores     Json?         // SectionConfidence breakdown (0-100 per section)
+
+  // Model & Pipeline Provenance
+  parserEngine         String?       // "GEMINI_VISION", "PDF_PLUMBER", "HYBRID"
+  parserModel          String?       // "gemini-2.5-flash"
+  modelVersion         String?
+  promptVersion        String?
+  processingDurationMs Int?
+
+  // Review & Approval Audit
+  isUserReviewed       Boolean       @default(false)
+  reviewedAt           DateTime?
+  reviewedByUserId     String?
+  reviewActions        Json?         // Audit of accept/edit/ignore per section
+
+  startedAt            DateTime?
+  completedAt          DateTime?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  resume               Resume        @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  resumeVersion        ResumeVersion? @relation(fields: [resumeVersionId], references: [id], onDelete: SetNull)
+  reviewedBy           User?          @relation("ReviewedParseResults", fields: [reviewedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([resumeId])
+  @@index([resumeVersionId])
+  @@index([status])
+  @@index([reviewedByUserId])
+  @@map("resume_parse_results")
+}
+
+model ResumeAnalysis {
+  id                    String        @id @default(uuid())
+  resumeId              String
+  resumeVersionId       String?
+  targetJobId           String?
+  targetJobTitle        String?
+
+  overallAtsScore       Float         // 0.0 - 100.0
+  qualityScore          Float?
+  completenessScore     Float?
+  keywordScore          Float?
+  readabilityScore      Float?
+
+  sectionScores         Json?
+  matchingKeywords      String[]      @default([])
+  missingKeywords       String[]      @default([])
+  keywordDensity        Json?
+  suggestions           Json?
+  bulletImprovements    Json?
+  summaryOptimization   Json?
+
+  analyzerModel         String?
+  analyzerVersion       String?
+  promptVersion         String?
+
+  createdAt             DateTime      @default(now())
+
+  resume                Resume        @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  resumeVersion         ResumeVersion? @relation(fields: [resumeVersionId], references: [id], onDelete: SetNull)
+  targetJob             Job?          @relation(fields: [targetJobId], references: [id], onDelete: SetNull)
+
+  @@index([resumeId])
+  @@index([resumeVersionId])
+  @@index([targetJobId])
+  @@map("resume_analyses")
+}
+
+// ============================================================================
+// PROFILE & BACKGROUND MODELS
+// ============================================================================
 
 model Profile {
   id                String    @id @default(uuid())
@@ -177,6 +378,7 @@ model SocialLink {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("social_links")
 }
 
@@ -195,6 +397,7 @@ model Certification {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("certifications")
 }
 
@@ -211,6 +414,7 @@ model Language {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("languages")
 }
 
@@ -236,37 +440,6 @@ model CareerPreference {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("career_preferences")
-}
-
-model OAuthAccount {
-  id             String        @id @default(uuid())
-  userId         String
-  provider       OAuthProvider
-  providerUserId String
-  createdAt      DateTime      @default(now())
-
-  user User @relation(fields: [userId], references: [id])
-
-  @@unique([provider, providerUserId])
-  @@map("oauth_accounts")
-}
-
-model Resume {
-  id               String         @id @default(uuid())
-  userId           String
-  title            String
-  fileUrl          String
-  fileType         ResumeFileType
-  fileSize         Int?
-  originalFileName String?
-  isDefault        Boolean        @default(false)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-
-  user User @relation(fields: [userId], references: [id])
-  jobApplications JobApplication[]
-
-  @@map("resumes")
 }
 
 model Skill {
@@ -296,6 +469,7 @@ model UserSkill {
   skill Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
 
   @@unique([userId, skillId])
+  @@index([skillId])
   @@map("user_skills")
 }
 
@@ -317,6 +491,7 @@ model Education {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("education")
 }
 
@@ -340,6 +515,7 @@ model Experience {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("experience")
 }
 
@@ -364,8 +540,13 @@ model Project {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("projects")
 }
+
+// ============================================================================
+// JOB ENGINE & APPLICATION TRACKING
+// ============================================================================
 
 model Company {
   id            String      @id @default(uuid())
@@ -382,7 +563,7 @@ model Company {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
-  jobs Job[]
+  jobs          Job[]
 
   @@map("companies")
 }
@@ -401,16 +582,19 @@ model Job {
   salaryMax          Int?
   currency           String?
   salaryPeriod       SalaryPeriod?
-  description        String
+  description        String          @db.Text
   isActive           Boolean         @default(true)
   postedAt           DateTime?
   expiresAt          DateTime?
   createdAt          DateTime        @default(now())
   updatedAt          DateTime        @updatedAt
 
-  company    Company     @relation(fields: [companyId], references: [id])
-  jobSources JobSource[]
+  company            Company         @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  jobSources         JobSource[]
+  jobApplications    JobApplication[]
+  resumeAnalyses     ResumeAnalysis[]
 
+  @@index([companyId])
   @@map("jobs")
 }
 
@@ -425,44 +609,58 @@ model JobSource {
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 
-  job             Job               @relation(fields: [jobId], references: [id])
+  job            Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
   jobApplications JobApplication[]
 
   @@unique([jobId, source])
+  @@index([jobId])
   @@map("job_sources")
 }
 
 model JobApplication {
-  id            String   @id @default(uuid())
-  userId        String
-  resumeId      String
-  jobSourceId   String
-  currentStatus String
-  appliedAt     DateTime
-  notes         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id               String                  @id @default(uuid())
+  userId           String                  // Required. Re-assigned to System Archive User upon account deletion.
+  jobId            String                  // Primary link directly to Job
+  jobSourceId      String?
+  resumeId         String?                 // Nullable: SetNull on resume deletion
+  resumeVersionId  String?                 // Nullable: SetNull on version deletion
+  
+  resumeSnapshot   Json?                   // { title, candidateName, candidateEmail, candidatePhone, originalFileName }
+  immutableFileKey String?                 // Version-locked object storage key
+  
+  status           ApplicationStatus       @default(APPLIED)
+  appliedAt        DateTime                @default(now())
+  notes            String?                 @db.Text
 
-  user   User      @relation(fields: [userId], references: [id])
-  resume Resume    @relation(fields: [resumeId], references: [id])
-  jobSource JobSource @relation(fields: [jobSourceId], references: [id])
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
 
-  statusHistory ApplicationStatusHistory[]
+  user             User                    @relation(fields: [userId], references: [id], onDelete: Restrict)
+  job              Job                     @relation(fields: [jobId], references: [id], onDelete: Restrict)
+  jobSource        JobSource?              @relation(fields: [jobSourceId], references: [id], onDelete: SetNull)
+  resume           Resume?                 @relation(fields: [resumeId], references: [id], onDelete: SetNull)
+  resumeVersion    ResumeVersion?          @relation(fields: [resumeVersionId], references: [id], onDelete: SetNull)
+  statusHistory    ApplicationStatusHistory[]
 
-  @@unique([userId, jobSourceId])
+  @@index([userId])
+  @@index([jobId])
+  @@index([resumeId])
+  @@index([status])
   @@map("job_applications")
 }
 
 model ApplicationStatusHistory {
   id               String                  @id @default(uuid())
   jobApplicationId String
-  status           String
-  statusSource     ApplicationStatusSource?
+  status           ApplicationStatus
+  statusSource     ApplicationStatusSource? @default(MANUAL)
   message          String?
-  statusAt         DateTime
+  statusAt         DateTime                @default(now())
   createdAt        DateTime                @default(now())
 
-  jobApplication JobApplication @relation(fields: [jobApplicationId], references: [id])
+  jobApplication   JobApplication          @relation(fields: [jobApplicationId], references: [id], onDelete: Cascade)
 
+  @@index([jobApplicationId])
+  @@index([statusAt])
   @@map("application_status_history")
 }

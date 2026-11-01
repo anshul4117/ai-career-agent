@@ -12,10 +12,10 @@ The database is designed to support:
 - Cover Letter Generation
 - Application Tracking
 
-| Concern | Technology |
-| ------- | ---------- |
+| Concern         | Technology |
+| --------------- | ---------- |
 | Database Engine | PostgreSQL |
-| ORM | Prisma |
+| ORM             | Prisma     |
 
 ---
 
@@ -51,15 +51,15 @@ Application
 
 **Table:** `users`
 
-| Field | Description |
-| ----- | ----------- |
-| `id` | Primary key |
-| `email` | Unique user email |
+| Field           | Description                          |
+| --------------- | ------------------------------------ |
+| `id`            | Primary key                          |
+| `email`         | Unique user email                    |
 | `password_hash` | Hashed password (nullable for OAuth) |
-| `provider` | Auth provider enum |
-| `is_verified` | Email verification status |
-| `created_at` | Record creation timestamp |
-| `updated_at` | Record update timestamp |
+| `provider`      | Auth provider enum                   |
+| `is_verified`   | Email verification status            |
+| `created_at`    | Record creation timestamp            |
+| `updated_at`    | Record update timestamp              |
 
 **Relationships:**
 
@@ -76,22 +76,22 @@ Application
 
 **Table:** `profiles`
 
-| Field | Description |
-| ----- | ----------- |
-| `id` | Primary key |
-| `user_id` | Foreign key → `users.id` |
-| `first_name` | Candidate first name |
-| `last_name` | Candidate last name |
-| `phone` | Contact phone number |
-| `location` | Current or preferred location |
-| `headline` | Professional headline |
-| `summary` | Career summary |
-| `preferred_role` | Target job role |
-| `preferred_location` | Target location |
-| `employment_type` | Preferred employment type |
-| `years_of_experience` | Total years of experience |
-| `created_at` | Record creation timestamp |
-| `updated_at` | Record update timestamp |
+| Field                 | Description                   |
+| --------------------- | ----------------------------- |
+| `id`                  | Primary key                   |
+| `user_id`             | Foreign key → `users.id`      |
+| `first_name`          | Candidate first name          |
+| `last_name`           | Candidate last name           |
+| `phone`               | Contact phone number          |
+| `location`            | Current or preferred location |
+| `headline`            | Professional headline         |
+| `summary`             | Career summary                |
+| `preferred_role`      | Target job role               |
+| `preferred_location`  | Target location               |
+| `employment_type`     | Preferred employment type     |
+| `years_of_experience` | Total years of experience     |
+| `created_at`          | Record creation timestamp     |
+| `updated_at`          | Record update timestamp       |
 
 **Relationships:**
 
@@ -108,12 +108,12 @@ Application
 
 **Table:** `skills`
 
-| Field | Description |
-| ----- | ----------- |
-| `id` | Primary key |
+| Field        | Description                 |
+| ------------ | --------------------------- |
+| `id`         | Primary key                 |
 | `profile_id` | Foreign key → `profiles.id` |
-| `name` | Skill name |
-| `level` | Proficiency level |
+| `name`       | Skill name                  |
+| `level`      | Proficiency level           |
 
 **Examples:** Node.js, React, Redis, MongoDB, AWS
 
@@ -125,16 +125,16 @@ Application
 
 **Table:** `educations`
 
-| Field | Description |
-| ----- | ----------- |
-| `id` | Primary key |
-| `profile_id` | Foreign key → `profiles.id` |
-| `institution` | School or university name |
-| `degree` | Degree earned |
-| `field_of_study` | Major or specialization |
-| `start_date` | Enrollment start date |
-| `end_date` | Graduation or end date |
-| `cgpa` | Grade point average |
+| Field            | Description                 |
+| ---------------- | --------------------------- |
+| `id`             | Primary key                 |
+| `profile_id`     | Foreign key → `profiles.id` |
+| `institution`    | School or university name   |
+| `degree`         | Degree earned               |
+| `field_of_study` | Major or specialization     |
+| `start_date`     | Enrollment start date       |
+| `end_date`       | Graduation or end date      |
+| `cgpa`           | Grade point average         |
 
 ---
 
@@ -144,15 +144,15 @@ Application
 
 **Table:** `experiences`
 
-| Field | Description |
-| ----- | ----------- |
-| `id` | Primary key |
-| `profile_id` | Foreign key → `profiles.id` |
-| `company_name` | Employer name |
-| `role` | Job title |
-| `description` | Role description |
-| `start_date` | Employment start date |
-| `end_date` | Employment end date |
+| Field               | Description                     |
+| ------------------- | ------------------------------- |
+| `id`                | Primary key                     |
+| `profile_id`        | Foreign key → `profiles.id`     |
+| `company_name`      | Employer name                   |
+| `role`              | Job title                       |
+| `description`       | Role description                |
+| `start_date`        | Employment start date           |
+| `end_date`          | Employment end date             |
 | `currently_working` | Whether currently employed here |
 
 ---
@@ -163,15 +163,15 @@ Application
 
 **Table:** `projects`
 
-| Field | Description |
-| ----- | ----------- |
-| `id` | Primary key |
-| `profile_id` | Foreign key → `profiles.id` |
-| `title` | Project title |
-| `description` | Project description |
-| `github_url` | Source code URL |
-| `live_url` | Live demo URL |
-| `technologies` | Tech stack used |
+| Field          | Description                 |
+| -------------- | --------------------------- |
+| `id`           | Primary key                 |
+| `profile_id`   | Foreign key → `profiles.id` |
+| `title`        | Project title               |
+| `description`  | Project description         |
+| `github_url`   | Source code URL             |
+| `live_url`     | Live demo URL               |
+| `technologies` | Tech stack used             |
 
 ---
 
@@ -181,15 +181,15 @@ Application
 
 **Table:** `resumes`
 
-| Field | Description |
-| ----- | ----------- |
-| `id` | Primary key |
-| `user_id` | Foreign key → `users.id` |
-| `file_name` | Original file name |
-| `file_url` | Storage URL |
-| `storage_provider` | Storage backend (e.g. S3) |
-| `parsed` | Whether resume has been parsed |
-| `created_at` | Upload timestamp |
+| Field              | Description                    |
+| ------------------ | ------------------------------ |
+| `id`               | Primary key                    |
+| `user_id`          | Foreign key → `users.id`       |
+| `file_name`        | Original file name             |
+| `file_url`         | Storage URL                    |
+| `storage_provider` | Storage backend (e.g. S3)      |
+| `parsed`           | Whether resume has been parsed |
+| `created_at`       | Upload timestamp               |
 
 **Relationships:**
 
@@ -203,14 +203,14 @@ Application
 
 **Table:** `resume_versions`
 
-| Field | Description |
-| ----- | ----------- |
-| `id` | Primary key |
-| `resume_id` | Foreign key → `resumes.id` |
-| `version_name` | Human-readable version label |
-| `file_url` | Storage URL |
+| Field             | Description                       |
+| ----------------- | --------------------------------- |
+| `id`              | Primary key                       |
+| `resume_id`       | Foreign key → `resumes.id`        |
+| `version_name`    | Human-readable version label      |
+| `file_url`        | Storage URL                       |
 | `generated_by_ai` | Whether AI generated this version |
-| `created_at` | Creation timestamp |
+| `created_at`      | Creation timestamp                |
 
 **Examples:** Original Resume, Backend Resume, Full Stack Resume, ATS Optimized Resume
 
@@ -222,17 +222,17 @@ Application
 
 **Table:** `companies`
 
-| Field | Description |
-| ----- | ----------- |
-| `id` | Primary key |
-| `name` | Company name |
-| `website` | Company website URL |
-| `industry` | Industry sector |
-| `location` | Headquarters or primary location |
-| `company_size` | Employee count range |
-| `description` | Company description |
-| `trust_score` | Credibility score from quality engine |
-| `created_at` | Record creation timestamp |
+| Field          | Description                           |
+| -------------- | ------------------------------------- |
+| `id`           | Primary key                           |
+| `name`         | Company name                          |
+| `website`      | Company website URL                   |
+| `industry`     | Industry sector                       |
+| `location`     | Headquarters or primary location      |
+| `company_size` | Employee count range                  |
+| `description`  | Company description                   |
+| `trust_score`  | Credibility score from quality engine |
+| `created_at`   | Record creation timestamp             |
 
 **Relationships:**
 
@@ -246,10 +246,10 @@ Application
 
 **Table:** `job_sources`
 
-| Field | Description |
-| ----- | ----------- |
-| `id` | Primary key |
-| `name` | Source name |
+| Field      | Description     |
+| ---------- | --------------- |
+| `id`       | Primary key     |
+| `name`     | Source name     |
 | `base_url` | Source base URL |
 
 **Examples:** Wellfound, YC Jobs, Internshala, Company Career Page
@@ -262,23 +262,23 @@ Application
 
 **Table:** `jobs`
 
-| Field | Description |
-| ----- | ----------- |
-| `id` | Primary key |
-| `company_id` | Foreign key → `companies.id` |
-| `job_source_id` | Foreign key → `job_sources.id` |
-| `title` | Job title |
-| `description` | Full job description |
-| `location` | Job location |
-| `employment_type` | Employment type enum |
-| `salary_min` | Minimum salary |
-| `salary_max` | Maximum salary |
-| `experience_required` | Required experience level |
-| `remote_allowed` | Whether remote work is allowed |
-| `job_url` | Original listing URL |
-| `posted_at` | Date job was posted |
-| `created_at` | Record creation timestamp |
-| `status` | Job status enum |
+| Field                 | Description                    |
+| --------------------- | ------------------------------ |
+| `id`                  | Primary key                    |
+| `company_id`          | Foreign key → `companies.id`   |
+| `job_source_id`       | Foreign key → `job_sources.id` |
+| `title`               | Job title                      |
+| `description`         | Full job description           |
+| `location`            | Job location                   |
+| `employment_type`     | Employment type enum           |
+| `salary_min`          | Minimum salary                 |
+| `salary_max`          | Maximum salary                 |
+| `experience_required` | Required experience level      |
+| `remote_allowed`      | Whether remote work is allowed |
+| `job_url`             | Original listing URL           |
+| `posted_at`           | Date job was posted            |
+| `created_at`          | Record creation timestamp      |
+| `status`              | Job status enum                |
 
 **Relationships:**
 
@@ -293,14 +293,14 @@ Application
 
 **Table:** `job_quality_scores`
 
-| Field | Description |
-| ----- | ----------- |
-| `id` | Primary key |
-| `job_id` | Foreign key → `jobs.id` |
-| `freshness_score` | Recency score |
-| `trust_score` | Company credibility score |
-| `relevance_score` | Candidate alignment score |
-| `quality_score` | Final composite score |
+| Field                | Description                  |
+| -------------------- | ---------------------------- |
+| `id`                 | Primary key                  |
+| `job_id`             | Foreign key → `jobs.id`      |
+| `freshness_score`    | Recency score                |
+| `trust_score`        | Company credibility score    |
+| `relevance_score`    | Candidate alignment score    |
+| `quality_score`      | Final composite score        |
 | `last_calculated_at` | Last recalculation timestamp |
 
 ---
@@ -311,17 +311,17 @@ Application
 
 **Table:** `job_matches`
 
-| Field | Description |
-| ----- | ----------- |
-| `id` | Primary key |
-| `job_id` | Foreign key → `jobs.id` |
-| `user_id` | Foreign key → `users.id` |
-| `match_percentage` | Overall match score (0–100) |
-| `matching_skills` | Skills that align with the job |
-| `missing_skills` | Skills the candidate lacks |
-| `strengths` | Candidate strength areas |
-| `improvements` | Suggested improvements |
-| `generated_at` | When the match was computed |
+| Field              | Description                    |
+| ------------------ | ------------------------------ |
+| `id`               | Primary key                    |
+| `job_id`           | Foreign key → `jobs.id`        |
+| `user_id`          | Foreign key → `users.id`       |
+| `match_percentage` | Overall match score (0–100)    |
+| `matching_skills`  | Skills that align with the job |
+| `missing_skills`   | Skills the candidate lacks     |
+| `strengths`        | Candidate strength areas       |
+| `improvements`     | Suggested improvements         |
+| `generated_at`     | When the match was computed    |
 
 ---
 
@@ -331,14 +331,14 @@ Application
 
 **Table:** `cover_letters`
 
-| Field | Description |
-| ----- | ----------- |
-| `id` | Primary key |
-| `user_id` | Foreign key → `users.id` |
-| `job_id` | Foreign key → `jobs.id` |
-| `content` | Cover letter body |
+| Field             | Description                      |
+| ----------------- | -------------------------------- |
+| `id`              | Primary key                      |
+| `user_id`         | Foreign key → `users.id`         |
+| `job_id`          | Foreign key → `jobs.id`          |
+| `content`         | Cover letter body                |
 | `generated_by_ai` | Whether AI generated this letter |
-| `created_at` | Creation timestamp |
+| `created_at`      | Creation timestamp               |
 
 ---
 
@@ -348,17 +348,17 @@ Application
 
 **Table:** `applications`
 
-| Field | Description |
-| ----- | ----------- |
-| `id` | Primary key |
-| `user_id` | Foreign key → `users.id` |
-| `job_id` | Foreign key → `jobs.id` |
+| Field               | Description                        |
+| ------------------- | ---------------------------------- |
+| `id`                | Primary key                        |
+| `user_id`           | Foreign key → `users.id`           |
+| `job_id`            | Foreign key → `jobs.id`            |
 | `resume_version_id` | Foreign key → `resume_versions.id` |
-| `cover_letter_id` | Foreign key → `cover_letters.id` |
-| `status` | Application status enum |
-| `applied_at` | Date application was submitted |
-| `notes` | User notes |
-| `updated_at` | Last status update timestamp |
+| `cover_letter_id`   | Foreign key → `cover_letters.id`   |
+| `status`            | Application status enum            |
+| `applied_at`        | Date application was submitted     |
+| `notes`             | User notes                         |
+| `updated_at`        | Last status update timestamp       |
 
 ---
 
@@ -368,14 +368,14 @@ Application
 
 **Table:** `notifications`
 
-| Field | Description |
-| ----- | ----------- |
-| `id` | Primary key |
-| `user_id` | Foreign key → `users.id` |
-| `title` | Notification title |
-| `message` | Notification body |
-| `read` | Whether user has read it |
-| `created_at` | Creation timestamp |
+| Field        | Description              |
+| ------------ | ------------------------ |
+| `id`         | Primary key              |
+| `user_id`    | Foreign key → `users.id` |
+| `title`      | Notification title       |
+| `message`    | Notification body        |
+| `read`       | Whether user has read it |
+| `created_at` | Creation timestamp       |
 
 ---
 
@@ -383,59 +383,59 @@ Application
 
 ### Auth Provider
 
-| Value | Description |
-| ----- | ----------- |
-| `EMAIL` | Email/password authentication |
-| `GOOGLE` | Google OAuth |
-| `GITHUB` | GitHub OAuth |
+| Value    | Description                   |
+| -------- | ----------------------------- |
+| `EMAIL`  | Email/password authentication |
+| `GOOGLE` | Google OAuth                  |
+| `GITHUB` | GitHub OAuth                  |
 
 ### Employment Type
 
-| Value | Description |
-| ----- | ----------- |
-| `FULL_TIME` | Full-time employment |
-| `PART_TIME` | Part-time employment |
-| `INTERNSHIP` | Internship |
-| `CONTRACT` | Contract work |
-| `REMOTE` | Fully remote |
-| `HYBRID` | Hybrid on-site/remote |
+| Value        | Description           |
+| ------------ | --------------------- |
+| `FULL_TIME`  | Full-time employment  |
+| `PART_TIME`  | Part-time employment  |
+| `INTERNSHIP` | Internship            |
+| `CONTRACT`   | Contract work         |
+| `REMOTE`     | Fully remote          |
+| `HYBRID`     | Hybrid on-site/remote |
 
 ### Application Status
 
-| Value | Description |
-| ----- | ----------- |
-| `SAVED` | Saved for later |
-| `APPLIED` | Application submitted |
-| `INTERVIEW_SCHEDULED` | Interview booked |
-| `INTERVIEW_COMPLETED` | Interview done |
-| `REJECTED` | Application rejected |
-| `OFFER_RECEIVED` | Offer extended |
-| `ACCEPTED` | Offer accepted |
-| `WITHDRAWN` | Candidate withdrew |
+| Value                 | Description           |
+| --------------------- | --------------------- |
+| `SAVED`               | Saved for later       |
+| `APPLIED`             | Application submitted |
+| `INTERVIEW_SCHEDULED` | Interview booked      |
+| `INTERVIEW_COMPLETED` | Interview done        |
+| `REJECTED`            | Application rejected  |
+| `OFFER_RECEIVED`      | Offer extended        |
+| `ACCEPTED`            | Offer accepted        |
+| `WITHDRAWN`           | Candidate withdrew    |
 
 ### Job Status
 
-| Value | Description |
-| ----- | ----------- |
-| `ACTIVE` | Currently open |
-| `EXPIRED` | Listing expired |
+| Value      | Description       |
+| ---------- | ----------------- |
+| `ACTIVE`   | Currently open    |
+| `EXPIRED`  | Listing expired   |
 | `ARCHIVED` | Manually archived |
 
 ---
 
 ## Indexing Strategy
 
-| Table | Indexed Column |
-| ----- | -------------- |
-| `users` | `email` |
-| `profiles` | `user_id` |
-| `skills` | `profile_id` |
-| `jobs` | `company_id` |
-| `jobs` | `posted_at` |
-| `applications` | `user_id` |
-| `applications` | `job_id` |
-| `job_matches` | `user_id` |
-| `job_matches` | `job_id` |
+| Table          | Indexed Column |
+| -------------- | -------------- |
+| `users`        | `email`        |
+| `profiles`     | `user_id`      |
+| `skills`       | `profile_id`   |
+| `jobs`         | `company_id`   |
+| `jobs`         | `posted_at`    |
+| `applications` | `user_id`      |
+| `applications` | `job_id`       |
+| `job_matches`  | `user_id`      |
+| `job_matches`  | `job_id`       |
 
 ---
 
@@ -443,14 +443,14 @@ Application
 
 These tables should **not** be implemented in Version 1.
 
-| Table | Purpose |
-| ----- | ------- |
-| `future_referrals` | Referral tracking |
-| `future_interviews` | Interview scheduling and prep |
-| `future_salary_insights` | Compensation intelligence |
-| `future_auto_apply_logs` | Automated application logs |
-| `future_career_roadmaps` | Career path planning |
-| `future_ai_memory` | Persistent AI context |
+| Table                    | Purpose                       |
+| ------------------------ | ----------------------------- |
+| `future_referrals`       | Referral tracking             |
+| `future_interviews`      | Interview scheduling and prep |
+| `future_salary_insights` | Compensation intelligence     |
+| `future_auto_apply_logs` | Automated application logs    |
+| `future_career_roadmaps` | Career path planning          |
+| `future_ai_memory`       | Persistent AI context         |
 
 ---
 
@@ -505,3 +505,47 @@ Applications
 - Applications
 
 **Ignore** all future tables until Version 2.
+
+---
+
+## Phase 1 Database Hardening, Invariants & Migration Safety
+
+### 1. Four-Tier Resume Architecture
+
+- **`resumes`**: Parent entity tracking current version number, active/archived status, styling, and default flag (`resumes_user_id_is_default_unique` partial unique index).
+- **`resume_versions`**: Append-only immutable version snapshots with unique composite key `(resumeId, versionNumber)` and structured JSON content.
+- **`resume_parse_results`**: Immutable extraction results tracking parser engines (`GEMINI_VISION`, `PDF_PLUMBER`), models, confidence scores, and user review actions.
+- **`resume_analyses`**: ATS scoring breakdown, keyword matching, keyword density, and actionable suggestions.
+
+### 2. Cross-Resume Ownership Invariant & Database Triggers
+
+- PostgreSQL trigger function `check_resume_version_ownership()` is active on:
+  - `resume_parse_results`
+  - `resume_analyses`
+  - `job_applications`
+- **Invariant**: Any non-null `resumeVersionId` must reference a row in `resume_versions` where `resumeId` strictly matches the referencing row's `resumeId`. Attempts to link mismatched versions are rejected at the database engine level with code `P0001`.
+
+### 3. Refresh Token Rotation & Security
+
+- `refresh_tokens` enforces a unique constraint on `tokenHash`.
+- Tokens belong to a `familyId`. Reuse of an already revoked token triggers automatic family revocation to mitigate replay attacks.
+- Concurrency race conditions on legacy token migration are handled gracefully without unhandled HTTP 500 errors.
+- Stateless token migration window is dynamically evaluated from deployment/migration timestamps and fails safely in unconfigured production environments.
+
+### 4. Account Anonymization & Compliance (GDPR / CCPA)
+
+- Executed via `DELETE /users/me` with `JwtAuthGuard`, re-authentication (password check for credential accounts), and explicit `"DELETE MY ACCOUNT"` confirmation.
+- **Employer Hiring Compliance**: Reassigns `job_applications.userId` to System Archive User `00000000-0000-0000-0000-000000000000`.
+- **PII Scrubbing**:
+  - `resumeSnapshot` scrubbed (`candidateName`, `candidateEmail`, `candidatePhone` replaced with anonymized placeholders; `originalFileName` sanitized to `anonymized_resume.pdf`).
+  - `immutableFileKey` set to `NULL`.
+  - `application_status_history.message` sanitized to `NULL`.
+- **Storage Asset Cleanup**: All physical file references (`Resume.fileUrl`, `ResumeVersion.fileUrl`, `JobApplication.immutableFileKey`) are collected before user deletion and dispatched for background object-storage cleanup _after_ the database transaction safely commits.
+
+### 5. Migration Safety & Recovery Guidelines
+
+- **Zero-Downtime Expand-Contract**: For production environments with existing data, never drop columns directly. Use a two-stage expand-contract pattern:
+  1. Expand: Add new nullable columns, dual-write in application layer, and backfill existing data.
+  2. Contract: Mark old columns deprecated, switch reads to new columns, and drop old columns in a subsequent release.
+- **PostgreSQL Enum Additions**: `ALTER TYPE ... ADD VALUE` cannot be reverted with `DROP VALUE`. Any rollback requires recreating the enum type, altering referencing tables, and dropping the temporary type.
+- **Production Pre-requisites**: Always verify database snapshots (e.g. Neon Point-in-Time Recovery / `pg_dump`) before executing schema-altering commands.
