@@ -17,7 +17,7 @@
     "lint": "npm run lint --workspace=@ai-career-agent/web",
     "type-check": "npm run type-check --workspace=@ai-career-agent/api && npm run type-check --workspace=@ai-career-agent/web",
     "test": "npm run test --workspace=@ai-career-agent/api && npm run test --workspace=@ai-career-agent/web",
-    "prepare": "node -e \"if (process.env.NODE_ENV !== 'production') { try { require('child_process').execSync('husky', { stdio: 'inherit' }) } catch (e) {} }\""
+    "prepare": "node -e \"if (!process.env.CI && !process.env.VERCEL && process.env.NODE_ENV !== 'production') { try { require('child_process').execSync('husky', { stdio: 'ignore' }) } catch (e) {} }\""
   },
   "engines": {
     "node": ">=20.0.0"
