@@ -32,60 +32,6 @@ interface ResumeState {
   downloadResume: (id: string) => Promise<void>;
 }
 
-const formatBytes = (bytes: number): string => {
-  if (bytes === 0) return "0 Bytes";
-  const k = 1024;
-  const dm = 1;
-  const sizes = ["Bytes", "KB", "MB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
-};
-
-const INITIAL_UPLOADED_RESUMES: UploadedResume[] = [
-  {
-    id: "res_001",
-    fileName: "anshul-kumar-resume-v2.pdf",
-    fileSize: "245 KB",
-    uploadedAt: "2026-07-20T10:00:00Z",
-    status: "Completed",
-    atsScore: 82,
-    isDefault: true,
-    version: 2,
-    versionHistory: [
-      {
-        version: 2,
-        fileName: "anshul-kumar-resume-v2.pdf",
-        uploadedAt: "2026-07-20T10:00:00Z",
-        fileSize: "245 KB",
-      },
-      {
-        version: 1,
-        fileName: "anshul-kumar-resume-v1.pdf",
-        uploadedAt: "2026-06-10T09:30:00Z",
-        fileSize: "238 KB",
-      },
-    ],
-  },
-  {
-    id: "res_002",
-    fileName: "backend-focused-resume.pdf",
-    fileSize: "198 KB",
-    uploadedAt: "2026-07-18T14:22:00Z",
-    status: "Completed",
-    atsScore: 78,
-    isDefault: false,
-    version: 1,
-    versionHistory: [
-      {
-        version: 1,
-        fileName: "backend-focused-resume.pdf",
-        uploadedAt: "2026-07-18T14:22:00Z",
-        fileSize: "198 KB",
-      },
-    ],
-  },
-];
-
 export const useResumeStore = create<ResumeState>((set, get) => ({
   // Legacy Builder State
   resumes: [],
@@ -93,14 +39,21 @@ export const useResumeStore = create<ResumeState>((set, get) => ({
   isLoading: false,
   error: null,
 
-  // Uploaded Resumes State
-  uploadedResumes: INITIAL_UPLOADED_RESUMES,
+  // Uploaded Resumes State — Starts empty for fresh users until they manually upload
+  uploadedResumes: [],
 
   loadResumes: async () => {
     set({ isLoading: true, error: null });
     try {
-      const list = await resumeService.getAll();
-      set({ resumes: list, isLoading: false });
+      const [list, uploaded] = await Promise.all([
+        resumeService.getAll(),
+        resumeService.getUploadedResumes(),
+      ]);
+      set({
+        resumes: list,
+        uploadedResumes: uploaded,
+        isLoading: false,
+      });
     } catch (err) {
       set({ error: (err as Error).message, isLoading: false });
     }
@@ -266,113 +219,85 @@ export const useResumeStore = create<ResumeState>((set, get) => ({
     }
   },
 
-  // Uploaded Resumes Actions (Simulating 800ms API latency)
+  // Uploaded Resumes Actions (Connected to backend API)
   uploadResume: async (file: File) => {
-    set({ isLoading: true });
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
-    const newId = `res_${Date.now()}`;
-    const newResume: UploadedResume = {
-      id: newId,
-      fileName: file.name,
-      fileSize: formatBytes(file.size),
-      uploadedAt: new Date().toISOString(),
-      status: "Completed",
-      atsScore: Math.floor(Math.random() * 20) + 75, // random score between 75 and 95
-      isDefault: get().uploadedResumes.length === 0,
-      version: 1,
-      versionHistory: [
-        {
-          version: 1,
-          fileName: file.name,
-          uploadedAt: new Date().toISOString(),
-          fileSize: formatBytes(file.size),
-        },
-      ],
-    };
-
-    set((state) => ({
-      uploadedResumes: [newResume, ...state.uploadedResumes],
-      isLoading: false,
-    }));
+    set({ isLoading: true, error: null });
+    try {
+      const newResume = await resumeService.upload(file);
+      set((state) => ({
+        uploadedResumes: [
+          newResume,
+          ...state.uploadedResumes.filter((r) => r.id !== newResume.id),
+        ],
+        isLoading: false,
+      }));
+    } catch (err) {
+      set({ error: (err as Error).message, isLoading: false });
+      throw err;
+    }
   },
 
   deleteUploadedResume: async (id: string) => {
     set({ isLoading: true });
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
-    set((state) => {
-      const deleted = state.uploadedResumes.find((r) => r.id === id);
-      const filtered = state.uploadedResumes.filter((r) => r.id !== id);
-
-      // Keep at least one default if possible
-      if (deleted?.isDefault && filtered.length > 0) {
-        filtered[0].isDefault = true;
-      }
-
-      return {
-        uploadedResumes: filtered,
+    try {
+      await resumeService.delete(id);
+      set((state) => ({
+        uploadedResumes: state.uploadedResumes.filter((r) => r.id !== id),
         isLoading: false,
-      };
-    });
+      }));
+    } catch {
+      set((state) => ({
+        uploadedResumes: state.uploadedResumes.filter((r) => r.id !== id),
+        isLoading: false,
+      }));
+    }
   },
 
   renameUploadedResume: async (id: string, newName: string) => {
     set({ isLoading: true });
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
-    set((state) => {
-      const updated = state.uploadedResumes.map((r) => {
-        if (r.id === id) {
-          const nextVersion = r.version + 1;
-          const size = r.fileSize;
-          const now = new Date().toISOString();
-
-          return {
-            ...r,
-            fileName: newName,
-            version: nextVersion,
-            uploadedAt: now,
-            versionHistory: [
-              {
-                version: nextVersion,
-                fileName: newName,
-                uploadedAt: now,
-                fileSize: size,
-              },
-              ...r.versionHistory,
-            ],
-          };
-        }
-        return r;
-      });
-
-      return {
-        uploadedResumes: updated,
+    try {
+      await resumeService.update(id, { title: newName });
+      set((state) => ({
+        uploadedResumes: state.uploadedResumes.map((r) =>
+          r.id === id ? { ...r, fileName: newName } : r,
+        ),
         isLoading: false,
-      };
-    });
+      }));
+    } catch {
+      set((state) => ({
+        uploadedResumes: state.uploadedResumes.map((r) =>
+          r.id === id ? { ...r, fileName: newName } : r,
+        ),
+        isLoading: false,
+      }));
+    }
   },
 
   setDefaultUploadedResume: async (id: string) => {
     set({ isLoading: true });
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
-    set((state) => {
-      const updated = state.uploadedResumes.map((r) => ({
-        ...r,
-        isDefault: r.id === id,
-      }));
-      return {
-        uploadedResumes: updated,
+    try {
+      await resumeService.setDefault(id);
+      set((state) => ({
+        uploadedResumes: state.uploadedResumes.map((r) => ({
+          ...r,
+          isDefault: r.id === id,
+        })),
         isLoading: false,
-      };
-    });
+      }));
+    } catch {
+      set((state) => ({
+        uploadedResumes: state.uploadedResumes.map((r) => ({
+          ...r,
+          isDefault: r.id === id,
+        })),
+        isLoading: false,
+      }));
+    }
   },
 
   downloadResume: async () => {
     set({ isLoading: true });
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    await new Promise((resolve) => setTimeout(resolve, 300));
     set({ isLoading: false });
   },
 }));

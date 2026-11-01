@@ -49,3 +49,7 @@ turbo/
 # Husky
 .husky/_
 
+# Uploads
+uploads/
+apps/api/uploads/
+

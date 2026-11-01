@@ -113,13 +113,24 @@ export function UploadedResumeDetailsView({
   };
 
   const handleDownload = async () => {
+    if (resume.fileUrl) {
+      if (resume.fileUrl.startsWith("http")) {
+        window.open(resume.fileUrl, "_blank");
+        return;
+      }
+      const apiBase =
+        process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
+      window.open(
+        `${apiBase}${resume.fileUrl.replace(/^\/api\/v1/, "")}`,
+        "_blank",
+      );
+      return;
+    }
+
     const toastId = toast.loading("Preparing download...");
     try {
       await downloadResume(resume.id);
-      toast.success(
-        `Mock Download: "${resume.fileName}" downloaded successfully!`,
-        { id: toastId },
-      );
+      toast.success(`Download ready for "${resume.fileName}"`, { id: toastId });
     } catch {
       toast.error("Failed to download resume.", { id: toastId });
     }

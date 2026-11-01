@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useResumeStore } from "@/features/resume/store/resume.store";
 import { useShallow } from "zustand/react/shallow";
@@ -29,6 +29,7 @@ import type { UploadedResume } from "@/features/resume/types/resume.types";
 export default function ResumeManagementPage() {
   const {
     uploadedResumes,
+    loadResumes,
     uploadResume,
     deleteUploadedResume,
     renameUploadedResume,
@@ -36,12 +37,17 @@ export default function ResumeManagementPage() {
   } = useResumeStore(
     useShallow((state) => ({
       uploadedResumes: state.uploadedResumes,
+      loadResumes: state.loadResumes,
       uploadResume: state.uploadResume,
       deleteUploadedResume: state.deleteUploadedResume,
       renameUploadedResume: state.renameUploadedResume,
       setDefaultUploadedResume: state.setDefaultUploadedResume,
     })),
   );
+
+  useEffect(() => {
+    loadResumes();
+  }, [loadResumes]);
 
   const { confirm, ConfirmationDialog } = useConfirm();
   const [selectedResumeId, setSelectedResumeId] = useState<string | null>(
@@ -92,8 +98,18 @@ export default function ResumeManagementPage() {
     }
   };
 
-  const handleDownload = (name: string) => {
-    toast.info(`Mock Download: Initiated transfer for ${name}`);
+  const handleDownload = (name: string, fileUrl?: string) => {
+    if (fileUrl) {
+      if (fileUrl.startsWith("http")) {
+        window.open(fileUrl, "_blank");
+        return;
+      }
+      const apiBase =
+        process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
+      window.open(`${apiBase}${fileUrl.replace(/^\/api\/v1/, "")}`, "_blank");
+      return;
+    }
+    toast.info(`Preparing file for ${name}`);
   };
 
   const handleRenameSubmit = async (newName: string) => {
@@ -356,7 +372,12 @@ export default function ResumeManagementPage() {
 
                     <div className="pt-2 border-t border-border/10">
                       <BrutalButton
-                        onClick={() => handleDownload(selectedResume.fileName)}
+                        onClick={() =>
+                          handleDownload(
+                            selectedResume.fileName,
+                            selectedResume.fileUrl,
+                          )
+                        }
                         className="w-full h-8 text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5"
                       >
                         <Download className="h-3.5 w-3.5" /> Download File
